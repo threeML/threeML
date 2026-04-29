@@ -1,9 +1,9 @@
 import collections
 import copy
 import types
-from collections.abc import Iterable
 from contextlib import contextmanager
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, Optional, Tuple, Union
+from packaging.version import Version
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -13,7 +13,7 @@ import pandas as pd
 from astromodels import Model, PointSource, clone_model
 from astromodels.core.parameter import Parameter
 from astromodels.functions.priors import Truncated_gaussian, Uniform_prior
-from past.utils import old_div
+
 from threeML.config.config import threeML_config
 from threeML.config.plotting_structure import BinnedSpectrumPlot
 from threeML.exceptions.custom_exceptions import NegativeBackground
@@ -52,39 +52,49 @@ __instrument_name = "General binned spectral data"
 _known_noise_models = ["poisson", "gaussian", "ideal", "modeled"]
 
 
+np_version = Version(np.__version__)
+if np_version < Version("2.0.0"):
+    trapezoid = np.trapz
+else:
+    trapezoid = np.trapezoid
+
+
 class SpectrumLike(PluginPrototype):
     def __init__(
         self,
         name: str,
         observation: BinnedSpectrum,
-        background: Optional[
-            Union[BinnedSpectrum, XYLike, "SpectrumLike"]
-        ] = None,
+        background: Optional[Union[BinnedSpectrum, XYLike, "SpectrumLike"]] = None,
         verbose: bool = True,
         background_exposure=None,
         tstart: Optional[Union[float, int]] = None,
         tstop: Optional[Union[float, int]] = None,
     ) -> None:
-        """
-        A plugin for generic spectral data, accepts an observed binned spectrum,
-        and a background binned spectrum or plugin with the background data.
+        """A plugin for generic spectral data, accepts an observed binned
+        spectrum, and a background binned spectrum or plugin with the
+        background data.
 
-        In the case of a binned background spectrum, the background model is profiled
-        out and the appropriate profile-likelihood is used to fit the total spectrum. In this
-        case, caution must be used when there are zero background counts in bins as the
-        profiled background parameters (one per channel) will then have zero information from which to
-        constrain the background. It is recommended to bin the spectrum such that there is one background count
-        per channel.
+        In the case of a binned background spectrum, the background
+        model is profiled out and the appropriate profile-likelihood is
+        used to fit the total spectrum. In this case, caution must be
+        used when there are zero background counts in bins as the
+        profiled background parameters (one per channel) will then have
+        zero information from which to constrain the background. It is
+        recommended to bin the spectrum such that there is one
+        background count per channel.
 
-        If either an SpectrumLike or XYLike instance is provided as background, it is assumed that this is the
-        background data and the likelihood model from this plugin is used to simultaneously fit the background
-        and source.
+        If either an SpectrumLike or XYLike instance is provided as
+        background, it is assumed that this is the background data and
+        the likelihood model from this plugin is used to simultaneously
+        fit the background and source.
 
         :param name: the plugin name
         :param observation: the observed spectrum
-        :param background: the background spectrum or a plugin from which the background will be modeled
-        :param background_exposure: (optional) adjust the background exposure of the modeled background data comes from and
-        XYLike plugin
+        :param background: the background spectrum or a plugin from
+            which the background will be modeled
+        :param background_exposure: (optional) adjust the background
+            exposure of the modeled background data comes from and
+            XYLike plugin
         :param verbose: turn on/off verbose logging
         """
 
@@ -95,9 +105,7 @@ class SpectrumLike(PluginPrototype):
 
         if not isinstance(observation, BinnedSpectrum):
 
-            log.error(
-                "The observed spectrum is not an instance of BinnedSpectrum"
-            )
+            log.error("The observed spectrum is not an instance of BinnedSpectrum")
 
         # Precomputed observed (for speed)
 
@@ -154,9 +162,10 @@ class SpectrumLike(PluginPrototype):
             np.ones(self._observed_spectrum.n_channels), bool
         )
 
-        # Now create the nuisance parameter for the effective area correction, which is fixed
-        # by default. This factor multiplies the model so that it can account for calibration uncertainties on the
-        # global effective area. By default it is limited to stay within 20%
+        # Now create the nuisance parameter for the effective area correction, which is
+        # fixed by default. This factor multiplies the model so that it can account for
+        # calibration uncertainties on the global effective area. By default it is
+        # limited to stay within 20%
 
         self._nuisance_parameter: Parameter = Parameter(
             "cons_%s" % name,
@@ -169,9 +178,7 @@ class SpectrumLike(PluginPrototype):
         )
 
         nuisance_parameters: Dict[str, Parameter] = collections.OrderedDict()
-        nuisance_parameters[
-            self._nuisance_parameter.name
-        ] = self._nuisance_parameter
+        nuisance_parameters[self._nuisance_parameter.name] = self._nuisance_parameter
 
         # if we have a background model we are going
         # to link all those parameters to new nuisance parameters
@@ -214,8 +221,9 @@ class SpectrumLike(PluginPrototype):
 
             if background_exposure is None:
                 log.warning(
-                    "An XYLike plugin is modeling the background but background_exposure is not set. "
-                    "It is assumed the observation and background have the same exposure"
+                    "An XYLike plugin is modeling the background but "
+                    "background_exposure is not set. It is assumed the observation and "
+                    "background have the same exposure"
                 )
 
                 self._explict_background_exposure = self.exposure
@@ -224,25 +232,23 @@ class SpectrumLike(PluginPrototype):
 
                 self._explicit_background_exposure = background_exposure
 
-        # The following vectors are the ones that will be really used for the computation. At the beginning they just
-        # point to the original ones, but if a rebinner is used and/or a mask is created through set_active_measurements,
+        # The following vectors are the ones that will be really used for the
+        # computation. At the beginning they just point to the original ones, but if a
+        # rebinner is used and/or a mask is created through set_active_measurements,
         # they will contain the rebinned and/or masked versions
 
         self._current_observed_counts: np.ndarray = self._observed_counts
-        self._current_observed_count_errors: Optional[
-            np.array
-        ] = self._observed_count_errors
-        self._current_background_counts: Optional[
-            np.array
-        ] = self._background_counts
-        self._current_scaled_background_counts: Optional[
-            np.array
-        ] = self._scaled_background_counts
-        self._current_back_count_errors: Optional[
-            np.array
-        ] = self._back_count_errors
+        self._current_observed_count_errors: Optional[np.array] = (
+            self._observed_count_errors
+        )
+        self._current_background_counts: Optional[np.array] = self._background_counts
+        self._current_scaled_background_counts: Optional[np.array] = (
+            self._scaled_background_counts
+        )
+        self._current_back_count_errors: Optional[np.array] = self._back_count_errors
 
-        # This will be used to keep track of how many syntethic datasets have been generated
+        # This will be used to keep track of how many syntethic datasets have been
+        # generated
         self._n_synthetic_datasets: int = 0
 
         if tstart is not None:
@@ -284,16 +290,14 @@ class SpectrumLike(PluginPrototype):
         # no checks are involved because the appropriate
         # noise models are pre-selected
 
-        self._likelihood_evaluator = statistic_lookup[
-            self.observation_noise_model
-        ][self.background_noise_model](self)
+        self._likelihood_evaluator = statistic_lookup[self.observation_noise_model][
+            self.background_noise_model
+        ](self)
 
     def _count_errors_initialization(self) -> Tuple[np.ndarray]:
-        """
-        compute the  count errors for the observed and background spectra
+        """Compute the  count errors for the observed and background spectra.
 
-
-        :return:  (observed_count_errors, background_count errors)
+        :return: (observed_count_errors, background_count errors)
         """
 
         # if there is not a background the dictionary
@@ -327,10 +331,11 @@ class SpectrumLike(PluginPrototype):
                 self._background_noise_model
             ]  # type: tuple
 
-        except (KeyError):
+        except KeyError:
 
             log.error(
-                f"The noise combination of source: {self._observation_noise_model}, background: {self._background_noise_model}  is not supported"
+                f"The noise combination of source: {self._observation_noise_model}, "
+                f"background: {self._background_noise_model}  is not supported"
             )
 
             RuntimeError()
@@ -350,8 +355,8 @@ class SpectrumLike(PluginPrototype):
                 if not np.all(errors[zero_idx] == counts[zero_idx]):
 
                     log.error(
-                        f"Error in {name} spectrum: if the error on the background is zero, "
-                        f"also the expected background counts must be zero"
+                        f"Error in {name} spectrum: if the error on the background is "
+                        "zero, also the expected background counts must be zero"
                     )
 
                     raise RuntimeError()
@@ -361,12 +366,7 @@ class SpectrumLike(PluginPrototype):
         return observed_count_errors, background_count_errors
 
     def _probe_noise_models(self):
-        """
-
-        probe the noise models
-
-
-
+        """Probe the noise models.
 
         :return: (observation_noise_model, background_noise_model)
         """
@@ -389,9 +389,9 @@ class SpectrumLike(PluginPrototype):
                     observation_noise_model = "poisson"
                     background_noise_model = "poisson"
 
-                    self._background_counts = np.around(
-                        self._background_counts
-                    ).astype(np.int64)
+                    self._background_counts = np.around(self._background_counts).astype(
+                        np.int64
+                    )
 
                     if not np.all(self._observed_counts >= 0):
 
@@ -401,9 +401,7 @@ class SpectrumLike(PluginPrototype):
 
                     if not np.all(self._background_counts >= 0):
 
-                        log.error(
-                            "Error in background spectrum: negative counts!"
-                        )
+                        log.error("Error in background spectrum: negative counts!")
 
                         raise NegativeBackground()
 
@@ -414,9 +412,7 @@ class SpectrumLike(PluginPrototype):
 
                     if not np.all(self._background_counts >= 0):
 
-                        log.error(
-                            "Error in background spectrum: negative background!"
-                        )
+                        log.error("Error in background spectrum: negative background!")
 
                         raise NegativeBackground()
 
@@ -425,7 +421,8 @@ class SpectrumLike(PluginPrototype):
                 if self._background_spectrum.is_poisson:
 
                     raise NotImplementedError(
-                        "We currently do not support Gaussian observation and Poisson background"
+                        "We currently do not support Gaussian observation and Poisson "
+                        "background"
                     )
 
                 else:
@@ -477,8 +474,7 @@ class SpectrumLike(PluginPrototype):
 
         if self._background_plugin is not None:
             log.info(
-                "Background modeled from plugin: %s"
-                % self._background_plugin.name
+                "Background modeled from plugin: %s" % self._background_plugin.name
             )
 
             bkg_noise = self._background_plugin.observation_noise_model
@@ -502,7 +498,8 @@ class SpectrumLike(PluginPrototype):
 
         :param background: background arguments (spectrum or plugin)
         :param observation: observed spectrum
-        :return: (background_spectrum, background_plugin, background_counts, scaled_background_counts)
+        :return: (background_spectrum, background_plugin, background_counts,
+        scaled_background_counts)
         """
 
         # this is only called during once during construction
@@ -526,9 +523,7 @@ class SpectrumLike(PluginPrototype):
 
             # we are explicitly violating duck-typing
 
-            if isinstance(background, SpectrumLike) or isinstance(
-                background, XYLike
-            ):
+            if isinstance(background, SpectrumLike) or isinstance(background, XYLike):
 
                 background_plugin = background
 
@@ -536,8 +531,8 @@ class SpectrumLike(PluginPrototype):
 
             else:
 
-                # if the background is not a plugin then we need to make sure it is a spectrum
-                # and that the spectrum is the same size as the observation
+                # if the background is not a plugin then we need to make sure it is a
+                # spectrum and that the spectrum is the same size as the observation
 
                 if not isinstance(background, BinnedSpectrum):
 
@@ -561,10 +556,8 @@ class SpectrumLike(PluginPrototype):
 
                 # this assumes the observed spectrum is already set!
 
-                scaled_background_counts = (
-                    self._get_expected_background_counts_scaled(
-                        background_spectrum
-                    )
+                scaled_background_counts = self._get_expected_background_counts_scaled(
+                    background_spectrum
                 )  # type: np.ndarray
 
         return (
@@ -575,10 +568,10 @@ class SpectrumLike(PluginPrototype):
         )
 
     def _precalculations(self):
-        """
-        pre calculate values for speed.
+        """Pre calculate values for speed.
 
-        originally, the plugins were calculating these values on the fly, which was very slow
+        originally, the plugins were calculating these values on the
+        fly, which was very slow
 
         :return:
         """
@@ -588,9 +581,7 @@ class SpectrumLike(PluginPrototype):
         # area scale factor between background and source
         # and exposure ratio between background and source
 
-        if (self._background_spectrum is None) and (
-            self._background_plugin is None
-        ):
+        if (self._background_spectrum is None) and (self._background_plugin is None):
 
             # there is no background so the area scaling is unity
 
@@ -611,7 +602,8 @@ class SpectrumLike(PluginPrototype):
 
                 if isinstance(self._background_plugin, SpectrumLike):
 
-                    # use the background plugin's observed spectrum  and exposure to scale the area and time
+                    # use the background plugin's observed spectrum  and exposure to
+                    # scale the area and time
 
                     self._background_scale_factor = (
                         self._background_plugin.observed_spectrum.scale_factor
@@ -622,38 +614,36 @@ class SpectrumLike(PluginPrototype):
 
                 else:
 
-                    # in this case, the XYLike data could come from anything, so area scaling is set to unity
+                    # in this case, the XYLike data could come from anything, so area
+                    # scaling is set to unity
                     # TODO: could this be wrong?
 
-                    self._background_scale_factor = (
-                        self._observed_spectrum.scale_factor
+                    self._background_scale_factor = self._observed_spectrum.scale_factor
+
+                    # if the background exposure is set in the constructor, then this
+                    # will scale it, otherwise this will be unity
+
+                    self._exposure_ratio = self._background_exposure = (
+                        self._explict_background_exposure
                     )
 
-                    # if the background exposure is set in the constructor, then this will scale it, otherwise
-                    # this will be unity
-
-                    self._exposure_ratio = (
-                        self._background_exposure
-                    ) = self._explict_background_exposure
-
             else:
-                # this is the normal case with no background model, get the scale factor directly
+                # this is the normal case with no background model, get the scale factor
+                # directly
 
                 log.debug("this is a normal background observation")
 
-                self._background_scale_factor = (
-                    self._background_spectrum.scale_factor
-                )
+                self._background_scale_factor = self._background_spectrum.scale_factor
 
                 self._background_exposure = self._background_spectrum.exposure
 
-            self._area_ratio = float(
-                self._observed_spectrum.scale_factor
-            ) / float(self._background_scale_factor)
+            self._area_ratio = float(self._observed_spectrum.scale_factor) / float(
+                self._background_scale_factor
+            )
 
-            self._exposure_ratio = float(
-                self._observed_spectrum.exposure
-            ) / float(self._background_exposure)
+            self._exposure_ratio = float(self._observed_spectrum.exposure) / float(
+                self._background_exposure
+            )
 
         self._total_scale_factor = self._area_ratio * self._exposure_ratio
 
@@ -663,9 +653,7 @@ class SpectrumLike(PluginPrototype):
 
     @property
     def exposure(self) -> float:
-        """
-        Exposure of the source spectrum
-        """
+        """Exposure of the source spectrum."""
 
         return self._observed_spectrum.exposure
 
@@ -705,8 +693,7 @@ class SpectrumLike(PluginPrototype):
 
     @property
     def scale_factor(self) -> float:
-        """
-        Ratio between the source and the background exposure and area
+        """Ratio between the source and the background exposure and area.
 
         :return:
         """
@@ -724,16 +711,13 @@ class SpectrumLike(PluginPrototype):
 
     @property
     def background_exposure(self) -> float:
-        """
-        Exposure of the background spectrum, if present
-        """
+        """Exposure of the background spectrum, if present."""
 
         return self._background_exposure
 
     @property
     def background_scale_factor(self) -> float:
-        """
-        The background scale factor
+        """The background scale factor.
 
         :return:
         """
@@ -792,9 +776,9 @@ class SpectrumLike(PluginPrototype):
         scale_factor,
         **kwargs,
     ) -> BinnedSpectrum:
-        """
-        This is the fake observation builder for SpectrumLike which builds data
-        for a binned spectrum without dispersion. It must be overridden in child classes.
+        """This is the fake observation builder for SpectrumLike which builds
+        data for a binned spectrum without dispersion. It must be overridden in
+        child classes.
 
         :param fake_data: series of values... they are ignored later
         :param channel_set: a channel set
@@ -823,9 +807,8 @@ class SpectrumLike(PluginPrototype):
 
     @classmethod
     def from_background(cls, name: str, spectrum_like, verbose: bool = True):
-        """
-        Extract a SpectrumLike plugin from the background of another SpectrumLike (or subclass) instance
-
+        """Extract a SpectrumLike plugin from the background of another
+        SpectrumLike (or subclass) instance.
 
         :param name: name of the extracted_plugin
         :param spectrum_like: plugin with background to extract
@@ -835,9 +818,7 @@ class SpectrumLike(PluginPrototype):
 
         log.debug("creating new spectrumlike from background")
 
-        background_only_spectrum = copy.deepcopy(
-            spectrum_like.background_spectrum
-        )
+        background_only_spectrum = copy.deepcopy(spectrum_like.background_spectrum)
 
         background_spectrum_like = SpectrumLike(
             name,
@@ -864,9 +845,9 @@ class SpectrumLike(PluginPrototype):
         scale_factor=1.0,
         **kwargs,
     ):
-        """
-
-        Construct a simulated spectrum from a given source function and (optional) background function. If source and/or background errors are not supplied, the likelihood is assumed to be Poisson.
+        """Construct a simulated spectrum from a given source function and
+        (optional) background function. If source and/or background errors are
+        not supplied, the likelihood is assumed to be Poisson.
 
         :param name: simulkated data set name
         :param source_function: astromodels function
@@ -874,11 +855,14 @@ class SpectrumLike(PluginPrototype):
         :param energy_max: array of high energy bin edges
         :param source_errors: (optional) gaussian source errors
         :param source_sys_errors: (optional) systematic source errors
-        :param background_function: (optional) astromodels background function
+        :param background_function: (optional) astromodels background
+            function
         :param background_errors: (optional) gaussian background errors
-        :param background_sys_errors: (optional) background systematic errors
+        :param background_sys_errors: (optional) background systematic
+            errors
         :param exposure: the exposure to assume
-        :param scale_factor: the scale factor between source exposure / bkg exposure
+        :param scale_factor: the scale factor between source exposure /
+            bkg exposure
         :return: simulated SpectrumLike plugin
         """
 
@@ -910,7 +894,8 @@ class SpectrumLike(PluginPrototype):
             if not len(source_sys_errors) == len(energy_min):
 
                 log.error(
-                    "background systematic error array is not the same dimension as the energy array"
+                    "background systematic error array is not the same dimension as the"
+                    " energy array"
                 )
 
                 raise RuntimeError()
@@ -941,7 +926,8 @@ class SpectrumLike(PluginPrototype):
                 if not len(background_errors) == len(energy_min):
 
                     log.error(
-                        "background error array is not the same dimension as the energy array"
+                        "background error array is not the same dimension as the energy"
+                        " array"
                     )
 
                     raise RuntimeError()
@@ -951,7 +937,8 @@ class SpectrumLike(PluginPrototype):
             if background_sys_errors is not None:
                 if not len(background_sys_errors) == len(energy_min):
                     log.error(
-                        "background systematic error array is not the same dimension as the energy array"
+                        "background systematic error array is not the same dimension as"
+                        " the energy array"
                     )
 
                     raise RuntimeError()
@@ -1004,10 +991,11 @@ class SpectrumLike(PluginPrototype):
         return generator.get_simulated_dataset(name)
 
     def assign_to_source(self, source_name: str) -> None:
-        """
-        Assign these data to the given source (instead of to the sum of all sources, which is the default)
+        """Assign these data to the given source (instead of to the sum of all
+        sources, which is the default)
 
-        :param source_name: name of the source (must be contained in the likelihood model)
+        :param source_name: name of the source (must be contained in the
+            likelihood model)
         :return: none
         """
 
@@ -1048,13 +1036,14 @@ class SpectrumLike(PluginPrototype):
         return info
 
     def set_active_measurements(self, *args, **kwargs) -> None:
-        """
-        Set the measurements to be used during the analysis. Use as many ranges as you need, and you can specify
-        either energies or channels to be used.
+        """Set the measurements to be used during the analysis. Use as many
+        ranges as you need, and you can specify either energies or channels to
+        be used.
 
-        NOTE to Xspec users: while XSpec uses integers and floats to distinguish between energies and channels
-        specifications, 3ML does not, as it would be error-prone when writing scripts. Read the following documentation
-        to know how to achieve the same functionality.
+        NOTE to Xspec users: while XSpec uses integers and floats to distinguish between
+        energies and channels specifications, 3ML does not, as it would be error-prone
+        when writing scripts. Read the following documentation to know how to achieve
+        the same functionality.
 
         * Energy selections:
 
@@ -1071,12 +1060,13 @@ class SpectrumLike(PluginPrototype):
 
         set_active_measurements('c10-c12','c56-c100')
 
-        This will set channels 10-12 and 56-100 as active channels to be used in the analysis
+        This will set channels 10-12 and 56-100 as active channels to be used in the
+        analysis
 
         * Mixed channel and energy selections:
 
-        You can also specify mixed energy/channel selections, for example to go from 0.2 keV to channel 20 and from
-        channel 50 to 10 keV:
+        You can also specify mixed energy/channel selections, for example to go from 0.2
+        keV to channel 20 and from channel 50 to 10 keV:
 
         set_active_measurements('0.2-c10','c50-10')
 
@@ -1093,34 +1083,38 @@ class SpectrumLike(PluginPrototype):
 
         * Exclude measurements:
 
-        Excluding measurements work as selecting measurements, but with the "exclude" keyword set to the energies and/or
-        channels to be excluded. To exclude between channel 10 and 20 keV and 50 keV to channel 120 do:
+        Excluding measurements work as selecting measurements, but with the "exclude"
+        keyword set to the energies and/or channels to be excluded. To exclude between
+        channel 10 and 20 keV and 50 keV to channel 120 do:
 
         set_active_measurements(exclude=["c10-20", "50-c120"])
 
         * Select and exclude:
 
-        Call this method more than once if you need to select and exclude. For example, to select between 0.2 keV and
-        channel 10, but exclude channel 30-50 and energy , do:
+        Call this method more than once if you need to select and exclude. For example,
+        to select between 0.2 keV and channel 10, but exclude channel 30-50 and energy,
+        do:
 
         set_active_measurements("0.2-c10",exclude=["c30-c50"])
 
         * Using native PHA quality:
 
-        To simply add or exclude channels from the native PHA, one can use the use_quailty
-        option:
+        To simply add or exclude channels from the native PHA, one can use the
+        use_quailty option:
 
         set_active_measurements(
             "0.2-c10",exclude=["c30-c50"], use_quality=True)
 
-        This translates to including the channels from 0.2 keV - channel 10, exluding channels
-        30-50 and any channels flagged BAD in the PHA file will also be excluded.
+        This translates to including the channels from 0.2 keV - channel 10, exluding
+        channels 30-50 and any channels flagged BAD in the PHA file will also be
+        excluded.
 
 
 
         :param args:
         :param exclude: (list) exclude the provided channel/energy ranges
-        :param use_quality: (bool) use the native quality on the PHA file (default=False)
+        :param use_quality: (bool) use the native quality on the PHA file
+        (default=False)
         :return:
         """
 
@@ -1164,9 +1158,7 @@ class SpectrumLike(PluginPrototype):
             # otherwise, we will start out with all channels deselected
             # and turn the on/off by the arguments
 
-            self._mask = np.zeros(
-                self._observed_spectrum.n_channels, dtype=bool
-            )
+            self._mask = np.zeros(self._observed_spectrum.n_channels, dtype=bool)
 
         if "all" in args:
 
@@ -1175,7 +1167,8 @@ class SpectrumLike(PluginPrototype):
             if not (len(args) == 1):
 
                 log.error(
-                    "If you specify 'all', you cannot specify more than one energy range."
+                    "If you specify 'all', you cannot specify more than one energy "
+                    "range."
                 )
 
                 raise RuntimeError()
@@ -1190,7 +1183,8 @@ class SpectrumLike(PluginPrototype):
             if not (len(args) == 1):
 
                 log.error(
-                    "If you specify 'reset', you cannot specify more than one energy range."
+                    "If you specify 'reset', you cannot specify more than one energy "
+                    "range."
                 )
 
                 raise RuntimeError()
@@ -1210,12 +1204,10 @@ class SpectrumLike(PluginPrototype):
 
                     if s[0].lower() == "c":
 
-                        if not (
-                            int(s[1:]) <= self._observed_spectrum.n_channels
-                        ):
+                        if not (int(s[1:]) <= self._observed_spectrum.n_channels):
 
                             log.error(
-                                f"%s is larger than the number of channels: %d"
+                                "%s is larger than the number of channels: %d"
                                 % (
                                     s,
                                     self._observed_spectrum.n_channels,
@@ -1228,15 +1220,13 @@ class SpectrumLike(PluginPrototype):
 
                     else:
 
-                        idx[i] = self._observed_spectrum.containing_bin(
-                            float(s)
-                        )
+                        idx[i] = self._observed_spectrum.containing_bin(float(s))
 
                 if not idx[0] < idx[1]:
 
                     log.error(
-                        "The channel and energy selection (%s) are out of order and translates to %s-%s"
-                        % (selections, idx[0], idx[1])
+                        f"The channel and energy selection ({selections}) are out of "
+                        f"order and translates to {idx[0]}-{idx[1]}"
                     )
 
                     raise RuntimeError()
@@ -1245,8 +1235,7 @@ class SpectrumLike(PluginPrototype):
                 self._mask[idx[0] : idx[1] + 1] = True
 
                 log.info(
-                    "Range %s translates to channels %s-%s"
-                    % (arg, idx[0], idx[1])
+                    "Range %s translates to channels %s-%s" % (arg, idx[0], idx[1])
                 )
 
         # If you are just excluding channels
@@ -1268,9 +1257,7 @@ class SpectrumLike(PluginPrototype):
 
                     if s[0].lower() == "c":
 
-                        if not (
-                            int(s[1:]) <= self._observed_spectrum.n_channels
-                        ):
+                        if not (int(s[1:]) <= self._observed_spectrum.n_channels):
 
                             log.error(
                                 "%s is larger than the number of channels: %d"
@@ -1286,15 +1273,13 @@ class SpectrumLike(PluginPrototype):
 
                     else:
 
-                        idx[i] = self._observed_spectrum.containing_bin(
-                            float(s)
-                        )
+                        idx[i] = self._observed_spectrum.containing_bin(float(s))
 
                 if not idx[0] < idx[1]:
 
                     log.error(
-                        "The channel and energy selection (%s) are out of order and translate to %s-%s"
-                        % (selections, idx[0], idx[1])
+                        f"The channel and energy selection ({selections}) are out of "
+                        f"order and translates to {idx[0]}-{idx[1]}"
                     )
                     raise RuntimeError()
 
@@ -1315,13 +1300,12 @@ class SpectrumLike(PluginPrototype):
         self._apply_mask_to_original_vectors()
 
         # if the user did not specify use_quality, they may have selected channels which
-        # are marked BAD (5) in the native PHA file. We want to warn them in this case only (or maybe in all cases?)
+        # are marked BAD (5) in the native PHA file. We want to warn them in this case
+        # only (or maybe in all cases?)
 
         if not use_quality:
 
-            number_of_native_good_channels = sum(
-                self._observed_spectrum.quality.good
-            )
+            number_of_native_good_channels = sum(self._observed_spectrum.quality.good)
             number_of_user_good_channels = sum(self._mask)
 
             if number_of_user_good_channels > number_of_native_good_channels:
@@ -1336,7 +1320,8 @@ class SpectrumLike(PluginPrototype):
                         deselected_channels.append(i)
 
                 log.warning(
-                    "You have opted to use channels which are flagged BAD in the PHA file."
+                    "You have opted to use channels which are flagged BAD in the PHA "
+                    "file."
                 )
 
                 log.warning(
@@ -1357,17 +1342,13 @@ class SpectrumLike(PluginPrototype):
 
         if self._background_spectrum is not None:
 
-            self._current_background_counts = self._background_counts[
+            self._current_background_counts = self._background_counts[self._mask]
+            self._current_scaled_background_counts = self._scaled_background_counts[
                 self._mask
             ]
-            self._current_scaled_background_counts = (
-                self._scaled_background_counts[self._mask]
-            )
 
             if self._back_count_errors is not None:
-                self._current_back_count_errors = self._back_count_errors[
-                    self._mask
-                ]
+                self._current_back_count_errors = self._back_count_errors[self._mask]
 
     @contextmanager
     def _without_mask_nor_rebinner(self) -> None:
@@ -1392,7 +1373,8 @@ class SpectrumLike(PluginPrototype):
 
         if rebinner is not None:
 
-            # There was a rebinner, use it. Note that the rebinner applies the mask by itself
+            # There was a rebinner, use it. Note that the rebinner applies the mask by
+            # itself
 
             self._apply_rebinner(rebinner)
 
@@ -1408,12 +1390,13 @@ class SpectrumLike(PluginPrototype):
         store_model: Optional[bool] = True,
         **kwargs,
     ) -> "SpectrumLike":
-        """
-        Returns another Binned instance where data have been obtained by randomizing the current expectation from the
-        model, as well as from the background (depending on the respective noise models)
+        """Returns another Binned instance where data have been obtained by
+        randomizing the current expectation from the model, as well as from the
+        background (depending on the respective noise models)
 
         :param new_name: the base line name
-        :param store_model: to store the model configuration used to simulate the data set
+        :param store_model: to store the model configuration used to
+            simulate the data set
         :return: an BinnedSpectrum or child instance
         """
 
@@ -1435,20 +1418,19 @@ class SpectrumLike(PluginPrototype):
 
         # Generate randomized data depending on the different noise models
 
-        # We remove the mask temporarily because we need the various elements for all channels. We will restore it
-        # at the end
+        # We remove the mask temporarily because we need the various elements for all
+        # channels. We will restore it at the end
 
         original_mask = np.array(self._mask, copy=True)
         original_rebinner = self._rebinner
 
         with self._without_mask_nor_rebinner():
 
-            # Get the source model for all channels (that's why we don't use the .folded_model property)
+            # Get the source model for all channels (that's why we don't use the
+            # .folded_model property)
 
             source_model_counts = (
-                self._evaluate_model()
-                * self.exposure
-                * self._nuisance_parameter.value
+                self._evaluate_model() * self.exposure * self._nuisance_parameter.value
             )
 
             # sometimes the first channel has ZERO
@@ -1464,9 +1446,7 @@ class SpectrumLike(PluginPrototype):
 
                 source_model_counts[0] = 0
 
-                log.warning(
-                    "simulated spectrum had infinite counts in first channel"
-                )
+                log.warning("simulated spectrum had infinite counts in first channel")
                 log.warning("setting to ZERO")
 
             if not np.all(source_model_counts >= 0.0) and (
@@ -1491,9 +1471,10 @@ class SpectrumLike(PluginPrototype):
 
                 raise RuntimeError()
 
-            # The likelihood evaluator keeps track of the proper likelihood needed to randomize
-            # quantities. It properly returns None if needed. This avoids multiple checks and dupilcate
-            # code for the MANY cases we can have. As new cases are added, this code will adapt.
+            # The likelihood evaluator keeps track of the proper likelihood needed to
+            # randomize quantities. It properly returns None if needed. This avoids
+            # multiple checks and dupilcate code for the MANY cases we can have. As new
+            # cases are added, this code will adapt.
 
             randomized_source_counts = (
                 self._likelihood_evaluator.get_randomized_source_counts(
@@ -1512,13 +1493,13 @@ class SpectrumLike(PluginPrototype):
 
             # create new source and background spectra
             # the children of BinnedSpectra must properly override the new_spectrum
-            # member so as to build the appropriate spectrum type. All parameters of the current
-            # spectrum remain the same except for the rate and rate errors
+            # member so as to build the appropriate spectrum type. All parameters of the
+            # current spectrum remain the same except for the rate and rate errors
 
             # the profile likelihood automatically adjust the background spectrum to the
             # same exposure and scale as the observation
-            # therefore, we must  set the background simulation to have the exposure and scale
-            # of the observation
+            # therefore, we must  set the background simulation to have the exposure and
+            # scale of the observation
 
             new_observation = self._observed_spectrum.clone(
                 new_counts=randomized_source_counts,
@@ -1531,27 +1512,24 @@ class SpectrumLike(PluginPrototype):
                 new_background = self._background_spectrum.clone(
                     new_counts=randomized_background_counts,
                     new_count_errors=randomized_background_count_err,
-                    new_exposure=self._observed_spectrum.exposure,  # because it was adjusted
+                    new_exposure=self._observed_spectrum.exposure,  # because it was
+                    # adjusted
                     # new_scale_factor=1.0,  # because it was adjusted
                     new_scale_factor=1.0 / self._total_scale_factor,
                 )
 
-                log.debug(
-                    f"made {sum(randomized_background_counts)} bkg counts"
-                )
+                log.debug(f"made {sum(randomized_background_counts)} bkg counts")
 
             elif self._background_plugin is not None:
 
-                new_background = (
-                    self._likelihood_evaluator.synthetic_background_plugin
-                )
+                new_background = self._likelihood_evaluator.synthetic_background_plugin
 
             else:
 
                 new_background = None
 
-            # Now create another instance of BinnedSpectrum with the randomized data we just generated
-            # notice that the _new member is a classmethod
+            # Now create another instance of BinnedSpectrum with the randomized data we
+            # just generated notice that the _new member is a classmethod
             # (we use verbose=False to avoid many messages when doing many simulations)
             new_spectrum_plugin = self._new_plugin(
                 name=new_name,
@@ -1577,9 +1555,7 @@ class SpectrumLike(PluginPrototype):
             # can recall them later
             if store_model:
 
-                new_spectrum_plugin._simulation_storage = clone_model(
-                    self._like_model
-                )
+                new_spectrum_plugin._simulation_storage = clone_model(self._like_model)
 
             else:
 
@@ -1591,21 +1567,17 @@ class SpectrumLike(PluginPrototype):
 
     @classmethod
     def _new_plugin(cls, *args, **kwargs):
-        """
-        allows for constructing a new plugin of the appropriate
-        type in conjunction with the Spectrum.clone method.
-        It is used for example in get_simulated_dataset
+        """Allows for constructing a new plugin of the appropriate type in
+        conjunction with the Spectrum.clone method. It is used for example in
+        get_simulated_dataset.
 
-        new_background = self._background_spectrum.clone(new_counts=randomized_background_counts,
-                                                  new_count_errors=randomized_background_count_err)
+        new_background = self._background_spectrum.clone(
+        new_counts=randomized_background_counts,
+        new_count_errors=randomized_background_count_err)
 
-
-        new_spectrum_plugin = self._new_plugin(name=new_name,
-                                               observation=new_observation,
-                                               background=new_background,
-                                               verbose=self._verbose,
-                                               **kwargs)
-
+         new_spectrum_plugin = self._new_plugin(name=new_name,
+        observation=new_observation, background=new_background,
+        verbose=self._verbose, **kwargs)
 
         :param args:
         :param kwargs:
@@ -1616,10 +1588,8 @@ class SpectrumLike(PluginPrototype):
 
     @property
     def simulated_parameters(self) -> Model:
-        """
-        Return the simulated dataset parameters
-        :return: a likelihood model copy
-        """
+        """Return the simulated dataset parameters :return: a likelihood model
+        copy."""
 
         if self._simulation_storage is None:
 
@@ -1630,17 +1600,19 @@ class SpectrumLike(PluginPrototype):
         return self._simulation_storage
 
     def rebin_on_background(self, min_number_of_counts: float) -> None:
-        """
-        Rebin the spectrum guaranteeing the provided minimum number of counts in each background bin. This is usually
-        required for spectra with very few background counts to make the Poisson profile likelihood meaningful.
-        Of course this is not relevant if you treat the background as ideal, nor if the background spectrum has
-        Gaussian errors.
+        """Rebin the spectrum guaranteeing the provided minimum number of
+        counts in each background bin. This is usually required for spectra
+        with very few background counts to make the Poisson profile likelihood
+        meaningful. Of course this is not relevant if you treat the background
+        as ideal, nor if the background spectrum has Gaussian errors.
 
-        The observed spectrum will be rebinned in the same fashion as the background spectrum.
+        The observed spectrum will be rebinned in the same fashion as
+        the background spectrum.
 
         To neutralize this completely, use "remove_rebinning"
 
-        :param min_number_of_counts: the minimum number of counts in each bin
+        :param min_number_of_counts: the minimum number of counts in
+            each bin
         :return: none
         """
 
@@ -1648,9 +1620,7 @@ class SpectrumLike(PluginPrototype):
 
         if self._background_spectrum is None:
 
-            log.error(
-                "This data has no background, cannot rebin on background!"
-            )
+            log.error("This data has no background, cannot rebin on background!")
 
             raise RuntimeError()
 
@@ -1672,20 +1642,19 @@ class SpectrumLike(PluginPrototype):
             log.info("rebinning had no effect")
 
     def rebin_on_source(self, min_number_of_counts: int) -> None:
-        """
-        Rebin the spectrum guaranteeing the provided minimum number of counts in each source bin.
+        """Rebin the spectrum guaranteeing the provided minimum number of
+        counts in each source bin.
 
         To neutralize this completely, use "remove_rebinning"
 
-        :param min_number_of_counts: the minimum number of counts in each bin
+        :param min_number_of_counts: the minimum number of counts in
+            each bin
         :return: none
         """
 
         # NOTE: the rebinner takes care of the mask already
 
-        rebinner = Rebinner(
-            self._observed_counts, min_number_of_counts, self._mask
-        )
+        rebinner = Rebinner(self._observed_counts, min_number_of_counts, self._mask)
 
         if rebinner.n_bins < len(self._mask):
 
@@ -1694,9 +1663,7 @@ class SpectrumLike(PluginPrototype):
                 self._observed_spectrum.set_ogip_grouping(rebinner.grouping)
 
                 if self._background_spectrum is not None:
-                    self._background_spectrum.set_ogip_grouping(
-                        rebinner.grouping
-                    )
+                    self._background_spectrum.set_ogip_grouping(rebinner.grouping)
 
             self._apply_rebinner(rebinner)
 
@@ -1709,16 +1676,15 @@ class SpectrumLike(PluginPrototype):
         self._rebinner = rebinner
 
         # Apply the rebinning to everything.
-        # NOTE: the output of the .rebin method are the vectors with the mask *already applied*
+        # NOTE: the output of the .rebin method are the vectors with the mask
+        # *already applied*
 
-        (self._current_observed_counts,) = self._rebinner.rebin(
-            self._observed_counts
-        )
+        (self._current_observed_counts,) = self._rebinner.rebin(self._observed_counts)
 
         if self._observed_count_errors is not None:
-            (
-                self._current_observed_count_errors,
-            ) = self._rebinner.rebin_errors(self._observed_count_errors)
+            (self._current_observed_count_errors,) = self._rebinner.rebin_errors(
+                self._observed_count_errors
+            )
 
         if self._background_spectrum is not None:
 
@@ -1730,17 +1696,17 @@ class SpectrumLike(PluginPrototype):
             )
 
             if self._back_count_errors is not None:
-                # NOTE: the output of the .rebin method are the vectors with the mask *already applied*
+                # NOTE: the output of the .rebin method are the vectors with the mask
+                # *already applied*
 
-                (
-                    self._current_back_count_errors,
-                ) = self._rebinner.rebin_errors(self._back_count_errors)
+                (self._current_back_count_errors,) = self._rebinner.rebin_errors(
+                    self._back_count_errors
+                )
 
         log.info("Now using %s bins" % self._rebinner.n_bins)
 
     def remove_rebinning(self) -> None:
-        """
-        Remove the rebinning scheme set with rebin_on_background.
+        """Remove the rebinning scheme set with rebin_on_background.
 
         :return:
         """
@@ -1753,32 +1719,29 @@ class SpectrumLike(PluginPrototype):
     def _get_expected_background_counts_scaled(
         self, background_spectrum: BinnedSpectrum
     ) -> None:
-        """
-        Get the background counts expected in the source interval and in the source region, based on the observed
-        background.
+        """Get the background counts expected in the source interval and in the
+        source region, based on the observed background.
 
         :return:
         """
 
         # NOTE : this is called only once during construction!
 
-        # The scale factor is the ratio between the collection area of the source spectrum and the
-        # background spectrum. It is used for example for the typical aperture-photometry method used in
-        # X-ray astronomy, where the background region has a different size with respect to the source region
+        # The scale factor is the ratio between the collection area of the source
+        # spectrum and the background spectrum. It is used for example for the typical
+        # aperture-photometry method used in X-ray astronomy, where the background
+        # region has a different size with respect to the source region
 
         scale_factor = (
-            self._observed_spectrum.scale_factor
-            / background_spectrum.scale_factor,
+            self._observed_spectrum.scale_factor / background_spectrum.scale_factor,
         )
 
-        # The expected number of counts is the rate in the background file multiplied by its exposure, renormalized
-        # by the scale factor.
+        # The expected number of counts is the rate in the background file multiplied by
+        # its exposure, renormalized by the scale factor.
         # (see http://heasarc.gsfc.nasa.gov/docs/asca/abc_backscal.html)
 
         bkg_counts = (
-            background_spectrum.rates
-            * self._observed_spectrum.exposure
-            * scale_factor
+            background_spectrum.rates * self._observed_spectrum.exposure * scale_factor
         )
 
         return bkg_counts
@@ -1826,13 +1789,13 @@ class SpectrumLike(PluginPrototype):
 
         # reset the likelihood
 
-        self._likelihood_evaluator = statistic_lookup[
-            self._observation_noise_model
-        ][new_model](self)
+        self._likelihood_evaluator = statistic_lookup[self._observation_noise_model][
+            new_model
+        ](self)
 
         log.warning(
-            "You are setting the background noise model to something that is not specified in the spectrum.\
-         Verify that this makes statistical sense."
+            "You are setting the background noise model to something that is not "
+            "specified in the spectrum. Verify that this makes statistical sense."
         )
 
     def _get_background_noise_model(self) -> str:
@@ -1871,8 +1834,8 @@ class SpectrumLike(PluginPrototype):
         ](self)
 
         log.warning(
-            "You are setting the observation noise model to something that is not specified in the spectrum.\
-                 Verify that this makes statistical sense."
+            "You are setting the observation noise model to something that is not "
+            "specified in the spectrum. Verify that this makes statistical sense."
         )
 
     def _get_observation_noise_model(self) -> str:
@@ -1885,12 +1848,9 @@ class SpectrumLike(PluginPrototype):
         doc="Sets/gets the noise model for the background spectrum",
     )
 
-    def get_log_like(
-        self, precalc_fluxes: Optional[np.ndarray] = None
-    ) -> float:
-        """
-        Calls the likelihood from the pre-setup likelihood evaluator that "knows" of the currently set
-        noise models
+    def get_log_like(self, precalc_fluxes: Optional[np.ndarray] = None) -> float:
+        """Calls the likelihood from the pre-setup likelihood evaluator that
+        "knows" of the currently set noise models.
 
         :return:
         """
@@ -1898,7 +1858,8 @@ class SpectrumLike(PluginPrototype):
         loglike, _ = self._likelihood_evaluator.get_current_value(
             precalc_fluxes=precalc_fluxes
         )
-        if self._exclude_from_fit: loglike*=0
+        if self._exclude_from_fit:
+            loglike *= 0
         return loglike
 
     def inner_fit(self) -> float:
@@ -1906,9 +1867,7 @@ class SpectrumLike(PluginPrototype):
         return self.get_log_like()
 
     def set_model(self, likelihoodModel: Model) -> None:
-        """
-        Set the model to be used in the joint minimization.
-        """
+        """Set the model to be used in the joint minimization."""
 
         # Store likelihood model
 
@@ -1932,8 +1891,8 @@ class SpectrumLike(PluginPrototype):
                 )
 
                 raise RuntimeError()
-        # Get the differential flux function, and the integral function, with no dispersion,
-        # we simply integrate the model over the bins
+        # Get the differential flux function, and the integral function, with no
+        # dispersion, we simply integrate the model over the bins
 
         differential_flux, integral = self._get_diff_flux_and_integral(
             self._like_model, integrate_method=self._model_integrate_method
@@ -1941,13 +1900,10 @@ class SpectrumLike(PluginPrototype):
 
         self._integral_flux = integral
 
-    def _evaluate_model(
-        self, precalc_fluxes: Optional[np.array] = None
-    ) -> np.ndarray:
-        """
-        Since there is no dispersion, we simply evaluate the model by integrating over the energy bins.
-        This can be overloaded to convolve the model with a response, for example
-
+    def _evaluate_model(self, precalc_fluxes: Optional[np.array] = None) -> np.ndarray:
+        """Since there is no dispersion, we simply evaluate the model by
+        integrating over the energy bins. This can be overloaded to convolve
+        the model with a response, for example.
 
         :return:
         """
@@ -1972,12 +1928,9 @@ class SpectrumLike(PluginPrototype):
                 ]
             )
 
-    def get_model(
-        self, precalc_fluxes: Optional[np.array] = None
-    ) -> np.ndarray:
-        """
-        The model integrated over the energy bins. Note that it only returns the  model for the
-        currently active channels/measurements
+    def get_model(self, precalc_fluxes: Optional[np.array] = None) -> np.ndarray:
+        """The model integrated over the energy bins. Note that it only returns
+        the  model for the currently active channels/measurements.
 
         :return: array of folded model
         """
@@ -1999,10 +1952,9 @@ class SpectrumLike(PluginPrototype):
         return self._nuisance_parameter.value * model
 
     def _evaluate_background_model(self) -> np.ndarray:
-        """
-        Since there is no dispersion, we simply evaluate the model by integrating over the energy bins.
-        This can be overloaded to convolve the model with a response, for example
-
+        """Since there is no dispersion, we simply evaluate the model by
+        integrating over the energy bins. This can be overloaded to convolve
+        the model with a response, for example.
 
         :return:
         """
@@ -2011,9 +1963,7 @@ class SpectrumLike(PluginPrototype):
 
             if self._predefined_energies is None:
 
-                return self._background_integral_flux(
-                    self._observed_spectrum.edges
-                )
+                return self._background_integral_flux(self._observed_spectrum.edges)
 
             else:
 
@@ -2028,9 +1978,8 @@ class SpectrumLike(PluginPrototype):
             )
 
     def get_background_model(self, without_mask: bool = False) -> np.ndarray:
-        """
-        The background model integrated over the energy bins. Note that it only returns the  model for the
-        currently active channels/measurements
+        """The background model integrated over the energy bins. Note that it
+        only returns the  model for the currently active channels/measurements.
 
         :return: array of folded model
         """
@@ -2039,8 +1988,7 @@ class SpectrumLike(PluginPrototype):
             if self._rebinner is not None:
 
                 (model,) = self._rebinner.rebin(
-                    self._evaluate_background_model()
-                    * self._background_exposure
+                    self._evaluate_background_model() * self._background_exposure
                 )
 
             else:
@@ -2052,9 +2000,7 @@ class SpectrumLike(PluginPrototype):
 
         else:
 
-            model = (
-                self._evaluate_background_model() * self._background_exposure
-            )
+            model = self._evaluate_background_model() * self._background_exposure
 
         # TODO: should I use the constant here?
 
@@ -2066,7 +2012,7 @@ class SpectrumLike(PluginPrototype):
         self, likelihood_model: Model, integrate_method: str = "simpson"
     ) -> Tuple[types.FunctionType, types.FunctionType]:
 
-        if not integrate_method in ["simpson", "trapz", "riemann"]:
+        if integrate_method not in ["simpson", "trapz", "riemann"]:
 
             log.error("Only simpson and trapz are valid integral_methods.")
 
@@ -2078,7 +2024,8 @@ class SpectrumLike(PluginPrototype):
 
             n_point_sources = likelihood_model.get_number_of_point_sources()
 
-            # Make a function which will stack all point sources (OGIP do not support spatial dimension)
+            # Make a function which will stack all point sources (OGIP do not support
+            # spatial dimension)
 
             def differential_flux(energies):
                 fluxes = likelihood_model.get_point_source_fluxes(
@@ -2097,7 +2044,8 @@ class SpectrumLike(PluginPrototype):
 
             # This SpectrumLike dataset refers to a specific source
 
-            # Note that we checked that self._source_name is in the model when the model was set
+            # Note that we checked that self._source_name is in the model when the model
+            # was set
 
             try:
 
@@ -2115,8 +2063,7 @@ class SpectrumLike(PluginPrototype):
 
                 log.error(
                     "This SpectumLike plugin has been assigned to source %s, "
-                    "which does not exist in the current model"
-                    % self._source_name
+                    "which does not exist in the current model" % self._source_name
                 )
 
                 raise KeyError()
@@ -2140,7 +2087,8 @@ class SpectrumLike(PluginPrototype):
 
                     def integral(e_edges):
 
-                        # Make sure we do not calculate the flux two times at the same energy
+                        # Make sure we do not calculate the flux two times at the same
+                        # energy
                         # e_edges = np.append(e1, e2[-1])
                         e_m = (e_edges[1:] + e_edges[:-1]) / 2.0
 
@@ -2167,9 +2115,7 @@ class SpectrumLike(PluginPrototype):
                         diff_fluxes_edges = differential_flux(e_edges)
                         diff_fluxes_mid = differential_flux(e_m)
 
-                        return _simps(
-                            ee1, ee2, diff_fluxes_edges, diff_fluxes_mid
-                        )
+                        return _simps(ee1, ee2, diff_fluxes_edges, diff_fluxes_mid)
 
             else:
 
@@ -2203,9 +2149,7 @@ class SpectrumLike(PluginPrototype):
                         diff_fluxes_edges = differential_flux(e_edges)
 
                         return _trapz(
-                            np.array(
-                                [diff_fluxes_edges[:-1], diff_fluxes_edges[1:]]
-                            ).T,
+                            np.array([diff_fluxes_edges[:-1], diff_fluxes_edges[1:]]).T,
                             np.array([ee1, ee2]).T,
                         )
 
@@ -2214,9 +2158,7 @@ class SpectrumLike(PluginPrototype):
                 def integral(e1, e2):
                     # single energy values given
                     return _trapz(
-                        np.array(
-                            [differential_flux(e1), differential_flux(e2)]
-                        ),
+                        np.array([differential_flux(e1), differential_flux(e2)]),
                         np.array([e1, e2]),
                     )
 
@@ -2259,25 +2201,29 @@ class SpectrumLike(PluginPrototype):
         mu: float = 1,
         sigma: float = 0.1,
     ) -> None:
-        """
-        Activate the use of the effective area correction, which is a multiplicative factor in front of the model which
-        might be used to mitigate the effect of intercalibration mismatch between different instruments.
+        """Activate the use of the effective area correction, which is a
+        multiplicative factor in front of the model which might be used to
+        mitigate the effect of intercalibration mismatch between different
+        instruments.
 
-        NOTE: do not use this is you are using only one detector, as the multiplicative constant will be completely
-        degenerate with the normalization of the model.
+        NOTE: do not use this is you are using only one detector, as the multiplicative
+        constant will be completely degenerate with the normalization of the model.
 
-        NOTE2: always keep at least one multiplicative constant fixed to one (its default value), when using this
-        with other OGIPLike-type detectors
+        NOTE2: always keep at least one multiplicative constant fixed to one (its
+        default value), when using this with other OGIPLike-type detectors
 
-        :param min_value: minimum allowed value (default: 0.8, corresponding to a 20% - effect)
-        :param max_value: maximum allowed value (default: 1.2, corresponding to a 20% + effect)
+        :param min_value: minimum allowed value (default: 0.8, corresponding to a
+        20% - effect)
+        :param max_value: maximum allowed value (default: 1.2, corresponding to a
+        20% + effect)
         :param use_gaussian_prior: use a gaussian prior on the constant
         :param mu: the center of the gaussian
         :param sigma: the spread of the gaussian
         :return:
         """
         log.info(
-            f"{self._name} is using effective area correction (between {min_value} and {max_value})"
+            f"{self._name} is using effective area correction (between {min_value} and"
+            f" {max_value})"
         )
         self._nuisance_parameter.free = True
         self._nuisance_parameter.bounds = (min_value, max_value)
@@ -2293,11 +2239,9 @@ class SpectrumLike(PluginPrototype):
 
             self._nuisance_parameter.set_uninformative_prior(Uniform_prior)
 
-    def fix_effective_area_correction(
-        self, value: Union[int, float] = 1
-    ) -> None:
-        """
-        Fix the multiplicative factor (see use_effective_area_correction) to the provided value (default: 1)
+    def fix_effective_area_correction(self, value: Union[int, float] = 1) -> None:
+        """Fix the multiplicative factor (see use_effective_area_correction) to
+        the provided value (default: 1)
 
         :param value: new value (default: 1, i.e., no correction)
         :return:
@@ -2307,11 +2251,11 @@ class SpectrumLike(PluginPrototype):
         self._nuisance_parameter.fix = True
 
     def set_model_integrate_method(self, method: str) -> None:
+        """Change the integrate method for the model integration :param method:
+
+        (str) which method should be used (simpson or trapz)
         """
-        Change the integrate method for the model integration
-        :param method: (str) which method should be used (simpson or trapz)
-        """
-        if not method in ["simpson", "trapz", "riemann"]:
+        if method not in ["simpson", "trapz", "riemann"]:
 
             log.error("Only simpson and trapz are valid intergate methods.")
 
@@ -2350,20 +2294,16 @@ class SpectrumLike(PluginPrototype):
     )
 
     def set_background_integrate_method(self, method: str) -> None:
-        """
-        Change the integrate method for the background integration
-        :param method: (str) which method should be used (simpson or trapz)
-        """
-        if not method in ["simpson", "trapz", "riemann"]:
+        """Change the integrate method for the background integration :param
+        method: (str) which method should be used (simpson or trapz)"""
+        if method not in ["simpson", "trapz", "riemann"]:
 
             log.error("Only simpson and trapz are valid intergate methods.")
 
             raise RuntimeError()
 
         self._background_integrate_method = method
-        log.info(
-            f"{self._name} changing background integration method to {method}"
-        )
+        log.info(f"{self._name} changing background integration method to {method}")
 
         # if background_plugin is set, update the integral function
         if self._background_plugin is not None:
@@ -2389,18 +2329,16 @@ class SpectrumLike(PluginPrototype):
 
         self.__set_background_integrate_method()
 
+    _doc = """The method used to integrate the_background across the response matrix """
     background_integrate_method = property(
         ___get_background_integrate_method,
         ___set_background_integrate_method,
-        doc="""The method used to integrate the_background across the response matrix """,
+        doc=_doc,
     )
 
     @property
     def mask(self) -> np.ndarray:
-        """
-        The channel mask
-        :return:
-        """
+        """The channel mask :return:"""
 
         return self._mask
 
@@ -2434,12 +2372,8 @@ class SpectrumLike(PluginPrototype):
         """
 
         cnt_err = None
-        log.debug(
-            "self._observation_noise_model = %s" % self._observation_noise_model
-        )
-        log.debug(
-            "self._background_noise_model = %s" % self._background_noise_model
-        )
+        log.debug("self._observation_noise_model = %s" % self._observation_noise_model)
+        log.debug("self._background_noise_model = %s" % self._background_noise_model)
         if self._observation_noise_model == "poisson":
 
             cnt_err = np.sqrt(self._observed_counts)
@@ -2469,8 +2403,8 @@ class SpectrumLike(PluginPrototype):
 
                 background_counts = self._background_counts
 
-                # Gehrels weighting, a little bit better approximation when statistic is low
-                # (and inconsequential when statistic is high)
+                # Gehrels weighting, a little bit better approximation when statistic is
+                # low (and inconsequential when statistic is high)
 
             elif self._background_noise_model == "ideal":
 
@@ -2521,16 +2455,14 @@ class SpectrumLike(PluginPrototype):
 
             if self._background_noise_model == "poisson":
 
-                # Gehrels weighting, a little bit better approximation when statistic is low
-                # (and inconsequential when statistic is high)
+                # Gehrels weighting, a little bit better approximation when statistic is
+                # low (and inconsequential when statistic is high)
 
                 background_errors = 1 + np.sqrt(self._background_counts + 0.75)
 
             elif self._background_noise_model == "ideal":
 
-                background_errors = np.zeros_like(
-                    self._scaled_background_counts
-                )
+                background_errors = np.zeros_like(self._scaled_background_counts)
 
             elif self._background_noise_model == "gaussian":
 
@@ -2566,10 +2498,10 @@ class SpectrumLike(PluginPrototype):
 
     @property
     def source_rate(self) -> np.ndarray:
-        """
-        The source rate of the model. If there is background or a background background plugin present,
-        the source is background subtracted, but only for visual purposes. If no background is present,
-        then, this is just the observed rate.
+        """The source rate of the model. If there is background or a background
+        background plugin present, the source is background subtracted, but
+        only for visual purposes. If no background is present, then, this is
+        just the observed rate.
 
         :return: the source rate
         """
@@ -2578,7 +2510,8 @@ class SpectrumLike(PluginPrototype):
             self._background_plugin is not None
         ):
 
-            # since we compare to the model rate... background subtract but with proper propagation
+            # since we compare to the model rate... background subtract but with proper
+            # propagation
             src_rate = (
                 self.observed_counts
                 / self._observed_spectrum.exposure
@@ -2592,16 +2525,17 @@ class SpectrumLike(PluginPrototype):
 
         else:
 
-            # since we compare to the model rate... background subtract but with proper propagation
+            # since we compare to the model rate... background subtract but with proper
+            # propagation
             src_rate = self.observed_counts / self._observed_spectrum.exposure
 
         return src_rate
 
     @property
     def source_rate_error(self) -> np.ndarray:
-        """
-        The source rate error of the model. If there is background or a background background plugin present,
-        the source is background subtracted, but only for visual purposes. If no background is present,
+        """The source rate error of the model. If there is background or a
+        background background plugin present, the source is background
+        subtracted, but only for visual purposes. If no background is present,
         then, this is just the observed rate.
 
         :return: the source rate error
@@ -2628,9 +2562,7 @@ class SpectrumLike(PluginPrototype):
 
         else:
 
-            src_rate_err = (
-                self.observed_count_errors / self._observed_spectrum.exposure
-            )
+            src_rate_err = self.observed_count_errors / self._observed_spectrum.exposure
 
         return src_rate_err
 
@@ -2641,8 +2573,8 @@ class SpectrumLike(PluginPrototype):
 
     @property
     def energy_boundaries(self, mask: bool = True) -> Tuple[float]:
-        """
-        Energy boundaries of channels currently in use (rebinned, if a rebinner is active)
+        """Energy boundaries of channels currently in use (rebinned, if a
+        rebinner is active)
 
         :return: (energy_min, energy_max)
         """
@@ -2685,9 +2617,11 @@ class SpectrumLike(PluginPrototype):
 
         sig_obj = Significance(
             Non=self._observed_spectrum.total_count,
-            Noff=self._background_spectrum.total_count
-            if self._background_spectrum is not None
-            else None,
+            Noff=(
+                self._background_spectrum.total_count
+                if self._background_spectrum is not None
+                else None
+            ),
             alpha=self._total_scale_factor,
         )
 
@@ -2705,17 +2639,13 @@ class SpectrumLike(PluginPrototype):
                 and not self._background_spectrum.is_poisson
             ):
 
-                significance = (
-                    sig_obj.li_and_ma_equivalent_for_gaussian_background(
-                        self._background_spectrum.total_count_error
-                    )
+                significance = sig_obj.li_and_ma_equivalent_for_gaussian_background(
+                    self._background_spectrum.total_count_error
                 )
 
             else:
 
-                raise NotImplementedError(
-                    "We haven't put in other significances yet"
-                )
+                raise NotImplementedError("We haven't put in other significances yet")
         else:
             log.warning(
                 "Significance with no background is not yet computed accurately"
@@ -2751,17 +2681,13 @@ class SpectrumLike(PluginPrototype):
                 and not self._background_spectrum.is_poisson
             ):
 
-                significance = (
-                    sig_obj.li_and_ma_equivalent_for_gaussian_background(
-                        self._current_back_count_errors
-                    )
+                significance = sig_obj.li_and_ma_equivalent_for_gaussian_background(
+                    self._current_back_count_errors
                 )
 
             else:
 
-                raise NotImplementedError(
-                    "We haven't put in other significances yet"
-                )
+                raise NotImplementedError("We haven't put in other significances yet")
 
             return significance
 
@@ -2769,7 +2695,8 @@ class SpectrumLike(PluginPrototype):
 
         raise NotImplementedError("this is in progress")
 
-        # we just need to make a diagonal response and then follow the example in dispersion like
+        # we just need to make a diagonal response and then follow the example in
+        # dispersion like
 
     def view_count_spectrum(
         self,
@@ -2779,10 +2706,12 @@ class SpectrumLike(PluginPrototype):
         significance_level: bool = None,
         scale_background: bool = True,
     ) -> matplotlib.figure.Figure:
-        """
-        View the count and background spectrum. Useful to check energy selections.
+        """View the count and background spectrum.
+
+        Useful to check energy selections.
         :param plot_errors: plot errors on the counts
-        :param show_bad_channels: (bool) show which channels are bad in the native PHA quality
+        :param show_bad_channels: (bool) show which channels are bad in
+            the native PHA quality
         :return:
         """
 
@@ -2814,9 +2743,7 @@ class SpectrumLike(PluginPrototype):
 
             elif self._background_noise_model == "ideal":
 
-                background_counts = copy.copy(
-                    self._current_scaled_background_counts
-                )
+                background_counts = copy.copy(self._current_scaled_background_counts)
 
                 background_errors = np.zeros_like(background_counts)
 
@@ -2862,9 +2789,7 @@ class SpectrumLike(PluginPrototype):
             #            background_errors /= self._background_exposure
 
             background_rate = background_counts / self._background_exposure
-            background_rate_errors = (
-                background_errors / self._background_exposure
-            )
+            background_rate_errors = background_errors / self._background_exposure
 
         # Gaussian observation
         else:
@@ -2872,12 +2797,8 @@ class SpectrumLike(PluginPrototype):
             if self._background_noise_model is None:
                 observed_counts = copy.copy(self._current_observed_counts)
 
-                background_counts = np.zeros(
-                    observed_counts.shape, dtype=np.int64
-                )
-                background_errors = np.zeros(
-                    observed_counts.shape, dtype=np.int64
-                )
+                background_counts = np.zeros(observed_counts.shape, dtype=np.int64)
+                background_errors = np.zeros(observed_counts.shape, dtype=np.int64)
 
                 background_rate = np.zeros(observed_counts.shape)
 
@@ -2894,9 +2815,7 @@ class SpectrumLike(PluginPrototype):
 
                 background_rate = background_counts / self._background_exposure
 
-                background_rate_errors = (
-                    background_errors / self._background_exposure
-                )
+                background_rate_errors = background_errors / self._background_exposure
 
                 cnt_err = copy.copy(self._current_observed_count_errors)
 
@@ -2942,9 +2861,7 @@ class SpectrumLike(PluginPrototype):
             energy_min,
             energy_max,
             observed_rates,
-            color=threeML_config["plugins"]["ogip"]["data_plot"][
-                "counts_color"
-            ],
+            color=threeML_config["plugins"]["ogip"]["data_plot"]["counts_color"],
             lw=1.5,
             alpha=1,
             label="Total",
@@ -2980,9 +2897,7 @@ class SpectrumLike(PluginPrototype):
                 alpha=0.9,
                 capsize=0,
                 # label=data._name,
-                color=threeML_config["plugins"]["ogip"]["data_plot"][
-                    "counts_color"
-                ],
+                color=threeML_config["plugins"]["ogip"]["data_plot"]["counts_color"],
             )
 
             if self._background_noise_model is not None:
@@ -3012,9 +2927,7 @@ class SpectrumLike(PluginPrototype):
                 np.array(self._observed_spectrum.starts),
                 np.array(self._observed_spectrum.stops),
             )
-            energy_width_unrebinned = (
-                energy_max_unrebinned - energy_min_unrebinned
-            )
+            energy_width_unrebinned = energy_max_unrebinned - energy_min_unrebinned
             observed_rate_unrebinned = self._observed_counts / self.exposure
 
             observed_rate_unrebinned_err = (
@@ -3053,8 +2966,7 @@ class SpectrumLike(PluginPrototype):
                     )
 
                     background_rate_unrebinned_err = (
-                        np.sqrt(self._background_counts)
-                        / self.background_exposure
+                        np.sqrt(self._background_counts) / self.background_exposure
                     )
 
                 if non_used_mask.sum() > 0:
@@ -3069,9 +2981,7 @@ class SpectrumLike(PluginPrototype):
                     )
             else:
 
-                background_rate_unrebinned = np.zeros_like(
-                    observed_rate_unrebinned
-                )
+                background_rate_unrebinned = np.zeros_like(observed_rate_unrebinned)
                 background_rate_unrebinned_err = np.zeros_like(
                     observed_rate_unrebinned_err
                 )
@@ -3193,9 +3103,7 @@ class SpectrumLike(PluginPrototype):
 
             if significance_level is not None:
 
-                log.info(
-                    "channels below the significance threshold shown in red\n"
-                )
+                log.info("channels below the significance threshold shown in red\n")
 
                 with np.errstate(invalid="ignore"):
                     significance_mask = (
@@ -3238,9 +3146,9 @@ class SpectrumLike(PluginPrototype):
         if self._background_spectrum is not None:
             obs["total bkg. rate"] = self._background_spectrum.total_rate
             if not self._background_spectrum.is_poisson:
-                obs[
-                    "total bkg. rate error"
-                ] = self._background_spectrum.total_rate_error
+                obs["total bkg. rate error"] = (
+                    self._background_spectrum.total_rate_error
+                )
             obs["bkg. exposure"] = self.background_exposure
             obs["bkg. is poisson"] = self._background_spectrum.is_poisson
 
@@ -3248,9 +3156,7 @@ class SpectrumLike(PluginPrototype):
         obs["is poisson"] = self._observed_spectrum.is_poisson
 
         if self._background_plugin is not None:
-            obs["background"] = (
-                "modeled from plugin %s" % self._background_plugin.name
-            )
+            obs["background"] = "modeled from plugin %s" % self._background_plugin.name
             obs["significance"] = self.significance
             obs["src/bkg area ratio"] = self._area_ratio
             obs["src/bkg exposure ratio"] = self._exposure_ratio
@@ -3269,10 +3175,7 @@ class SpectrumLike(PluginPrototype):
         return pd.Series(data=obs, index=list(obs.keys()))
 
     def get_number_of_data_points(self) -> int:
-        """
-        returns the number of active data bins
-        :return:
-        """
+        """Returns the number of active data bins :return:"""
 
         # the sum of the mask should be the number of data bins in use
 
@@ -3292,17 +3195,16 @@ class SpectrumLike(PluginPrototype):
         ratio_residuals: bool = False,
         total_counts: bool = False,
     ) -> dict:
-        """
-
-        Build new arrays before or after a fit of rebinned data/model
-        values. We keep this seperated from the plotting code because
-        it is cleaner and allows us to extract these quantites independently
+        """Build new arrays before or after a fit of rebinned data/model
+        values. We keep this seperated from the plotting code because it is
+        cleaner and allows us to extract these quantites independently.
 
         :param min_rate:
         :param ratio_residuals:
-        :param total_counts: Should this construct the total counts as "data". If not, the "data counts" are
-        observed-background and the model counts are only source counts. Otherwise "data counts" are observed
-        and model counts are source+background
+        :param total_counts: Should this construct the total counts as
+            "data". If not, the "data counts" are observed-background
+            and the model counts are only source counts. Otherwise "data
+            counts" are observed and model counts are source+background
         :return:
         """
 
@@ -3336,8 +3238,8 @@ class SpectrumLike(PluginPrototype):
             background_rate = np.zeros(len(observed_rate))
             background_rate_err = np.zeros(len(observed_rate))
 
-        # Create a rebinner if either a min_rate has been given, or if the current data set has no rebinned on its own
-        # rebin on expected model rate
+        # Create a rebinner if either a min_rate has been given, or if the current data
+        # set has no rebinned on its own rebin on expected model rate
         if (min_rate is not NO_REBIN) or (self._rebinner is None):
 
             this_rebinner = Rebinner(expected_model_rate, min_rate, self._mask)
@@ -3352,13 +3254,9 @@ class SpectrumLike(PluginPrototype):
             new_observed_rate,
             new_model_rate,
             new_background_rate,
-        ) = this_rebinner.rebin(
-            observed_rate, expected_model_rate, background_rate
-        )
+        ) = this_rebinner.rebin(observed_rate, expected_model_rate, background_rate)
         (new_observed_rate_err,) = this_rebinner.rebin_errors(observed_rate_err)
-        (new_background_rate_err,) = this_rebinner.rebin_errors(
-            background_rate_err
-        )
+        (new_background_rate_err,) = this_rebinner.rebin_errors(background_rate_err)
 
         # adjust channels
         new_energy_min, new_energy_max = this_rebinner.get_new_start_and_stop(
@@ -3376,9 +3274,7 @@ class SpectrumLike(PluginPrototype):
         for e_min, e_max in zip(new_energy_min, new_energy_max):
 
             # Find all channels in this rebinned bin
-            idx = (mean_energy_unrebinned >= e_min) & (
-                mean_energy_unrebinned <= e_max
-            )
+            idx = (mean_energy_unrebinned >= e_min) & (mean_energy_unrebinned <= e_max)
 
             # Find the rates for these channels
             r = observed_rate[idx]
@@ -3405,7 +3301,8 @@ class SpectrumLike(PluginPrototype):
                     mean_energy_unrebinned[idx], weights=weights
                 )
 
-            # Compute "errors" for X (which aren't really errors, just to mark the size of the bin)
+            # Compute "errors" for X (which aren't really errors, just to mark the size
+            # of the bin)
 
             delta_energy[0].append(this_mean_energy - e_min)
             delta_energy[1].append(e_max - this_mean_energy)
@@ -3421,9 +3318,7 @@ class SpectrumLike(PluginPrototype):
         )
 
         # the rebinned counts expected from the model
-        rebinned_model_counts = (
-            new_model_rate * self._observed_spectrum.exposure
-        )
+        rebinned_model_counts = new_model_rate * self._observed_spectrum.exposure
 
         # and also the rebinned background
 
@@ -3462,16 +3357,15 @@ class SpectrumLike(PluginPrototype):
         # Divide the various cases
 
         # TODO check this: shoudn't it be obseved-background/model (for the old way) and
-        # observed/(model+background) (for the new way). Errors also wrong observed+background error
+        # observed/(model+background) (for the new way). Errors also wrong observed +
+        # background error
         if ratio_residuals:
             residuals = (
                 (rebinned_observed_counts - rebinned_model_counts)
                 / rebinned_model_counts,
             )
 
-            residual_errors = (
-                rebinned_observed_count_errors / rebinned_model_counts
-            )
+            residual_errors = rebinned_observed_count_errors / rebinned_model_counts
 
         else:
             residual_errors = None
@@ -3489,8 +3383,10 @@ class SpectrumLike(PluginPrototype):
 
                 elif self._background_noise_model == "gaussian":
 
-                    residuals = significance_calc.li_and_ma_equivalent_for_gaussian_background(
-                        rebinned_background_errors
+                    residuals = (
+                        significance_calc.li_and_ma_equivalent_for_gaussian_background(
+                            rebinned_background_errors
+                        )
                     )
 
                 elif self._background_noise_model is None:
@@ -3578,9 +3474,9 @@ class SpectrumLike(PluginPrototype):
         show_background: bool = False,
         **kwargs,
     ) -> ResidualPlot:
-        """
-        Plot the current model with or without the data and the residuals. Multiple models can be plotted by supplying
-        a previous axis to 'model_subplot'.
+        """Plot the current model with or without the data and the residuals.
+        Multiple models can be plotted by supplying a previous axis to
+        'model_subplot'.
 
         Example usage:
 
@@ -3597,10 +3493,12 @@ class SpectrumLike(PluginPrototype):
         :param ratio_residuals: (bool) use model ratio instead of residuals
         :param show_legend: (bool) show legend
         :param min_rate: the minimum rate per bin
-        :param model_label: (optional) the label to use for the model default is plugin name
+        :param model_label: (optional) the label to use for the model default is plugin
+        name
         :param model_subplot: (optional) axis or list of axes to plot to
         :param model_kwargs: plotting kwargs affecting the plotting of the model
-        :param data_kwargs:  plotting kwargs affecting the plotting of the data and residuls
+        :param data_kwargs:  plotting kwargs affecting the plotting of the data and
+        residuls
         :return:
         """
 
@@ -3608,9 +3506,7 @@ class SpectrumLike(PluginPrototype):
 
         _default_model_kwargs = dict(color=model_color, alpha=1)
 
-        _default_background_kwargs = dict(
-            color=background_color, alpha=1, ls="--"
-        )
+        _default_background_kwargs = dict(color=background_color, alpha=1, ls="--")
 
         _sub_menu = threeML_config.plotting.residual_plot
 
@@ -3648,7 +3544,7 @@ class SpectrumLike(PluginPrototype):
 
         if model_kwargs is not None:
 
-            if not type(model_kwargs) == dict:
+            if not isinstance(model_kwargs, dict):
 
                 log.error("model_kwargs must be a dict")
 
@@ -3666,7 +3562,7 @@ class SpectrumLike(PluginPrototype):
 
         if data_kwargs is not None:
 
-            if not type(data_kwargs) == dict:
+            if not isinstance(data_kwargs, dict):
 
                 log.error("data_kwargs must be a dict")
 
@@ -3684,7 +3580,7 @@ class SpectrumLike(PluginPrototype):
 
         if background_kwargs is not None:
 
-            if not type(background_kwargs) == dict:
+            if not isinstance(background_kwargs, dict):
 
                 log.error("background_kwargs must be a dict")
 
@@ -3707,15 +3603,11 @@ class SpectrumLike(PluginPrototype):
 
         for d in _duplicates:
 
-            if (d[0] in _default_model_kwargs) and (
-                d[1] in _default_model_kwargs
-            ):
+            if (d[0] in _default_model_kwargs) and (d[1] in _default_model_kwargs):
 
                 _default_model_kwargs.pop(d[0])
 
-            if (d[0] in _default_data_kwargs) and (
-                d[1] in _default_data_kwargs
-            ):
+            if (d[0] in _default_data_kwargs) and (d[1] in _default_data_kwargs):
 
                 _default_data_kwargs.pop(d[0])
 
@@ -3736,40 +3628,31 @@ class SpectrumLike(PluginPrototype):
 
         # compute the values for the plotting
 
-        rebinned_quantities = self._construct_counts_arrays(
-            min_rate, ratio_residuals
-        )
+        rebinned_quantities = self._construct_counts_arrays(min_rate, ratio_residuals)
 
         if source_only:
             y_label = "Net rate\n(counts s$^{-1}$ keV$^{-1}$)"
-            weighted_data = old_div(
+            weighted_data = (
                 rebinned_quantities["new_observed_rate"]
-                - rebinned_quantities["new_background_rate"],
-                rebinned_quantities["new_chan_width"],
-            )
-            weighted_error = old_div(
+                - rebinned_quantities["new_background_rate"]
+            ) / rebinned_quantities["new_chan_width"]
+            weighted_error = (
                 np.sqrt(
                     rebinned_quantities["new_observed_rate_err"] ** 2
                     + rebinned_quantities["new_background_rate_err"] ** 2
-                ),
-                rebinned_quantities["new_chan_width"],
+                )
+                / rebinned_quantities["new_chan_width"]
             )
         else:
             y_label = "Observed rate\n(counts s$^{-1}$ keV$^{-1}$)"
-            weighted_data = old_div(
-                rebinned_quantities["new_observed_rate"],
-                rebinned_quantities["new_chan_width"],
+            weighted_data = (
+                rebinned_quantities["new_observed_rate"]
+                / rebinned_quantities["new_chan_width"]
             )
-            weighted_error = old_div(
-                rebinned_quantities["new_observed_rate_err"],
-                rebinned_quantities["new_chan_width"],
+            weighted_error = (
+                rebinned_quantities["new_observed_rate_err"]
+                / rebinned_quantities["new_chan_width"]
             )
-        # weighted_data = old_div(
-        #    rebinned_quantities["new_rate"], rebinned_quantities["new_chan_width"]
-        # )
-        # weighted_error = old_div(
-        #    rebinned_quantities["new_err"], rebinned_quantities["new_chan_width"]
-        # )
 
         residual_plot.add_data(
             rebinned_quantities["mean_energy"],
@@ -3829,10 +3712,8 @@ class SpectrumLike(PluginPrototype):
             # y = expected_model_rate / chan_width
             y = np.ma.masked_where(
                 ~self._mask,
-                old_div(
-                    rebinned_quantities["expected_model_rate"],
-                    rebinned_quantities["chan_width"],
-                ),
+                rebinned_quantities["expected_model_rate"]
+                / rebinned_quantities["chan_width"],
             )
 
             x = np.mean(
@@ -3843,9 +3724,7 @@ class SpectrumLike(PluginPrototype):
                 axis=0,
             )
 
-            residual_plot.add_model(
-                x, y, label=model_label, **_default_model_kwargs
-            )
+            residual_plot.add_model(x, y, label=model_label, **_default_model_kwargs)
 
         return residual_plot.finalize(
             xlabel="Energy\n(keV)",
@@ -3857,12 +3736,12 @@ class SpectrumLike(PluginPrototype):
 
 
 @nb.njit(fastmath=True, cache=True)
-def _trapz(x, y):
-    return np.trapz(x, y)
+def _trapz(x, y):  # pragma: no cover
+    return trapezoid(x, y)
 
 
 @nb.njit(fastmath=True, cache=True)
-def _simps(e1, e2, diff_fluxes_edges, diff_fluxes_mid):
+def _simps(e1, e2, diff_fluxes_edges, diff_fluxes_mid):  # pragma: no cover
     return (
         (e2 - e1)
         / 6.0
@@ -3871,6 +3750,6 @@ def _simps(e1, e2, diff_fluxes_edges, diff_fluxes_mid):
 
 
 @nb.njit(fastmath=True, cache=True)
-def _rsum(model_mid_points, de):
+def _rsum(model_mid_points, de):  # pragma: no cover
 
     return np.multiply(model_mid_points, de)

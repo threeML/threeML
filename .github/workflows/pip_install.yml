@@ -31,7 +31,7 @@ jobs:
         if [[ ${{matrix.os}} == macos-latest ]];
         then
           brew update
-          brew install hdf5
+          brew install hdf5 lzo c-blosc
           # This installation of numpy is currently needed to avoid an issue
           # while running pip install of astromodels
           pip install numpy
@@ -66,7 +66,7 @@ jobs:
         if [[ ${{matrix.os}} == macos-latest ]];
         then
           brew update
-          brew install hdf5
+          brew install hdf5 lzo c-blosc
           # This installation of numpy is currently needed to avoid an issue
           # while running pip install of astromodels
           pip install numpy 
@@ -81,7 +81,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ["ubuntu-latest", "macos-latest", "macos-12"]
+        os: ["ubuntu-latest", "macos-latest", "macos-13"]
         python-version: [3.9]
     runs-on: ${{ matrix.os }}
     steps:
@@ -95,14 +95,14 @@ jobs:
       with:
         activate-environment: "test_env"
         auto-activate-base: false
-        miniforge-variant: Mambaforge
+        miniforge-variant: Miniforge3
         python-version: ${{ matrix.python-version }}
         auto-update-conda: true
-        channels:  threeml, xspecmodels, fermi, conda-forge
+        channels:  threeml, fermi, conda-forge
     - name: Install packages
       run: |
         mamba activate test_env
-        mamba install threeML astromodels xspec-modelsonly fermitools #fermipy
+        mamba install threeML astromodels fermitools fermipy
     - name: Test threeML and astromodels
       run: |
         pytest -vv --pyargs astromodels
@@ -117,7 +117,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ["ubuntu-latest", "macos-latest", "macos-12"]
+        os: ["ubuntu-latest", "macos-latest", "macos-13"]
         python-version: [3.9]
     runs-on: ${{ matrix.os }}
     steps:
@@ -131,14 +131,14 @@ jobs:
       with:
         activate-environment: "test_env"
         auto-activate-base: false
-        miniforge-variant: Mambaforge
+        miniforge-variant: Miniforge3
         python-version: ${{ matrix.python-version }}
         auto-update-conda: true
-        channels:  threeml/label/dev, xspecmodels, fermi, conda-forge
+        channels:  threeml/label/dev, fermi, conda-forge
     - name: Install packages
       run: |
         mamba activate test_env
-        mamba install threeML astromodels xspec-modelsonly fermitools #fermipy
+        mamba install threeML astromodels fermitools fermipy
     - name: Test threeML and astromodels
       run: |
         pytest -vv --pyargs astromodels

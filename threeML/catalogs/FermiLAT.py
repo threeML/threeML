@@ -1,62 +1,72 @@
-from __future__ import division
-
 import re
+import os
 from builtins import map, str
 
-import numpy
-from astropy.table import Table
-
-from astropy.coordinates import SkyCoord
-
 import astropy.units as u
+import numpy
+from astropy.coordinates import SkyCoord
+from astropy.table import Table
 
 from threeML.config.config import threeML_config
 from threeML.io.get_heasarc_table_as_pandas import get_heasarc_table_as_pandas
 from threeML.io.logging import setup_logger
 
+from .catalog_utils import (
+    ModelFromFGL,
+    _get_extended_source_from_fgl,
+    _get_point_source_from_fgl,
+)
 from .VirtualObservatoryCatalog import VirtualObservatoryCatalog
-from .catalog_utils import _get_point_source_from_fgl, _get_extended_source_from_fgl, ModelFromFGL
+
 try:
     from fermipy.catalog import Catalog
-    have_fermipy = True
-except:
-    have_fermipy = False
 
+    have_fermipy = True
+except Exception:
+    have_fermipy = False
 
 
 log = setup_logger(__name__)
 
 fgl_types = {
-            "agn": "other non-blazar active galaxy",
-            "bcu": "active galaxy of uncertain type",
-            "bin": "binary",
-            "bll": "BL Lac type of blazar",
-            "css": "compact steep spectrum quasar",
-            "fsrq": "FSRQ type of blazar",
-            "gal": "normal galaxy (or part)",
-            "glc": "globular cluster",
-            "hmb": "high-mass binary",
-            "nlsy1": "narrow line Seyfert 1",
-            "nov": "nova",
-            "PSR": "pulsar, identified by pulsations",
-            "psr": "pulsar, no pulsations seen in LAT yet",
-            "pwn": "pulsar wind nebula",
-            "rdg": "radio galaxy",
-            "sbg": "starburst galaxy",
-            "sey": "Seyfert galaxy",
-            "sfr": "star-forming region",
-            "snr": "supernova remnant",
-            "spp": "special case - potential association with SNR or PWN",
-            "ssrq": "soft spectrum radio quasar",
-            "unk": "unknown",
-            "": "unknown",
+    "agn": "other non-blazar active galaxy",
+    "bcu": "active galaxy of uncertain type",
+    "bin": "binary",
+    "bll": "BL Lac type of blazar",
+    "css": "compact steep spectrum quasar",
+    "fsrq": "FSRQ type of blazar",
+    "gal": "normal galaxy (or part)",
+    "glc": "globular cluster",
+    "hmb": "high-mass binary",
+    "nlsy1": "narrow line Seyfert 1",
+    "nov": "nova",
+    "PSR": "pulsar, identified by pulsations",
+    "psr": "pulsar, no pulsations seen in LAT yet",
+    "pwn": "pulsar wind nebula",
+    "rdg": "radio galaxy",
+    "sbg": "starburst galaxy",
+    "sey": "Seyfert galaxy",
+    "sfr": "star-forming region",
+    "snr": "supernova remnant",
+    "spp": "special case - potential association with SNR or PWN",
+    "ssrq": "soft spectrum radio quasar",
+    "unk": "unknown",
+    "": "unknown",
 }
 
-_FGL_name_match = re.compile("^[34]FGL J\d{4}.\d(\+|-)\d{4}\D?$")
+fermipy_catalogs = [
+    '4FGL',
+    '4FGL-DR2',
+    '4FGL-DR3',
+    '4FGL-DR4',
+    'FL16Y'
+]
+
+_FGL_name_match = re.compile(r"^[34]FGL J\d{4}.\d(\+|-)\d{4}\D?$")
+
 
 class FermiLATSourceCatalog(VirtualObservatoryCatalog):
     def __init__(self, update=False):
-
         self._update = update
 
         super(FermiLATSourceCatalog, self).__init__(
@@ -66,14 +76,12 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
         )
 
     def _get_vo_table_from_source(self):
-
         self._vo_dataframe = get_heasarc_table_as_pandas(
             "fermilpsc", update=self._update, cache_time_days=10.0
         )
 
     def _source_is_valid(self, source):
-        """
-        checks if source name is valid for the 4FGL catalog
+        """Checks if source name is valid for the 4FGL catalog.
 
         :param source: source name
         :return: bool
@@ -87,20 +95,16 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
         match = _FGL_name_match.match(source)
 
         if match is None:
-
             log.warning(warn_string)
 
             answer = False
 
         else:
-
             answer = True
 
         return answer
-        
-        
-    def apply_format(self, table):
 
+    def apply_format(self, table):
         # Translate the 3 letter code to a more informative category, according
         # to the dictionary above
         def translate(key):
@@ -113,10 +117,11 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
             return key
 
         table["short_source_type"] = table["source_type"]
-        table["source_type"] = numpy.array(list(map(translate, table["short_source_type"])))
+        table["source_type"] = numpy.array(
+            list(map(translate, table["short_source_type"]))
+        )
 
         if "Search_Offset" in table.columns:
-
             new_table = table[
                 "name",
                 "source_type",
@@ -132,22 +137,28 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
 
         # we may have not done a cone search!
         else:
-
             new_table = table[
-                "name", "source_type", "short_source_type", "ra", "dec", "assoc_name", "tevcat_assoc"
+                "name",
+                "source_type",
+                "short_source_type",
+                "ra",
+                "dec",
+                "assoc_name",
+                "tevcat_assoc",
             ]
 
             return new_table.group_by("name")
 
-
     def get_model(self, use_association_name=True, exposure=None, npred_min=0):
-        '''
-        Build the model with FGL sources
-        :param use_association_name: use the name of the associated source (stored in assoc_name column)
-        :param exposure: exposure in cm2 * seconds (can be calculated with gtexposure)
+        """Build the model with FGL sources.
+
+        :param use_association_name: use the name of the associated
+            source (stored in assoc_name column)
+        :param exposure: exposure in cm2 * seconds (can be calculated
+            with gtexposure)
         :param npred_min: minimum number of predicted events.
         :return: model
-        '''
+        """
 
         assert (
             self._last_query_results is not None
@@ -158,61 +169,57 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
         source_names = []
         for name, row in self._last_query_results.T.items():
             if exposure is not None:
-                npred = row['flux_1_100_gev'] * exposure
-                log.debug('Source %s npred= %.1e' % (name, npred) )
+                npred = row["flux_1_100_gev"] * exposure
+                log.debug("Source %s npred= %.1e" % (name, npred))
                 if npred < npred_min:
                     continue
-            # If there is an association and use_association is True, use that name, otherwise the 3FGL name
+            # If there is an association and use_association is True, use that name,
+            # otherwise the 3FGL name
             if row["assoc_name"] != "" and use_association_name:
-
                 this_name = row["assoc_name"]
 
-                # The crab is the only source which is present more than once in the 3FGL
+                # The crab is the only source which is present more than once in the
+                # 3FGL
 
                 if this_name == "Crab Nebula":
-
                     if name[-1] == "i":
-
                         this_name = "Crab_IC"
 
                     elif name[-1] == "s":
-
                         this_name = "Crab_synch"
 
                     else:
-
                         this_name = "Crab_pulsar"
             else:
-
                 this_name = name
 
-            # in the 4FGL name there are more sources with the same name: this nwill avod any duplicates:
+            # in the 4FGL name there are more sources with the same name: this will
+            # avoid any duplicates:
             i = 1
             while this_name in source_names:
                 this_name += str(i)
                 i += 1
                 pass
-            # By default all sources are fixed. The user will free the one he/she will need
+            # By default all sources are fixed. The user will free the one needed
 
             source_names.append(this_name)
 
-            if ( "extended_source_name" in row and row["extended_source_name"] != "" ) or \
-                ("sourcetype" in row and row["sourcetype"] == "DiffuseSource" ):
-        
+            if (
+                "extended_source_name" in row and row["extended_source_name"] != ""
+            ) or ("sourcetype" in row and row["sourcetype"] == "DiffuseSource"):
                 if "spatial_function" in row:
-                    
-                    this_source = _get_extended_source_from_fgl(this_name, row, fix=True)
+                    this_source = _get_extended_source_from_fgl(
+                        this_name, row, fix=True
+                    )
 
                 else:
-                
                     log.warning(
-                        "Source %s is extended, but morphology information is unavailable. "
-                        "I will provide a point source instead" % name
+                        "Source %s is extended, but morphology information is "
+                        "unavailable. I will provide a point source instead" % name
                     )
                     this_source = _get_point_source_from_fgl(this_name, row, fix=True)
 
             else:
-    
                 this_source = _get_point_source_from_fgl(this_name, row, fix=True)
 
             sources.append(this_source)
@@ -221,110 +228,130 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
 
 
 class FermiPySourceCatalog(FermiLATSourceCatalog):
-
-    def __init__(self, catalog_name = "4FGL", update=True):
-
+    def __init__(self, catalog_name="4FGL-DR4", update=True):
         self._update = update
-    
+
+        catalog_name = os.fspath(catalog_name).strip()
+        is_fits_file = catalog_name.lower().endswith(
+            (".fit", ".fits", ".fit.gz", ".fits.gz")
+        )
+        is_supported_catalog = catalog_name in fermipy_catalogs
+
+        if not (is_fits_file or is_supported_catalog):
+            available_catalogs = ", ".join(fermipy_catalogs)
+            raise ValueError(
+                f"Catalog '{catalog_name}' must be a FITS filename or one of: "
+                f"{available_catalogs}"
+            )
+
         self._catalog_name = catalog_name
 
         super(FermiPySourceCatalog, self).__init__(update)
 
     def _get_vo_table_from_source(self):
-
         if not have_fermipy:
-            
             log.error("Must have fermipy installed to use FermiPySourceCatalog")
             self._vo_dataframe = None
-            
+
         else:
-        
             try:
-                
                 self._fermipy_catalog = Catalog.create(self._catalog_name)
-            
-            except:
-            
-                log.error(f"Catalog {self._catalog_name} not available in fermipy")
-                        
+
+            except Exception:
+                raise ValueError(
+                    f"Catalog {self._catalog_name} not available in fermipy"
+                )
+
             self._astropy_table = self._fermipy_catalog.table
 
-            #Stupid but necessary: Remove catalog values if we're reading in a pre-fit ROI.
+            # Stupid but necessary: Remove catalog values if we're reading in a pre-fit
+            # ROI.
             catalog_columns = ["GLAT", "GLON", "RAJ2000", "DEJ2000"]
             prefit_columns = ["glat", "glon", "ra", "dec"]
-            for col1, col2 in zip( catalog_columns, prefit_columns):
-                if col1 in list(self._astropy_table.columns) and col2 in list(self._astropy_table.columns):
+            for col1, col2 in zip(catalog_columns, prefit_columns):
+                if col1 in list(self._astropy_table.columns) and col2 in list(
+                    self._astropy_table.columns
+                ):
                     self._astropy_table.remove_column(col1)
 
-            #remove multi-dimensional columns
-            good_columns = [name for name in self._astropy_table.colnames if len(self._astropy_table[name].shape) <= 1]
+            # remove multi-dimensional columns
+            good_columns = [
+                name
+                for name in self._astropy_table.colnames
+                if len(self._astropy_table[name].shape) <= 1
+            ]
             self._astropy_table = self._astropy_table[good_columns]
 
-            #remove duplicate columns
-            if "Extended" in list(self._astropy_table.columns) and  "extended" in list(self._astropy_table.columns):
+            # remove duplicate columns
+            if "Extended" in list(self._astropy_table.columns) and "extended" in list(
+                self._astropy_table.columns
+            ):
                 self._astropy_table.remove_column("Extended")
-            
+
             self._astropy_table.convert_bytestring_to_unicode()
-            ##### This prevents an issue with multi dimension columns:
-            #names = [name for name in self._astropy_table.colnames if len(self._astropy_table[name].shape) <= 1]
-            #log.info("COL NAMES = ", names)
-            #self._vo_dataframe = self._astropy_table[names].to_pandas()
-            ### Comment the following
+            # This prevents an issue with multi dimension columns:
+            # names = [name for name in self._astropy_table.colnames if
+            # len(self._astropy_table[name].shape) <= 1]
+            # log.info("COL NAMES = ", names)
+            # self._vo_dataframe = self._astropy_table[names].to_pandas()
+            # Comment the following
             self._vo_dataframe = self._astropy_table.to_pandas()
 
-            if ("Pivot_Energy" in self._astropy_table.columns) and ("pivot_energy" in self._astropy_table.columns):
-                self._vo_dataframe.rename(columns = {"Pivot_Energy":"pivot_energy_catalog"}, inplace=True)
+            if ("Pivot_Energy" in self._astropy_table.columns) and (
+                "pivot_energy" in self._astropy_table.columns
+            ):
+                self._vo_dataframe.rename(
+                    columns={"Pivot_Energy": "pivot_energy_catalog"}, inplace=True
+                )
 
-            self._vo_dataframe.rename(columns = str.lower, inplace=True)
+            self._vo_dataframe.rename(columns=str.lower, inplace=True)
 
             rename_dict = {
-                "spectrumtype":   "spectrum_type",
-                "raj2000":        "ra",
-                "dej2000":        "dec",
-                "name":    "name_fermipy",
-                "source_name":    "name",
+                "spectrumtype": "spectrum_type",
+                "raj2000": "ra",
+                "dej2000": "dec",
+                "name": "name_fermipy",
+                "source_name": "name",
                 "plec_expfactor": "plec_exp_factor",
             }
-                  
-            self._vo_dataframe.rename(columns = rename_dict, inplace=True)
+
+            self._vo_dataframe.rename(columns=rename_dict, inplace=True)
 
             if "class1" in self._vo_dataframe.columns:
+                self._vo_dataframe["source_type"] = (
+                    self._vo_dataframe["class1"] + self._vo_dataframe["class2"]
+                )
 
-                self._vo_dataframe["source_type"] = self._vo_dataframe["class1"] + self._vo_dataframe["class2"]
-            
             else:
-                
                 self._vo_dataframe["source_type"] = self._vo_dataframe["class"]
 
             if "assoc1" in self._vo_dataframe:
-            
                 self._vo_dataframe["assoc_name"] = numpy.where(
-                    ( self._vo_dataframe["assoc1"] != "" ),
+                    (self._vo_dataframe["assoc1"] != ""),
                     self._vo_dataframe["assoc1"],
-                    self._vo_dataframe["assoc2"] )
+                    self._vo_dataframe["assoc2"],
+                )
             else:
                 self._vo_dataframe["assoc_name"] = ""
 
-
             if "assoc_gam1" in self._vo_dataframe:
-
                 self._vo_dataframe["tevcat_assoc"] = numpy.where(
-                    ( self._vo_dataframe["assoc_gam1"] != "" ),
+                    (self._vo_dataframe["assoc_gam1"] != ""),
                     self._vo_dataframe["assoc_gam1"],
-                    self._vo_dataframe["assoc_gam2"] )
+                    self._vo_dataframe["assoc_gam2"],
+                )
 
                 self._vo_dataframe["tevcat_assoc"] = numpy.where(
-                    ( self._vo_dataframe["tevcat_assoc"] != "" ),
+                    (self._vo_dataframe["tevcat_assoc"] != ""),
                     self._vo_dataframe["tevcat_assoc"],
-                    self._vo_dataframe["assoc_gam3"] )
+                    self._vo_dataframe["assoc_gam3"],
+                )
             else:
                 self._vo_dataframe["tevcat_assoc"] = ""
 
-
-    #overwrite cone_search function to use existing table.
+    # overwrite cone_search function to use existing table.
     def cone_search(self, ra, dec, radius):
-        """
-        Searches for sources in a cone of given radius and center
+        """Searches for sources in a cone of given radius and center.
 
         :param ra: decimal degrees, R.A. of the center of the cone
         :param dec: decimal degrees, Dec. of the center of the cone
@@ -335,13 +362,15 @@ class FermiPySourceCatalog(FermiLATSourceCatalog):
         skycoord = SkyCoord(ra=ra * u.degree, dec=dec * u.degree, frame="icrs")
 
         pandas_df = self._vo_dataframe
-        pandas_df["Search_Offset"] = self._fermipy_catalog.skydir.separation(skycoord).deg
+        pandas_df["Search_Offset"] = self._fermipy_catalog.skydir.separation(
+            skycoord
+        ).deg
 
-        pandas_df = pandas_df[pandas_df["Search_Offset"] < radius ]
+        pandas_df = pandas_df[pandas_df["Search_Offset"] < radius]
         pandas_df = pandas_df.sort_values("Search_Offset")
 
         self._last_query_results = pandas_df.set_index("name")
-        
+
         out = self.apply_format(Table.from_pandas(pandas_df))
 
         # Save coordinates of center of cone search

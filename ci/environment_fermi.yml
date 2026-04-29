@@ -1,5 +1,5 @@
 # environment file fo CI testing
-
+# when fermitools and fermipy are needed
 name: test_env
 channels:
   - threeml
@@ -10,6 +10,8 @@ dependencies:
   - pip
   - pytest
   - pytest-cov
+  - astromodels>=2.5.0
+  - arviz
   - codecov
   - coverage
   - setuptools
@@ -17,12 +19,11 @@ dependencies:
   - scipy>=1.4
   - emcee>=3
   - astropy
-  - matplotlib<3.9
+  - matplotlib
   - uncertainties
   - pyyaml>=5.1
   - dill
   - iminuit>=2
-  - astromodels>=2
   - astroquery
   - corner>=1.0.2
   - pandas>=0.23
@@ -44,7 +45,13 @@ dependencies:
   - numdifftools
   - tqdm
   - future
-  - fermitools>=2
+  - fermitools>=2.2.0
   - colorama
   - omegaconf
   - flake8
+  - h5py
+  - rich
+  - joblib
+  - fermipy
+  - pip:
+    - autoemcee

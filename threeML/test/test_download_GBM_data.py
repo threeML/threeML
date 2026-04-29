@@ -1,10 +1,13 @@
-import shutil
 import os
+import shutil
+
 import pytest
 
-from threeML import *
+from threeML.exceptions.custom_exceptions import DetDoesNotExist, TriggerDoesNotExist
 from threeML.io.network import internet_connection_is_active
-from threeML.exceptions.custom_exceptions import TriggerDoesNotExist, DetDoesNotExist
+from threeML.utils.data_download.Fermi_GBM.download_GBM_data import (
+    download_GBM_trigger_data,
+)
 
 skip_if_internet_is_not_available = pytest.mark.skipif(
     not internet_connection_is_active(), reason="No active internet connection"
@@ -12,7 +15,6 @@ skip_if_internet_is_not_available = pytest.mark.skipif(
 
 
 @skip_if_internet_is_not_available
-@pytest.mark.xfail
 def test_download_GBM_data():
     # test good trigger names
     good_triggers = ["080916009", "bn080916009", "GRB080916009"]
@@ -20,7 +22,6 @@ def test_download_GBM_data():
     which_detector = "n1"
 
     for i, trigger in enumerate(good_triggers):
-
         temp_dir = "_download_temp"
 
         dl_info = download_GBM_trigger_data(
@@ -40,23 +41,19 @@ def test_download_GBM_data():
     # Now test that bad names block us
 
     with pytest.raises(NameError):
-
         download_GBM_trigger_data(
             trigger_name="blah080916009", destination_directory=temp_dir
         )
 
     with pytest.raises(TypeError):
-
         download_GBM_trigger_data(trigger_name=80916009, destination_directory=temp_dir)
 
     with pytest.raises(NameError):
-
         download_GBM_trigger_data(
             trigger_name="bn08a916009", destination_directory=temp_dir
         )
 
     with pytest.raises(TriggerDoesNotExist):
-
         download_GBM_trigger_data(
             trigger_name="080916008", destination_directory=temp_dir
         )
@@ -64,13 +61,11 @@ def test_download_GBM_data():
     # now test that bad detectors block us
 
     with pytest.raises(DetDoesNotExist):
-
         download_GBM_trigger_data(
             trigger_name="080916009", detectors="n1", destination_directory=temp_dir
         )
 
     with pytest.raises(DetDoesNotExist):
-
         download_GBM_trigger_data(
             trigger_name="080916009",
             detectors=["not_a_detector"],

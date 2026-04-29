@@ -15,7 +15,8 @@ jupyter:
 
 ## What happens to the model/function during a fit?
 
-The spectral/spatial shapes that are input into the models and subsequently used during the fit are objects. There parameters are members of those objects and when they are changed by the user or the fitting engine, the parameter values in those objects are modified. 
+The spectral/spatial shapes that are input into the models and subsequently used during the fit are objects.
+There parameters are members of those objects and when they are changed by the user or the fitting engine, the parameter values in those objects are modified. 
 
 ```python
 %%capture
@@ -76,4 +77,4 @@ When a plugin is created, it does not have a likelihood model set initially. Thi
 
 ## Why did my plugin lose its model?
 
-If you use the same plugin with different models bvy passing it to successive JointLikelihood or BayesianAnalysis constructors, the plugin will have the last model with which it was used set as its model. 
+If you use the same plugin with different models by passing it to successive JointLikelihood or BayesianAnalysis constructors, the plugin will have the last model with which it was used set as its model. 

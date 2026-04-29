@@ -1,35 +1,31 @@
-from builtins import zip
-from builtins import map
-from astromodels import Model, PointSource, Uniform_prior, Log_uniform_prior
-from threeML.data_list import DataList
-from threeML.bayesian.bayesian_analysis import BayesianAnalysis
-from threeML.minimizer.tutorial_material import Simple, Complex, CustomLikelihoodLike
-
-from astromodels import use_astromodels_memoization
-
-import matplotlib.pyplot as plt
 import matplotlib as mpl
+import matplotlib.pyplot as plt
 import numpy as np
+from astromodels import (
+    Log_uniform_prior,
+    Model,
+    PointSource,
+    use_astromodels_memoization,
+)
+
+from threeML.bayesian.bayesian_analysis import BayesianAnalysis
+from threeML.data_list import DataList
+from threeML.minimizer.tutorial_material import Complex, CustomLikelihoodLike, Simple
 
 
 class BayesianAnalysisWrap(BayesianAnalysis):
     def sample(self, *args, **kwargs):
-
         self.likelihood_model.test.spectrum.main.shape.reset_tracking()
         self.likelihood_model.test.spectrum.main.shape.start_tracking()
 
         with use_astromodels_memoization(False):
-
             try:
-
                 super(BayesianAnalysisWrap, self).sample(*args, **kwargs)
 
-            except:
-
+            except Exception:
                 raise
 
             finally:
-
                 self.likelihood_model.test.spectrum.main.shape.stop_tracking()
 
 
@@ -78,10 +74,8 @@ def get_bayesian_analysis_object_complex_likelihood():
 
 
 def array_to_cmap(values, cmap, use_log=False):
-    """
-    Generates a color map and color list that is normalized
-    to the values in an array. Allows for adding a 3rd dimension
-    onto a plot
+    """Generates a color map and color list that is normalized to the values in
+    an array. Allows for adding a 3rd dimension onto a plot.
 
     :param values: a list a values to map into a cmap
     :param cmap: the mpl colormap to use
@@ -89,11 +83,9 @@ def array_to_cmap(values, cmap, use_log=False):
     """
 
     if use_log:
-
         norm = mpl.colors.LogNorm(vmin=min(values), vmax=max(values))
 
     else:
-
         norm = mpl.colors.Normalize(vmin=min(values), vmax=max(values))
 
     cmap = plt.cm.ScalarMappable(norm=norm, cmap=cmap)
@@ -105,11 +97,9 @@ def array_to_cmap(values, cmap, use_log=False):
 
 def plot_likelihood_function(bayes, fig=None, show_prior=False):
     if fig is None:
-
         fig, sub = plt.subplots(1, 1)
 
     else:
-
         sub = fig.axes[0]
 
     original_mu = bayes.likelihood_model.test.spectrum.main.shape.mu.value
@@ -127,11 +117,9 @@ def plot_likelihood_function(bayes, fig=None, show_prior=False):
     _ = sub.plot(mus, log_like, "k--", alpha=0.8)
 
     if show_prior:
-
         prior = []
 
         for mu in mus:
-
             prior.append(-bayes.sampler._log_prior([mu]))
 
         _ = sub.plot(mus, prior, "r")
@@ -176,11 +164,9 @@ def plot_sample_path(bayes, burn_in=None, truth=None):
     #     ax1.scatter(time[i], qx, c=np.atleast_2d(colors[i]), s=10)
 
     if truth is not None:
-
         ax1.axhline(truth, ls="--", color="k", label=r"True $\mu=$%d" % truth)
 
     if burn_in is not None:
-
         ax1.axvline(burn_in, ls=":", color="#FC2530", label="Burn in")
 
     ax1.legend(loc="upper right", fontsize=7, frameon=False)

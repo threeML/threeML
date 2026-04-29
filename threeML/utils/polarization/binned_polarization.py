@@ -1,29 +1,23 @@
 import numpy as np
-import pandas as pd
+
+from threeML.utils.interval import Interval, IntervalSet
 
 # from threeML.utils.OGIP.response import InstrumentResponse
 from threeML.utils.spectrum.binned_spectrum import BinnedSpectrum
-from threeML.utils.histogram import Histogram
-from threeML.utils.interval import Interval, IntervalSet
-from threeML.utils.statistics.stats_tools import sqrt_sum_of_squares
 
 
 class ScatteringChannel(Interval):
     @property
     def channel_width(self):
-
         return self._get_width()
 
 
 class ScatteringChannelSet(IntervalSet):
-
     INTERVAL_TYPE = ScatteringChannel
 
     @classmethod
     def from_instrument_response(cls, instrument_response):
-        """
-        Build EBOUNDS interval from an instrument response
-
+        """Build EBOUNDS interval from an instrument response.
 
         :param instrument_response:
         :return:
@@ -36,12 +30,10 @@ class ScatteringChannelSet(IntervalSet):
 
     @property
     def channels_widths(self):
-
         return np.array([channel.channel_width for channel in self._intervals])
 
 
 class BinnedModulationCurve(BinnedSpectrum):
-
     INTERVAL_TYPE = ScatteringChannel
 
     def __init__(
@@ -59,15 +51,17 @@ class BinnedModulationCurve(BinnedSpectrum):
         tstart=None,
         tstop=None,
     ):
-        """
-        A binned modulation curve
+        """A binned modulation curve.
 
         :param counts: an array of counts
         :param exposure: the exposure for the counts
-        :param abounds: the len(counts) + 1 energy edges of the histogram or an instance of EBOUNDSIntervalSet
+        :param abounds: the len(counts) + 1 energy edges of the
+            histogram or an instance of EBOUNDSIntervalSet
         :param count_errors: (optional) the count errors for the spectra
         :param sys_errors: (optional) systematic errors on the spectrum
-        :param quality: quality instance marking good, bad and warned channels. If not provided, all channels are assumed to be good
+        :param quality: quality instance marking good, bad and warned
+            channels. If not provided, all channels are assumed to be
+            good
         :param scale_factor: scaling parameter of the spectrum
         :param is_poisson: if the histogram is Poisson
         :param mission: the mission name
@@ -138,10 +132,8 @@ class BinnedModulationCurve(BinnedSpectrum):
         new_exposure=None,
         new_scale_factor=None,
     ):
-        """
-        make a new spectrum with new counts and errors and all other
-        parameters the same
-
+        """Make a new spectrum with new counts and errors and all other
+        parameters the same.
 
         :param new_counts: new counts for the spectrum
         :param new_count_errors: new errors from the spectrum
@@ -156,7 +148,6 @@ class BinnedModulationCurve(BinnedSpectrum):
             new_exposure = self.exposure
 
         if new_scale_factor is None:
-
             new_scale_factor = self._scale_factor
 
         return BinnedModulationCurve(

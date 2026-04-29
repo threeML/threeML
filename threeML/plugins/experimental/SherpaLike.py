@@ -1,23 +1,21 @@
-from __future__ import division
-from builtins import zip
-from builtins import range
-from past.utils import old_div
-from builtins import object
+from builtins import object, range, zip
+
+import matplotlib.pyplot as plt
 import numpy as np
 from sherpa.astro import datastack
 from sherpa.models import TableModel
+
 from threeML.plugin_prototype import PluginPrototype
-import matplotlib.pyplot as plt
 
 __instrument_name = "All OGIP compliant instruments"
 
 
 class Likelihood2SherpaTableModel(object):
-    """Creates from a 3ML Likelihhod model a table model that can be used in sherpa.
-    It should be used to convert a threeML.models.LikelihoodModel
-    into a sherpa.models.TableModel such that values are evaluated
-    at the boundaries of the energy bins for the pha data for which one wants to calculate
-    the likelihood.
+    """Creates from a 3ML Likelihhod model a table model that can be used in
+    sherpa. It should be used to convert a threeML.models.LikelihoodModel into
+    a sherpa.models.TableModel such that values are evaluated at the boundaries
+    of the energy bins for the pha data for which one wants to calculate the
+    likelihood.
 
     Parameters
     -----------
@@ -47,11 +45,10 @@ class Likelihood2SherpaTableModel(object):
         self.onExtSrc = []  # list of extended sources in the ON region
         nExtsrc = self.likelihoodModel.getNumberOfExtendedSources()
         if nExtsrc > 0:
-            raise NotImplemented("Cannot support extended sources yet")
+            raise NotImplementedError("Cannot support extended sources yet")
 
     def update(self):
-        """Update the model values.
-        """
+        """Update the model values."""
         vals = np.zeros(len(self.table_model._TableModel__x))
         for ipt in self.onPtSrc:
             vals += [
@@ -60,12 +57,13 @@ class Likelihood2SherpaTableModel(object):
                 )
                 for bounds in zip(self.e_lo, self.e_hi)
             ]
-            # integrated fluxes over same energy bins as for dataset, according to Sherpa TableModel specs, TBV
+            # integrated fluxes over same energy bins as for dataset, according to
+            # Sherpa TableModel specs, TBV
         self.table_model._TableModel__y = vals
 
 
 class SherpaLike(PluginPrototype):
-    """Generic plugin based on sherpa for data in OGIP format
+    """Generic plugin based on sherpa for data in OGIP format.
 
     Parameters
     ----------
@@ -92,7 +90,7 @@ class SherpaLike(PluginPrototype):
         self.nuisanceParameters = {}
 
     def set_model(self, likelihoodModel):
-        """Set model for the source region
+        """Set model for the source region.
 
         Parameters
         ----------
@@ -105,13 +103,13 @@ class SherpaLike(PluginPrototype):
         self.ds.set_source(self.model.table_model)
 
     def _updateModel(self):
-        """Updates the sherpa table model"""
+        """Updates the sherpa table model."""
         self.model.update()
         self.ds.set_source(self.model.table_model)
 
     def setEnergyRange(self, e_lo, e_hi):
-        """Define an energy threshold for the fit
-        which is different from the full range in the pha files
+        """Define an energy threshold for the fit which is different from the
+        full range in the pha files.
 
         Parameters
         ------------
@@ -123,7 +121,7 @@ class SherpaLike(PluginPrototype):
         self.ds.notice(e_lo, e_hi)
 
     def get_log_like(self):
-        """Returns the current statistics value
+        """Returns the current statistics value.
 
         Returns
         -------------
@@ -134,7 +132,7 @@ class SherpaLike(PluginPrototype):
         return -datastack.ui.calc_stat()
 
     def get_name(self):
-        """Return a name for this dataset set during the construction
+        """Return a name for this dataset set during the construction.
 
         Returns:
         ----------
@@ -145,22 +143,23 @@ class SherpaLike(PluginPrototype):
 
     def get_nuisance_parameters(self):
         """Return a list of nuisance parameters.
-        Return an empty list if there are no nuisance parameters.
-        Not implemented yet.
+
+        Return an empty list if there are no nuisance parameters. Not
+        implemented yet.
         """
         # TODO implement nuisance parameters
         return list(self.nuisanceParameters.keys())
 
     def inner_fit(self):
-        """Inner fit. Just a hack to get it to work now.
-        Will be removed.
+        """Inner fit.
+
+        Just a hack to get it to work now. Will be removed.
         """
         # TODO remove once the inner fit requirement has been dropped
         return self.get_log_like()
 
     def display(self):
-        """creates plots comparing data to model
-        """
+        """Creates plots comparing data to model."""
         # datastack.ui.set_xlog()
         # datastack.ui.set_ylog()
         # self.ds.plot_data()
@@ -200,12 +199,12 @@ class SherpaLike(PluginPrototype):
         axarr[0].plot(energies, model, label="source")
         axarr[0].plot(energies, bkg, label="background")
         axarr[0].plot(energies, tot, label="total model")
-        leg = axarr[0].legend()
+        axarr[0].legend()
         axarr[1].errorbar(
             energies[counts > 0],
-            (old_div((counts - tot), tot))[counts > 0],
+            ((counts - tot) / tot)[counts > 0],
             xerr=np.zeros(len(energies[counts > 0])),
-            yerr=(old_div(np.sqrt(counts), tot))[counts > 0],
+            yerr=(np.sqrt(counts) / tot)[counts > 0],
             fmt="ko",
             capsize=0,
         )

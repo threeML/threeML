@@ -18,22 +18,23 @@ Though **Maximum Likelihood** is in the name for historical reasons, 3ML is an i
 
 
 .. toctree::
-    :maxdepth: 5
-    :hidden:
-    
-    notebooks/installation.ipynb
-    intro
-    notebooks/configuration.ipynb
-    notebooks/logging.ipynb
-    xspec_users
-    notebooks/Minimization_tutorial.ipynb
-    notebooks/Bayesian_tutorial.ipynb
-    notebooks/sampler_docs.ipynb
-    plugins
-    modeling
-    faq
-    api/API
-    release_notes
+   :maxdepth: 5
+   :hidden:
+   
+   team
+   installation.md
+   intro
+   notebooks/configuration.ipynb
+   notebooks/logging.ipynb
+   xspec_users
+   notebooks/Minimization_tutorial.ipynb
+   notebooks/Bayesian_tutorial.ipynb
+   notebooks/sampler_docs.ipynb
+   plugins
+   modeling
+   faq
+   api/API
+   CHANGELOG.md
 
 .. nbgallery::
    :caption: Features and examples:
@@ -49,10 +50,12 @@ Though **Maximum Likelihood** is in the name for historical reasons, 3ML is an i
    notebooks/flux_examples.ipynb
    notebooks/Fermipy_LAT.ipynb
    notebooks/LAT_Transient_Builder_Example.ipynb
+   notebooks/grb_130427A_GBM+LAT.ipynb
    notebooks/Time-energy-fit.ipynb
    notebooks/synthetic_spectra.ipynb
    notebooks/gof_lrt.ipynb
-   
+   notebooks/Photometry_demo.ipynb
+
     
 ThreeML is supported by the National Science Foundation (NSF) 
 

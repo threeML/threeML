@@ -3,12 +3,11 @@
 
 import sys
 
-from threeML.utils.progress_bar import tqdm
 import numexpr
 import numpy as np
 
-
 from threeML.io.logging import setup_logger
+from threeML.utils.progress_bar import tqdm
 
 logger = setup_logger(__name__)
 
@@ -59,13 +58,8 @@ def bayesian_blocks_not_unique(tt, ttstart, ttstop, p0):
     # Speed tricks: resolve once for all the functions which will be used
     # in the loop
     cumsum = np.cumsum
-    log = np.log
     argmax = np.argmax
     numexpr_evaluate = numexpr.evaluate
-    arange = np.arange
-
-    # Decide the step for reporting progress
-    incr = max(int(float(N) / 100.0 * 10), 1)
 
     logger.debug("Finding blocks...")
 
@@ -82,8 +76,6 @@ def bayesian_blocks_not_unique(tt, ttstart, ttstop, p0):
     oldaccuracy = numexpr.set_vml_accuracy_mode("low")
     numexpr.set_num_threads(1)
     numexpr.set_vml_num_threads(1)
-
-    
 
     for R in tqdm(range(N)):
         br = block_length[R + 1]
@@ -118,8 +110,6 @@ def bayesian_blocks_not_unique(tt, ttstart, ttstop, p0):
         last[R] = i_max
         best[R] = A_R[i_max]
 
-        
-
     numexpr.set_vml_accuracy_mode(oldaccuracy)
 
     logger.debug("Done\n")
@@ -145,8 +135,7 @@ def bayesian_blocks_not_unique(tt, ttstart, ttstop, p0):
 
 
 def bayesian_blocks(tt, ttstart, ttstop, p0, bkg_integral_distribution=None):
-    """
-    Divide a series of events characterized by their arrival time in blocks
+    """Divide a series of events characterized by their arrival time in blocks
     of perceptibly constant count rate. If the background integral distribution
     is given, divide the series in blocks where the difference with respect to
     the background is perceptibly constant.
@@ -154,10 +143,12 @@ def bayesian_blocks(tt, ttstart, ttstop, p0, bkg_integral_distribution=None):
     :param tt: arrival times of the events
     :param ttstart: the start of the interval
     :param ttstop: the stop of the interval
-    :param p0: the false positive probability. This is used to decide the penalization on the likelihood, so this
-    parameter affects the number of blocks
-    :param bkg_integral_distribution: (default: None) If given, the algorithm account for the presence of the background and
-    finds changes in rate with respect to the background
+    :param p0: the false positive probability. This is used to decide
+        the penalization on the likelihood, so this parameter affects
+        the number of blocks
+    :param bkg_integral_distribution: (default: None) If given, the
+        algorithm account for the presence of the background and finds
+        changes in rate with respect to the background
     :return: the np.array containing the edges of the blocks
     """
 
@@ -167,23 +158,20 @@ def bayesian_blocks(tt, ttstart, ttstop, p0, bkg_integral_distribution=None):
     assert tt.ndim == 1
 
     if bkg_integral_distribution is not None:
-
-        # Transforming the inhomogeneous Poisson process into an homogeneous one with rate 1,
-        # by changing the time axis according to the background rate
+        # Transforming the inhomogeneous Poisson process into an homogeneous one with
+        # rate 1, by changing the time axis according to the background rate
         logger.debug(
-            "Transforming the inhomogeneous Poisson process to a homogeneous one with rate 1..."
+            "Transforming the inhomogeneous Poisson process to a homogeneous one with "
+            "rate 1..."
         )
         t = np.array(bkg_integral_distribution(tt))
         logger.debug("done")
 
         # Now compute the start and stop time in the new system
-        tstart = bkg_integral_distribution(ttstart)
         tstop = bkg_integral_distribution(ttstop)
 
     else:
-
         t = tt
-        tstart = ttstart
         tstop = ttstop
 
     # Create initial cell edges (Voronoi tessellation)
@@ -200,7 +188,6 @@ def bayesian_blocks(tt, ttstart, ttstop, p0, bkg_integral_distribution=None):
     block_length = tstop - edges
 
     if np.sum((block_length <= 0)) > 1:
-
         raise RuntimeError(
             "Events appears to be out of order! Check for order, or duplicated events."
         )
@@ -212,7 +199,7 @@ def bayesian_blocks(tt, ttstart, ttstop, p0, bkg_integral_distribution=None):
     last = np.zeros(N, dtype=int)
 
     # eq. 21 from Scargle 2012
-    prior = 4 - np.log(73.53 * p0 * (N ** -0.478))
+    prior = 4 - np.log(73.53 * p0 * (N**-0.478))
 
     logger.debug("Finding blocks...")
 
@@ -263,7 +250,6 @@ def bayesian_blocks(tt, ttstart, ttstop, p0, bkg_integral_distribution=None):
         # all the other times we can reuse it
 
         if R == 0:
-
             fit_vec = numexpr_evaluate(
                 """N_k * log(N_k/ T_k) """,
                 optimization="aggressive",
@@ -271,7 +257,6 @@ def bayesian_blocks(tt, ttstart, ttstop, p0, bkg_integral_distribution=None):
             )
 
         else:
-
             fit_vec = numexpr_re_evaluate(local_dict={"N_k": N_k, "T_k": T_k})
 
         A_R = fit_vec - prior  # type: np.ndarray
@@ -293,13 +278,11 @@ def bayesian_blocks(tt, ttstart, ttstop, p0, bkg_integral_distribution=None):
     ind = N
 
     while True:
-
         i_cp -= 1
 
         change_points[i_cp] = ind
 
         if ind == 0:
-
             break
 
         ind = last[ind - 1]
@@ -311,11 +294,9 @@ def bayesian_blocks(tt, ttstart, ttstop, p0, bkg_integral_distribution=None):
     # Transform the found edges back into the original time system
 
     if bkg_integral_distribution is not None:
-
         final_edges = [lookup_table[x] for x in edg]
 
     else:
-
         final_edges = edg
 
     # Now fix the first and last edge so that they are tstart and tstop
@@ -327,7 +308,6 @@ def bayesian_blocks(tt, ttstart, ttstop, p0, bkg_integral_distribution=None):
 
 # To be run with a profiler
 if __name__ == "__main__":
-
     tt = np.random.uniform(0, 1000, int(sys.argv[1]))
     tt.sort()
 

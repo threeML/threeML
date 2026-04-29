@@ -16,11 +16,11 @@ build:
 requirements:
   
   build:
-    # - {{ compiler('c') }}
-    # - {{ compiler('cxx') }}
-    # - {{ compiler('fortran') }}
     - python
-    - numpy>=1.15
+    - versioneer
+    - setuptools
+    - numpy>=1.15 # [py==311]
+    - numpy>=1.15,<1.24 # [py==39]
     - emcee>=3
     - uncertainties
     - pyyaml>=5.1
@@ -48,7 +48,8 @@ requirements:
     
   run:
     - python
-    - numpy>=1.15
+    - numpy>=1.15 # [py==311]
+    - numpy>=1.15,<1.24 # [py==39]
     - scipy>=0.18
     - emcee>=3
     - astropy>=1.0.3
@@ -82,6 +83,7 @@ requirements:
     - asciitree
     - colorama
     - rich
+    - versioneer
 
 #test:
 #  # Python imports

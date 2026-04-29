@@ -1,15 +1,13 @@
-import warnings as custom_warnings
-import inspect
 import functools
+import inspect
+import warnings as custom_warnings
 
 # Monkeypatch the print of warning so we can customize them
 
 
 def my_format_warning(message, category, filename, lineo, line=None):
-    """
-    Override the default showwarning to customize the appearance of warnings
-    :return:
-    """
+    """Override the default showwarning to customize the appearance of warnings
+    :return:"""
     # if message.message.find("may indicate binary incompatibility") >= 0:
     #     return ''
     return "\nWARNING %s: %s\n\n" % (category.__name__, message)
@@ -27,22 +25,18 @@ class TriggerDoesNotExist(RuntimeError):
 
 
 class ForbiddenRegionOfParameterSpace(RuntimeWarning):
-
     pass
 
 
 class CppInterfaceNotAvailable(ImportWarning):
-
     pass
 
 
 class CannotImportPlugin(ImportWarning):
-
     pass
 
 
 class LikelihoodIsInfinite(RuntimeWarning):
-
     pass
 
 

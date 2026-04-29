@@ -1,39 +1,31 @@
-from __future__ import division
-from __future__ import print_function
-
-# NOTE: XSpec must be loaded before any other plugin/package from threeML because otherwise it could
-# complain about conflicting CFITSIO libraries
-from past.utils import old_div
 import os
 
-if os.environ.get("HEADAS") is not None:
+# NOTE: XSpec must be loaded before any other plugin/package from threeML because
+# otherwise it could complain about conflicting CFITSIO libraries
 
+if os.environ.get("HEADAS") is not None:
     # Try to import xspec
 
     try:
-
         import xspec
 
     except ImportError:
-
         has_pyxspec = False
 
     else:
-
         has_pyxspec = True
 
 else:
-
     has_pyxspec = False
 
-import pytest
-import numpy as np
 import os
 
+import numpy as np
+import pytest
 from astromodels import Powerlaw
+
 from threeML.io.package_data import get_path_of_data_file
 from threeML.utils.OGIP.response import InstrumentResponse, OGIPResponse
-
 
 skip_if_pyxspec_is_not_available = pytest.mark.skipif(
     not has_pyxspec, reason="No pyXspec installed"
@@ -41,7 +33,6 @@ skip_if_pyxspec_is_not_available = pytest.mark.skipif(
 
 
 def get_matrix_elements():
-
     # In[5]: np.diagflat([1, 2, 3, 4])[:3, :]
 
     matrix = np.diagflat([1.0, 2.0, 3.0, 4.0])[:3, :]
@@ -60,10 +51,8 @@ def get_matrix_elements():
 
 @skip_if_pyxspec_is_not_available
 def test_OGIP_response_against_xspec():
-
     # Test for various photon indexes
     for index in [-0.5, 0.0, 0.5, 1.5, 2.0, 3.0, 4.0]:
-
         print("Processing index %s" % index)
 
         # First reset xspec
@@ -74,16 +63,16 @@ def test_OGIP_response_against_xspec():
         mo = xspec.Model("po")
 
         # Change the default value for the photon index
-        # (remember that in XSpec the definition of the powerlaw is norm * E^(-PhoIndex),
-        # so PhoIndex is positive normally. This is the opposite of astromodels.
+        # (remember that in XSpec the definition of the powerlaw is norm * E^(-PhoIndex)
+        # , so PhoIndex is positive normally. This is the opposite of astromodels.
         mo.powerlaw.PhoIndex = index
         mo.powerlaw.norm = 12.2
 
         # Now repeat the same in 3ML
 
-        # Generate the astromodels function and set it to the same values as the XSpec power law
-        # (the pivot in XSpec is set to 1). Remember also that the definition in xspec has the
-        # sign of the photon index opposite
+        # Generate the astromodels function and set it to the same values as the XSpec
+        # power law (the pivot in XSpec is set to 1). Remember also that the definition
+        # in xspec has the sign of the photon index opposite
         powerlaw = Powerlaw()
         powerlaw.piv = 1.0
         powerlaw.index = -mo.powerlaw.PhoIndex.values[0]
@@ -95,13 +84,15 @@ def test_OGIP_response_against_xspec():
         powerlaw_integral.K._transformation = None
         powerlaw_integral.K.bounds = (None, None)
         powerlaw_integral.index = powerlaw.index.value + 1
-        powerlaw_integral.K = old_div(powerlaw.K.value, (powerlaw.index.value + 1))
+        powerlaw_integral.K = powerlaw.K.value / (powerlaw.index.value + 1)
 
         powerlaw_integral.display()
 
-        integral_function = lambda e1, e2: powerlaw_integral(e2) - powerlaw_integral(e1)
+        def integral_function(e1, e2):
+            return powerlaw_integral(e2) - powerlaw_integral(e1)
 
-        # Now check that the two convoluted model give the same number of counts in each channel
+        # Now check that the two convoluted model give the same number of counts in each
+        # channel
 
         # Fake a spectrum so we can actually compute the convoluted model
 
@@ -160,7 +151,6 @@ def test_OGIP_response_against_xspec():
 
 @skip_if_pyxspec_is_not_available
 def test_response_against_xspec():
-
     # Make a response and write to a FITS OGIP file
     matrix, mc_energies, ebounds = get_matrix_elements()
 
@@ -173,9 +163,7 @@ def test_response_against_xspec():
     # Test for various photon indexes
 
     for index in np.linspace(-2.0, 2.0, 10):
-
         if index == 1.0:
-
             # This would make the integral of the power law different, so let's just
             # skip it
 
@@ -189,16 +177,16 @@ def test_response_against_xspec():
         mo = xspec.Model("po")
 
         # Change the default value for the photon index
-        # (remember that in XSpec the definition of the powerlaw is norm * E^(-PhoIndex),
-        # so PhoIndex is positive normally. This is the opposite of astromodels.
+        # (remember that in XSpec the definition of the powerlaw is norm * E^(-PhoIndex)
+        # , so PhoIndex is positive normally. This is the opposite of astromodels.
         mo.powerlaw.PhoIndex = index
         mo.powerlaw.norm = 12.2
 
         # Now repeat the same in 3ML
 
-        # Generate the astromodels function and set it to the same values as the XSpec power law
-        # (the pivot in XSpec is set to 1). Remember also that the definition in xspec has the
-        # sign of the photon index opposite
+        # Generate the astromodels function and set it to the same values as the XSpec
+        # power law (the pivot in XSpec is set to 1). Remember also that the definition
+        # in xspec has the sign of the photon index opposite
         powerlaw = Powerlaw()
         powerlaw.piv = 1.0
         powerlaw.index = -mo.powerlaw.PhoIndex.values[0]
@@ -209,11 +197,13 @@ def test_response_against_xspec():
         powerlaw_integral.K._transformation = None
         powerlaw_integral.K.bounds = (None, None)
         powerlaw_integral.index = powerlaw.index.value + 1
-        powerlaw_integral.K = old_div(powerlaw.K.value, (powerlaw.index.value + 1))
+        powerlaw_integral.K = powerlaw.K.value / (powerlaw.index.value + 1)
 
-        integral_function = lambda e1, e2: powerlaw_integral(e2) - powerlaw_integral(e1)
+        def integral_function(e1, e2):
+            return powerlaw_integral(e2) - powerlaw_integral(e1)
 
-        # Now check that the two convoluted model give the same number of counts in each channel
+        # Now check that the two convoluted model give the same number of counts in each
+        # channel
 
         # Fake a spectrum so we can actually compute the convoluted model
 

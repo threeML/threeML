@@ -225,7 +225,7 @@ for T0, T1 in zip(intervals[:-1], intervals[1:]):
     pass
 ```
 
-You can usethis function to graphically display the results of your fit (folded model, data and residuals)
+You can use this function to graphically display the results of your fit (folded model, data and residuals)
 
 
 ```python tags=["nbsphinx-thumbnail"]
@@ -255,7 +255,7 @@ fig.set_size_inches(10, 8)
 ```
 
 
-Finally, we can display flux lightcurves and index evolution with time.
+Now we can display flux lightcurves and index evolution with time.
 
 
 ```python
@@ -292,4 +292,15 @@ for i, n in enumerate(variates):
     if i == 0:
         plt.yscale("log")
     plt.ylabel(ylabels[i])
+```
+
+Finally, you can also compute the TS in all time intervals and print their values
+
+```python
+TS = {}
+for a in results.values():
+    TS[list(a.data_list.keys())[0]] = a.compute_TS('GRB', a.results.get_statistic_frame())['TS'].iloc[0]
+
+for key, value in TS.items():
+    print(key, value)
 ```

@@ -1,17 +1,29 @@
-from builtins import range
-from builtins import object
-import pytest
 import os
+from builtins import object, range
+
+import numpy as np
 import numpy.testing as npt
+import pytest
+from astromodels import Band, Cutoff_powerlaw, Model, PointSource, Powerlaw
 from astropy.io import fits
-from .conftest import get_test_datasets_directory
-from threeML import *
+
+from threeML import display_spectrum_model_counts
+from threeML.classicMLE.joint_likelihood import JointLikelihood
+from threeML.classicMLE.likelihood_ratio_test import LikelihoodRatioTest
+from threeML.data_list import DataList
 from threeML.io.file_utils import within_directory
 from threeML.plugins.OGIPLike import OGIPLike
 from threeML.plugins.SwiftXRTLike import SwiftXRTLike
 from threeML.utils.OGIP.response import OGIPResponse
 from threeML.utils.spectrum.pha_spectrum import PHASpectrum
-from threeML.utils.statistics.likelihood_functions import *
+from threeML.utils.statistics.likelihood_functions import (
+    poisson_log_likelihood_ideal_bkg,
+    poisson_observed_gaussian_background,
+    poisson_observed_poisson_background,
+    poisson_observed_poisson_background_xs,
+)
+
+from .conftest import get_test_datasets_directory
 
 __this_dir__ = os.path.join(os.path.abspath(os.path.dirname(__file__)))
 __example_dir = get_test_datasets_directory()
@@ -43,7 +55,6 @@ class AnalysisBuilder(object):
 
 
 def test_loading_a_generic_pha_file():
-
     with within_directory(__example_dir):
         ogip = OGIPLike("test_ogip", observation="test.pha{1}")
 
@@ -55,8 +66,8 @@ def test_loading_a_generic_pha_file():
         assert ogip.tstart == 0.0
         assert ogip.tstop == 9.95012
         assert "cons_test_ogip" in ogip.nuisance_parameters
-        assert ogip.nuisance_parameters["cons_test_ogip"].fix == True
-        assert ogip.nuisance_parameters["cons_test_ogip"].free == False
+        assert ogip.nuisance_parameters["cons_test_ogip"].fix is True
+        assert ogip.nuisance_parameters["cons_test_ogip"].free is False
 
         assert "pha" in pha_info
         assert "bak" in pha_info
@@ -66,7 +77,6 @@ def test_loading_a_generic_pha_file():
 
 
 def test_loading_a_loose_ogip_pha_file():
-
     with within_directory(__example_dir):
         ogip = OGIPLike("test_ogip", observation="example_integral.pha")
 
@@ -78,8 +88,8 @@ def test_loading_a_loose_ogip_pha_file():
         # assert ogip.tstart is None
         # assert ogip.tstop is None
         assert "cons_test_ogip" in ogip.nuisance_parameters
-        assert ogip.nuisance_parameters["cons_test_ogip"].fix == True
-        assert ogip.nuisance_parameters["cons_test_ogip"].free == False
+        assert ogip.nuisance_parameters["cons_test_ogip"].fix is True
+        assert ogip.nuisance_parameters["cons_test_ogip"].free is False
 
         assert "pha" in pha_info
         # assert 'bak' in pha_info
@@ -89,14 +99,13 @@ def test_loading_a_loose_ogip_pha_file():
 
 
 def test_loading_bad_keywords_file():
-
     with within_directory(__example_dir):
         pha_fn = "example_integral_spi.pha"
         rsp_fn = "example_integral_spi.rsp"
 
         pha_spectrum = PHASpectrum(pha_fn, rsp_file=rsp_fn)
 
-        assert type(pha_spectrum.is_poisson) == bool
+        assert isinstance(pha_spectrum.is_poisson, bool)
 
         ogip = OGIPLike("test_ogip", observation=pha_fn, response=rsp_fn)
         ogip.__repr__()
@@ -104,20 +113,18 @@ def test_loading_bad_keywords_file():
 
 def test_pha_files_in_generic_ogip_constructor_spec_number_in_file_name():
     with within_directory(__example_dir):
-
         ogip = OGIPLike("test_ogip", observation="test.pha{1}")
         ogip.set_active_measurements("all")
         pha_info = ogip.get_pha_files()
 
         for key in ["pha", "bak"]:
-
             assert isinstance(pha_info[key], PHASpectrum)
 
         assert pha_info["pha"].background_file == "test_bak.pha{1}"
         assert pha_info["pha"].ancillary_file is None
         assert pha_info["pha"].instrument == "GBM_NAI_03"
         assert pha_info["pha"].mission == "GLAST"
-        assert pha_info["pha"].is_poisson == True
+        assert pha_info["pha"].is_poisson is True
         assert pha_info["pha"].n_channels == ogip.n_data_points
         assert pha_info["pha"].n_channels == len(pha_info["pha"].rates)
 
@@ -161,7 +168,7 @@ def test_pha_files_in_generic_ogip_constructor_spec_number_in_file_name():
         assert pha_info["bak"].instrument == "GBM_NAI_03"
         assert pha_info["bak"].mission == "GLAST"
 
-        assert pha_info["bak"].is_poisson == False
+        assert pha_info["bak"].is_poisson is False
 
         assert pha_info["bak"].n_channels == ogip.n_data_points
         assert pha_info["bak"].n_channels == len(pha_info["pha"].rates)
@@ -186,14 +193,13 @@ def test_pha_files_in_generic_ogip_constructor_spec_number_in_arguments():
         pha_info = ogip.get_pha_files()
 
         for key in ["pha", "bak"]:
-
             assert isinstance(pha_info[key], PHASpectrum)
 
         assert pha_info["pha"].background_file == "test_bak.pha{1}"
         assert pha_info["pha"].ancillary_file is None
         assert pha_info["pha"].instrument == "GBM_NAI_03"
         assert pha_info["pha"].mission == "GLAST"
-        assert pha_info["pha"].is_poisson == True
+        assert pha_info["pha"].is_poisson is True
         assert pha_info["pha"].n_channels == ogip.n_data_points
         assert pha_info["pha"].n_channels == len(pha_info["pha"].rates)
 
@@ -234,7 +240,7 @@ def test_pha_files_in_generic_ogip_constructor_spec_number_in_arguments():
         assert pha_info["bak"].instrument == "GBM_NAI_03"
         assert pha_info["bak"].mission == "GLAST"
 
-        assert pha_info["bak"].is_poisson == False
+        assert pha_info["bak"].is_poisson is False
 
         assert pha_info["bak"].n_channels == ogip.n_data_points
         assert pha_info["bak"].n_channels == len(pha_info["pha"].rates)
@@ -338,7 +344,6 @@ def test_various_effective_area():
 
 def test_simulating_data_sets():
     with within_directory(__example_dir):
-
         ogip = OGIPLike("test_ogip", observation="test.pha{1}")
 
         with pytest.raises(RuntimeError):
@@ -363,8 +368,8 @@ def test_simulating_data_sets():
         assert new_ogip.tstart == 0.0
 
         assert "cons_sim" in new_ogip.nuisance_parameters
-        assert new_ogip.nuisance_parameters["cons_sim"].fix == True
-        assert new_ogip.nuisance_parameters["cons_sim"].free == False
+        assert new_ogip.nuisance_parameters["cons_sim"].fix is True
+        assert new_ogip.nuisance_parameters["cons_sim"].free is False
 
         pha_info = new_ogip.get_pha_files()
 
@@ -387,7 +392,6 @@ def test_simulating_data_sets():
         assert len(sim_data_sets) == ogip._n_synthetic_datasets
 
         for i, ds in enumerate(sim_data_sets):
-
             assert ds.name == "sim%d" % i
             assert sum(ds._mask) == sum(ogip._mask)
             assert ds._rebinner is None
@@ -436,7 +440,7 @@ def test_xrt():
 
         data = DataList(xrt)
 
-        jl = JointLikelihood(model, data, verbose=False)
+        _ = JointLikelihood(model, data, verbose=False)
 
 
 def test_swift_gbm():
@@ -496,7 +500,6 @@ def test_swift_gbm():
 
 def test_pha_write():
     with within_directory(__example_dir):
-
         ogip = OGIPLike("test_ogip", observation="test.pha{1}")
 
         ogip.write_pha("test_write", overwrite=True)
@@ -506,20 +509,18 @@ def test_pha_write():
         pha_info = written_ogip.get_pha_files()
 
         for key in ["pha", "bak"]:
-
             assert isinstance(pha_info[key], PHASpectrum)
 
         assert pha_info["pha"].background_file == "test_bak.pha{1}"
         assert pha_info["pha"].ancillary_file is None
         assert pha_info["pha"].instrument == "GBM_NAI_03"
         assert pha_info["pha"].mission == "GLAST"
-        assert pha_info["pha"].is_poisson == True
+        assert pha_info["pha"].is_poisson is True
         assert pha_info["pha"].n_channels == len(pha_info["pha"].rates)
 
 
 def test_pha_write_no_bkg():
     with within_directory(__example_dir):
-
         # custom remove background
         f = fits.open("test.pha")
         f["SPECTRUM"].data["BACKFILE"] = "NONE"
@@ -543,7 +544,7 @@ def test_pha_write_no_bkg():
         assert pha_info["pha"].ancillary_file is None
         assert pha_info["pha"].instrument == "GBM_NAI_03"
         assert pha_info["pha"].mission == "GLAST"
-        assert pha_info["pha"].is_poisson == True
+        assert pha_info["pha"].is_poisson is True
         assert pha_info["pha"].n_channels == len(pha_info["pha"].rates)
 
 

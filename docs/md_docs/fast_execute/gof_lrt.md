@@ -20,7 +20,7 @@ jupyter:
 ## Goodness of fit
 It is often that we we need to know how well our model fits our data. While in  linear, Gaussian regimes and under certain regularity conditions, the reduced $\chi^2$ provides a measure of fit quality, most of the time it is unreliable and incorrect to use. For more on this, read [The Do's and Don'ts of reduced chi2](https://arxiv.org/pdf/1012.3754.pdf).
 
-Instead, we can [almost](www.google.com) always use the bootstrap method to estimate the quality of an MLE analysis. In 3ML, we can do this with the quite simply after a fit.
+Instead, we can [almost](https://www.google.com) always use the bootstrap method to estimate the quality of an MLE analysis. In 3ML, we can do this with the quite simply after a fit.
 <!-- #endregion -->
 
 

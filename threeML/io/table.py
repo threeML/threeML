@@ -3,16 +3,13 @@
 # A hack on the astropy Table class to make its output
 # more appealing, especially when in the Ipython notebook
 
-import pandas as pd
 import astropy.table
-from astromodels.utils.long_path_formatter import long_path_formatter
 
 
 class Table(astropy.table.Table):
     def _base_repr_(self, html=False, show_name=True, **kwargs):
-        """Override the method in the astropy.Table class
-        to avoid displaying the description, and the format
-        of the columns"""
+        """Override the method in the astropy.Table class to avoid displaying
+        the description, and the format of the columns."""
 
         tableid = "table{id}".format(id=id(self))
 

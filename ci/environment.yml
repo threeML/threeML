@@ -1,16 +1,16 @@
-# environment file fo CI testing
+# base environment file fo CI testing
+
 name: test_env
 channels:
   - threeml
-  - xspecmodels
-  - fermi
   - conda-forge
   - defaults
 dependencies:
   - pip
   - pytest
   - pytest-cov
-  - astromodels>=2
+  - astromodels>=2.5.0
+  - arviz # needed for autoemcee 
   - codecov
   - coverage
   - setuptools
@@ -18,7 +18,7 @@ dependencies:
   - scipy>=1.4
   - emcee>=3
   - astropy
-  - matplotlib<3.9
+  - matplotlib
   - uncertainties
   - pyyaml>=5.1
   - dill
@@ -33,6 +33,8 @@ dependencies:
   - ultranest
   - dynesty>=1
   - pygmo>=2.4
+  - nautilus-sampler
+  - zeus-mcmc
   - ipywidgets
   - ipython
   - ipyparallel
@@ -44,11 +46,11 @@ dependencies:
   - numdifftools
   - tqdm
   - future
-  - xspec-modelsonly
-  - fermitools>=2
   - colorama
   - omegaconf
   - flake8
   - h5py
   - rich
   - joblib
+  - pip:
+    - autoemcee

@@ -3,23 +3,24 @@
 name: test_env
 channels:
   - threeml
-  - xspecmodels
+  - https://heasarc.gsfc.nasa.gov/FTP/software/conda/
   - conda-forge
   - defaults
 dependencies:
   - pip
-  - astromodels>=2
-  - xspec-modelsonly==6.30.1
   - pytest
   - pytest-cov
+  - astromodels>=2.5.0
+  - arviz
   - codecov
   - coverage
   - setuptools
   - numpy>=1.15 
   - scipy>=1.4
   - emcee>=3
+  - zeus-mcmc
   - astropy
-  - matplotlib<3.9
+  - matplotlib
   - uncertainties
   - pyyaml>=5.1
   - dill
@@ -51,4 +52,6 @@ dependencies:
   - h5py
   - rich
   - joblib
-
+  - xspec>=12.15.1
+  - pip:
+    - autoemcee

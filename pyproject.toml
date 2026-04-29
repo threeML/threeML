@@ -1,0 +1,138 @@
+[build-system]
+requires = ["setuptools", "wheel", "versioneer[toml]"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "threeML"
+dynamic = ["version"]
+description = "The Multi-Mission Maximum Likelihood framework"
+readme = "README.md"
+license = "BSD-3-Clause"
+license-files = ["LICENSE"]
+requires-python = ">=3.9.0"
+authors = [
+    {name = "Giacomo Vianello", email = "io@tu.com"}
+]
+maintainers = [
+	    {name = "Niccolò Di Lalla", email = "niccolo.dilalla@stanford.edu"},
+        {name = "Nicola Omodei", email = "nicola.omodei@stanford.edu"}
+]
+keywords = [
+    "Likelihood",
+    "Multi-mission", 
+    "3ML",
+    "HAWC",
+    "Fermi",
+    "HESS",
+    "joint fit",
+    "bayesian",
+    "multi-wavelength"
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Topic :: Scientific/Engineering :: Astronomy",
+    "Intended Audience :: Science/Research",
+    "Operating System :: POSIX",
+    "Programming Language :: Python :: 3.9",
+    "Environment :: Console",
+]
+dependencies = [
+    "numpy>=1.16",
+    "scipy>=1.4",
+    "emcee>=3",
+    "astropy",
+    "matplotlib",
+    "uncertainties",
+    "pyyaml>=5.1",
+    "dill",
+    "iminuit>=2.0",
+    "astromodels",
+    "astroquery",
+    "corner",
+    "pandas",
+    "requests",
+    "speclite>=0.11",
+    "ipython",
+    "ipyparallel",
+    "joblib",
+    "numexpr",
+    "dynesty",
+    "numba",
+    "numdifftools",
+    "tqdm>=4.56.0",
+    "colorama",
+    "omegaconf",
+    "ipywidgets",
+    "rich",
+    "packaging"
+]
+
+[project.optional-dependencies]
+tests = [
+    "pytest",
+    "pytest-codecov",
+]
+docs = [
+    "sphinx>=1.4",
+    "sphinx_rtd_theme",
+    "nbsphinx",
+    "sphinx-autoapi",
+]
+
+[project.urls]
+Homepage = "https://github.com/threeml/threeML"
+Documentation = "https://threeml.readthedocs.io"
+Repository = "https://github.com/threeML/threeML"
+"Bug Tracker" = "https://github.com/threeML/threeML/issues"
+"Source Code" = "https://github.com/threeML/threeML"
+
+[tool.setuptools]
+packages = [
+    "threeML",
+    "threeML.exceptions",
+    "threeML.bayesian",
+    "threeML.minimizer",
+    "threeML.utils",
+    "threeML.utils.OGIP",
+    "threeML.utils.spectrum",
+    "threeML.utils.polarization",
+    "threeML.utils.photometry",
+    "threeML.utils.time_series",
+    "threeML.utils.data_builders",
+    "threeML.utils.data_builders.fermi",
+    "threeML.utils.data_download",
+    "threeML.utils.data_download.Fermi_LAT",
+    "threeML.utils.data_download.Fermi_GBM",
+    "threeML.utils.fitted_objects",
+    "threeML.utils.statistics",
+    "threeML.plugins",
+    "threeML.classicMLE",
+    "threeML.catalogs",
+    "threeML.io",
+    "threeML.io.plotting",
+    "threeML.io.cern_root_utils",
+    "threeML.parallel",
+    "threeML.config",
+    "threeML.test",
+    "threeML.plugins.experimental",
+]
+include-package-data = true
+
+[tool.setuptools.package-data]
+threeML = ["threeML/data/*"]
+
+[tool.versioneer]
+VCS = "git"
+style = "pep440"
+versionfile_source = "threeML/_version.py"
+versionfile_build = "threeML/_version.py"
+tag_prefix = "v"
+parentdir_prefix = "threeML-"
+
+[tool.pytest.ini_options]
+markers = [
+    "slow: slow tests",
+]
+
+[tool.isort]
+profile = "black"

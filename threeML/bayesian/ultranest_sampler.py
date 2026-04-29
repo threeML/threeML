@@ -3,26 +3,23 @@ import os
 from typing import Optional
 
 import numpy as np
-from astromodels import ModelAssertionViolation, use_astromodels_memoization
+from astromodels import use_astromodels_memoization
+
 from threeML.bayesian.sampler_base import UnitCubeSampler
 from threeML.config.config import threeML_config
 from threeML.io.logging import setup_logger
 
 try:
-
     import ultranest
 
-except:
-
+except Exception:
     has_ultranest = False
 
 else:
-
     has_ultranest = True
 
 
 try:
-
     # see if we have mpi and/or are using parallel
 
     from mpi4py import MPI
@@ -34,10 +31,8 @@ try:
         rank = comm.Get_rank()
 
     else:
-
         using_mpi = False
-except:
-
+except Exception:
     using_mpi = False
 
 
@@ -49,7 +44,6 @@ log = setup_logger(__name__)
 
 class UltraNestSampler(UnitCubeSampler):
     def __init__(self, likelihood_model=None, data_list=None, **kwargs):
-
         assert has_ultranest, "You must install UltraNest to use this sampler"
 
         super(UltraNestSampler, self).__init__(likelihood_model, data_list, **kwargs)
@@ -66,36 +60,44 @@ class UltraNestSampler(UnitCubeSampler):
         **kwargs,
     ):
         """
-                set up the Ultranest sampler. Consult the documentation:
+        set up the Ultranest sampler. Consult the documentation:
+        https://johannesbuchner.github.io/UltraNest/ultranest.html?highlight=reactive#
+        ultranest.integrator.ReactiveNestedSampler
 
-                https://johannesbuchner.github.io/UltraNest/ultranest.html?highlight=reactive#ultranest.integrator.ReactiveNestedSampler
-
-                :param min_num_live_points: minimum number of live points throughout the run
-                :type min_num_live_points: int
-                :param dlogz: Target evidence uncertainty. This is the std between bootstrapped logz integrators.
-                :type dlogz: float
-                :param chain_name: where to store output files
-                :type chain_name:
-                :param resume:  ('resume', 'resume-similar', 'overwrite' or 'subfolder') –
+        :param min_num_live_points: minimum number of live points throughout the run
+        :type min_num_live_points: int
+        :param dlogz: Target evidence uncertainty. This is the std between bootstrapped
+        logz integrators.
+        :type dlogz: float
+        :param chain_name: where to store output files
+        :type chain_name:
+        :param resume:  ('resume', 'resume-similar', 'overwrite' or 'subfolder') –
         if ‘overwrite’, overwrite previous data.
         if ‘subfolder’, create a fresh subdirectory in log_dir.
-        if ‘resume’ or True, continue previous run if available. Only works when dimensionality, transform or likelihood are consistent.
-        if ‘resume-similar’, continue previous run if available. Only works when dimensionality and transform are consistent. If a likelihood difference is detected, the existing likelihoods are updated until the live point order differs. Otherwise, behaves like resume.
-                :type resume: str
-                :param wrapped_params:  (list of bools) – indicating whether this parameter wraps around (circular parameter).
-                :type wrapped_params:
-                :param stepsampler:
-                :type stepsampler:
-                :param use_mlfriends: Whether to use MLFriends+ellipsoidal+tellipsoidal region (better for multi-modal problems) or just ellipsoidal sampling (faster for high-dimensional, gaussian-like problems).
-                :type use_mlfriends: bool
-                :returns:
+        if ‘resume’ or True, continue previous run if available. Only works when
+        dimensionality, transform or likelihood are consistent.
+        if ‘resume-similar’, continue previous run if available. Only works when
+        dimensionality and transform are consistent. If a likelihood difference is
+        detected, the existing likelihoods are updated until the live point order
+        differs. Otherwise, behaves like resume.
+        :type resume: str
+        :param wrapped_params:  (list of bools) – indicating whether this parameter
+        wraps around (circular parameter).
+        :type wrapped_params:
+        :param stepsampler:
+        :type stepsampler:
+        :param use_mlfriends: Whether to use MLFriends+ellipsoidal+tellipsoidal region
+        (better for multi-modal problems) or just ellipsoidal sampling (faster for
+        high-dimensional, gaussian-like problems).
+        :type use_mlfriends: bool
+        :returns:
 
         """
 
         log.debug(
             f"Setup for UltraNest sampler: min_num_live_points:{min_num_live_points}, "
-            f"chain_name:{chain_name}, dlogz: {dlogz}, wrapped_params: {wrapped_params}. "
-            f"Other input: {kwargs}"
+            f"chain_name:{chain_name}, dlogz: {dlogz}, wrapped_params: {wrapped_params}"
+            f". Other input: {kwargs}"
         )
         self._kwargs = {}
         self._kwargs["min_num_live_points"] = min_num_live_points
@@ -107,7 +109,6 @@ class UltraNestSampler(UnitCubeSampler):
         self._wrapped_params = wrapped_params
 
         for k, v in kwargs.items():
-
             self._kwargs[k] = v
 
         self._use_mlfriends: bool = use_mlfriends
@@ -115,15 +116,11 @@ class UltraNestSampler(UnitCubeSampler):
         self._is_setup: bool = True
 
     def sample(self, quiet=False):
-        """
-        sample using the UltraNest numerical integration method
-        :rtype:
+        """Sample using the UltraNest numerical integration method :rtype:
 
         :returns:
-
         """
         if not self._is_setup:
-
             log.info("You forgot to setup the sampler!")
             return
 
@@ -150,24 +147,19 @@ class UltraNestSampler(UnitCubeSampler):
                 mcmc_chains_out_dir += s + "/"
 
             if using_mpi:
-
                 comm.Barrier()
 
                 # if we are running in parallel and this is not the
                 # first engine, then we want to wait and let everything finish
 
                 if rank == 0:
-
                     # create mcmc chains directory only on first engine
 
                     if not os.path.exists(mcmc_chains_out_dir):
                         log.debug(f"Create {mcmc_chains_out_dir} for ultranest output")
                         os.makedirs(mcmc_chains_out_dir)
 
-
-
             else:
-
                 if not os.path.exists(mcmc_chains_out_dir):
                     log.debug(f"Create {mcmc_chains_out_dir} for ultranest output")
                     os.makedirs(mcmc_chains_out_dir)
@@ -177,13 +169,12 @@ class UltraNestSampler(UnitCubeSampler):
         # see the demo in the examples folder!!
 
         if threeML_config["parallel"]["use_parallel"]:
-
             raise RuntimeError(
-                "If you want to run ultranest in parallel you need to use an ad-hoc method"
+                "If you want to run ultranest in parallel you need to use an ad-hoc "
+                "method"
             )
 
         else:
-
             resume = self._kwargs.pop("resume")
 
             sampler = ultranest.ReactiveNestedSampler(
@@ -197,7 +188,6 @@ class UltraNestSampler(UnitCubeSampler):
             )
 
             if self._kwargs["stepsampler"] is not None:
-
                 sampler.stepsampler = self._kwargs["stepsampler"]
 
             self._kwargs.pop("stepsampler")
@@ -205,7 +195,6 @@ class UltraNestSampler(UnitCubeSampler):
             # use a different region class
 
             if not self._use_mlfriends:
-
                 self._kwargs["region_class"] = ultranest.mlfriends.RobustEllipsoidRegion
 
             with use_astromodels_memoization(False):
@@ -216,7 +205,6 @@ class UltraNestSampler(UnitCubeSampler):
         process_fit = False
 
         if using_mpi:
-
             # if we are running in parallel and this is not the
             # first engine, then we want to wait and let everything finish
 
@@ -227,17 +215,12 @@ class UltraNestSampler(UnitCubeSampler):
                 process_fit = False
 
             else:
-
                 process_fit = True
 
-
-
         else:
-
             process_fit = True
 
         if process_fit:
-
             results = sampler.results
 
             self._sampler = sampler
