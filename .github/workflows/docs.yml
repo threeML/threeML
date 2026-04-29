@@ -534,7 +534,6 @@ jobs:
           pip3 install sphinx-rtd-dark-mode
           pip3 install -U sphinx
 
-
           sphinx-apidoc -f -o docs/api/ threeML -T
 
       - name: Set commit sha for RTD
@@ -550,8 +549,6 @@ jobs:
         with:
           name: api-stubs-for-${{ steps.set_commit_sha.outputs.commit_sha }}
           path: docs/api
-
-
 
 
   build_docs:
