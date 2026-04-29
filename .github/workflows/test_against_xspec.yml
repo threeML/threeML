@@ -120,10 +120,11 @@ jobs:
                   echo "Listing all libraries in xspec"
                   ls -l $HEADAS/lib/
 
-                  python -m pip install --upgrade pip wheel
+                  conda install pip wheel
                   ${{ matrix.extra_deps }}
                   ${{ matrix.astro_install }}
-                  pip install --upgrade flake8 coverage pytest-cov 
+                  pip install --upgrade ultranest dynesty
+                  pip install --upgrade flake8 coverage pytest-cov pytest
                   pip install -e .
 
             - name: Test xspec
@@ -185,7 +186,7 @@ jobs:
                   python -m pip install --upgrade pip wheel
                   ${{ matrix.extra_deps }}
                   ${{ matrix.astro_install }}
-                  pip install --upgrade flake8 coverage pytest-cov 
+                  pip install --upgrade flake8 coverage pytest-cov pytest
                   pip install -e .
               env:
                   ASTRO_XSPEC_VERSION: 12.15.1

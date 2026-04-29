@@ -41,7 +41,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                python-version: ["3.9","3.10","3.11"]
+                python-version: ["3.11","3.12","3.13"]
                 os: ["ubuntu-latest", "macos-latest", "macos-15-intel"]
         runs-on:  ${{ matrix.os }}
         steps:
@@ -69,6 +69,8 @@ jobs:
                   
                   pip install --upgrade flake8 coverage pytest-cov 
 
+                  pip install ultranest autoemcee zeus-mcmc
+ 
                   pip install -e .
               env:
                   ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
@@ -94,7 +96,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                python-version: ["3.9","3.10","3.11"]
+                python-version: ["3.11","3.12","3.13"]
                 os: [ "ubuntu-latest", "macos-latest", "macos-15-intel"]
         runs-on: ${{ matrix.os }}
         steps:
@@ -117,6 +119,7 @@ jobs:
                   # install astromodels dev directly without cloning
                   pip install git+https://github.com/threeML/astromodels.git@dev
                   pip install --upgrade flake8 coverage pytest-cov 
+                  pip install ultranest autoemcee zeus-mcmc
 
                   pip install -e .
             - name: Lint with flake8
@@ -144,17 +147,22 @@ jobs:
             fail-fast: false
             matrix:
                 os: ["ubuntu-latest", "macos-15-intel", "macos-latest"]
-                python-version: [3.9, 3.11]
+                python-version: ["3.11", "3.12", "3.13"]
                 include:
                   - environment: ci/environment_fermi.yml
                     architecture: x64
+                    channels: threeml, conda-forge,fermi
                   - environment: ci/environment_macos-latest.yml
                     architecture: arm64
                     os: macos-latest
+                    channels: threeml, conda-forge
                   - environment: ci/environment.yml
-                    os: macos-15-intel
-                    python-version: 3.9
-                    architecture: x64
+                    python-version: "3.12"
+                    channels: threeml/label/dev, conda-forge, https://heasarc.gsfc.nasa.gov/FTP/software/conda
+                  - environment: ci/environment.yml
+                    python-version: "3.13"
+                    channels: threeml/label/dev, conda-forge, https://heasarc.gsfc.nasa.gov/FTP/software/conda
+
         runs-on: ${{ matrix.os }}
         steps:
             - name: Checkout
@@ -173,7 +181,7 @@ jobs:
                   architecture: ${{ matrix.architecture }}
                   activate-environment: test_env
                   python-version: ${{ matrix.python-version }}
-                  channels: threeml, conda-forge, fermi
+                  channels: ${{ matrix.channels }}
                   environment-file: ${{ matrix.environment }}
                   use-only-tar-bz2: false
             - name: Init Env
@@ -188,17 +196,12 @@ jobs:
                   echo "Running on development branch: ${ISDEV} "
 
                   if [[ "${ISDEV}" == "true" ]]; then
-                  
-                  mamba install -c conda-forge -c threeml/label/dev "threeml/label/dev::astromodels"
-                  
+                    mamba install -c conda-forge -c threeml/label/dev "threeml/label/dev::astromodels"
                   fi
+
                   #pip install --upgrade speclite
                   #pip install fermipy 
 
-                  if [[ ${{matrix.python-version}} == 3.9 ]];
-                  then
-                    mamba install -c conda-forge "numpy<1.24"
-                  fi
               env:
                   ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
             - name: Conda list
@@ -218,13 +221,6 @@ jobs:
             - name: test it
               shell: bash -l {0}
               run: |
-                  if [[ ${{matrix.python-version}} != 3.9 || ${{matrix.os}} != macos-15-intel ]]; then
-
-                    wget https://raw.githubusercontent.com/fermi-lat/pyBurstAnalysisGUI/master/python/GtBurst/updater.py -O $CONDA_PREFIX/lib/python${{ matrix.python-version }}/site-packages/fermitools/GtBurst/updater.py
-                    python $CONDA_PREFIX/lib/python${{ matrix.python-version }}/site-packages/fermitools/GtBurst/updater.py
-                  
-                  fi
-
                   python -m pytest -vv --cov=threeML --cov-report=xml
 
               env:
@@ -274,11 +270,11 @@ jobs:
 
             - name: Install twine
               run: |
-                  python -m pip install twine
-                  pip install wheel setuptools -U
+                  pip install twine build
+                  pip install setuptools -U
             - name: Build package
               run: |
-                  python setup.py sdist bdist_wheel
+                python -m build --sdist --wheel
             - name: List result
               run: |
                   ls -lh dist

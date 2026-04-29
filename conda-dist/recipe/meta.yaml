@@ -1,0 +1,87 @@
+{% set name = "threeml" %}
+
+package:
+  name: {{ name }}
+  version: {{ os.environ.get('PKG_VERSION') }}
+
+source:
+  git_url: ../../
+  git_rev: HEAD
+  git_depth: 0
+
+build:
+  # Use build env Python
+  script: {{ PYTHON }} -m pip install . --no-deps --ignore-installed  --no-cache-dir --no-build-isolation -vvv
+  skip: true  # [win]
+
+requirements:
+  host:
+    - python
+    - pip
+    - setuptools
+    - wheel
+    - versioneer
+
+  run:
+    - python >=3.11,<3.14
+    - numpy >=1.26
+    - scipy >=1.11
+    - astropy
+    - pandas >=2.0,<3.0
+    - numexpr
+    - numba
+    - matplotlib
+    - uncertainties
+    - tqdm >=4.56.0
+    - omegaconf
+    - emcee >=3
+    - iminuit >=2
+    - astromodels >=2.5.1
+    - astroquery
+    - speclite
+    - ipyparallel
+    - ipython
+    - requests
+    - dill
+    - pyyaml >=5.1
+    - corner >=1.0.2
+    - numdifftools
+    - rich
+    - joblib
+
+  run_constrained:
+    # Make samplers optional to avoid solver conflicts on platforms
+    - multinest       # [not arm64]
+    - pymultinest     # [not arm64]
+    - ultranest       # [not arm64]
+    - dynesty
+    - chainconsumer
+    - zeus-mcmc
+
+test:
+  requires:
+    - pytest
+    - pytest-cov
+    - coverage
+    - pip
+  # Copy tests into the test workdir
+  source_files:
+    - threeML/
+    - pyproject.toml
+  commands:
+    # Ensure test modules are importable by ipyparallel engines
+    - export PYTHONPATH="$SRC_DIR:$PYTHONPATH"
+    - pytest -vv threeML/test --cov=threeML --cov-report=term
+
+about:
+  home: https://github.com/threeML/threeML
+  license: BSD-3-Clause
+  license_file: LICENSE
+  summary: The Multi-Mission Maximum Likelihood framework
+  dev_url: https://github.com/threeML/threeML
+  doc_url: https://threeml.readthedocs.io
+
+extra:
+  recipe-maintainers:
+    - omodei
+    - ndilalla

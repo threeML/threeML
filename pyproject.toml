@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools", "wheel", "versioneer[toml]"]
+requires = ["setuptools>=64", "versioneer[toml]"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -9,13 +9,13 @@ description = "The Multi-Mission Maximum Likelihood framework"
 readme = "README.md"
 license = "BSD-3-Clause"
 license-files = ["LICENSE"]
-requires-python = ">=3.9.0"
+requires-python = ">=3.11.0"
 authors = [
     {name = "Giacomo Vianello", email = "io@tu.com"}
 ]
 maintainers = [
-	    {name = "Niccolò Di Lalla", email = "niccolo.dilalla@stanford.edu"},
-        {name = "Nicola Omodei", email = "nicola.omodei@stanford.edu"}
+    {name = "Niccolò Di Lalla", email = "niccolo.dilalla@stanford.edu"},
+    {name = "Nicola Omodei", email = "nicola.omodei@stanford.edu"}
 ]
 keywords = [
     "Likelihood",
@@ -33,13 +33,14 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Astronomy",
     "Intended Audience :: Science/Research",
     "Operating System :: POSIX",
-    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Environment :: Console",
 ]
 dependencies = [
-    "numpy>=1.16",
-    "scipy>=1.4",
-    "emcee>=3",
+    "numpy>=1.26",
+    "scipy>=1.11",
     "astropy",
     "matplotlib",
     "uncertainties",
@@ -56,18 +57,22 @@ dependencies = [
     "ipyparallel",
     "joblib",
     "numexpr",
-    "dynesty",
     "numba",
     "numdifftools",
     "tqdm>=4.56.0",
-    "colorama",
     "omegaconf",
-    "ipywidgets",
     "rich",
     "packaging"
 ]
 
 [project.optional-dependencies]
+samplers = [
+    "dynesty",
+    "pymultinest",
+    "chainconsumer",
+    "zeus-mcmc",
+    "ultranest",
+]
 tests = [
     "pytest",
     "pytest-codecov",
@@ -87,39 +92,13 @@ Repository = "https://github.com/threeML/threeML"
 "Source Code" = "https://github.com/threeML/threeML"
 
 [tool.setuptools]
-packages = [
-    "threeML",
-    "threeML.exceptions",
-    "threeML.bayesian",
-    "threeML.minimizer",
-    "threeML.utils",
-    "threeML.utils.OGIP",
-    "threeML.utils.spectrum",
-    "threeML.utils.polarization",
-    "threeML.utils.photometry",
-    "threeML.utils.time_series",
-    "threeML.utils.data_builders",
-    "threeML.utils.data_builders.fermi",
-    "threeML.utils.data_download",
-    "threeML.utils.data_download.Fermi_LAT",
-    "threeML.utils.data_download.Fermi_GBM",
-    "threeML.utils.fitted_objects",
-    "threeML.utils.statistics",
-    "threeML.plugins",
-    "threeML.classicMLE",
-    "threeML.catalogs",
-    "threeML.io",
-    "threeML.io.plotting",
-    "threeML.io.cern_root_utils",
-    "threeML.parallel",
-    "threeML.config",
-    "threeML.test",
-    "threeML.plugins.experimental",
-]
 include-package-data = true
 
+[tool.setuptools.packages.find]
+include = ["threeML*"]
+
 [tool.setuptools.package-data]
-threeML = ["threeML/data/*"]
+threeML = ["data/*", "data/**/*"]
 
 [tool.versioneer]
 VCS = "git"
