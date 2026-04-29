@@ -42,9 +42,9 @@ from threeML.utils.time_series.time_series import TimeSeries
 log = setup_logger(__name__)
 
 try:
-    from polarpy.polar_data import POLARData
-    from polarpy.polar_response import PolarResponse
-    from polarpy.polarlike import PolarLike
+    from polpy.poldata import PolData
+    from polpy.polresponse import PolResponse
+    from polpy.polarizationlike import PolarizationLike
 
     log.debug("POLAR plugins are available")
 
@@ -1313,7 +1313,7 @@ class TimeSeriesBuilder(object):
         )
 
     @classmethod
-    def from_polar_spectrum(
+    def from_pol_spectrum(
         cls,
         name,
         polevents,
@@ -1332,19 +1332,19 @@ class TimeSeriesBuilder(object):
 
         # extract spectral response
         hdu_spec = fits.open(specrsp)
-        mc_low = hdu_spec['MATRIX'].data.field('ENERG_LO')
-        mc_high = hdu_spec['MATRIX'].data.field('ENERG_HI')
+        mc_low = hdu_spec["MATRIX"].data.field("ENERG_LO")
+        mc_high = hdu_spec["MATRIX"].data.field("ENERG_HI")
         ebounds = np.append(mc_low, mc_high[-1])
-        matrix = hdu_spec['MATRIX'].data.field('MATRIX')
+        matrix = hdu_spec["MATRIX"].data.field("MATRIX")
         matrix = matrix.transpose()
         mc_energies = np.append(mc_low, mc_high[-1])
 
-        specrsp = InstrumentResponse(matrix=matrix, ebounds=ebounds, monte_carlo_energies=mc_energies)
+        specrsp = InstrumentResponse(
+            matrix=matrix, ebounds=ebounds, monte_carlo_energies=mc_energies
+        )
 
         # extract the polarization variables
-        polarization_data = PolData(
-            polevents, reference_time=trigger_time
-        )
+        polarization_data = PolData(polevents, reference_time=trigger_time)
 
         # Create the the event list
 
@@ -1364,7 +1364,7 @@ class TimeSeriesBuilder(object):
         return cls(
             name,
             event_list,
-            response= specrsp,
+            response=specrsp,
             poly_order=poly_order,
             unbinned=unbinned,
             verbose=verbose,
@@ -1373,7 +1373,7 @@ class TimeSeriesBuilder(object):
         )
 
     @classmethod
-    def from_polar_polarization(
+    def from_polarization(
         cls,
         name,
         polevents,
@@ -1392,9 +1392,8 @@ class TimeSeriesBuilder(object):
 
         # extract the polar varaibles
 
-        polarization_data = PolData(
-            polevents, trigger_time)
-        
+        polarization_data = PolData(polevents, trigger_time)
+
         # get the pa offset
         cls._pa_offset = polarization_data.get_pa_offset()
 
@@ -1411,13 +1410,13 @@ class TimeSeriesBuilder(object):
             first_channel=1,
             mission=polarization_data.mission,
             instrument=polarization_data.instrument,
-            edges=np.arange(0,361,1)
+            edges=np.arange(0, 361, 1),
         )
 
         return cls(
             name,
             event_list,
-            response=polar_hdf5_response,
+            response=polrsp,
             poly_order=poly_order,
             unbinned=unbinned,
             verbose=verbose,
@@ -1425,7 +1424,7 @@ class TimeSeriesBuilder(object):
             container_type=BinnedModulationCurve,
         )
 
-    def to_polarlike(
+    def to_polarizationlike(
         self,
         from_bins=False,
         start=None,
@@ -1459,7 +1458,7 @@ class TimeSeriesBuilder(object):
                     " background!"
                 )
 
-            return PolarLike(
+            return PolarizationLike(
                 name=self._name,
                 observation=self._observed_spectrum,
                 background=this_background_spectrum,
