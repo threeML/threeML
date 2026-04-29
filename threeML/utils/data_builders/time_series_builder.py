@@ -1447,7 +1447,6 @@ class TimeSeriesBuilder(object):
         name,
         polevents,
         specrsp,
-        polrsp=None,
         restore_background=None,
         trigger_time=0.0,
         poly_order=-1,
@@ -1462,10 +1461,20 @@ class TimeSeriesBuilder(object):
 
         # self._default_unbinned = unbinned
 
-        # extract the polarization variables
+        # extract spectral response
+        hdu_spec = fits.open(specrsp)
+        mc_low = hdu_spec['MATRIX'].data.field('ENERG_LO')
+        mc_high = hdu_spec['MATRIX'].data.field('ENERG_HI')
+        ebounds = np.append(mc_low, mc_high[-1])
+        matrix = hdu_spec['MATRIX'].data.field('MATRIX')
+        matrix = matrix.transpose()
+        mc_energies = np.append(mc_low, mc_high[-1])
 
+        specrsp = InstrumentResponse(matrix=matrix, ebounds=ebounds, monte_carlo_energies=mc_energies)
+
+        # extract the polarization variables
         polarization_data = PolData(
-            polevents, polrsp, specrsp, reference_time=trigger_time
+            polevents, reference_time=trigger_time
         )
 
         # Create the the event list
@@ -1486,7 +1495,7 @@ class TimeSeriesBuilder(object):
         return cls(
             name,
             event_list,
-            response=polarization_data.rsp,
+            response= specrsp,
             poly_order=poly_order,
             unbinned=unbinned,
             verbose=verbose,
@@ -1500,7 +1509,6 @@ class TimeSeriesBuilder(object):
         name,
         polevents,
         polrsp,
-        specrsp=None,
         restore_background=None,
         trigger_time=0.0,
         poly_order=-1,
@@ -1518,7 +1526,7 @@ class TimeSeriesBuilder(object):
         # extract the polar varaibles
 
         polarization_data = PolData(
-            polevents, polrsp, specrsp, trigger_time)
+            polevents, trigger_time)
         
         # get the pa offset
         cls._pa_offset = polarization_data.get_pa_offset()
@@ -1536,7 +1544,7 @@ class TimeSeriesBuilder(object):
             first_channel=1,
             mission=polarization_data.mission,
             instrument=polarization_data.instrument,
-            edges=polarization_data.scattering_edges,
+            edges=np.arange(0,361,1)
         )
 
         return cls(
