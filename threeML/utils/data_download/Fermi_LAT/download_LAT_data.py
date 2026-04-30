@@ -93,12 +93,9 @@ def merge_LAT_data(
 
     infile: Path = Path(destination_directory) / _filelist
 
-    infile_list = infile.open("w")
-
-    for ft1 in ft1s:
-        infile_list.write(str(ft1) + "\n")
-
-    infile_list.close()
+    with open(infile, "w") as infile_list:
+        for ft1 in ft1s:
+            infile_list.write(str(ft1) + "\n")
 
     from GtApp import GtApp
 
