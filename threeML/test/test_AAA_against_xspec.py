@@ -1,35 +1,9 @@
-import os
-
-# NOTE: XSpec must be loaded before any other plugin/package from threeML because
-# otherwise it could complain about conflicting CFITSIO libraries
-
-if os.environ.get("HEADAS") is not None:
-    # Try to import xspec
-
-    try:
-        import xspec
-
-    except ImportError:
-        has_pyxspec = False
-
-    else:
-        has_pyxspec = True
-
-else:
-    has_pyxspec = False
-
-import os
-
 import numpy as np
 import pytest
 from astromodels import Powerlaw
 
 from threeML.io.package_data import get_path_of_data_file
 from threeML.utils.OGIP.response import InstrumentResponse, OGIPResponse
-
-skip_if_pyxspec_is_not_available = pytest.mark.skipif(
-    not has_pyxspec, reason="No pyXspec installed"
-)
 
 
 def get_matrix_elements():
@@ -49,8 +23,8 @@ def get_matrix_elements():
     return matrix, mc_energies, ebounds
 
 
-@skip_if_pyxspec_is_not_available
 def test_OGIP_response_against_xspec():
+    xspec = pytest.importorskip("xspec")
     # Test for various photon indexes
     for index in [-0.5, 0.0, 0.5, 1.5, 2.0, 3.0, 4.0]:
         print("Processing index %s" % index)
@@ -149,14 +123,14 @@ def test_OGIP_response_against_xspec():
         assert np.allclose(xspec_counts, threeML_counts)
 
 
-@skip_if_pyxspec_is_not_available
-def test_response_against_xspec():
+def test_response_against_xspec(tmp_path):
+    xspec = pytest.importorskip("xspec")
     # Make a response and write to a FITS OGIP file
     matrix, mc_energies, ebounds = get_matrix_elements()
 
     rsp = InstrumentResponse(matrix, ebounds, mc_energies)
 
-    temp_file = "__test.rsp"
+    temp_file = tmp_path / "__test.rsp"
 
     rsp.to_fits(temp_file, "TEST", "TEST", overwrite=True)
 
@@ -210,7 +184,7 @@ def test_response_against_xspec():
         # Get path of response file
 
         fs1 = xspec.FakeitSettings(
-            temp_file, exposure=1.0, fileName="_fake_spectrum.pha"
+            str(temp_file), exposure=1.0, fileName=str(tmp_path / "_fake_spectrum.pha")
         )
 
         xspec.AllData.fakeit(noWrite=True, applyStats=False, settings=fs1)
@@ -226,5 +200,3 @@ def test_response_against_xspec():
 
         # Compare them
         assert np.allclose(xspec_counts, threeML_counts)
-
-    os.remove(temp_file)
