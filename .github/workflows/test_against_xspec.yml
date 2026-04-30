@@ -43,7 +43,7 @@ jobs:
 
             - name: Add conda to system path (conda jobs only)
               if: matrix.use_conda
-              uses: conda-incubator/setup-miniconda@v3
+              uses: conda-incubator/setup-miniconda@v4
               with:
                   activate-environment: "test_env"
                   auto-activate: false
@@ -165,7 +165,7 @@ jobs:
               uses: actions/checkout@v4
 
             - name: Add conda to system path
-              uses: conda-incubator/setup-miniconda@v3
+              uses: conda-incubator/setup-miniconda@v4
               with:
                   activate-environment: "test_env"
                   auto-activate: false

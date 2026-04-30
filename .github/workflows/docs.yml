@@ -24,7 +24,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup Miniconda
-        uses: conda-incubator/setup-miniconda@v3
+        uses: conda-incubator/setup-miniconda@v4
         with:
              auto-update-conda: true
              auto-activate: false
@@ -107,7 +107,7 @@ jobs:
           key: conda-hal_notebooks-python-3.11-${{ hashFiles('ci/environment_hal.yml') }}
 
       - name: Setup Miniconda
-        uses: conda-incubator/setup-miniconda@v3
+        uses: conda-incubator/setup-miniconda@v4
         with:
           auto-update-conda: true
           auto-activate: false
@@ -177,7 +177,7 @@ jobs:
           key: conda-fermi_notebooks-python-3.11-${{ hashFiles('ci/environment_fermi.yml') }}
 
       - name: Setup Miniconda
-        uses: conda-incubator/setup-miniconda@v3
+        uses: conda-incubator/setup-miniconda@v4
         with:
           auto-update-conda: true
           auto-activate: false
@@ -256,7 +256,7 @@ jobs:
           key: conda-xspec_notebooks-python-3.11-${{ hashFiles('ci/environment_xspec.yml') }}
 
       - name: Setup Miniconda
-        uses: conda-incubator/setup-miniconda@v3
+        uses: conda-incubator/setup-miniconda@v4
         with:
           auto-update-conda: true
           auto-activate: false
@@ -328,7 +328,7 @@ jobs:
           key: conda-multinest_notebooks-python-3.11-${{ hashFiles('ci/environment.yml') }}
 
       - name: Setup Miniconda
-        uses: conda-incubator/setup-miniconda@v3
+        uses: conda-incubator/setup-miniconda@v4
         with:
           auto-update-conda: true
           auto-activate: false
