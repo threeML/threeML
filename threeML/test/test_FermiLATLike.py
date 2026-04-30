@@ -1,3 +1,4 @@
+from pathlib import Path
 import astropy.units as u
 import matplotlib.pyplot as plt
 import pytest
@@ -129,6 +130,9 @@ def test_make_LAT_dataset():
     # plt.ylim(1e-12, 1e-3)
     # plt.show()
     # myplug.display()
+    analysis_builder.clean_up_data(force=True)
+    (Path.cwd() / myLATdataset.grb_name).unlink()
+    (Path.cwd() / myLATdataset.filt_file).unlink()
 
 
 if __name__ == "__main__":
