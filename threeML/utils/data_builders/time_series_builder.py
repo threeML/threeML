@@ -46,14 +46,14 @@ try:
     from polpy.polresponse import PolResponse
     from polpy.polarizationlike import PolarizationLike
 
-    log.debug("POLAR plugins are available")
+    log.debug("PolPy plugin is available")
 
-    has_polarpy = True
+    has_polpy = True
 
 except ImportError:
-    log.debug("POLAR plugins are unavailable")
+    log.debug("PolPy plugin is unavailable")
 
-    has_polarpy = False
+    has_polpy = False
 
 try:
     import gbm_drm_gen
@@ -1324,8 +1324,8 @@ class TimeSeriesBuilder(object):
         unbinned=True,
         verbose=True,
     ):
-        if not has_polarpy:
-            log.error("The polarpy module is not installed")
+        if not has_polpy:
+            log.error("The PolPy module is not installed")
             raise RuntimeError()
 
         # self._default_unbinned = unbinned
@@ -1384,8 +1384,8 @@ class TimeSeriesBuilder(object):
         unbinned=True,
         verbose=True,
     ):
-        if not has_polarpy:
-            log.error("The polarpy module is not installed")
+        if not has_polpy:
+            log.error("The PolPy module is not installed")
             raise RuntimeError()
 
         # self._default_unbinned = unbinned
@@ -1407,10 +1407,10 @@ class TimeSeriesBuilder(object):
             stop_time=polarization_data.scattering_angle_time.max(),
             dead_time_fraction=polarization_data.scattering_angle_dead_time_fraction,
             verbose=verbose,
-            first_channel=1,
+            first_channel=0,
             mission=polarization_data.mission,
             instrument=polarization_data.instrument,
-            edges=np.arange(0, 361, 1),
+            edges=polarization_data.scattering_edges
         )
 
         return cls(
@@ -1432,7 +1432,7 @@ class TimeSeriesBuilder(object):
         interval_name="_interval",
         extract_measured_background=False,
     ):
-        assert has_polarpy, "you must have the polarpy module installed"
+        assert has_polpy, "you must have the PolPy module installed"
 
         assert issubclass(
             self._container_type, BinnedModulationCurve
@@ -1463,9 +1463,7 @@ class TimeSeriesBuilder(object):
                 observation=self._observed_spectrum,
                 background=this_background_spectrum,
                 response=self._response,
-                verbose=self._verbose,
-                #                 tstart=self._tstart,
-                #                 tstop=self._tstop
+                verbose=self._verbose
             )
 
         else:
