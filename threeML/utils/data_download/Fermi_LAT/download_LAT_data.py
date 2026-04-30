@@ -520,7 +520,6 @@ class LAT_dataset:
     def __init__(self):
         self.ft1 = None
         self.ft2 = None
-        pass
 
     def make_LAT_dataset(
         self,
@@ -534,7 +533,7 @@ class LAT_dataset:
         destination_directory: str = ".",
         Emin: float = 30.0,
         Emax: float = 1000000.0,
-    ):
+    ) -> None:
         self.trigger_time = trigger_time
         self.ra = ra
         self.dec = dec
@@ -609,7 +608,6 @@ class LAT_dataset:
         self.ft1 = new_ft1
         self.ft2 = new_ft2
         self.rspfile = eboundsFilename
-        pass
 
     def extract_events(
         self, roi, zmax, irf, thetamax=180.0, strategy="time", data_quality=True
