@@ -307,7 +307,7 @@ class SpectrumLike(PluginPrototype):
 
         if self._background_spectrum is not None:
 
-            tmp_bkg_count_errors = self._background_spectrum.count_errors
+            tmp_bkg_count_errors = self._background_spectrum.combined_count_errors
 
         count_errors_lookup = {
             "poisson": {
@@ -318,10 +318,10 @@ class SpectrumLike(PluginPrototype):
             # gaussian source
             "gaussian": {
                 "gaussian": (
-                    self._observed_spectrum.count_errors,
+                    self._observed_spectrum.combined_count_errors,
                     tmp_bkg_count_errors,
                 ),
-                None: (self._observed_spectrum.count_errors, None),
+                None: (self._observed_spectrum.combined_count_errors, None),
             },
         }
 
@@ -348,15 +348,14 @@ class SpectrumLike(PluginPrototype):
 
             # if the errors are not None then we want to make sure they make sense
             if errors is not None:
-
                 zero_idx = errors == 0  # type: np.ndarray
 
                 # check that zero error => zero counts
                 if not np.all(errors[zero_idx] == counts[zero_idx]):
 
                     log.error(
-                        f"Error in {name} spectrum: if the error on the background is "
-                        "zero, also the expected background counts must be zero"
+                        f"Error in {name} spectrum: if the error on the {name} spectrum "
+                        "is zero, also the expected {name} counts must be zero"
                     )
 
                     raise RuntimeError()
