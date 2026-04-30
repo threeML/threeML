@@ -6,6 +6,7 @@ import site
 import subprocess
 import uuid
 from glob import glob
+from pathlib import Path
 
 import pandas as pd
 import yaml
@@ -639,6 +640,9 @@ class TransientLATDataBuilder(object):
 
         self._process_keywords(**init_values)
 
+        # list to keep track of created dirs so we can clean them up afterwards
+        self._created_dirs = set()
+
     def _process_keywords(self, **kwargs):
         """Processes the keywords from a dictionary likely loaded from a yaml
         config.
@@ -830,6 +834,7 @@ class TransientLATDataBuilder(object):
                         raise AssertionError()
 
                     shutil.copy(base_ft2_file, interval)
+                    self._created_dirs.add(Path.cwd() / interval)
 
                     ft2_file = os.path.join(
                         interval, "gll_ft2_tr_bn%s_v00.fit" % self._triggername
@@ -930,6 +935,22 @@ class TransientLATDataBuilder(object):
 
         with open(filename, "w") as outfile:
             yaml.dump(data, outfile, default_flow_style=False)
+
+    def clean_up_data(self, force=False) -> None:
+        """Removes the used data fully!"""
+        if force:
+            asw = "y"
+        else:  # pragma: no cover
+            asw = input(
+                "Do you really want to delete all downloaded files and GtBurst interval "
+                "directories? [y/n]: "
+            )
+
+        if asw.lower() == "y":
+            shutil.rmtree(self.datarepository.get_disp_value())
+            for e in self._created_dirs:
+                print(e)
+                shutil.rmtree(str(e))
 
     @classmethod
     def from_saved_configuration(cls, triggername, config_file):
