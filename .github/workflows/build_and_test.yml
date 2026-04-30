@@ -42,7 +42,7 @@ jobs:
             fail-fast: false
             matrix:
                 python-version: ["3.11","3.12","3.13"]
-                os: ["ubuntu-latest", "macos-latest", "macos-15-intel"]
+                os: ["ubuntu-latest", "macos-latest", "macos-15-intel","ubuntu-24.04-arm"]
         runs-on:  ${{ matrix.os }}
         steps:
             - name: Checkout
@@ -97,7 +97,7 @@ jobs:
             fail-fast: false
             matrix:
                 python-version: ["3.11","3.12","3.13"]
-                os: [ "ubuntu-latest", "macos-latest", "macos-15-intel"]
+                os: [ "ubuntu-latest", "macos-latest", "macos-15-intel", "ubuntu-24.04-arm"]
         runs-on: ${{ matrix.os }}
         steps:
             - name: Checkout
@@ -146,7 +146,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                os: ["ubuntu-latest", "macos-15-intel", "macos-latest"]
+                os: ["ubuntu-latest", "macos-15-intel", "macos-latest","ubuntu-24.04-arm]
                 python-version: ["3.11", "3.12", "3.13"]
                 include:
                   - environment: ci/environment_fermi.yml
@@ -162,6 +162,10 @@ jobs:
                   - environment: ci/environment.yml
                     python-version: "3.13"
                     channels: threeml/label/dev, conda-forge, https://heasarc.gsfc.nasa.gov/FTP/software/conda
+                  - environment: ci/environment_aarch64.yml
+                    os: ubuntu-24.04-arm
+                    channels: threeml/label/dev, conda-forge, fermi
+
 
         runs-on: ${{ matrix.os }}
         steps:
