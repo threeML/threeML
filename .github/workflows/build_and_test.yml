@@ -150,10 +150,8 @@ jobs:
                 python-version: ["3.11", "3.12", "3.13"]
                 include:
                   - environment: ci/environment_fermi.yml
-                    architecture: x64
                     channels: threeml, conda-forge,fermi
                   - environment: ci/environment_macos-latest.yml
-                    architecture: arm64
                     os: macos-latest
                     channels: threeml, conda-forge
                   - environment: ci/environment.yml
@@ -181,13 +179,13 @@ jobs:
               with:
                   auto-update-conda: true
                   auto-activate: false
-                  mamba-version: "*"
-                  architecture: ${{ matrix.architecture }}
+                  miniforge-version: latest
                   activate-environment: test_env
                   python-version: ${{ matrix.python-version }}
                   channels: ${{ matrix.channels }}
                   environment-file: ${{ matrix.environment }}
                   use-only-tar-bz2: false
+
             - name: Init Env
               shell: bash -l {0}
               run: |
