@@ -11,6 +11,8 @@ import numpy as np
 from matplotlib import colormaps
 from matplotlib.colors import SymLogNorm
 
+from astromodels.core.units import get_units
+
 from threeML.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import (
@@ -56,6 +58,7 @@ class InstrumentResponse(object):
         ebounds: np.ndarray,
         monte_carlo_energies: np.ndarray,
         coverage_interval: Optional[TimeInterval] = None,
+        energy_unit: Union[str, u.Unit] = "keV",
     ):
         """Generic response class that accepts a full matrix, detector energy
         boundaries (ebounds) and monte carlo energies, and an optional coverage
@@ -81,6 +84,9 @@ class InstrumentResponse(object):
         """
 
         # we simply store all the variables to the class
+        if not isinstance(energy_unit, u.Unit):
+            energy_unit = u.Unit(energy_unit)
+        self._energy_unit = energy_unit
 
         self._matrix: np.ndarray = np.array(matrix, float)
         self._matrix_transpose: np.ndarray = self._matrix.T
@@ -91,9 +97,13 @@ class InstrumentResponse(object):
 
             raise RuntimeError()
 
-        self._ebounds: np.ndarray = np.array(ebounds, float)
+        self._ebounds: np.ndarray = (
+            (np.array(ebounds, float) * energy_unit).to(get_units().energy).value
+        )
 
-        self._monte_carlo_energies: np.ndarray = np.array(monte_carlo_energies)
+        self._monte_carlo_energies: np.ndarray = (
+            (np.array(monte_carlo_energies) * energy_unit).to(get_units().energy).value
+        )
 
         self._integral_function: Optional[Callable] = None
 
@@ -154,9 +164,11 @@ class InstrumentResponse(object):
 
     @property
     def first_channel(self) -> int:
-        # This is needed to write to PHA files. We use always 1 (and consistently we
-        # always use 1 in the MATRIX files too, to avoid confusion (and because XSpec
-        # default is 1)
+        """
+        This is needed to write to PHA files. We use always 1 (and consistently we
+        always use 1 in the MATRIX files too, to avoid confusion (and because XSpec
+        default is 1)
+        """
 
         return 1
 
@@ -204,12 +216,22 @@ class InstrumentResponse(object):
 
     @property
     def monte_carlo_energies(self) -> np.ndarray:
-        """Returns the boundaries of the Monte Carlo bins (true energy bins)
+        """
+        Returns the boundaries of the Monte Carlo bins (true energy bins)
 
         :return: array
         """
 
         return self._monte_carlo_energies
+
+    @property
+    def energy_unit(self) -> u.Unit:
+        """
+        Returns the original energy of the response
+
+        :return: astropy.units.Unit
+        """
+        return self._energy_unit
 
     def set_function(self, integral_function=None) -> None:
         """Set the function to be used for the convolution.
@@ -222,16 +244,15 @@ class InstrumentResponse(object):
         self._integral_function = integral_function
 
     def convolve(self, precalc_fluxes: Optional[np.array] = None) -> np.ndarray:
-        """Convolve the source flux with the response :param precalc_fluxes:
-        The precalulated flux.
+        """
+        Convolve the source flux with the response
 
-        If this is None, the flux gets calculated here.
+        :param precalc_fluxes: The precalulated flux. If this is None, the flux gets
+            calculated here.
         """
         if precalc_fluxes is None:
             try:
-                fluxes = self._integral_function(
-                    # self._monte_carlo_energies[:-1], self._monte_carlo_energies[1:]
-                )
+                fluxes = self._integral_function()
             except TypeError:
                 fluxes = self._integral_function(
                     self._monte_carlo_energies[:-1],
@@ -254,27 +275,37 @@ class InstrumentResponse(object):
 
         return folded_counts
 
-    def energy_to_channel(self, energy: float) -> int:
+    def energy_to_channel(self, energy: Union[float, u.Quantity]) -> int:
         """Finds the channel containing the provided energy.
+
         NOTE: returns the channel index (starting at zero),
         not the channel number (likely starting from 1).
 
         If you ask for a energy lower than the minimum ebounds, 0 will be returned
         If you ask for a energy higher than the maximum ebounds, the last channel index
         will be returned
+
+        :param energy: energy, must be float or astropy unit - if float then assume
+            current astromodels energy
+        :type energy: float or astropy.units.Unit
         """
 
         # Get the index of the first ebounds upper bound larger than energy
         # (but never go below zero or above the last channel)
+
+        if isinstance(energy, u.Quantity):
+            energy = energy.to(get_units().energy).value
+
         idx = min(
             max(0, np.searchsorted(self._ebounds, energy) - 1),
             len(self._ebounds) - 1,
         )
-
         return idx
 
     def plot_matrix(self) -> plt.Figure:
-        """"""
+        """
+        Plot the response matrix
+        """
 
         fig, ax = plt.subplots()
 
@@ -288,16 +319,6 @@ class InstrumentResponse(object):
 
         if self._ebounds[0] == 0:
             idx_eb = 1
-
-        # ax.imshow(image[idx_eb:, idx_mc:], extent=(self._ebounds[idx_eb],
-        #                                            self._ebounds[-1],
-        #                                            self._monte_carlo_energies[idx_mc],
-        #                                            self._monte_carlo_energies[-1]),
-        #           aspect='equal',
-        #           cmap=cm.BrBG_r,
-        #           origin='lower',
-        #           norm=SymLogNorm(1.0, 1.0, vmin=self._matrix.min(),
-        #               vmax=self._matrix.max()))
 
         # Find minimum non-zero element
         vmin = self._matrix[self._matrix > 0].min()
@@ -350,12 +371,18 @@ class InstrumentResponse(object):
 
         filename: Path = sanitize_filename(filename, abspath=True)
 
+        mc_energies = (
+            (self.monte_carlo_energies * get_units().energy).to(self._energy_unit).value
+        )
+        ebounds = (self.ebounds * get_units().energy).to(self._energy_unit).value
+
         fits_file = RSP(
-            self.monte_carlo_energies,
-            self.ebounds,
+            mc_energies,
+            ebounds,
             self.matrix,
             telescope_name,
             instrument_name,
+            energy_unit=self._energy_unit,
         )
 
         fits_file.writeto(filename, overwrite=overwrite)
@@ -958,12 +985,22 @@ class InstrumentResponseSet(object):
         # Now generate the instance of the response
 
         # get EBOUNDS from the first matrix
-        ebounds = self._matrix_list[0].ebounds
+        energy_unit = self._matrix_list[0].energy_unit
+
+        ebounds = (
+            (self._matrix_list[0].ebounds * get_units().energy).to(energy_unit).value
+        )
 
         # Get mc channels from the first matrix
-        mc_channels = self._matrix_list[0].monte_carlo_energies
+        mc_channels = (
+            (self._matrix_list[0].monte_carlo_energies * get_units().energy)
+            .to(energy_unit)
+            .value
+        )
 
-        matrix_instance = InstrumentResponse(matrix, ebounds, mc_channels)
+        matrix_instance = InstrumentResponse(
+            matrix, ebounds, mc_channels, energy_unit=energy_unit
+        )
 
         return matrix_instance
 
@@ -1200,7 +1237,7 @@ class MATRIX(FITSExtension):
         ("TLMIN4", 1, "Minimum legal channel number"),
     ]
 
-    def __init__(self, mc_energies, channel_energies, matrix):
+    def __init__(self, mc_energies, channel_energies, matrix, energy_unit="keV"):
         n_mc_channels = len(mc_energies) - 1
         n_channels = len(channel_energies) - 1
 
@@ -1220,8 +1257,8 @@ class MATRIX(FITSExtension):
         # length
 
         data_tuple = (
-            ("ENERG_LO", mc_energies[:-1] * u.keV),
-            ("ENERG_HI", mc_energies[1:] * u.keV),
+            ("ENERG_LO", mc_energies[:-1] * u.Unit(energy_unit)),
+            ("ENERG_HI", mc_energies[1:] * u.Unit(energy_unit)),
             ("N_GRP", ones),
             ("F_CHAN", ones),
             ("N_CHAN", np.ones(n_mc_channels, np.int16) * n_channels),
@@ -1246,11 +1283,13 @@ class SPECRESP_MATRIX(MATRIX):
         dispersion effects and effective area information
     """
 
-    def __init__(self, mc_energies, channel_energies, matrix):
+    def __init__(self, mc_energies, channel_energies, matrix, energy_unit="keV"):
         # This is essentially exactly the same as MATRIX, but with a different extension
         # name
 
-        super(SPECRESP_MATRIX, self).__init__(mc_energies, channel_energies, matrix)
+        super(SPECRESP_MATRIX, self).__init__(
+            mc_energies, channel_energies, matrix, energy_unit=energy_unit
+        )
 
         # Change the extension name
         self.hdu.header.set("EXTNAME", "SPECRESP MATRIX")
@@ -1261,7 +1300,15 @@ class RMF(FITSFile):
     """A RMF file, the OGIP format for a matrix representing energy dispersion
     effects."""
 
-    def __init__(self, mc_energies, ebounds, matrix, telescope_name, instrument_name):
+    def __init__(
+        self,
+        mc_energies,
+        ebounds,
+        matrix,
+        telescope_name,
+        instrument_name,
+        energy_unit="keV",
+    ):
         # Make sure that the provided iterables are of the right type for the FITS
         # format
 
@@ -1273,7 +1320,7 @@ class RMF(FITSFile):
         ebounds_ext = EBOUNDS(ebounds)
 
         # Create MATRIX extension
-        matrix_ext = MATRIX(mc_energies, ebounds, matrix)
+        matrix_ext = MATRIX(mc_energies, ebounds, matrix, energy_unit=energy_unit)
 
         # Set telescope and instrument name
         matrix.hdu.header.set("TELESCOP", telescope_name)
@@ -1287,7 +1334,15 @@ class RSP(FITSFile):
     """A response file, the OGIP format for a matrix representing both energy
     dispersion effects and effective area, in the same matrix."""
 
-    def __init__(self, mc_energies, ebounds, matrix, telescope_name, instrument_name):
+    def __init__(
+        self,
+        mc_energies,
+        ebounds,
+        matrix,
+        telescope_name,
+        instrument_name,
+        energy_unit="keV",
+    ):
         # Make sure that the provided iterables are of the right type for the FITS
         # format
 
@@ -1299,7 +1354,9 @@ class RSP(FITSFile):
         ebounds_ext = EBOUNDS(ebounds)
 
         # Create MATRIX extension
-        matrix_ext = SPECRESP_MATRIX(mc_energies, ebounds, matrix)
+        matrix_ext = SPECRESP_MATRIX(
+            mc_energies, ebounds, matrix, energy_unit=energy_unit
+        )
 
         # Set telescope and instrument name
         matrix_ext.hdu.header.set("TELESCOP", telescope_name)
