@@ -1,9 +1,11 @@
+import logging
+
 from pathlib import Path
 from typing import Optional, Union
 
 import pandas as pd
 
-from threeML.io.logging import setup_logger
+
 from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
 from threeML.plugins.SpectrumLike import SpectrumLike
 from threeML.plugins.XYLike import XYLike
@@ -12,7 +14,7 @@ from threeML.utils.spectrum.pha_spectrum import PHASpectrum
 
 __instrument_name = "All OGIP-compliant instruments"
 
-log = setup_logger(__name__)
+log = logging.getLogger(__name__)
 
 _valid_obs_types = (str, Path, PHASpectrum, PHAII)
 _valid_bkg_types = (str, Path, PHASpectrum, PHAII, SpectrumLike, XYLike)

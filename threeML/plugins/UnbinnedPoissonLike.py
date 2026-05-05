@@ -1,3 +1,5 @@
+import logging
+
 import types
 from collections.abc import Iterable
 from typing import Optional, Tuple, Union
@@ -6,13 +8,13 @@ import astromodels
 import numba as nb
 import numpy as np
 
-from threeML.io.logging import setup_logger
+
 from threeML.plugin_prototype import PluginPrototype
 
 __instrument_name = "n.a."
 
 
-log = setup_logger(__name__)
+log = logging.getLogger(__name__)
 
 _tiny = np.float64(np.finfo(1.0).tiny)
 

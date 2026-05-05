@@ -1,3 +1,5 @@
+import logging
+
 import inspect
 
 import numpy as np
@@ -5,7 +7,7 @@ from astromodels import use_astromodels_memoization
 
 from threeML.bayesian.sampler_base import UnitCubeSampler
 from threeML.config.config import threeML_config
-from threeML.io.logging import setup_logger
+
 
 try:
     import nautilus
@@ -32,7 +34,7 @@ try:
 except ModuleNotFoundError:
     using_mpi: bool = False
 
-log = setup_logger(__name__)
+log = logging.getLogger(__name__)
 
 
 class NautilusSampler(UnitCubeSampler):

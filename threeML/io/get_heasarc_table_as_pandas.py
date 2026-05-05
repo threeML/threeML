@@ -1,3 +1,5 @@
+import logging
+
 import codecs
 import datetime
 import requests
@@ -16,9 +18,9 @@ from threeML.io.file_utils import (
     if_directory_not_existing_then_make,
     sanitize_filename,
 )
-from threeML.io.logging import setup_logger
 
-log = setup_logger(__name__)
+
+log = logging.getLogger(__name__)
 
 
 def get_heasarc_table_as_pandas(heasarc_table_name, update=False, cache_time_days=1):

@@ -1,12 +1,12 @@
+import logging
+
 import copy
 import re
 from operator import attrgetter, itemgetter
 
 import numpy as np
 
-from threeML.io.logging import setup_logger
-
-log = setup_logger(__name__)
+log = logging.getLogger(__name__)
 
 
 class IntervalsDoNotOverlap(RuntimeError):

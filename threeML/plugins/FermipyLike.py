@@ -1,3 +1,5 @@
+import logging
+
 import collections
 import os
 from typing import Any, Dict, List, Optional, Union
@@ -16,7 +18,7 @@ from threeML.config.plotting_structure import FermiSpectrumPlot
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.dict_with_pretty_print import DictWithPrettyPrint
 from threeML.io.file_utils import sanitize_filename
-from threeML.io.logging import setup_logger
+
 from threeML.io.package_data import get_path_of_data_file
 from threeML.io.plotting.cmap_cycle import cmap_intervals
 from threeML.io.plotting.data_residual_plot import ResidualPlot
@@ -26,7 +28,7 @@ from threeML.utils.statistics.gammaln import logfactorial
 from threeML.utils.statistics.stats_tools import Significance
 from threeML.utils.unique_deterministic_tag import get_unique_deterministic_tag
 
-log = setup_logger(__name__)
+log = logging.getLogger(__name__)
 
 __instrument_name = "Fermi LAT (with fermipy)"
 

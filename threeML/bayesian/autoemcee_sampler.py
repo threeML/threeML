@@ -1,3 +1,5 @@
+import logging
+
 import time
 
 import numpy as np
@@ -5,7 +7,7 @@ from astromodels import use_astromodels_memoization
 
 from threeML.bayesian.sampler_base import UnitCubeSampler
 from threeML.config.config import threeML_config
-from threeML.io.logging import setup_logger
+
 
 try:
     import autoemcee
@@ -37,7 +39,7 @@ except Exception:
 # un_logger = logging.getLogger("ultranest")
 # un_logger.propagate = False
 
-log = setup_logger(__name__)
+log = logging.getLogger(__name__)
 
 
 class AutoEmceeSampler(UnitCubeSampler):
