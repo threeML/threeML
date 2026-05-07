@@ -12,6 +12,7 @@ del get_versions
 
 _public = {}
 
+_deprecated = {}
 
 # Import everything from astromodels
 _astromodels = {
@@ -22,6 +23,7 @@ _astromodels = {
     "ExtendedSource": ("astromodels.sources", "ExtendedSource"),
 }
 _public.update(_astromodels)
+_deprecated.update(_astromodels)
 _am = import_module("astromodels")
 
 # Determine what astromodels exports
@@ -55,7 +57,7 @@ except AttributeError:
     }
 
 _public.update(_astromodels_temp)
-
+_deprecated.update(_astromodels_temp)
 
 _config = {
     k: ("threeML.config", k)
@@ -67,8 +69,11 @@ _config = {
 }
 
 _public.update(_config)
+_deprecated.update(_config)
+
 _io = {k: ("threeML.io", k) for k in ["setup_logger"]}
 _public.update(_io)
+
 _mini = {
     k: ("threeML.minimizer.minimization", k)
     for k in [
@@ -81,6 +86,8 @@ _public.update(_mini)
 
 _plugins = {"PluginPrototype": ("threeML.plugin_prototype", "PluginPrototype")}
 _public.update(_plugins)
+_deprecated.update(_plugins)
+
 _astropy = {"u": ("astropy", "units")}
 _public.update(_astropy)
 _analysis_results = {
@@ -106,6 +113,7 @@ _catalogs = {
     ]
 }
 _public.update(_catalogs)
+_deprecated.update(_catalogs)
 
 _ios = {
     "activate_logs": ("threeML.io", "activate_logs"),
@@ -171,7 +179,6 @@ _data_downloaders = {
 }
 _public.update(_data_downloaders)
 _core = {
-    "BayesianAnalysis": ("threeML.bayesian.bayesian_analysis", "BayesianAnalysis"),
     "GoodnessOfFit": ("threeML.classicMLE.goodness_of_fit", "GoodnessOfFit"),
     "JointLikelihood": ("threeML.classicMLE.joint_likelihood", "JointLikelihood"),
     "JointLikelihoodSet": (
@@ -194,9 +201,9 @@ _core = {
     "step_generator": ("threeML.utils.step_parameter_generator", "step_generator"),
 }
 _public.update(_core)
+print(sorted(_public))
 # Import GBM  downloader
 
-_deprecated = {}
 DEPRECATED_TOPLEVEL = set(_deprecated.keys())
 
 # Export everything (historic behavior), plus convenience names
@@ -248,7 +255,6 @@ def __getattr__(name: str):
 
 
 def __dir__():
-    # List everything we export (historic behavior)
     return sorted(__all__)
 
 
