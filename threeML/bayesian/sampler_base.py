@@ -7,23 +7,7 @@ from typing import Dict, Optional
 import numpy as np
 
 from threeML.config import threeML_config
-
-try:
-    # see if we have mpi and/or are using parallel
-
-    from mpi4py import MPI
-
-    if MPI.COMM_WORLD.Get_size() > 1:  # need parallel capabilities
-        using_mpi = True
-
-        comm = MPI.COMM_WORLD
-        rank = comm.Get_rank()
-
-    else:
-        using_mpi = False
-except Exception:
-    using_mpi = False
-
+from importlib.util import find_spec
 
 from astromodels.core.model import Model
 from astromodels.functions.function import ModelAssertionViolation
@@ -34,6 +18,20 @@ from threeML.io.logging import setup_logger
 from threeML.utils.numba_utils import nb_sum
 from threeML.utils.spectrum.share_spectrum import ShareSpectrum
 from threeML.utils.statistics.stats_tools import aic, bic, dic
+
+if find_spec("mpi4py") is not None:
+    from mpi4py import MPI
+
+    if MPI.COMM_WORLD.Get_size() > 1:  # need parallel capabilities
+        using_mpi = True
+
+        comm = MPI.COMM_WORLD
+        rank = comm.Get_rank()
+
+    else:
+        using_mpi = False
+else:
+    using_mpi = False
 
 log = setup_logger(__name__)
 
