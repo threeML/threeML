@@ -8,9 +8,9 @@ from threeML import DataList, JointLikelihood
 from threeML.exceptions.custom_exceptions import NegativeBackground
 from threeML.io.file_utils import within_directory
 from threeML.io.package_data import get_path_of_data_file
-from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
-from threeML.plugins.OGIPLike import OGIPLike
-from threeML.plugins.SpectrumLike import SpectrumLike
+from threeML.plugins import DispersionSpectrumLike
+from threeML.plugins import OGIPLike
+from threeML.plugins import SpectrumLike
 from threeML.utils.OGIP.response import OGIPResponse
 
 from .conftest import get_test_datasets_directory

@@ -10,9 +10,10 @@ from threeML.config.config import threeML_config
 from threeML.config.config_utils import get_value_kwargs
 from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
 from threeML.io.logging import setup_logger, silence_console_log
-from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
-from threeML.plugins.OGIPLike import OGIPLike
-from threeML.plugins.SpectrumLike import NegativeBackground, SpectrumLike
+from threeML.plugins import DispersionSpectrumLike
+from threeML.plugins import OGIPLike
+from threeML.plugins import SpectrumLike
+from threeML.exceptions.custom_exceptions import NegativeBackground
 from threeML.utils.data_builders.fermi.gbm_data import GBMCdata, GBMTTEFile
 from threeML.utils.data_builders.fermi.lat_data import LLEFile
 from threeML.utils.histogram import Histogram

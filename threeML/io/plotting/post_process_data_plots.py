@@ -2,8 +2,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import colormaps
 
-import threeML.plugins.PhotometryLike as photolike
-import threeML.plugins.SpectrumLike as speclike
+import threeML.plugins.photometry_like as photolike
+import threeML.plugins.spectrum_like as speclike
 
 try:
     from threeML.plugins.FermiLATLike import FermiLATLike

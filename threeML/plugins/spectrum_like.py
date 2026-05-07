@@ -26,7 +26,7 @@ from threeML.io.plotting.light_curve_plots import (
 )
 from threeML.io.rich_display import display
 from threeML.plugin_prototype import PluginPrototype
-from threeML.plugins.XYLike import XYLike
+from threeML.plugins import XYLike
 from threeML.utils.binner import Rebinner
 from threeML.utils.spectrum.binned_spectrum import (
     BinnedSpectrum,
@@ -3751,5 +3751,4 @@ def _simps(e1, e2, diff_fluxes_edges, diff_fluxes_mid):  # pragma: no cover
 
 @nb.njit(fastmath=True, cache=True)
 def _rsum(model_mid_points, de):  # pragma: no cover
-
     return np.multiply(model_mid_points, de)

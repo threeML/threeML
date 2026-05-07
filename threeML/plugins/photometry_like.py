@@ -8,7 +8,7 @@ from speclite.filters import FilterResponse, FilterSequence
 from threeML.config import threeML_config
 from threeML.io.logging import setup_logger
 from threeML.io.plotting.data_residual_plot import ResidualPlot
-from threeML.plugins.XYLike import XYLike
+from threeML.plugins import XYLike
 from threeML.utils.photometry import FilterSet, PhotometericObservation
 
 log = setup_logger(__name__)

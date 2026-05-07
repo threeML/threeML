@@ -6,8 +6,8 @@ import pandas as pd
 from astromodels import Model
 
 from threeML.io.logging import setup_logger
-from threeML.plugins.SpectrumLike import SpectrumLike
-from threeML.plugins.XYLike import XYLike
+from threeML.plugins import SpectrumLike
+from threeML.plugins import XYLike
 from threeML.utils.OGIP.response import InstrumentResponse
 from threeML.utils.spectrum.binned_spectrum import (
     BinnedSpectrum,
@@ -224,7 +224,7 @@ class DispersionSpectrumLike(SpectrumLike):
 
         # a local import here because OGIPLike is dependent on this
 
-        from threeML.plugins.OGIPLike import OGIPLike
+        from threeML.plugins import OGIPLike
 
         ogiplike = OGIPLike.from_general_dispersion_spectrum(self)
         ogiplike.write_pha(

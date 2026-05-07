@@ -4,7 +4,7 @@ import numpy as np
 from threeML.config import threeML_config
 from threeML.io.logging import setup_logger
 from threeML.io.package_data import get_path_of_data_file
-from threeML.plugins.XYLike import XYLike
+from threeML.plugins import XYLike
 
 __instrument_name = "n.a."
 

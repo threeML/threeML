@@ -4,9 +4,9 @@ from typing import Optional, Union
 import pandas as pd
 
 from threeML.io.logging import setup_logger
-from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
-from threeML.plugins.SpectrumLike import SpectrumLike
-from threeML.plugins.XYLike import XYLike
+from threeML.plugins import DispersionSpectrumLike
+from threeML.plugins import SpectrumLike
+from threeML.plugins import XYLike
 from threeML.utils.OGIP.pha import PHAII, PHAWrite
 from threeML.utils.spectrum.pha_spectrum import PHASpectrum
 

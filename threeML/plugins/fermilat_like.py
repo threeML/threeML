@@ -4,13 +4,15 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 import astropy.io.fits as fits
-import BinnedAnalysis
 import matplotlib.pyplot as plt
 import numpy
-import pyLikelihood as pyLike
-import UnbinnedAnalysis
 from astromodels import Model, Parameter
+
+import pyLikelihood as pyLike
+import BinnedAnalysis
+import UnbinnedAnalysis
 from GtBurst import FuncFactory, LikelihoodComponent
+
 from matplotlib import gridspec
 
 from threeML.config.config import threeML_config

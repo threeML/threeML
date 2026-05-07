@@ -1,4 +1,4 @@
-from threeML.plugins.OGIPLike import OGIPLike
+from threeML.plugins import OGIPLike
 
 __instrument_name = "Swift XRT"
 
