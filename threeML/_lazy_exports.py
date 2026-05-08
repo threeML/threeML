@@ -1,5 +1,4 @@
-# mypkg/_lazy.py
-
+import os
 import importlib
 import importlib.util
 from typing import Dict, List, Tuple
@@ -30,7 +29,8 @@ def setup_lazy_exports(
         mod_path, _ = exports[name]
         mod = importlib.import_module(mod_path, namespace["__name__"])
         obj = getattr(mod, name)
-
+        if os.environ.get("IMPORT_DEBUG", False):
+            print(f"{name} imported\n")
         namespace[name] = obj
         return obj
 
