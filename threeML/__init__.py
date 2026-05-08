@@ -179,6 +179,7 @@ _data_downloaders = {
 }
 _public.update(_data_downloaders)
 _core = {
+    "BayesianAnalysis": ("threeML.bayesian", "BayesianAnalysis"),
     "GoodnessOfFit": ("threeML.classicMLE.goodness_of_fit", "GoodnessOfFit"),
     "JointLikelihood": ("threeML.classicMLE.joint_likelihood", "JointLikelihood"),
     "JointLikelihoodSet": (
