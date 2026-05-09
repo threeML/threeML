@@ -45,11 +45,12 @@ jobs:
                   activate-environment: "test_env"
                   auto-activate: false
                   miniforge-variant: Miniforge3
-                  miniforge-version: "25.11.0-1"
+                  miniforge-version: latest
                   python-version: ${{ matrix.python-version }}
                   auto-update-conda: true
                   environment-file: ${{ matrix.environment }}
                   use-only-tar-bz2: false
+                  mamba-version: "2.5"
 
             - name: Init Env
               shell: bash -l {0}
@@ -132,11 +133,12 @@ jobs:
                   activate-environment: "test_env"
                   auto-activate: false
                   miniforge-variant: Miniforge3
-                  miniforge-version: "25.11.0-1"
+                  miniforge-version: latest 
                   python-version: ${{ matrix.python-version }}
                   auto-update-conda: true
                   environment-file: ${{ matrix.environment }}
                   use-only-tar-bz2: false
+                  mamba-version: "2.5"
 
             - name: Init Env
               shell: bash -l {0}
