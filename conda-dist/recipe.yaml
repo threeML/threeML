@@ -1,0 +1,74 @@
+context:
+  version: ${{ git.latest_tag('../')[1:] if git.latest_tag('../') and git.latest_tag('../')[0] == 'v' else git.latest_tag('../') }}
+
+package:
+  name: threeml 
+  version: ${{ version }}
+
+source:
+  path: ../.
+  use_gitignore: false
+
+build:
+  noarch: python 
+  script: pip install . -v
+
+requirements:
+  # note that there is no build section
+  host:
+    - pip>=26
+    - python >=3.13
+    - setuptools >=82
+    - versioneer
+
+  run:
+    - numpy>=1.26
+    - scipy>=1.11
+    - astropy
+    - matplotlib
+    - uncertainties
+    - pyyaml>=5.1
+    - dill
+    - iminuit>=2.0
+    - astromodels>=2.5.1
+    - astroquery
+    - corner
+    - pandas
+    - requests
+    - speclite>=0.11
+    - ipython
+    - ipyparallel
+    - joblib
+    - numexpr
+    - numba
+    - numdifftools
+    - tqdm>=4.56.0
+    - omegaconf
+    - rich
+    - packaging
+    - emcee >3
+
+tests:
+  - python:
+      imports:
+        - threeML 
+
+  - script:
+      - pytest -vv --pyargs threeML
+    requirements:
+      run:
+        - pytest
+        - pymultinest
+        - ultranest
+        - zeus-mcmc
+        - dynesty
+
+
+about:
+  homepage: https://github.com/ipython/ipywidgets
+  license: BSD-3-Clause
+  license_file: LICENSE
+  summary: Jupyter Interactive Widgets
+  description: |
+    ipywidgets are interactive HTML widgets for Jupyter notebooks and the IPython kernel.
+  documentation: https://ipywidgets.readthedocs.io/en/latest/
