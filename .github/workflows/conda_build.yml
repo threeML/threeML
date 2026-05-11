@@ -55,7 +55,7 @@ jobs:
             - name: Init Env
               shell: bash -l {0}
               run: |
-                  mamba activate test_env
+                  conda activate test_env
                   if [[ ${{ matrix.os }} == "macos-15-intel" ]]; then
                     mamba install -c conda-forge icu libxml2 libarchive --force-reinstall
                   fi
