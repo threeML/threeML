@@ -16,37 +16,45 @@ build:
 requirements:
   # note that there is no build section
   host:
-    - pip>=26
-    - python >=3.13
-    - setuptools >=82
+    - pip
+    - python
+    - setuptools
     - versioneer
 
   run:
-    - numpy>=1.26
-    - scipy>=1.11
+    - python >=3.11
+    - numpy >=1.26
+    - scipy >=1.11
     - astropy
     - matplotlib
     - uncertainties
-    - pyyaml>=5.1
+    - pyyaml >=5.1
     - dill
-    - iminuit>=2.0
-    - astromodels>=2.5.1
+    - iminuit >=2.0
+    - astromodels >=2.5.1
     - astroquery
+    - chainconsumer
     - corner
     - pandas
     - requests
-    - speclite>=0.11
+    - speclite >=0.11
     - ipython
     - ipyparallel
     - joblib
     - numexpr
     - numba
     - numdifftools
-    - tqdm>=4.56.0
+    - tqdm >=4.56.0
     - omegaconf
     - rich
     - packaging
     - emcee >3
+    - if: (osx and x86_64)
+      then: llvmlite<0.46
+
+  run_constraints:
+    - if: not (linux and aarch64)
+      then: xspec>=12.15.1
 
 tests:
   - python:
@@ -59,9 +67,12 @@ tests:
       run:
         - pytest
         - pymultinest
-        - ultranest
         - zeus-mcmc
         - dynesty
+        - if: not (linux and aarch64)
+          then:
+          - ultranest
+          - xspec
 
 
 about:
