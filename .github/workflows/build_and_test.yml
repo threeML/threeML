@@ -32,7 +32,7 @@ jobs:
                   concurrent_skipping: never
                   skip_after_successful_duplicate: true
                   paths_ignore: '["**/README.md", "**/docs/**"]'
-                  do_not_skip: '["pull_request",  "schedule"]'
+                  do_not_skip: '["pull_request", "schedule"]'
 
     test-pip:
         name: Test on Pip
@@ -41,21 +41,21 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                python-version: ["3.9","3.10","3.11"]
-                os: ["ubuntu-latest", "macos-latest", "macos-15-intel"]
+                python-version: ["3.11","3.12","3.13"]
+                os: ["ubuntu-latest", "macos-latest", "macos-15-intel","ubuntu-24.04-arm"]
         runs-on:  ${{ matrix.os }}
         steps:
             - name: Checkout
-              uses: actions/checkout@v4
+              uses: actions/checkout@v6
             - name: Set up Python ${{ matrix.python-version }}
-              uses: actions/setup-python@v5
+              uses: actions/setup-python@v6
               with:
                   python-version: ${{ matrix.python-version }}
             - name: Install dependencies
               run: |
                   python -m pip install --upgrade pip wheel setuptools numpy
 
-                  if [[ ${{matrix.os}} != ubuntu-latest ]];
+                  if [[ ${{matrix.os}} != *"ubuntu"* ]];
                   then
                     brew update
                     brew install hdf5 lzo c-blosc
@@ -69,6 +69,8 @@ jobs:
                   
                   pip install --upgrade flake8 coverage pytest-cov 
 
+                  pip install ultranest autoemcee zeus-mcmc
+ 
                   pip install -e .
               env:
                   ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
@@ -94,21 +96,22 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                python-version: ["3.9","3.10","3.11"]
-                os: [ "ubuntu-latest", "macos-latest", "macos-15-intel"]
+                python-version: ["3.11","3.12","3.13"]
+                os: [ "ubuntu-latest", "macos-latest", "macos-15-intel", "ubuntu-24.04-arm"]
+
         runs-on: ${{ matrix.os }}
         steps:
             - name: Checkout
-              uses: actions/checkout@v4
+              uses: actions/checkout@v6
             - name: Set up Python ${{ matrix.python-version }}
-              uses: actions/setup-python@v5
+              uses: actions/setup-python@v6
               with:
                   python-version: ${{ matrix.python-version }}
             - name: Install dependencies
               run: |
                   python -m pip install --upgrade pip wheel
 
-                  if [[ ${{matrix.os}} != ubuntu-latest ]];
+                  if [[ ${{matrix.os}} != *"ubuntu"* ]];
                   then
                     brew update
                     brew install hdf5 lzo c-blosc
@@ -117,6 +120,7 @@ jobs:
                   # install astromodels dev directly without cloning
                   pip install git+https://github.com/threeML/astromodels.git@dev
                   pip install --upgrade flake8 coverage pytest-cov 
+                  pip install ultranest autoemcee zeus-mcmc
 
                   pip install -e .
             - name: Lint with flake8
@@ -143,39 +147,36 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                os: ["ubuntu-latest", "macos-15-intel", "macos-latest"]
-                python-version: [3.9, 3.11]
+                os: ["ubuntu-latest", "macos-15-intel", "macos-latest","ubuntu-24.04-arm"]
+                python-version: ["3.11", "3.12", "3.13"]
                 include:
                   - environment: ci/environment_fermi.yml
-                    architecture: x64
+                    channels: threeml/label/dev, conda-forge, fermi, https://heasarc.gsfc.nasa.gov/FTP/software/conda
                   - environment: ci/environment_macos-latest.yml
-                    architecture: arm64
                     os: macos-latest
-                  - environment: ci/environment.yml
-                    os: macos-15-intel
-                    python-version: 3.9
-                    architecture: x64
+                    channels: threeml, conda-forge
+                  - environment: ci/environment_aarch64.yml
+                    os: ubuntu-24.04-arm
+                    channels: threeml/label/dev, conda-forge, fermi
+
+
         runs-on: ${{ matrix.os }}
         steps:
             - name: Checkout
-              uses: actions/checkout@v4
-            - name: XCode
-              uses: maxim-lobanov/setup-xcode@v1
-              with:
-                  xcode-version: latest
-              if: runner.os == 'macOS'
+              uses: actions/checkout@v6
             - name: Setup Miniconda
-              uses: conda-incubator/setup-miniconda@v3
+              uses: conda-incubator/setup-miniconda@v4
               with:
                   auto-update-conda: true
                   auto-activate: false
-                  mamba-version: "*"
-                  architecture: ${{ matrix.architecture }}
+                  miniforge-version: latest
                   activate-environment: test_env
                   python-version: ${{ matrix.python-version }}
-                  channels: threeml, conda-forge, fermi
+                  channels: ${{ matrix.channels }}
                   environment-file: ${{ matrix.environment }}
                   use-only-tar-bz2: false
+                  mamba-vesrion: "2.5"
+
             - name: Init Env
               shell: bash -l {0}
               run: |
@@ -188,17 +189,9 @@ jobs:
                   echo "Running on development branch: ${ISDEV} "
 
                   if [[ "${ISDEV}" == "true" ]]; then
-                  
-                  mamba install -c conda-forge -c threeml/label/dev "threeml/label/dev::astromodels"
-                  
+                    mamba install -c threeml/label/dev -c https://heasarc.gsfc.nasa.gov/FTP/software/conda -c conda-forge "threeml/label/dev::astromodels"
                   fi
-                  #pip install --upgrade speclite
-                  #pip install fermipy 
 
-                  if [[ ${{matrix.python-version}} == 3.9 ]];
-                  then
-                    mamba install -c conda-forge "numpy<1.24"
-                  fi
               env:
                   ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
             - name: Conda list
@@ -218,13 +211,6 @@ jobs:
             - name: test it
               shell: bash -l {0}
               run: |
-                  if [[ ${{matrix.python-version}} != 3.9 || ${{matrix.os}} != macos-15-intel ]]; then
-
-                    wget https://raw.githubusercontent.com/fermi-lat/pyBurstAnalysisGUI/master/python/GtBurst/updater.py -O $CONDA_PREFIX/lib/python${{ matrix.python-version }}/site-packages/fermitools/GtBurst/updater.py
-                    python $CONDA_PREFIX/lib/python${{ matrix.python-version }}/site-packages/fermitools/GtBurst/updater.py
-                  
-                  fi
-
                   python -m pytest -vv --cov=threeML --cov-report=xml
 
               env:
@@ -248,9 +234,9 @@ jobs:
             id-token: write
         steps:
             - name: Checkout source
-              uses: actions/checkout@v4
+              uses: actions/checkout@v6
             - name: Set up Python
-              uses: actions/setup-python@v5
+              uses: actions/setup-python@v6
               with:
                   python-version: 3.11
             - name: Build package
@@ -267,18 +253,18 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
-            - uses: actions/checkout@v4
-            - uses: actions/setup-python@v5
+            - uses: actions/checkout@v6
+            - uses: actions/setup-python@v6
               with:
                   python-version: 3.11
 
             - name: Install twine
               run: |
-                  python -m pip install twine
-                  pip install wheel setuptools -U
+                  pip install twine build
+                  pip install setuptools -U
             - name: Build package
               run: |
-                  python setup.py sdist bdist_wheel
+                python -m build --sdist --wheel
             - name: List result
               run: |
                   ls -lh dist

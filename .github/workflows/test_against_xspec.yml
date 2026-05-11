@@ -37,13 +37,13 @@ jobs:
 
         steps:
             - name: Set up Python 3.11
-              uses: actions/setup-python@v5
+              uses: actions/setup-python@v6
               with:
                   python-version: 3.11
 
             - name: Add conda to system path (conda jobs only)
               if: matrix.use_conda
-              uses: conda-incubator/setup-miniconda@v3
+              uses: conda-incubator/setup-miniconda@v4
               with:
                   activate-environment: "test_env"
                   auto-activate: false
@@ -56,7 +56,7 @@ jobs:
                   channel-priority: true
 
             - name: Cache XSPEC
-              uses: actions/cache@v4
+              uses: actions/cache@v5
               id: cache-xspec
               with:
                   path: ~/xspec_home
@@ -107,7 +107,7 @@ jobs:
                   fi
 
             - name: Checkout
-              uses: actions/checkout@v4
+              uses: actions/checkout@v6
 
             - name: Install dependencies
               shell: bash -l {0}
@@ -120,10 +120,11 @@ jobs:
                   echo "Listing all libraries in xspec"
                   ls -l $HEADAS/lib/
 
-                  python -m pip install --upgrade pip wheel
+                  conda install pip wheel
                   ${{ matrix.extra_deps }}
                   ${{ matrix.astro_install }}
-                  pip install --upgrade flake8 coverage pytest-cov 
+                  pip install --upgrade ultranest dynesty
+                  pip install --upgrade flake8 coverage pytest-cov pytest
                   pip install -e .
 
             - name: Test xspec
@@ -161,10 +162,10 @@ jobs:
 
         steps:
             - name: Checkout
-              uses: actions/checkout@v4
+              uses: actions/checkout@v6
 
             - name: Add conda to system path
-              uses: conda-incubator/setup-miniconda@v3
+              uses: conda-incubator/setup-miniconda@v4
               with:
                   activate-environment: "test_env"
                   auto-activate: false
@@ -175,6 +176,7 @@ jobs:
                   environment-file: ci/environment_xspec.yml
                   use-only-tar-bz2: false
                   channel-priority: true
+                  mamba-version: "2.5"
 
             - name: Install dependencies
               shell: bash -l {0}
@@ -185,7 +187,7 @@ jobs:
                   python -m pip install --upgrade pip wheel
                   ${{ matrix.extra_deps }}
                   ${{ matrix.astro_install }}
-                  pip install --upgrade flake8 coverage pytest-cov 
+                  pip install --upgrade flake8 coverage pytest-cov pytest
                   pip install -e .
               env:
                   ASTRO_XSPEC_VERSION: 12.15.1

@@ -22,19 +22,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Setup Miniconda
-        uses: conda-incubator/setup-miniconda@v3
+        uses: conda-incubator/setup-miniconda@v4
         with:
              auto-update-conda: true
              auto-activate: false
-             mamba-version: "*"
              architecture: x64 
              activate-environment: test_env
              python-version: 3.11
              channels: threeml, conda-forge, fermi
              environment-file: ci/environment.yml 
              use-only-tar-bz2: false
+             mamba-version: "2.5"
 
       # is that really needed?
       - name: install latex
@@ -96,9 +96,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Cache conda
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         env:
           # Increase this value to reset cache if etc/example-environment.yml has not changed
           CACHE_NUMBER: 0
@@ -107,7 +107,7 @@ jobs:
           key: conda-hal_notebooks-python-3.11-${{ hashFiles('ci/environment_hal.yml') }}
 
       - name: Setup Miniconda
-        uses: conda-incubator/setup-miniconda@v3
+        uses: conda-incubator/setup-miniconda@v4
         with:
           auto-update-conda: true
           auto-activate: false
@@ -118,6 +118,7 @@ jobs:
           environment-file: ci/environment_hal.yml
           use-only-tar-bz2: false
           architecture: "x64"
+          mamba-version: "2.5"
 
       - name: Init Environment
         shell: bash -l {0}
@@ -166,9 +167,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Cache conda
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         env:
           # Increase this value to reset cache if etc/example-environment.yml has not changed
           CACHE_NUMBER: 0
@@ -177,7 +178,7 @@ jobs:
           key: conda-fermi_notebooks-python-3.11-${{ hashFiles('ci/environment_fermi.yml') }}
 
       - name: Setup Miniconda
-        uses: conda-incubator/setup-miniconda@v3
+        uses: conda-incubator/setup-miniconda@v4
         with:
           auto-update-conda: true
           auto-activate: false
@@ -188,6 +189,7 @@ jobs:
           environment-file: ci/environment_fermi.yml
           use-only-tar-bz2: false
           architecture: "x64"
+          mamba-version: "2.5"
 
       - name: Init Environment
         shell: bash -l {0}
@@ -245,9 +247,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Cache conda
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         env:
           # Increase this value to reset cache if etc/example-environment.yml has not changed
           CACHE_NUMBER: 0
@@ -256,7 +258,7 @@ jobs:
           key: conda-xspec_notebooks-python-3.11-${{ hashFiles('ci/environment_xspec.yml') }}
 
       - name: Setup Miniconda
-        uses: conda-incubator/setup-miniconda@v3
+        uses: conda-incubator/setup-miniconda@v4
         with:
           auto-update-conda: true
           auto-activate: false
@@ -267,6 +269,7 @@ jobs:
           environment-file: ci/environment_xspec.yml
           use-only-tar-bz2: false
           architecture: x64
+          mamba-version: "2.5"
 
       - name: Init Environment
         shell: bash -l {0}
@@ -317,9 +320,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Cache conda
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         env:
           # Increase this value to reset cache if etc/example-environment.yml has not changed
           CACHE_NUMBER: 0
@@ -328,7 +331,7 @@ jobs:
           key: conda-multinest_notebooks-python-3.11-${{ hashFiles('ci/environment.yml') }}
 
       - name: Setup Miniconda
-        uses: conda-incubator/setup-miniconda@v3
+        uses: conda-incubator/setup-miniconda@v4
         with:
           auto-update-conda: true
           auto-activate: false
@@ -339,6 +342,7 @@ jobs:
           environment-file: ci/environment.yml
           use-only-tar-bz2: false
           architecture: "x64"
+          mamba-version: "2.5"
 
       - name: Init Environment
         shell: bash -l {0}
@@ -416,7 +420,7 @@ jobs:
     
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - uses: actions/download-artifact@v7
         with:
@@ -504,13 +508,13 @@ jobs:
     name: "Create the API stubs"
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
           fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: 3.11
 
@@ -561,13 +565,13 @@ jobs:
     steps:
 
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
           fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: 3.11
 

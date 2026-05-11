@@ -1,17 +1,16 @@
-# base environment file fo CI testing
-
+# environment file fo CI testing
 name: test_env
 channels:
-  - threeml
+  - threeml/label/dev
+  - fermi
   - conda-forge
-  - https://heasarc.gsfc.nasa.gov/FTP/software/conda
   - defaults
 dependencies:
   - pip
   - pytest
   - pytest-cov
   - astromodels>=2.5.0
-  - arviz # needed for autoemcee 
+  - arviz
   - codecov
   - coverage
   - setuptools
@@ -29,13 +28,8 @@ dependencies:
   - pandas>=0.23
   - requests
   - speclite
-  - multinest
-  - pymultinest
-  - ultranest
   - dynesty>=1
   - pygmo>=2.4
-  - nautilus-sampler
-  - zeus-mcmc
   - ipywidgets
   - ipython
   - ipyparallel
@@ -53,6 +47,6 @@ dependencies:
   - h5py
   - rich
   - joblib
-  - xspec
+  - fermipy
   - pip:
     - autoemcee
