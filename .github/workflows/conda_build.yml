@@ -94,10 +94,10 @@ jobs:
                   
                   if [[ "${ISDEV}" == "true" ]]; then
                     conda activate test_env
-                    conda build conda-dist/recipe --override-channels -c https://conda.anaconda.org/threeml/label/dev -c https://heasarc.gsfc.nasa.gov/FTP/software/conda/ -c conda-forge # temporarily need to install xspec
+                    conda-build conda-dist/recipe --override-channels -c https://conda.anaconda.org/threeml/label/dev -c https://heasarc.gsfc.nasa.gov/FTP/software/conda/ -c conda-forge # temporarily need to install xspec
                   else
                     conda activate test_env
-                    conda build conda-dist/recipe --override-channels -c https://conda.anaconda.org/threeml -c conda-forge
+                    conda-build conda-dist/recipe --override-channels -c https://conda.anaconda.org/threeml -c conda-forge
 
                   fi
                   conda search -c ${CONDA}/conda-bld/ threeml --offline --use-local --info
@@ -165,7 +165,7 @@ jobs:
                   conda config --set conda_build.pkg_format 2
                   conda config --set conda_build.zstd_compression_level 19
   
-                  conda build conda-dist/recipe --override-channels -c https://conda.anaconda.org/threeml -c conda-forge
+                  conda-build conda-dist/recipe --override-channels -c https://conda.anaconda.org/threeml -c conda-forge
                   conda search -c ${CONDA}/conda-bld/ threeml --offline --use-local --info
 
 
