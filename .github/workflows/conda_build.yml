@@ -55,6 +55,7 @@ jobs:
             - name: Init Env
               shell: bash -l {0}
               run: |
+                  mamba activate test_env
                   if [[ ${{ matrix.os }} == "macos-15-intel" ]]; then
                     mamba install -c conda-forge icu libxml2 libarchive --force-reinstall
                   fi
@@ -85,16 +86,17 @@ jobs:
                   # Build package
 
                   #conda install conda-build -n base
-                  mamba install -c conda-forge boa icu libarchive conda-build 
+                  conda activate test_env
+                  conda install -c conda-forge boa icu libarchive conda-build 
 
                   conda config --set conda_build.pkg_format 2
                   conda config --set conda_build.zstd_compression_level 19
                   
                   if [[ "${ISDEV}" == "true" ]]; then
-
+                    conda activate test_env
                     conda mambabuild conda-dist/recipe --override-channels -c https://conda.anaconda.org/threeml/label/dev -c https://heasarc.gsfc.nasa.gov/FTP/software/conda/ -c conda-forge # temporarily need to install xspec
                   else
-
+                    conda activate test_env
                     conda mambabuild conda-dist/recipe --override-channels -c https://conda.anaconda.org/threeml -c conda-forge
 
                   fi
@@ -157,11 +159,12 @@ jobs:
                   # Build package
 
                   #conda install conda-build -n base
-                  mamba install -c conda-forge boa icu libarchive conda-build
+                  conda activate test_env
+                  conda install -c conda-forge boa icu libarchive conda-build
 
                   conda config --set conda_build.pkg_format 2
                   conda config --set conda_build.zstd_compression_level 19
-
+  
                   conda mambabuild conda-dist/recipe --override-channels -c https://conda.anaconda.org/threeml -c conda-forge
                   conda search -c ${CONDA}/conda-bld/ threeml --offline --use-local --info
 
