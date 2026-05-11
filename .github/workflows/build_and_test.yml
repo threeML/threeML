@@ -31,8 +31,8 @@ jobs:
                   github_token: ${{ github.token }}
                   concurrent_skipping: never
                   skip_after_successful_duplicate: true
-                  paths_ignore: '["**/README.md", "**/docs/**"]'
-                  do_not_skip: '["pull_request",  "schedule"]'
+                  paths_ignore: ["**/README.md", "**/docs/**"]
+                  do_not_skip: ["pull_request",  "schedule"]
 
     test-pip:
         name: Test on Pip
@@ -98,6 +98,7 @@ jobs:
             matrix:
                 python-version: ["3.11","3.12","3.13"]
                 os: [ "ubuntu-latest", "macos-latest", "macos-15-intel", "ubuntu-24.04-arm"]
+
         runs-on: ${{ matrix.os }}
         steps:
             - name: Checkout
@@ -150,16 +151,10 @@ jobs:
                 python-version: ["3.11", "3.12", "3.13"]
                 include:
                   - environment: ci/environment_fermi.yml
-                    channels: threeml, conda-forge,fermi
+                    channels: threeml, conda-forge, fermi, https://heasarc.gsfc.nasa.gov/FTP/software/conda
                   - environment: ci/environment_macos-latest.yml
                     os: macos-latest
                     channels: threeml, conda-forge
-                  - environment: ci/environment.yml
-                    python-version: "3.12"
-                    channels: threeml/label/dev, conda-forge, https://heasarc.gsfc.nasa.gov/FTP/software/conda
-                  - environment: ci/environment.yml
-                    python-version: "3.13"
-                    channels: threeml/label/dev, conda-forge, https://heasarc.gsfc.nasa.gov/FTP/software/conda
                   - environment: ci/environment_aarch64.yml
                     os: ubuntu-24.04-arm
                     channels: threeml/label/dev, conda-forge, fermi
@@ -194,11 +189,8 @@ jobs:
                   echo "Running on development branch: ${ISDEV} "
 
                   if [[ "${ISDEV}" == "true" ]]; then
-                    mamba install -c conda-forge -c threeml/label/dev "threeml/label/dev::astromodels"
+                    mamba install -c threeml/label/dev -c https://heasarc.gsfc.nasa.gov/FTP/software/conda -c conda-forge "threeml/label/dev::astromodels"
                   fi
-
-                  #pip install --upgrade speclite
-                  #pip install fermipy 
 
               env:
                   ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
