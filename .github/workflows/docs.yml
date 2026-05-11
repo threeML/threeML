@@ -35,6 +35,7 @@ jobs:
              channels: threeml, conda-forge, fermi
              environment-file: ci/environment.yml 
              use-only-tar-bz2: false
+             mamba-version: "2.5"
 
       # is that really needed?
       - name: install latex
@@ -118,6 +119,7 @@ jobs:
           environment-file: ci/environment_hal.yml
           use-only-tar-bz2: false
           architecture: "x64"
+          mamba-version: "2.5"
 
       - name: Init Environment
         shell: bash -l {0}
@@ -188,6 +190,7 @@ jobs:
           environment-file: ci/environment_fermi.yml
           use-only-tar-bz2: false
           architecture: "x64"
+          mamba-version: "2.5"
 
       - name: Init Environment
         shell: bash -l {0}
@@ -267,6 +270,7 @@ jobs:
           environment-file: ci/environment_xspec.yml
           use-only-tar-bz2: false
           architecture: x64
+          mamba-version: "2.5"
 
       - name: Init Environment
         shell: bash -l {0}
@@ -339,6 +343,7 @@ jobs:
           environment-file: ci/environment.yml
           use-only-tar-bz2: false
           architecture: "x64"
+          mamba-version: "2.5"
 
       - name: Init Environment
         shell: bash -l {0}
