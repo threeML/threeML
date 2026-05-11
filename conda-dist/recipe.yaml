@@ -64,13 +64,13 @@ tests:
     requirements:
       run:
         - pytest
-        - pymultinest
         - zeus-mcmc
         - dynesty
         - if: not (linux and aarch64)
           then:
           - ultranest
           - xspec
+          - pymultinest
 
 
 about:
