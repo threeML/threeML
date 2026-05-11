@@ -1,15 +1,16 @@
 context:
+  name: threeml 
   version: ${{ git.latest_tag('../')[1:] if git.latest_tag('../') and git.latest_tag('../')[0] == 'v' else git.latest_tag('../') }}
 
 package:
-  name: threeml 
+  name: ${{ name }}
   version: ${{ version }}
 
 source:
-  path: ../.
-  use_gitignore: false
+  path: ../
 
 build:
+  skip: win
   script: pip install . -v
 
 requirements:
@@ -21,9 +22,10 @@ requirements:
     - versioneer
 
   run:
-    - python >=3.11
+    - python
     - numpy >=1.26
     - scipy >=1.11
+    - emcee >=3
     - astropy
     - matplotlib
     - uncertainties
@@ -32,7 +34,7 @@ requirements:
     - iminuit >=2.0
     - astromodels >=2.5.1
     - astroquery
-    - corner
+    - corner>=1.0.2
     - pandas
     - requests
     - speclite >=0.11
@@ -46,7 +48,6 @@ requirements:
     - omegaconf
     - rich
     - packaging
-    - emcee >3
     - if: (osx and x86_64)
       then: llvmlite<0.46
 
