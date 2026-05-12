@@ -10,7 +10,6 @@ from astropy.coordinates import SkyCoord
 
 from threeML import (
     FermiLATSourceCatalog,
-    FermiPySourceCatalog,
     is_plugin_available,
 )
 from threeML.catalogs.catalog_utils import _sanitize_fgl_name
@@ -23,10 +22,6 @@ log = setup_logger(__name__)
 
 skip_if_internet_is_not_available = pytest.mark.skipif(
     not internet_connection_is_active(), reason="No active internet connection"
-)
-
-skip_if_fermipy_is_not_available = pytest.mark.skipif(
-    not is_plugin_available("FermipyLike"), reason="No LAT environment installed"
 )
 
 
@@ -46,6 +41,7 @@ evclass_irf = {
 
 def do_the_test(cat_name):
     from fermipy.gtanalysis import GTAnalysis
+    from threeML.catalogs import FermiPySourceCatalog
 
     gta = GTAnalysis(f"2config_Crab_{cat_name}.yaml", logging={"verbosity": 3})
     gta.setup()
@@ -157,8 +153,9 @@ def do_the_test(cat_name):
 
 # @pytest.mark.xfail
 @skip_if_internet_is_not_available
-@skip_if_fermipy_is_not_available
 def test_read_model_from_catalogs():
+    fermipy = pytest.importorskip("fermipy")
+
     # Find crab and download data from Jan 01 2010 to Jan 8 2010 (needed for fermipy
     # instance)
 
