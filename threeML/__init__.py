@@ -1,5 +1,3 @@
-# We import matplotlib first, because we need control on the backend
-# Indeed, if no DISPLAY variable is set, matplotlib 2.0 crashes (at the moment, 05/26/2017)
 import os
 import warnings
 from importlib import import_module
@@ -11,7 +9,6 @@ __version__ = get_versions()["version"]
 del get_versions
 
 _public = {}
-
 _deprecated = {}
 
 # Import everything from astromodels
@@ -212,8 +209,6 @@ __all__ = sorted(set(_public.keys()) | {"__version__"})
 
 
 def __getattr__(name: str):
-    # Lazy re-exports
-
     try:
         mod_name, attr = _public[name]
     except KeyError:
