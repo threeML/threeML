@@ -1,5 +1,5 @@
 import warnings
-from .swiftxrt_like import SwiftXRTLike as SwiftXRTLike
+from .swiftxrt_like import SwiftXRTLike as SwiftXRTLike  # noqa: F401
 
 warnings.warn(
     f"Importing plugins like 'from {__name__} import {__name__.split('.')[-1]}' is "

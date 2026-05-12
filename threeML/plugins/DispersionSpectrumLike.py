@@ -1,7 +1,7 @@
 import warnings
-from .dispersionspectrum_like import (
+from .dispersionspectrum_like import (  # noqa: F401
     DispersionSpectrumLike as DispersionSpectrumLike,
-)  # noqa: F401
+)
 
 warnings.warn(
     f"Importing plugins like 'from {__name__} import {__name__.split('.')[-1]}' is "

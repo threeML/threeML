@@ -1,5 +1,5 @@
 import warnings
-from .fermipy_like import FermipyLike as FermipyLike
+from .fermipy_like import FermipyLike as FermipyLike  # noqa: F401
 
 warnings.warn(
     f"Importing plugins like 'from {__name__} import {__name__.split('.')[-1]}' is "

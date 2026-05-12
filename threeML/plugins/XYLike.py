@@ -1,5 +1,5 @@
 import warnings
-from .xy_like import XYLike as XYLike
+from .xy_like import XYLike as XYLike  # noqa: F401
 
 warnings.warn(
     f"Importing plugins like 'from {__name__} import {__name__.split('.')[-1]}' is "

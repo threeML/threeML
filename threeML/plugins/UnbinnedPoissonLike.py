@@ -1,5 +1,7 @@
 import warnings
-from .unbinnedpoisson_like import UnbinnedPoissonLike as UnbinnedPoissonLike
+from .unbinnedpoisson_like import (  # noqa: F401
+    UnbinnedPoissonLike as UnbinnedPoissonLike,
+)
 
 warnings.warn(
     f"Importing plugins like 'from {__name__} import {__name__.split('.')[-1]}' is "

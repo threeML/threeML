@@ -1,5 +1,5 @@
 import warnings
-from .spectrum_like import SpectrumLike as SpectrumLike
+from .spectrum_like import SpectrumLike as SpectrumLike  # noqa: F401
 
 warnings.warn(
     f"Importing plugins like 'from {__name__} import {__name__.split('.')[-1]}' is "

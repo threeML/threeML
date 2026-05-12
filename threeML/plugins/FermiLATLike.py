@@ -1,5 +1,5 @@
 import warnings
-from .fermilat_like import FermiLATLike as FermiLATLike
+from .fermilat_like import FermiLATLike as FermiLATLike  # noqa: F401
 
 warnings.warn(
     f"Importing plugins like 'from {__name__} import {__name__.split('.')[-1]}' is "

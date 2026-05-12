@@ -1,5 +1,5 @@
 import warnings
-from .photometry_like import PhotometryLike as PhotometryLike
+from .photometry_like import PhotometryLike as PhotometryLike  # noqa: F401
 
 warnings.warn(
     f"Importing plugins like 'from {__name__} import {__name__.split('.')[-1]}' is "

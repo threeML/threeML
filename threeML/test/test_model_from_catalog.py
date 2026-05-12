@@ -154,7 +154,7 @@ def do_the_test(cat_name):
 # @pytest.mark.xfail
 @skip_if_internet_is_not_available
 def test_read_model_from_catalogs():
-    fermipy = pytest.importorskip("fermipy")
+    _ = pytest.importorskip("fermipy")
 
     # Find crab and download data from Jan 01 2010 to Jan 8 2010 (needed for fermipy
     # instance)

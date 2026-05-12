@@ -1,5 +1,5 @@
 import warnings
-from .unresolvedextendedxy_like import (
+from .unresolvedextendedxy_like import (  # noqa: F401
     UnresolvedExtendedXYLike as UnresolvedExtendedXYLike,
 )
 
