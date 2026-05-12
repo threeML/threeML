@@ -5,12 +5,12 @@ import numpy as np
 import ROOT
 
 from threeML.io.dict_with_pretty_print import DictWithPrettyPrint
+from threeML.io.logging import setup_logger
 from threeML.minimizer.minimization import (
     CannotComputeCovariance,
     FitFailed,
     LocalMinimizer,
 )
-from threeML.io.logging import setup_logger
 
 log = setup_logger(__name__)
 

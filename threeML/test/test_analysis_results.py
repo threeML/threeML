@@ -1,5 +1,6 @@
 import os
 from builtins import zip
+from pathlib import Path
 
 import astropy.units as u
 import numpy as np
@@ -16,7 +17,6 @@ from threeML.analysis_results import (
     load_analysis_results,
     load_analysis_results_hdf,
 )
-from pathlib import Path
 
 _cache = {}
 

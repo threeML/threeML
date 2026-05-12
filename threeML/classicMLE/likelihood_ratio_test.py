@@ -10,7 +10,7 @@ from threeML.config import threeML_config
 from threeML.data_list import DataList
 from threeML.io.logging import setup_logger
 from threeML.io.package_data import get_path_of_data_file
-from threeML.plugins.OGIPLike import OGIPLike
+from threeML.plugins import OGIPLike
 from threeML.utils.OGIP.pha import PHAWrite
 
 if threeML_config.plotting.use_threeml_style:

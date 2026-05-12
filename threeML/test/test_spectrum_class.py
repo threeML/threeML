@@ -4,8 +4,8 @@ import numpy as np
 import pytest
 from astromodels import Model, PointSource, Powerlaw
 
-from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
-from threeML.plugins.SpectrumLike import SpectrumLike
+from threeML.plugins import DispersionSpectrumLike
+from threeML.plugins import SpectrumLike
 from threeML.utils.OGIP.response import OGIPResponse
 from threeML.utils.spectrum.binned_spectrum import (
     BinnedSpectrum,

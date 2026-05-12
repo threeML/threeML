@@ -1,12 +1,12 @@
 __author__ = "grburgess"
 
 import collections
-from packaging.version import Version
 
 import numba as nb
 import numpy as np
 import scipy.integrate as integrate
 from astropy import units as u
+from packaging.version import Version
 
 from threeML.config import threeML_config
 from threeML.config.point_source_structure import IntegrateMethod

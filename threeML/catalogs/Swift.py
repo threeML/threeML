@@ -1,12 +1,12 @@
 import re
-import requests
-from requests.adapters import HTTPAdapter
-from urllib3.util import Retry
 from builtins import map, range, str
 
 import astropy.table as astro_table
 import numpy as np
 import pandas as pd
+import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util import Retry
 
 from threeML.catalogs.VirtualObservatoryCatalog import VirtualObservatoryCatalog
 from threeML.config.config import threeML_config

@@ -3,8 +3,9 @@ import shutil
 
 import pytest
 import requests
-from threeML.config import threeML_config
+
 from threeML import download_LLE_trigger_data
+from threeML.config import threeML_config
 from threeML.exceptions.custom_exceptions import TriggerDoesNotExist
 from threeML.io.network import internet_connection_is_active
 from threeML.utils.data_download.Fermi_LAT.download_LAT_data import download_LAT_data

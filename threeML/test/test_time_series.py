@@ -6,8 +6,8 @@ import numpy as np
 import pytest
 
 from threeML.io.file_utils import within_directory
-from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
-from threeML.plugins.OGIPLike import OGIPLike
+from threeML.plugins import DispersionSpectrumLike
+from threeML.plugins import OGIPLike
 from threeML.utils.data_builders.time_series_builder import TimeSeriesBuilder
 from threeML.utils.time_interval import TimeIntervalSet
 from threeML.utils.time_series.event_list import EventList, EventListWithDeadTime

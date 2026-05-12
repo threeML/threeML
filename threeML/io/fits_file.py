@@ -1,7 +1,8 @@
+from importlib.metadata import version
+
 import astropy.units as u
 import numpy as np
 from astropy.io import fits
-from importlib.metadata import version
 
 from threeML.io.logging import setup_logger
 

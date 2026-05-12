@@ -1,8 +1,9 @@
-from threeML.plugins.OGIPLike import OGIPLike
+import warnings
+from .swiftxrt_like import SwiftXRTLike as SwiftXRTLike
 
-__instrument_name = "Swift XRT"
-
-
-# At the moment this is just another name for the GenericOGIPLike spectrum
-class SwiftXRTLike(OGIPLike):
-    pass
+warnings.warn(
+    f"Importing plugins like 'from {__name__} import {__name__.split('.')[-1]}' is "
+    + f"deprecated; use 'from threeML.plugins import {__name__.split('.')[-1]}'.",
+    DeprecationWarning,
+    stacklevel=2,
+)

@@ -1,7 +1,8 @@
 import os
+from importlib import resources
 from pathlib import Path
 
-from importlib import resources
+from threeML.config.config import get_path_of_user_config
 
 
 def get_path_of_data_file(data_file) -> Path:
@@ -53,19 +54,6 @@ def get_path_of_user_dir() -> Path:
         user_dir.mkdir()
 
     return user_dir
-
-
-def get_path_of_user_config() -> Path:
-    if os.environ.get("THREEML_CONFIG") is not None:
-        config_path: Path = Path(os.environ.get("THREEML_CONFIG"))
-
-    else:
-        config_path: Path = Path().home() / ".config" / "threeML"
-
-    if not config_path.exists():
-        config_path.mkdir(parents=True)
-
-    return config_path
 
 
 def get_user_data_path():

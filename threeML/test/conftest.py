@@ -21,10 +21,10 @@ from threeML.bayesian.bayesian_analysis import BayesianAnalysis
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.data_list import DataList
 from threeML.io.package_data import get_path_of_data_dir
-from threeML.plugins.OGIPLike import OGIPLike
-from threeML.plugins.PhotometryLike import PhotometryLike
-from threeML.plugins.UnbinnedPoissonLike import EventObservation
-from threeML.plugins.XYLike import XYLike
+from threeML.plugins import OGIPLike
+from threeML.plugins import PhotometryLike
+from threeML.plugins import EventObservation
+from threeML.plugins import XYLike
 from threeML.utils.numba_utils import VectorFloat64
 from threeML.utils.photometry import (
     PhotometericObservation,
