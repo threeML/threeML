@@ -6,7 +6,7 @@ _EXPORTS = {
     "FermiLATSourceCatalog": (".FermiLAT", []),
     "FermiPySourceCatalog": (".FermiLAT", ["fermipy"]),
     "FermiLLEBurstCatalog": (".FermiLLE", []),
-    "SwiftGRBCatalog": ("SwiftGRBCatalog", []),
+    "SwiftGRBCatalog": (".Swift", []),
     "VirtualObservatoryCatalog": (".VirtualObservatoryCatalog", []),
     "ConeSearchFailed": (".VirtualObservatoryCatalog", []),
 }

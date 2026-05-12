@@ -38,7 +38,10 @@ try:
     _astromodels_temp = {
         k: (_am_pub_dict[k][0], k)
         for k in _ast_all
-        if k not in _astromodels.keys() and k in _am_pub_dict.keys()
+        if k not in _astromodels.keys()
+        and k in _am_pub_dict.keys()
+        and k not in ["functions", "core", "sources", "utils", "xspec"]
+        # exclude the subpackages
     }
     _astromodels_temp.update(
         {
@@ -105,7 +108,6 @@ _catalogs = {
         "FermiGBMTriggerCatalog",
         "FermiLATSourceCatalog",
         "FermiLLEBurstCatalog",
-        "FermiPySourceCatalog",
         "SwiftGRBCatalog",
     ]
 }
@@ -175,8 +177,8 @@ _data_downloaders = {
     ),
 }
 _public.update(_data_downloaders)
-_core = {
-    "BayesianAnalysis": ("threeML.bayesian", "BayesianAnalysis"),
+
+_classicMLE = {
     "GoodnessOfFit": ("threeML.classicMLE.goodness_of_fit", "GoodnessOfFit"),
     "JointLikelihood": ("threeML.classicMLE.joint_likelihood", "JointLikelihood"),
     "JointLikelihoodSet": (
@@ -191,6 +193,11 @@ _core = {
         "threeML.classicMLE.likelihood_ratio_test",
         "LikelihoodRatioTest",
     ),
+}
+_public.update(_classicMLE)
+
+_core = {
+    "BayesianAnalysis": ("threeML.bayesian", "BayesianAnalysis"),
     "DataList": ("threeML.data_list", "DataList"),
     "parallel_computation": (
         "threeML.parallel.parallel_client",
@@ -199,7 +206,6 @@ _core = {
     "step_generator": ("threeML.utils.step_parameter_generator", "step_generator"),
 }
 _public.update(_core)
-print(sorted(_public))
 # Import GBM  downloader
 
 DEPRECATED_TOPLEVEL = set(_deprecated.keys())
@@ -235,11 +241,11 @@ def __getattr__(name: str):
         val = getattr(mod, attr)
     except ImportError as e:
         # Surface clearer message for optional dependencies or missing submodules
-        raise ImportError(
+        warnings.warn(
             f"Cannot access 'threeML.{name}' because '{mod_name}' "
             f"could not be imported. This feature may require optional dependencies. "
             f"Original error: {e}"
-        ) from e
+        )
     except AttributeError as e:
         # Defensive: module imported but symbol missing (internal mismatch)
         raise AttributeError(
