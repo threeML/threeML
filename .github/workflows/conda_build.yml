@@ -63,6 +63,10 @@ jobs:
                   MKL_NUM_THREADS: 1
                   NUMEXPR_NUM_THREADS: 1
                   MPLBACKEND: "Agg"
+            - name: List built packages
+              run: |
+                ls -lh output/${{ matrix.target-platform }}/*.conda
+
 
     publish-conda:
         name: Publish to Conda
@@ -104,7 +108,9 @@ jobs:
                   LABEL="--channel dev"
                 fi
 
-                rattler-build upload anaconda ${CONDA_BLD_PATH}/${{ matrix.target-platform }}/*.conda --force --owner threeml ${LABEL}
+                echo "Listing packages to upload:"
+                ls -lh output/${{ matrix.target-platform }}/*.conda
+                rattler-build upload anaconda output/${{ matrix.target-platform }}/*.conda --force --owner threeml ${LABEL}
 
               env:
                   OMP_NUM_THREADS: 1
