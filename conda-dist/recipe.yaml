@@ -68,10 +68,12 @@ tests:
         - pytest
         - zeus-mcmc
         - dynesty
-        - if: not (linux and aarch64)
+        - if: not (linux and aarch64) 
           then:
-          - ultranest
-          - pymultinest
+            - pymultinest
+            - if: not (osx and python>=3.13)
+              then:
+                - ultranest
 
 
 about:
