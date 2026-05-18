@@ -193,6 +193,9 @@ jobs:
                   echo "HOME= ${HOME}"
                   echo "Python version: ${{matrix.python-version}}"
                   echo "Running on development branch: ${ISDEV} "
+                  if [[ ${matrix.os} != macos-latest && ${matrix.python-version} != 3.13 ]]; then
+                      mamba install -c conda-forge pygmo
+                  fi
               env:
                   ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
             - name: Conda list
