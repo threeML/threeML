@@ -365,10 +365,7 @@ jobs:
       - name: Install the package
         shell: bash -l {0}
         run: |
-          pip install black 
-          pip install --upgrade speclite
-          #pip install git+https://github.com/desihub/speclite.git
-          #pip install --no-binary :all: root_numpy
+          mamba install -c conda-forge black speclite pagmo
           
           if [[ "${ISDEV}" == "true" ]]; then
             mamba remove --force astromodels
