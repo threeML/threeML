@@ -180,7 +180,7 @@ jobs:
                   channels: >-
                     ${{ env.ISDEV == 'true'
                         && 'threeml/label/dev,conda-forge,fermi'
-                        || 'threeml,conda-forge,fermi' }}
+                        || 'threeml,conda-forge,fermi'}}
                   environment-file: ${{ matrix.environment }}
                   use-only-tar-bz2: false
               env:
@@ -190,26 +190,9 @@ jobs:
             - name: Init Env
               shell: bash -l {0}
               run: |
-                  pip install tomli
-                  export PKG_VERSION=$(python -c "import versioneer;print(versioneer.get_version())")
-
                   echo "HOME= ${HOME}"
-                  echo "Building ${PKG_VERSION} ..."
                   echo "Python version: ${{matrix.python-version}}"
                   echo "Running on development branch: ${ISDEV} "
-
-                  if [[ "${ISDEV}" == "true" ]]; then
-                  
-                  mamba install -c conda-forge -c threeml/label/dev "threeml/label/dev::astromodels"
-                  
-                  fi
-                  #pip install --upgrade speclite
-                  #pip install fermipy 
-
-                  if [[ ${{matrix.python-version}} == 3.9 ]];
-                  then
-                    mamba install -c conda-forge "numpy<1.24"
-                  fi
               env:
                   ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
             - name: Conda list
