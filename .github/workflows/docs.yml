@@ -35,6 +35,7 @@ jobs:
              channels: threeml, conda-forge, fermi
              environment-file: ci/environment.yml 
              use-only-tar-bz2: false
+             miniforge-version: latest
 
       # is that really needed?
       - name: install latex
@@ -111,7 +112,6 @@ jobs:
         with:
           auto-update-conda: true
           auto-activate: false
-          miniforge-version: latest
           activate-environment: test_env
           python-version: 3.11
           channels: threeml, conda-forge, defaults
@@ -119,6 +119,7 @@ jobs:
           use-only-tar-bz2: false
           architecture: "x64"
           mamba-version: "2.5"
+          miniforge-version: latest
 
       - name: Init Environment
         shell: bash -l {0}
@@ -178,7 +179,7 @@ jobs:
           key: conda-fermi_notebooks-python-3.11-${{ hashFiles('ci/environment_fermi.yml') }}
 
       - name: Setup Miniconda
-        uses: conda-incubator/setup-miniconda@v3
+        uses: conda-incubator/setup-miniconda@v4
         with:
           auto-update-conda: true
           auto-activate: false
@@ -359,7 +360,7 @@ jobs:
 
           # eval "$(/usr/libexec/path_helper)"
           # sudo apt-get install texlive
-
+          
           mamba install ${compilers} jupytext jupyterthemes jupyter_latex_envs texlive-core ipython_genutils jupyter notebook jupyterthemes jupyter_latex_envs
 
       - name: Install the package
