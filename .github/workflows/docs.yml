@@ -366,7 +366,7 @@ jobs:
       - name: Install the package
         shell: bash -l {0}
         run: |
-          mamba install -c conda-forge black speclite pagmo
+          mamba install -c conda-forge black speclite pygmo
           
           if [[ "${ISDEV}" == "true" ]]; then
             mamba remove --force astromodels
