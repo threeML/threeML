@@ -96,9 +96,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Cache conda
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         env:
           # Increase this value to reset cache if etc/example-environment.yml has not changed
           CACHE_NUMBER: 0
@@ -167,9 +167,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Cache conda
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         env:
           # Increase this value to reset cache if etc/example-environment.yml has not changed
           CACHE_NUMBER: 0
@@ -319,9 +319,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Cache conda
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         env:
           # Increase this value to reset cache if etc/example-environment.yml has not changed
           CACHE_NUMBER: 0
@@ -467,7 +467,7 @@ jobs:
           path: docs/notebooks
           
       - name: Sleep for 10 min
-        uses: juliangruber/sleep-action@v2
+        uses: juliangruber/sleep-action@master
         with:
           time: 10m
           
@@ -513,7 +513,7 @@ jobs:
           fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: 3.11
 
@@ -567,7 +567,7 @@ jobs:
           fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: 3.11
 
@@ -621,11 +621,12 @@ jobs:
 
 
       - name: Build and Commit
-        uses: sphinx-notes/pages@v2
+        uses: sphinx-notes/pages@v3
         with:
           documentation_path: docs
           sphinx_version: 9.0.4
           requirements_path: docs/requirements.txt
+          publish: false
 
       - name: Push changes
         if: github.event_name == 'push'
