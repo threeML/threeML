@@ -22,10 +22,35 @@ class GBMTTEFile(object):
         :param ttefile: The filename of the TTE file to be stored
         """
 
-        tte = fits.open(ttefile)
+        with fits.open(ttefile) as tte:
+            self._events = tte["EVENTS"].data["TIME"]
+            self._pha = tte["EVENTS"].data["PHA"]
+            self._start_events = tte["PRIMARY"].header["TSTART"]
+            self._stop_events = tte["PRIMARY"].header["TSTOP"]
 
-        self._events = tte["EVENTS"].data["TIME"]
-        self._pha = tte["EVENTS"].data["PHA"]
+            self._utc_start = tte["PRIMARY"].header["DATE-OBS"]
+            self._utc_stop = tte["PRIMARY"].header["DATE-END"]
+
+            self._n_channels = tte["EBOUNDS"].header["NAXIS2"]
+
+            self._det_name = "%s_%s" % (
+                tte["PRIMARY"].header["INSTRUME"],
+                tte["PRIMARY"].header["DETNAM"],
+            )
+
+            self._telescope = tte["PRIMARY"].header["TELESCOP"]
+            try:
+                self._trigger_time = tte["PRIMARY"].header["TRIGTIME"]
+
+            except Exception:
+                # For continuous data
+                log.warning(
+                    "There is no trigger time in the TTE file. Must be set manually or "
+                    "using MET relative times."
+                )
+
+                log.debug("set trigger time to zero")
+                self._trigger_time = 0
 
         # the GBM TTE data are not always sorted in TIME.
         # we will now do this for you. We should at some
@@ -52,34 +77,6 @@ class GBMTTEFile(object):
             )
             self._events = self._events[sort_idx]
             self._pha = self._pha[sort_idx]
-
-        try:
-            self._trigger_time = tte["PRIMARY"].header["TRIGTIME"]
-
-        except Exception:
-            # For continuous data
-            log.warning(
-                "There is no trigger time in the TTE file. Must be set manually or "
-                "using MET relative times."
-            )
-
-            log.debug("set trigger time to zero")
-            self._trigger_time = 0
-
-        self._start_events = tte["PRIMARY"].header["TSTART"]
-        self._stop_events = tte["PRIMARY"].header["TSTOP"]
-
-        self._utc_start = tte["PRIMARY"].header["DATE-OBS"]
-        self._utc_stop = tte["PRIMARY"].header["DATE-END"]
-
-        self._n_channels = tte["EBOUNDS"].header["NAXIS2"]
-
-        self._det_name = "%s_%s" % (
-            tte["PRIMARY"].header["INSTRUME"],
-            tte["PRIMARY"].header["DETNAM"],
-        )
-
-        self._telescope = tte["PRIMARY"].header["TELESCOP"]
 
         self._calculate_deadtime()
 
