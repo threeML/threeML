@@ -47,7 +47,7 @@ jobs:
         shell: bash -l {0}
         run: |
           set -e
-          mamba install jupytext jupyterthemes ipython_genutils jupyter notebook black 
+          mamba install jupytext jupyterthemes ipython_genutils jupyter notebook black ultranest
 
 
       - name: Install the package
@@ -366,7 +366,7 @@ jobs:
       - name: Install the package
         shell: bash -l {0}
         run: |
-          mamba install -c conda-forge black speclite pygmo
+          mamba install -c conda-forge black speclite pygmo ultranest
           
           if [[ "${ISDEV}" == "true" ]]; then
             mamba remove --force astromodels
