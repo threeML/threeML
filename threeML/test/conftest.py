@@ -425,14 +425,12 @@ def test_directory():
 
 
 @pytest.fixture(scope="function")
-def test_file():
-    test_file = Path("dummy_file")
+def test_file(tmp_path):
+    test_file = tmp_path / "dummy_file"
 
     test_file.touch(exist_ok=True)
 
     yield test_file
-
-    test_file.unlink()
 
 
 @pytest.fixture(scope="session")
@@ -454,15 +452,7 @@ def photo_obs():
         K=(19.07, 0.1),
     )
 
-    fn = Path("grond_observation.h5")
-
-    photo_obs.to_hdf5(fn, overwrite=True)
-
-    restored = PhotometericObservation.from_hdf5(fn)
-
-    yield restored
-
-    fn.unlink()
+    yield photo_obs
 
 
 @pytest.fixture(scope="function")
