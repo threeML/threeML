@@ -1,5 +1,4 @@
 import astropy.units as u
-import matplotlib.pyplot as plt
 import pytest
 from astromodels import Model, PointSource, Powerlaw
 
@@ -10,7 +9,6 @@ from threeML.io.logging import setup_logger
 from threeML.io.network import internet_connection_is_active
 from threeML.utils.data_builders.fermi.lat_transient_builder import (
     TransientLATDataBuilder,
-    has_fermitools,
 )
 from threeML.utils.data_download.Fermi_LAT.download_LAT_data import LAT_dataset
 
@@ -20,47 +18,21 @@ skip_if_internet_is_not_available = pytest.mark.skipif(
     not internet_connection_is_active(), reason="No active internet connection"
 )
 
-try:
-    import GtApp
-    import GtBurst
 
-    log.debug(GtApp.__doc__)
-    log.debug(GtBurst.__doc__)
-
-
-except Exception:
-    has_Fermi = False
-
-else:
-    has_Fermi = True
-
-if has_Fermi is not has_fermitools:
-    log.warning(
-        f"has_Fermi ({has_Fermi}) is not the same as has_fermitools ({has_fermitools})"
-    )
-    has_Fermi = False
-
-# This defines a decorator which can be applied to single tests to
-# skip them if the condition is not met
-skip_if_LAT_is_not_available = pytest.mark.skipif(
-    not has_Fermi,
-    reason="Fermi Science Tools not installed",
-)
-
-trigger_time = 243216766
-ra = 119.84717
-dec = -56.638333
-radius = 10.0
-zmax = 110.0
-thetamax = 180.0
-irf = "p8_transient020e"
-datarepository = "FermiData"
-
-
-# @pytest.mark.xfail
-@skip_if_LAT_is_not_available
 @skip_if_internet_is_not_available
-def test_make_LAT_dataset():
+def test_make_LAT_dataset(tmp_path):
+
+    _ = pytest.importorskip("GtApp")
+    _ = pytest.importorskip("GtBurst")
+    trigger_time = 243216766
+    ra = 119.84717
+    dec = -56.638333
+    radius = 10.0
+    zmax = 110.0
+    thetamax = 180.0
+    irf = "p8_transient020e"
+    datarepository = tmp_path / "FermiData"
+
     myLATdataset = LAT_dataset()
 
     myLATdataset.make_LAT_dataset(
@@ -123,14 +95,3 @@ def test_make_LAT_dataset():
         ene_min=10,
         ene_max=10e4,
     )
-
-    # plt.xlabel("Energy (MeV)")
-    # plt.ylabel("Differential flux (ph./cm2/s/MeV)")
-    # plt.ylim(1e-12, 1e-3)
-    # plt.show()
-    # myplug.display()
-
-
-if __name__ == "__main__":
-    test_make_LAT_dataset()
-    plt.show()
