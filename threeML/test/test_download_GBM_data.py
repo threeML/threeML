@@ -15,14 +15,14 @@ skip_if_internet_is_not_available = pytest.mark.skipif(
 
 
 @skip_if_internet_is_not_available
-def test_download_GBM_data():
+def test_download_GBM_data(tmp_path):
     # test good trigger names
     good_triggers = ["080916009", "bn080916009", "GRB080916009"]
 
     which_detector = "n1"
 
     for i, trigger in enumerate(good_triggers):
-        temp_dir = "_download_temp"
+        temp_dir = tmp_path / "_download_temp"
 
         dl_info = download_GBM_trigger_data(
             trigger_name=trigger,
