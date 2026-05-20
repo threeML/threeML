@@ -42,7 +42,7 @@ jobs:
             fail-fast: false
             matrix:
                 python-version: ["3.11","3.12","3.13"]
-                os: ["ubuntu-latest", "macos-latest", "macos-15-intel"]
+                os: ["ubuntu-latest", "macos-latest", "macos-15-intel", "ubuntu-24.04-arm"]
         runs-on:  ${{ matrix.os }}
         steps:
             - name: Checkout
@@ -55,7 +55,7 @@ jobs:
               run: |
                   python -m pip install --upgrade pip wheel setuptools numpy
 
-                  if [[ ${{matrix.os}} != ubuntu-latest ]];
+                  if [[ ${{matrix.os}} != *"ubuntu"*]];
                   then
                     brew update
                     brew install hdf5 lzo c-blosc
@@ -68,6 +68,7 @@ jobs:
                   fi
                   
                   pip install --upgrade flake8 coverage pytest-cov 
+                  pip install ultranest autoemcee zeus-mcmc
 
                   pip install -e .
               env:
@@ -95,7 +96,7 @@ jobs:
             fail-fast: false
             matrix:
                 python-version: ["3.11","3.12","3.13"]
-                os: [ "ubuntu-latest", "macos-latest", "macos-15-intel"]
+                os: [ "ubuntu-latest", "macos-latest", "macos-15-intel","ubuntu-24.04-arm"]
         runs-on: ${{ matrix.os }}
         steps:
             - name: Checkout
@@ -108,7 +109,7 @@ jobs:
               run: |
                   python -m pip install --upgrade pip wheel
 
-                  if [[ ${{matrix.os}} != ubuntu-latest ]];
+                  if [[ ${{matrix.os}} != *"ubuntu"* ]];
                   then
                     brew update
                     brew install hdf5 lzo c-blosc
@@ -143,7 +144,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                os: ["ubuntu-latest", "macos-15-intel", "macos-latest"]
+                os: ["ubuntu-latest", "macos-15-intel", "macos-latest","ubuntu-24.04-arm]
                 python-version: ["3.11", "3.12", "3.13"]
                 include:
                   - environment: ci/environment_macos-latest.yml
@@ -151,13 +152,10 @@ jobs:
                     os: macos-latest
                   - python-version: 3.11
                     environment: ci/environment_fermi.yml
-                    architecture: x64
                   - python-version: 3.12
                     environment: ci/environment.yml
-                    architecture: x64
                   - python-version: 3.13
                     environment: ci/environment.yml
-                    architecture: x64
 
         runs-on: ${{ matrix.os }}
         steps:
