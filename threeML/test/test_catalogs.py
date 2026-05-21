@@ -166,8 +166,10 @@ def test_old_fermi_module():
     _ = lle_catalog.query('trigger_type == "GRB"')
 
     lat_catalog = LATSC()
-
-    ra, dec, table1 = lat_catalog.search_around_source("Crab", 1.0)
+    try:
+        ra, dec, table1 = lat_catalog.search_around_source("Crab", 1.0)
+    except NameResolveError:
+        pytest.skip(reason="Connection to Sesame failed")
 
     table2 = lat_catalog.cone_search(ra, dec, 1.0)
 
