@@ -148,20 +148,16 @@ jobs:
                 python-version: ["3.11", "3.12", "3.13"]
                 include:
                   - environment: ci/environment_macos-latest.yml
-                    architecture: arm64
                     os: macos-latest
                   - environment: ci/environment_aarch64.yml
-                    architecture: arm64
                     os: ubuntu-24.04-arm
                   - python-version: 3.11
                     environment: ci/environment_fermi.yml
-                    architecture: x64
                   - python-version: 3.12
                     environment: ci/environment.yml
-                    architecture: x64
                   - python-version: 3.13
                     environment: ci/environment.yml
-                    architecture: x64
+
 
         runs-on: ${{ matrix.os }}
         steps:
@@ -172,7 +168,6 @@ jobs:
               with:
                   auto-update-conda: true
                   auto-activate: false
-                  architecture: ${{ matrix.architecture }}
                   activate-environment: test_env
                   python-version: ${{ matrix.python-version }}
                   channels: >-
