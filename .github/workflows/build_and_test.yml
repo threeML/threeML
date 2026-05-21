@@ -161,19 +161,19 @@ jobs:
                     ${{ env.ISDEV == 'true'
                         && 'threeml/label/dev,conda-forge,fermi'
                         || 'threeml,conda-forge,fermi'}}
-                  environment-file: ${{ ENV_FILE }}
+                  environment-file: ${{ env.ENV_FILE }}
                   use-only-tar-bz2: false
                   miniforge-version: latest
                   mamba-version: "2.5"
-
               env:
                   ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
-                  ENV_FILE: ${{ 
-                    matrix.os == 'ubuntu-24.04-arm' && 'ci/environment_aarch64.yml' ||
-                    matrix.os == 'macos-latest' && 'ci/environment_macos-latest.yml' ||
-                    matrix.python-version == '3.11' && 'ci/environment_fermi.yml' ||
-                    'ci/environment.yml'
-                  }}
+                  ENV_FILE: >-
+                    ${{ 
+                      matrix.os == 'ubuntu-24.04-arm' && 'ci/environment_aarch64.yml' ||
+                      matrix.os == 'macos-latest' && 'ci/environment_macos-latest.yml' ||
+                      matrix.python-version == '3.11' && 'ci/environment_fermi.yml' ||
+                      'ci/environment.yml'
+                    }}
 
 
             - name: Init Env
