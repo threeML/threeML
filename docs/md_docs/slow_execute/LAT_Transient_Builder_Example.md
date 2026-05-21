@@ -299,7 +299,7 @@ Finally, you can also compute the TS in all time intervals and print their value
 ```python
 TS = {}
 for a in results.values():
-    TS[list(a.data_list.keys())[0]] = a.compute_TS('GRB', a.results.get_statistic_frame())['TS'][0]
+    TS[list(a.data_list.keys())[0]] = a.compute_TS('GRB', a.results.get_statistic_frame())['TS'].iloc[0]
 
 for key, value in TS.items():
     print(key, value)
