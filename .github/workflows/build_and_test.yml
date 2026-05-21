@@ -170,7 +170,7 @@ jobs:
                   ENV_FILE: >-
                     ${{ 
                       matrix.os == 'ubuntu-24.04-arm' && 'ci/environment_aarch64.yml' ||
-                      matrix.os == 'macos-latest' && 'ci/environment_macos-latest.yml' ||
+                      matrix.os == 'macos-latest' && matrix.python-version == '3.11' && 'ci/environment_macos-latest.yml' ||
                       matrix.python-version == '3.11' && 'ci/environment_fermi.yml' ||
                       'ci/environment.yml'
                     }}
