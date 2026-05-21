@@ -146,25 +146,6 @@ jobs:
             matrix:
                 os: ["ubuntu-latest", "macos-15-intel", "macos-latest","ubuntu-24.04-arm"]
                 python-version: ["3.11", "3.12", "3.13"]
-                include:
-                  - environment: ci/environment_macos-latest.yml
-                    os: macos-latest
-                  - environment: ci/environment_aarch64.yml
-                    os: ubuntu-24.04-arm
-                    python-version: 3.11
-                  - environment: ci/environment_aarch64.yml
-                    os: ubuntu-24.04-arm
-                    python-version: 3.12
-                  - environment: ci/environment_aarch64.yml
-                    os: ubuntu-24.04-arm
-                    python-version: 3.13
-                  - python-version: 3.11
-                    environment: ci/environment_fermi.yml
-                  - python-version: 3.12
-                    environment: ci/environment.yml
-                  - python-version: 3.13
-                    environment: ci/environment.yml
-
         runs-on: ${{ matrix.os }}
         steps:
             - name: Checkout
@@ -180,13 +161,19 @@ jobs:
                     ${{ env.ISDEV == 'true'
                         && 'threeml/label/dev,conda-forge,fermi'
                         || 'threeml,conda-forge,fermi'}}
-                  environment-file: ${{ matrix.environment }}
+                  environment-file: ${{ ENV_FILE }}
                   use-only-tar-bz2: false
                   miniforge-version: latest
                   mamba-version: "2.5"
 
               env:
                   ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
+                  ENV_FILE: ${{ 
+                    matrix.os == 'ubuntu-24.04-arm' && 'ci/environment_aarch64.yml' ||
+                    matrix.os == 'macos-latest' && 'ci/environment_macos-latest.yml' ||
+                    matrix.python-version == '3.11' && 'ci/environment_fermi.yml' ||
+                    'ci/environment.yml'
+                  }}
 
 
             - name: Init Env
