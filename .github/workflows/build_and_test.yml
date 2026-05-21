@@ -157,6 +157,11 @@ jobs:
                     environment: ci/environment.yml
                   - python-version: 3.13
                     environment: ci/environment.yml
+              exclude: 
+                  - os: ubuntu-24.04-arm
+                    environment: ci/environment_fermi.yml
+                  - os: ubuntu-24.04-arm
+                    environment: ci/environment.yml
 
 
         runs-on: ${{ matrix.os }}
