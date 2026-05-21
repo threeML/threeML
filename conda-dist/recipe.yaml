@@ -1,0 +1,85 @@
+context:
+  name: threeml 
+  version: ${{ git.latest_tag('../')[1:] if git.latest_tag('../') and git.latest_tag('../')[0] == 'v' else git.latest_tag('../') }}
+
+package:
+  name: ${{ name }}
+  version: ${{ version }}
+
+source:
+  path: ../
+
+build:
+  skip: win
+  script: pip install . -v
+
+requirements:
+  # note that there is no build section
+  host:
+    - pip
+    - python
+    - setuptools
+    - versioneer
+
+  run:
+    - python
+    - numpy >=1.26
+    - scipy >=1.13
+    - emcee >=3.1.5
+    - astropy
+    - matplotlib
+    - uncertainties
+    - pyyaml >=5.1
+    - dill
+    - iminuit >=2.0
+    - astromodels >=2.5.1
+    - astroquery
+    - corner>=1.0.2
+    - pandas
+    - requests
+    - speclite >=0.20
+    - ipython
+    - ipyparallel
+    - joblib
+    - numexpr
+    - numba
+    - numdifftools
+    - tqdm >=4.67.2
+    - omegaconf
+    - rich
+    - packaging
+
+    - if: (osx and x86_64)
+      then: llvmlite<0.46
+
+  run_constraints:
+    - if: not (linux and aarch64)
+      then: xspec>=12.15.1
+
+tests:
+  - python:
+      imports:
+        - threeML 
+
+  - script:
+      - pytest -vv --pyargs threeML
+    requirements:
+      run:
+        - pytest
+        - zeus-mcmc
+        - dynesty
+        - nautilus-sampler
+        - if: not (linux and aarch64) 
+          then:
+            - pymultinest
+            - if: not (osx and python>=3.13)
+              then:
+                - ultranest
+
+
+about:
+  homepage: https://github.com/threeML/threeML
+  license: BSD-3-Clause
+  license_file: LICENSE
+  summary: The Multi-Mission Maximum Likelihood Framework 
+  documentation: https://threeML.readthedocs.io/en/latest/

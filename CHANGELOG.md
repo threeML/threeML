@@ -1,6 +1,49 @@
 # Changelog
 
 
+## v2.5
+### [v2.5.0](https://github.com/threeML/threeML/tree/v2.5.0) (2026-02-24)
+
+[Full Changelog](https://github.com/threeML/threeML/compare/v2.4.3...v2.5.0)
+
+**Fixed bugs:**
+
+- Circular import in logging and config\_utils module [\#657](https://github.com/threeML/threeML/issues/657)
+
+**Closed issues:**
+
+- PluginPrototype not being garbage-collected when used with JointLikelihood fitting [\#663](https://github.com/threeML/threeML/issues/663)
+- Generetaing photon and background files using 3ML  for RMFIT [\#661](https://github.com/threeML/threeML/issues/661)
+- GtBurst module error [\#660](https://github.com/threeML/threeML/issues/660)
+- Creating catalogs with FermiGBMBurstCatalog results in an error [\#659](https://github.com/threeML/threeML/issues/659)
+- Conda based testing of XSPEC [\#652](https://github.com/threeML/threeML/issues/652)
+- Regarding LATgrb analysis: LATdataset\(\).extract\_events\(\) [\#650](https://github.com/threeML/threeML/issues/650)
+- the cache \(vo\_table\) can not download through the url within "get\_heasarc\_table\_as\_pandas.py" [\#648](https://github.com/threeML/threeML/issues/648)
+- TypeError: integral\(\) takes 0 positional arguments but 2 were given [\#641](https://github.com/threeML/threeML/issues/641)
+- getting error while importing threeml package [\#633](https://github.com/threeML/threeML/issues/633)
+- Error related to initialisation the threeML package  [\#632](https://github.com/threeML/threeML/issues/632)
+- Issue to load xspec models  [\#625](https://github.com/threeML/threeML/issues/625)
+- Rebinning in grb080916C tutorial fails: Method '\_\_array\_\_' is not supported. [\#622](https://github.com/threeML/threeML/issues/622)
+- PackagesNotFoundError when trying to install threeML with Conda on MacOS with new Silicon chip [\#618](https://github.com/threeML/threeML/issues/618)
+- deprecated function error with numpy 1.24 [\#616](https://github.com/threeML/threeML/issues/616)
+- astromodels.xspec [\#614](https://github.com/threeML/threeML/issues/614)
+- Discrepancy between 3ML and Xspec residuals of spectral fitting [\#572](https://github.com/threeML/threeML/issues/572)
+
+**Merged pull requests:**
+
+- Dev [\#666](https://github.com/threeML/threeML/pull/666) ([ndilalla](https://github.com/ndilalla))
+- Add support for numpy\>=2.0 [\#665](https://github.com/threeML/threeML/pull/665) ([PreisTo](https://github.com/PreisTo))
+- Using weakref instead of strong callback links. [\#664](https://github.com/threeML/threeML/pull/664) ([ndilalla](https://github.com/ndilalla))
+- Fix nautilus sampler [\#662](https://github.com/threeML/threeML/pull/662) ([PreisTo](https://github.com/PreisTo))
+- Updated docs for the 2.5.0 release + fix workflows [\#658](https://github.com/threeML/threeML/pull/658) ([PreisTo](https://github.com/PreisTo))
+- Fix Zeus-MCMC Deprecation [\#655](https://github.com/threeML/threeML/pull/655) ([PreisTo](https://github.com/PreisTo))
+- Support for Dynesty v3.0.0 [\#654](https://github.com/threeML/threeML/pull/654) ([PreisTo](https://github.com/PreisTo))
+- Remove Python2 compatibility Code [\#651](https://github.com/threeML/threeML/pull/651) ([PreisTo](https://github.com/PreisTo))
+- Codestyle update [\#649](https://github.com/threeML/threeML/pull/649) ([PreisTo](https://github.com/PreisTo))
+- Send logs to stderr by default [\#646](https://github.com/threeML/threeML/pull/646) ([israelmcmc](https://github.com/israelmcmc))
+- Organization chart [\#644](https://github.com/threeML/threeML/pull/644) ([omodei](https://github.com/omodei))
+
+
 ## v2.4
 ### [v2.4.3](https://github.com/threeML/threeML/tree/v2.4.3) (2025-02-06)
 
@@ -238,7 +281,6 @@
 - Simulated data from LAT plugins. [\#422](https://github.com/threeML/threeML/issues/422)
 - test\_parallel\_pagmo fails [\#419](https://github.com/threeML/threeML/issues/419)
 - Conda really slow in solving the environment with fermi on linux [\#418](https://github.com/threeML/threeML/issues/418)
-- Proper import \_\_all\_\_ statements [\#400](https://github.com/threeML/threeML/issues/400)
 
 **Merged pull requests:**
 
