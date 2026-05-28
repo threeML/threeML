@@ -18,6 +18,7 @@ from threeML.catalogs.catalog_utils import _sanitize_fgl_name
 from threeML.io.logging import setup_logger
 from threeML.io.network import internet_connection_is_active
 from threeML.plugins.FermipyLike import FermipyLike
+from astropy.coordinates.name_resolve import NameResolveError
 
 log = setup_logger(__name__)
 
@@ -54,7 +55,10 @@ def do_the_test(cat_name):
     gta = GTAnalysis.create(f"roi_{cat_name}.npy")
 
     lat_catalog = FermiPySourceCatalog(f"roi_{cat_name}.fits")
-    ra, dec, table = lat_catalog.search_around_source("Crab", radius=30.0)
+    try:
+        ra, dec, table = lat_catalog.search_around_source("Crab", radius=30.0)
+    except NameResolveError:
+        pytest.skip(reason="Connection to Sesame failed")
     model_fits = lat_catalog.get_model()
 
     lat_catalog = FermiPySourceCatalog(cat_name)
@@ -163,7 +167,10 @@ def test_read_model_from_catalogs():
     # instance)
 
     lat_catalog = FermiLATSourceCatalog()
-    ra, dec, table = lat_catalog.search_around_source("Crab", radius=20.0)
+    try:
+        ra, dec, table = lat_catalog.search_around_source("Crab", radius=20.0)
+    except NameResolveError:
+        pytest.skip(reason="Connection to Sesame failed")
 
     tstart = "2010-01-01 00:00:00"
     tstop = "2010-01-08 00:00:00"
