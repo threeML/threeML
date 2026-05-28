@@ -1,6 +1,7 @@
 import copy
 import re
 from pathlib import Path
+from importlib.util import find_spec
 
 import astropy.io.fits as fits
 import matplotlib.pyplot as plt
@@ -42,7 +43,7 @@ from threeML.utils.time_series.time_series import TimeSeries
 
 log = setup_logger(__name__)
 
-try:
+if find_spec("polarpy") is not None:
     from polarpy.polar_data import POLARData
     from polarpy.polar_response import PolarResponse
     from polarpy.polarlike import PolarLike
@@ -50,20 +51,18 @@ try:
     log.debug("POLAR plugins are available")
 
     has_polarpy = True
-
-except ImportError:
+else:
     log.debug("POLAR plugins are unavailable")
 
     has_polarpy = False
 
-try:
+if find_spec("gbm_drm_gen") is not None:
     import gbm_drm_gen
 
     log.debug("GBM RSP generator is available")
-
     has_balrog = True
+else:
 
-except ImportError:
     log.debug("GBM RSP generator is unavailable")
 
     has_balrog = False
