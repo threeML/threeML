@@ -8,6 +8,7 @@ from threeML.data_list import DataList
 from threeML.io.logging import setup_logger, update_logging_level
 from threeML.io.network import internet_connection_is_active
 from threeML.utils.data_download.Fermi_LAT.download_LAT_data import download_LAT_data
+from astropy.coordinates.name_resolve import NameResolveError
 
 log = setup_logger(__name__)
 update_logging_level("INFO")
@@ -29,8 +30,10 @@ def test_FermipyLike_fromVO():
     # Crab coordinates
 
     lat_catalog = FermiLATSourceCatalog()
-
-    ra, dec, table = lat_catalog.search_around_source("Crab", radius=20.0)
+    try:
+        ra, dec, table = lat_catalog.search_around_source("Crab", radius=20.0)
+    except NameResolveError:
+        pytest.skip(reason="Connection to Sesame failed.")
 
     assert np.isclose(ra, 83.633, atol=5e-3)
     assert np.isclose(dec, 22.013, atol=5e-3)
@@ -132,8 +135,10 @@ def test_FermipyLike_fromDisk():
     # Crab coordinates
 
     lat_catalog = FermiPySourceCatalog("4FGL")
-
-    ra, dec, table = lat_catalog.search_around_source("Crab", radius=20.0)
+    try:
+        ra, dec, table = lat_catalog.search_around_source("Crab", radius=20.0)
+    except NameResolveError:
+        pytest.skip(reason="Connection to Sesame failed.")
 
     assert np.isclose(ra, 83.633, atol=5e-3)
     assert np.isclose(dec, 22.013, atol=5e-3)
