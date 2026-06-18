@@ -173,7 +173,7 @@ _optional_parameters = [
 ]
 
 
-class TransientLATDataBuilder(object):
+class TransientLATDataBuilder:
     def __init__(self, triggername, **init_values):
         """Build the command for GtBurst's likelihood analysis and produce the
         required files for the FermiLATLike plugin.
@@ -947,7 +947,7 @@ class TransientLATDataBuilder(object):
         return cls(triggername, **loaded_config)
 
 
-class LATObservation(object):
+class LATObservation:
     def __init__(
         self,
         event_file,
