@@ -2,17 +2,15 @@ import abc
 import collections
 import math
 import weakref
+from importlib.util import find_spec
 from typing import Dict, Optional
 
 import numpy as np
-
-from threeML.config import threeML_config
-from importlib.util import find_spec
-
 from astromodels.core.model import Model
 from astromodels.functions.function import ModelAssertionViolation
 
 from threeML.analysis_results import BayesianResults
+from threeML.config import threeML_config
 from threeML.data_list import DataList
 from threeML.io.logging import setup_logger
 from threeML.utils.numba_utils import nb_sum

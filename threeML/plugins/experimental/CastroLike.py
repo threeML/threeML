@@ -1,7 +1,6 @@
 import warnings
-from .castro_like import (  # noqa: F401
-    CastroLike as CastroLike,
-)
+
+from .castro_like import CastroLike as CastroLike  # noqa: F401
 
 warnings.warn(
     f"Importing plugins like 'from {__name__} import {__name__.split('.')[-1]}' is "

@@ -6,8 +6,7 @@ import pandas as pd
 from astromodels import Model
 
 from threeML.io.logging import setup_logger
-from threeML.plugins import SpectrumLike
-from threeML.plugins import XYLike
+from threeML.plugins import SpectrumLike, XYLike
 from threeML.utils.OGIP.response import InstrumentResponse
 from threeML.utils.spectrum.binned_spectrum import (
     BinnedSpectrum,

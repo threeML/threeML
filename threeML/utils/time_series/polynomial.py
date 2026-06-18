@@ -26,8 +26,7 @@ from threeML.minimizer.minimization import (
     GlobalMinimization,
     LocalMinimization,
 )
-from threeML.plugins import EventObservation, UnbinnedPoissonLike
-from threeML.plugins import XYLike
+from threeML.plugins import EventObservation, UnbinnedPoissonLike, XYLike
 
 log = setup_logger(__name__)
 

@@ -1,7 +1,6 @@
 import warnings
-from .sherpa_like import (  # noqa: F401
-    SherpaLike as SherpaLike,
-)
+
+from .sherpa_like import SherpaLike as SherpaLike  # noqa: F401
 
 warnings.warn(
     f"Importing plugins like 'from {__name__} import {__name__.split('.')[-1]}' is "

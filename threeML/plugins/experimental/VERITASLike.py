@@ -1,7 +1,6 @@
 import warnings
-from .veritas_like import (  # noqa: F401
-    VERITASLike as VERITASLike,
-)
+
+from .veritas_like import VERITASLike as VERITASLike  # noqa: F401
 
 warnings.warn(
     f"Importing plugins like 'from {__name__} import {__name__.split('.')[-1]}' is "

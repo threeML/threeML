@@ -1,7 +1,7 @@
 import copy
 import re
-from pathlib import Path
 from importlib.util import find_spec
+from pathlib import Path
 
 import astropy.io.fits as fits
 import matplotlib.pyplot as plt
@@ -9,12 +9,10 @@ import numpy as np
 
 from threeML.config.config import threeML_config
 from threeML.config.config_utils import get_value_kwargs
+from threeML.exceptions.custom_exceptions import NegativeBackground
 from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
 from threeML.io.logging import setup_logger, silence_console_log
-from threeML.plugins import DispersionSpectrumLike
-from threeML.plugins import OGIPLike
-from threeML.plugins import SpectrumLike
-from threeML.exceptions.custom_exceptions import NegativeBackground
+from threeML.plugins import DispersionSpectrumLike, OGIPLike, SpectrumLike
 from threeML.utils.data_builders.fermi.gbm_data import GBMCdata, GBMTTEFile
 from threeML.utils.data_builders.fermi.lat_data import LLEFile
 from threeML.utils.histogram import Histogram
