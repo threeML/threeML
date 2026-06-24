@@ -30,7 +30,6 @@ except Exception:
 has_GammapyLike = False
 if find_spec("gammapy_plugin") is not None:
     has_GammapyLike = True
-    from gammapy_plugin.gammapy_like import GammapyLike
 
 if threeML_config.plotting.use_threeml_style:
     plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
@@ -91,6 +90,8 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
     # Now we want to make sure that we only grab OGIP plugins
 
     new_data_keys = []
+    if has_GammapyLike:
+        from gammapy_plugin.gammapy_like import GammapyLike
 
     for key in data_keys:
         # Make sure it is a valid key
