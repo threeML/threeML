@@ -1,3 +1,5 @@
+import logging
+
 import collections
 import sys
 import weakref
@@ -21,7 +23,7 @@ from threeML.exceptions.custom_exceptions import (
     MinLargerMax,
     NoFitYet,
 )
-from threeML.io.logging import setup_logger
+
 from threeML.io.package_data import get_path_of_data_file
 from threeML.io.results_table import ResultsTable
 from threeML.io.table import Table
@@ -33,7 +35,7 @@ if threeML_config.plotting.use_threeml_style:
     plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
 
-log = setup_logger(__name__)
+log = logging.getLogger(__name__)
 
 
 class ReducingNumberOfThreads(Warning):

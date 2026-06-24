@@ -1,3 +1,5 @@
+import logging
+
 import collections
 import datetime
 import functools
@@ -32,7 +34,7 @@ from threeML.io.hdf5_utils import (
     recursively_load_dict_contents_from_group,
     recursively_save_dict_contents_to_group,
 )
-from threeML.io.logging import setup_logger
+
 from threeML.io.package_data import get_path_of_data_file
 from threeML.io.results_table import ResultsTable
 from threeML.io.rich_display import display
@@ -43,7 +45,7 @@ from threeML.random_variates import RandomVariates
 if threeML_config.plotting.use_threeml_style:
     plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
-log = setup_logger(__name__)
+log = logging.getLogger(__name__)
 
 _rich_console = Console()
 

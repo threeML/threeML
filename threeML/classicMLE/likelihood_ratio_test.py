@@ -1,3 +1,5 @@
+import logging
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -8,7 +10,7 @@ from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.classicMLE.joint_likelihood_set import JointLikelihoodSet
 from threeML.config import threeML_config
 from threeML.data_list import DataList
-from threeML.io.logging import setup_logger
+
 from threeML.io.package_data import get_path_of_data_file
 from threeML.plugins.OGIPLike import OGIPLike
 from threeML.utils.OGIP.pha import PHAWrite
@@ -17,7 +19,7 @@ if threeML_config.plotting.use_threeml_style:
     plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
 
-log = setup_logger(__name__)
+log = logging.getLogger(__name__)
 
 
 class LikelihoodRatioTest:

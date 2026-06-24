@@ -55,19 +55,6 @@ def get_path_of_user_dir() -> Path:
     return user_dir
 
 
-def get_path_of_user_config() -> Path:
-    if os.environ.get("THREEML_CONFIG") is not None:
-        config_path: Path = Path(os.environ.get("THREEML_CONFIG"))
-
-    else:
-        config_path: Path = Path().home() / ".config" / "threeML"
-
-    if not config_path.exists():
-        config_path.mkdir(parents=True)
-
-    return config_path
-
-
 def get_user_data_path():
     user_data = os.path.join(os.path.expanduser("~"), ".threeml", "data")
 
@@ -85,5 +72,4 @@ __all__ = [
     "get_path_of_data_file",
     "get_path_of_data_dir",
     "get_path_of_user_dir",
-    "get_path_of_user_config",
 ]

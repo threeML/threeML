@@ -1,9 +1,11 @@
+import logging
+
 import numpy as np
 from astromodels import use_astromodels_memoization
 
 from threeML.bayesian.sampler_base import MCMCSampler
 from threeML.config.config import threeML_config
-from threeML.io.logging import setup_logger
+
 from threeML.parallel.parallel_client import ParallelClient
 
 try:
@@ -34,7 +36,7 @@ try:
 except Exception:
     using_mpi = False
 
-log = setup_logger(__name__)
+log = logging.getLogger(__name__)
 
 
 class ZeusSampler(MCMCSampler):
