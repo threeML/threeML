@@ -1,3 +1,5 @@
+import logging
+
 import copy
 
 import astropy.units as u
@@ -15,12 +17,12 @@ from threeML import (
 )
 from threeML.utils.data_download.Fermi_LAT.download_LAT_data import download_LAT_data
 from threeML.catalogs.catalog_utils import _sanitize_fgl_name
-from threeML.io.logging import setup_logger
+
 from threeML.io.network import internet_connection_is_active
 from threeML.plugins.FermipyLike import FermipyLike
 from astropy.coordinates.name_resolve import NameResolveError
 
-log = setup_logger(__name__)
+log = logging.getLogger(__name__)
 
 skip_if_internet_is_not_available = pytest.mark.skipif(
     not internet_connection_is_active(), reason="No active internet connection"
