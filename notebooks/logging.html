@@ -11,7 +11,6 @@
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=fd6457a4" />
-      <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
@@ -62,6 +61,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Logging and Verbosity</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Logging-handlers">Logging handlers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Startup-warnings">Startup warnings</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Logging-controls-and-verbosity">Logging controls and verbosity</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Progress-bars">Progress bars</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Loud-and-Quiet">Loud and Quiet</a></li>
@@ -123,93 +125,75 @@
   <section id="Logging-and-Verbosity">
 <h1>Logging and Verbosity<a class="headerlink" href="#Logging-and-Verbosity" title="Link to this heading"></a>
 </h1>
-<p>We have recently switched to reporting information to the user via logging. Logging in 3ML occurs in three different ways:</p>
+<p>We use the <code class="docutils literal notranslate"><span class="pre">`logging</span></code> &lt;<a class="reference external" href="https://docs.python.org/3/library/logging.html">https://docs.python.org/3/library/logging.html</a>&gt;`__ library to manage all logs. The <code class="docutils literal notranslate"><span class="pre">logging</span></code> needs to be configured by the application using 3ML –e.g. a script, an interactive notebook, etc– for example:</p>
+<div class="highlight-python notranslate">
+<div class="highlight"><pre><span></span><span class="c1"># myapp.py</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>See the <code class="docutils literal notranslate"><span class="pre">logging</span></code> library documentation for further details.</p>
+<p>For convenience, 3ML provides a custom logging configuration, which can be activated with:</p>
+<div class="highlight-python notranslate">
+<div class="highlight"><pre><span></span><span class="c1"># myapp.py</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logger</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The logging behavior can be further configured with the instructions below. Note that these 3ML-specific logging configuration only take effect if your logger was instantiated using 3ML’s <code class="docutils literal notranslate"><span class="pre">setup_logger</span></code>.</p>
+<p>NOTE: Until recently, 3ML configured its own logger by default. Now you need to call <code class="docutils literal notranslate"><span class="pre">setup_logger</span></code> if you want to recover the previous behavior.</p>
+<section id="Logging-handlers">
+<h2>Logging handlers<a class="headerlink" href="#Logging-handlers" title="Link to this heading"></a>
+</h2>
+<p>Logging in 3ML occurs in three different ways:</p>
 <ul class="simple">
 <li><p>to the console (jupyter or command line)</p></li>
 <li><p>a user log file</p></li>
 <li><p>a debug log file</p></li>
 </ul>
 <p>The first two files record information relvant to the average 3ML user. The debug file records low level information useful when trying to solve runtime errors.</p>
+</section>
+<section id="Configuration">
+<h2>Configuration<a class="headerlink" href="#Configuration" title="Link to this heading"></a>
+</h2>
 <p>The logging of 3ML is configurable in the configuration file.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate">
-<div class="highlight"><pre><span></span>[1]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate">
-<div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
-
-<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">"ignore"</span><span class="p">)</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-
-<span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate">
-<div class="highlight"><pre><span></span>[1]:
-</pre></div>
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-{'divide': 'warn', 'over': 'warn', 'under': 'ignore', 'invalid': 'warn'}
-</pre></div>
-</div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate">
-<div class="highlight"><pre><span></span>[2]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate">
-<div class="highlight"><pre><span></span><span class="o">%%capture</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">threeML</span><span class="w"> </span><span class="kn">import</span> <span class="n">threeML_config</span>
+<div class="highlight-python notranslate">
+<div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">threeML</span><span class="w"> </span><span class="kn">import</span> <span class="n">threeML_config</span>
 
 <span class="n">threeML_config</span><span class="p">[</span><span class="s2">"logging"</span><span class="p">]</span>
 </pre></div>
 </div>
-</div>
 <p>First, <strong>the location of the log files can be set</strong> before start a 3ML session in python. By default, logging to the debug file is off (<strong>developer</strong> switch). The <strong>console</strong> and <strong>usr</strong> switches can also be disabled by default to completely silence 3ML. Additionally, the default logging level of 3ML can be set for both the usr and console logs.</p>
+</section>
+<section id="Startup-warnings">
+<h2>Startup warnings<a class="headerlink" href="#Startup-warnings" title="Link to this heading"></a>
+</h2>
+<p>3ML checks the availability of various plugins and external libraries during the library initialization. While these warnings are usual benign, if it is important for your application to record these warning you can log them at any point by calling</p>
+<div class="highlight-python notranslate">
+<div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">log_threeml_startup_warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astromodels.utils.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">log_astromodels_startup_warnings</span>
+<span class="n">log_astromodels_startup_warnings</span><span class="p">(</span><span class="n">logger</span><span class="p">)</span>
+<span class="n">log_threeml_startup_warnings</span><span class="p">(</span><span class="n">logger</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Here, <code class="docutils literal notranslate"><span class="pre">logger</span></code> can be an arbitrary <code class="docutils literal notranslate"><span class="pre">Logger</span></code>, whether it was configured by 3ML or not.</p>
+<p>NOTE: until recently, these warnings were logged and printed by default. Now you need to call the function above explicitely.</p>
+</section>
 <section id="Logging-controls-and-verbosity">
 <h2>Logging controls and verbosity<a class="headerlink" href="#Logging-controls-and-verbosity" title="Link to this heading"></a>
 </h2>
 <p>During a 3ML session, it may be diserable to toggle the state of the logger for certain actions. While it is possible to access the logger and handlers from <code class="docutils literal notranslate"><span class="pre">bash</span> <span class="pre">threeml.io.logging</span></code> and following the <a class="reference external" href="https://docs.python.org/3/howto/logging.html">standard practices</a> of python logging, we provide some simple utilites to toggle the state the logger.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate">
-<div class="highlight"><pre><span></span>[3]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate">
-<div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">threeML</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">silence_logs</span><span class="p">,</span>
-    <span class="n">silence_warnings</span><span class="p">,</span>
-    <span class="n">activate_logs</span><span class="p">,</span>
-    <span class="n">activate_warnings</span><span class="p">,</span>
-    <span class="n">update_logging_level</span><span class="p">,</span>
-<span class="p">)</span>
+<div class="highlight-python notranslate">
+<div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">threeML</span><span class="w"> </span><span class="kn">import</span> <span class="n">silence_logs</span><span class="p">,</span> <span class="n">silence_warnings</span><span class="p">,</span> <span class="n">activate_logs</span><span class="p">,</span> <span class="n">activate_warnings</span><span class="p">,</span> <span class="n">update_logging_level</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
-
 <span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">"threeML"</span><span class="p">)</span>
 <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Hello there"</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">23:08:42 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Hello there                                                                      </span><a href="file:///tmp/ipykernel_5202/265651751.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">265651751.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///tmp/ipykernel_5202/265651751.py#11" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">11</span></a>
-</pre>
-</div>
-</div>
 <p>If we want to shut off all logging for a few operations, we can call <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">silence_logs()</span></code> which diable all logs</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate">
-<div class="highlight"><pre><span></span>[4]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate">
+<div class="highlight-python notranslate">
 <div class="highlight"><pre><span></span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Now you see me"</span><span class="p">)</span>
 
 <span class="c1"># logging will be silenced</span>
@@ -224,30 +208,8 @@
 <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"I'm back"</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Now you see me                                                                   </span><a href="file:///tmp/ipykernel_5202/2537978581.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">2537978581.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///tmp/ipykernel_5202/2537978581.py#1" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">1</span></a>
-</pre>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> I'm back                                                                        </span><a href="file:///tmp/ipykernel_5202/2537978581.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">2537978581.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///tmp/ipykernel_5202/2537978581.py#12" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">12</span></a>
-</pre>
-</div>
-</div>
 <p>3ML has a lot of useful warning information. Sometimes we just want to get on with out analysis and now have to see this. <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">silence_warnings()</span></code> removes warnings while maintained all other logs</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate">
-<div class="highlight"><pre><span></span>[5]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate">
+<div class="highlight-python notranslate">
 <div class="highlight"><pre><span></span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"I am tired of"</span><span class="p">)</span>
 <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"being warned"</span><span class="p">)</span>
 
@@ -261,46 +223,8 @@
 <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"I hope your computer didn't crash in the mean time"</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> I am tired of                                                                    </span><a href="file:///tmp/ipykernel_5202/1734388436.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">1734388436.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///tmp/ipykernel_5202/1734388436.py#1" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">1</span></a>
-</pre>
-</div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #af5fd7; text-decoration-color: #af5fd7">WARNING </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> being warned                                                                     </span><a href="file:///tmp/ipykernel_5202/1734388436.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">1734388436.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///tmp/ipykernel_5202/1734388436.py#2" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">2</span></a>
-</pre>
-</div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> so I will turn off                                                               </span><a href="file:///tmp/ipykernel_5202/1734388436.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">1734388436.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///tmp/ipykernel_5202/1734388436.py#6" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">6</span></a>
-</pre>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #af5fd7; text-decoration-color: #af5fd7">WARNING </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> I hope your computer didn't crash in the mean time                              </span><a href="file:///tmp/ipykernel_5202/1734388436.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">1734388436.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///tmp/ipykernel_5202/1734388436.py#11" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">11</span></a>
-</pre>
-</div>
-</div>
 <p>We can also control the level of the console log:</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate">
-<div class="highlight"><pre><span></span>[6]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate">
+<div class="highlight-python notranslate">
 <div class="highlight"><pre><span></span><span class="n">update_logging_level</span><span class="p">(</span><span class="s2">"DEBUG"</span><span class="p">)</span>
 
 <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Now we can see low level logging"</span><span class="p">)</span>
@@ -310,60 +234,23 @@
 <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"This is invisible"</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #5f00ff; text-decoration-color: #5f00ff">DEBUG   </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Now we can see low level logging                                                 </span><a href="file:///tmp/ipykernel_5202/1207135628.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">1207135628.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///tmp/ipykernel_5202/1207135628.py#3" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">3</span></a>
-</pre>
-</div>
-</div>
 </section>
 <section id="Progress-bars">
 <h2>Progress bars<a class="headerlink" href="#Progress-bars" title="Link to this heading"></a>
 </h2>
 <p>Some analyses take a while and it is nice to see that something is happening, or at least point to the screen when our boss walks by and we are on twitter to show that we are still working. Thus, 3ML reports the progress of various tasks with progress bars.</p>
 <p>These are configurable from the configuration file.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate">
-<div class="highlight"><pre><span></span>[7]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate">
+<div class="highlight-python notranslate">
 <div class="highlight"><pre><span></span><span class="n">threeML_config</span><span class="p">[</span><span class="s2">"interface"</span><span class="p">]</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate">
-<div class="highlight"><pre><span></span>[7]:
-</pre></div>
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-{'progress_bars': True, 'multi_progress_color': True, 'multi_progress_cmap': 'viridis', 'progress_bar_color': '#9C04FF'}
-</pre></div>
-</div>
-</div>
 <p>We see that it is possible to show or not show progress for all of 3ML. However, it is also possible to toggle the progress bars during a session</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate">
-<div class="highlight"><pre><span></span>[8]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate">
+<div class="highlight-python notranslate">
 <div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">threeML</span><span class="w"> </span><span class="kn">import</span> <span class="n">silence_progress_bars</span><span class="p">,</span> <span class="n">activate_progress_bars</span><span class="p">,</span> <span class="n">toggle_progress_bars</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.progress_bar</span><span class="w"> </span><span class="kn">import</span> <span class="n">trange</span>
 </pre></div>
 </div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate">
-<div class="highlight"><pre><span></span>[9]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate">
+<div class="highlight-python notranslate">
 <div class="highlight"><pre><span></span><span class="n">activate_progress_bars</span><span class="p">()</span>
 
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">trange</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">"progressive"</span><span class="p">):</span>
@@ -381,42 +268,16 @@
     <span class="k">pass</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<script type="application/vnd.jupyter.widget-view+json">{"model_id": "764a7d96bb8841d4a1d822c13c433ee3", "version_major": 2, "version_minor": 0}</script>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<script type="application/vnd.jupyter.widget-view+json">{"model_id": "45faa390be504b469f82ae06fa96aab4", "version_major": 2, "version_minor": 0}</script>
-</div>
-</div>
 </section>
 <section id="Loud-and-Quiet">
 <h2>Loud and Quiet<a class="headerlink" href="#Loud-and-Quiet" title="Link to this heading"></a>
 </h2>
 <p>If you want to silence everything or turn everything on, there are toggles for this:</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate">
-<div class="highlight"><pre><span></span>[10]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate">
+<div class="highlight-python notranslate">
 <div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">threeML</span><span class="w"> </span><span class="kn">import</span> <span class="n">quiet_mode</span><span class="p">,</span> <span class="n">loud_mode</span>
 </pre></div>
 </div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate">
-<div class="highlight"><pre><span></span>[11]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate">
+<div class="highlight-python notranslate">
 <div class="highlight"><pre><span></span><span class="n">quiet_mode</span><span class="p">()</span>
 
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">trange</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">"invisible"</span><span class="p">):</span>
@@ -432,25 +293,7 @@
 <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"here I am"</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<script type="application/vnd.jupyter.widget-view+json">{"model_id": "c14e861e945945f299c611a010bdcf7b", "version_major": 2, "version_minor": 0}</script>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> here I am                                                                       </span><a href="file:///tmp/ipykernel_5202/2340447944.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">2340447944.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///tmp/ipykernel_5202/2340447944.py#13" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">13</span></a>
-</pre>
-</div>
-</div>
-<script type="application/vnd.jupyter.widget-state+json">
-{"state": {"03908bdeb5f645d7a18b15920c7b6f05": {"model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "0b6787939f2a458b89dc84d3cc27593f": {"model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": "2", "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "20ac70db92ac423493100249431790ac": {"model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "26c5e5d7426b47d9b810efd575332d38": {"model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": "2", "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "3056e6518e9e435386eddfbd4543d52b": {"model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": "inline-flex", "flex": null, "flex_flow": "row wrap", "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": "100%"}}, "39afaa82aa754082adb9a8c3020fd3a0": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "ProgressStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "ProgressStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "bar_color": "#440154", "description_width": ""}}, "45faa390be504b469f82ae06fa96aab4": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HBoxModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HBoxModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HBoxView", "box_style": "", "children": ["IPY_MODEL_cab273183f4a42fda62ace41463b435a", "IPY_MODEL_abf213137b774a57ab012ba15e44f918", "IPY_MODEL_e6fdcbc168614cd78bc30cb287bb47b2"], "layout": "IPY_MODEL_5c675875fa9b4320933c1f3a9bffb6a5", "tabbable": null, "tooltip": null}}, "479c2494ae1542dfaa96e61c5318bb50": {"model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "493e59550a2d4008b16daf1c29809304": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HTMLStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "background": null, "description_width": "", "font_size": null, "text_color": null}}, "4ba8df7fd32d4381b4dc85e6c24c6965": {"model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "5c675875fa9b4320933c1f3a9bffb6a5": {"model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": "inline-flex", "flex": null, "flex_flow": "row wrap", "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": "100%"}}, "5e190b2d853c41c4a55ae260659c861a": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HTMLStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "background": null, "description_width": "", "font_size": null, "text_color": null}}, "5e24674a69eb43ea9a235987d18cdf31": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HTMLStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "background": null, "description_width": "", "font_size": null, "text_color": null}}, "618a6f6bee2a49b18523a21260b813dd": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HTMLStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "background": null, "description_width": "", "font_size": null, "text_color": null}}, "63fca56fbc9b438d981eb13c3b4e07f0": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "FloatProgressModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "FloatProgressModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "ProgressView", "bar_style": "success", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_0b6787939f2a458b89dc84d3cc27593f", "max": 10.0, "min": 0.0, "orientation": "horizontal", "style": "IPY_MODEL_39afaa82aa754082adb9a8c3020fd3a0", "tabbable": null, "tooltip": null, "value": 10.0}}, "718d0d1829824a00b31fd692f29d8380": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "FloatProgressModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "FloatProgressModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "ProgressView", "bar_style": "success", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_26c5e5d7426b47d9b810efd575332d38", "max": 10.0, "min": 0.0, "orientation": "horizontal", "style": "IPY_MODEL_d2b70a593232413e9d171c4a6ae22379", "tabbable": null, "tooltip": null, "value": 10.0}}, "764a7d96bb8841d4a1d822c13c433ee3": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HBoxModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HBoxModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HBoxView", "box_style": "", "children": ["IPY_MODEL_f5e3d7b6888a4346a9a3231eeda15193", "IPY_MODEL_63fca56fbc9b438d981eb13c3b4e07f0", "IPY_MODEL_fd1bf71d62d74eee96283cd63feda149"], "layout": "IPY_MODEL_3056e6518e9e435386eddfbd4543d52b", "tabbable": null, "tooltip": null}}, "782c2ea33a9048a4a1a5836f0109056c": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "ProgressStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "ProgressStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "bar_color": "#365c8d", "description_width": ""}}, "83a2af3c53aa4711a0131e7764d2d360": {"model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "9331bedc4b1f4fbdb6bf239a585a4eab": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HTMLStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "background": null, "description_width": "", "font_size": null, "text_color": null}}, "9b6dda8337fc4e4684e82f9920afdc26": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HTMLModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HTMLView", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_20ac70db92ac423493100249431790ac", "placeholder": "\u200b", "style": "IPY_MODEL_9331bedc4b1f4fbdb6bf239a585a4eab", "tabbable": null, "tooltip": null, "value": "visible:\u2007100%"}}, "abf213137b774a57ab012ba15e44f918": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "FloatProgressModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "FloatProgressModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "ProgressView", "bar_style": "success", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_bdf3840cb8a541b5b2bdb7eb5a7c313f", "max": 10.0, "min": 0.0, "orientation": "horizontal", "style": "IPY_MODEL_782c2ea33a9048a4a1a5836f0109056c", "tabbable": null, "tooltip": null, "value": 10.0}}, "b152b1a80d164940a83de599fb3ef875": {"model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "b9dcff0de8b8407eb12bfb450fd7a3c1": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HTMLStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "background": null, "description_width": "", "font_size": null, "text_color": null}}, "bdf3840cb8a541b5b2bdb7eb5a7c313f": {"model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": "2", "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "c14e861e945945f299c611a010bdcf7b": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HBoxModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HBoxModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HBoxView", "box_style": "", "children": ["IPY_MODEL_9b6dda8337fc4e4684e82f9920afdc26", "IPY_MODEL_718d0d1829824a00b31fd692f29d8380", "IPY_MODEL_f1ecf3a5c2b14a63812a31d82531ba5e"], "layout": "IPY_MODEL_c3f949b9e5444a278a3c682dec81facb", "tabbable": null, "tooltip": null}}, "c3f949b9e5444a278a3c682dec81facb": {"model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": "inline-flex", "flex": null, "flex_flow": "row wrap", "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": "100%"}}, "cab273183f4a42fda62ace41463b435a": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HTMLModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HTMLView", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_b152b1a80d164940a83de599fb3ef875", "placeholder": "\u200b", "style": "IPY_MODEL_618a6f6bee2a49b18523a21260b813dd", "tabbable": null, "tooltip": null, "value": "more\u2007progress:\u2007100%"}}, "d2b70a593232413e9d171c4a6ae22379": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "ProgressStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "ProgressStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "bar_color": "#1fa187", "description_width": ""}}, "e6fdcbc168614cd78bc30cb287bb47b2": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HTMLModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HTMLView", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_4ba8df7fd32d4381b4dc85e6c24c6965", "placeholder": "\u200b", "style": "IPY_MODEL_5e190b2d853c41c4a55ae260659c861a", "tabbable": null, "tooltip": null, "value": "\u200710/10\u2007[00:00&lt;00:00,\u20071930.99it/s]"}}, "f1ecf3a5c2b14a63812a31d82531ba5e": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HTMLModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HTMLView", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_03908bdeb5f645d7a18b15920c7b6f05", "placeholder": "\u200b", "style": "IPY_MODEL_493e59550a2d4008b16daf1c29809304", "tabbable": null, "tooltip": null, "value": "\u200710/10\u2007[00:00&lt;00:00,\u20071713.01it/s]"}}, "f5e3d7b6888a4346a9a3231eeda15193": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HTMLModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HTMLView", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_479c2494ae1542dfaa96e61c5318bb50", "placeholder": "\u200b", "style": "IPY_MODEL_5e24674a69eb43ea9a235987d18cdf31", "tabbable": null, "tooltip": null, "value": "progressive:\u2007100%"}}, "fd1bf71d62d74eee96283cd63feda149": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HTMLModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HTMLView", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_83a2af3c53aa4711a0131e7764d2d360", "placeholder": "\u200b", "style": "IPY_MODEL_b9dcff0de8b8407eb12bfb450fd7a3c1", "tabbable": null, "tooltip": null, "value": "\u200710/10\u2007[00:00&lt;00:00,\u20072018.04it/s]"}}}, "version_major": 2, "version_minor": 0}
-</script></section>
+</section>
 </section>
 
 

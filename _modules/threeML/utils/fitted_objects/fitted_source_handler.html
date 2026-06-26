@@ -112,7 +112,9 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.utils.fitted_objects.fitted_source_handler</h1><div class="highlight"><pre>
-<span></span><span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;grburgess&quot;</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;grburgess&quot;</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
@@ -122,11 +124,11 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">joblib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">threeML_config</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logger</span>
+
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.parallel.parallel_client</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParallelClient</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.progress_bar</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
 
-<span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="GenericFittedSourceHandler">

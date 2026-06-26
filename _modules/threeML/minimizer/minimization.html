@@ -112,7 +112,9 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.minimizer.minimization</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">collections</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">collections</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">builtins</span><span class="w"> </span><span class="kn">import</span> <span class="nb">object</span><span class="p">,</span> <span class="nb">range</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">zip</span>
 
@@ -120,9 +122,10 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">scipy.optimize</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_startup_warning</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.config.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">threeML_config</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.exceptions.custom_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">custom_warnings</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logger</span>
+
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.differentiation</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParameterOnBoundary</span><span class="p">,</span> <span class="n">get_hessian</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.progress_bar</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
 
@@ -130,7 +133,7 @@
 
 <span class="n">custom_warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;always&quot;</span><span class="p">,</span> <span class="ne">RuntimeWarning</span><span class="p">)</span>
 
-<span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 <span class="c1"># Special constants</span>
 <span class="n">FIT_FAILED</span> <span class="o">=</span> <span class="mf">1e12</span>
@@ -1383,8 +1386,7 @@
     <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.minimizer.minuit_minimizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">MinuitMinimizer</span>
 
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="k">if</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">startup_warnings</span><span class="p">:</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Minuit minimizer not available&quot;</span><span class="p">)</span>
+    <span class="n">add_startup_warning</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="s2">&quot;Minuit minimizer not available&quot;</span><span class="p">)</span>
 
 <span class="k">else</span><span class="p">:</span>
     <span class="n">_minimizers</span><span class="p">[</span><span class="s2">&quot;MINUIT&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">MinuitMinimizer</span>
@@ -1393,8 +1395,7 @@
     <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.minimizer.ROOT_minimizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">ROOTMinimizer</span>
 
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="k">if</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">startup_warnings</span><span class="p">:</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;ROOT minimizer not available&quot;</span><span class="p">)</span>
+    <span class="n">add_startup_warning</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="s2">&quot;ROOT minimizer not available&quot;</span><span class="p">)</span>
 
 <span class="k">else</span><span class="p">:</span>
     <span class="n">_minimizers</span><span class="p">[</span><span class="s2">&quot;ROOT&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ROOTMinimizer</span>
@@ -1403,8 +1404,7 @@
     <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.minimizer.multinest_minimizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultinestMinimizer</span>
 
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="k">if</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">startup_warnings</span><span class="p">:</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Multinest minimizer not available&quot;</span><span class="p">)</span>
+    <span class="n">add_startup_warning</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="s2">&quot;Multinest minimizer not available&quot;</span><span class="p">)</span>
 
 <span class="k">else</span><span class="p">:</span>
     <span class="n">_minimizers</span><span class="p">[</span><span class="s2">&quot;MULTINEST&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">MultinestMinimizer</span>
@@ -1413,8 +1413,7 @@
     <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.minimizer.pagmo_minimizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">PAGMOMinimizer</span>
 
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="k">if</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">startup_warnings</span><span class="p">:</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;PyGMO is not available&quot;</span><span class="p">)</span>
+    <span class="n">add_startup_warning</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="s2">&quot;PyGMO is not available&quot;</span><span class="p">)</span>
 
 <span class="k">else</span><span class="p">:</span>
     <span class="n">_minimizers</span><span class="p">[</span><span class="s2">&quot;PAGMO&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PAGMOMinimizer</span>
@@ -1423,8 +1422,7 @@
     <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.minimizer.scipy_minimizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">ScipyMinimizer</span>
 
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="k">if</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">startup_warnings</span><span class="p">:</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Scipy minimizer is not available&quot;</span><span class="p">)</span>
+    <span class="n">add_startup_warning</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="s2">&quot;Scipy minimizer is not available&quot;</span><span class="p">)</span>
 
 <span class="k">else</span><span class="p">:</span>
     <span class="n">_minimizers</span><span class="p">[</span><span class="s2">&quot;SCIPY&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ScipyMinimizer</span>

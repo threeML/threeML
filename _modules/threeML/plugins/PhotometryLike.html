@@ -112,7 +112,9 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.plugins.PhotometryLike</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">collections</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">collections</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
@@ -120,12 +122,12 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">speclite.filters</span><span class="w"> </span><span class="kn">import</span> <span class="n">FilterResponse</span><span class="p">,</span> <span class="n">FilterSequence</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">threeML_config</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logger</span>
+
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.plotting.data_residual_plot</span><span class="w"> </span><span class="kn">import</span> <span class="n">ResidualPlot</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.plugins.XYLike</span><span class="w"> </span><span class="kn">import</span> <span class="n">XYLike</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.photometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">FilterSet</span><span class="p">,</span> <span class="n">PhotometericObservation</span>
 
-<span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 <span class="n">__instrument_name</span> <span class="o">=</span> <span class="s2">&quot;Generic photometric data&quot;</span>
 

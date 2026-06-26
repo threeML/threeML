@@ -112,7 +112,9 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.utils.time_series.polynomial</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astromodels</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
@@ -132,7 +134,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.config.config_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_value</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.data_list</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataList</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.exceptions.custom_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">BadCovariance</span>  <span class="c1"># , FitFailed</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logger</span><span class="p">,</span> <span class="n">silence_console_log</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">silence_console_log</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.minimizer.grid_minimizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">AllFitFailed</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.minimizer.minimization</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">CannotComputeCovariance</span><span class="p">,</span>
@@ -143,7 +145,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.plugins.UnbinnedPoissonLike</span><span class="w"> </span><span class="kn">import</span> <span class="n">EventObservation</span><span class="p">,</span> <span class="n">UnbinnedPoissonLike</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.plugins.XYLike</span><span class="w"> </span><span class="kn">import</span> <span class="n">XYLike</span>
 
-<span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 <span class="c1"># we include the line twice to mimic a constant</span>
 <span class="n">_grade_model_lookup</span> <span class="o">=</span> <span class="p">(</span><span class="n">Line</span><span class="p">,</span> <span class="n">Line</span><span class="p">,</span> <span class="n">Quadratic</span><span class="p">,</span> <span class="n">Cubic</span><span class="p">,</span> <span class="n">Quartic</span><span class="p">)</span>
@@ -345,7 +347,7 @@
 
     <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;starting polyfit with avg norm </span><span class="si">{</span><span class="n">avg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="k">with</span> <span class="n">silence_console_log</span><span class="p">():</span>
+    <span class="k">with</span> <span class="n">silence_console_log</span><span class="p">(</span><span class="n">log</span><span class="p">):</span>
         <span class="n">xy</span> <span class="o">=</span> <span class="n">XYLike</span><span class="p">(</span>
             <span class="s2">&quot;series&quot;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">exposure</span><span class="o">=</span><span class="n">exposure</span><span class="p">,</span> <span class="n">poisson_data</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
@@ -508,7 +510,7 @@
 
     <span class="n">shape</span> <span class="o">=</span> <span class="n">_grade_model_lookup</span><span class="p">[</span><span class="n">grade</span><span class="p">]()</span>
 
-    <span class="k">with</span> <span class="n">silence_console_log</span><span class="p">():</span>
+    <span class="k">with</span> <span class="n">silence_console_log</span><span class="p">(</span><span class="n">log</span><span class="p">):</span>
         <span class="n">ps</span> <span class="o">=</span> <span class="n">PointSource</span><span class="p">(</span><span class="s2">&quot;dummy&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">spectral_shape</span><span class="o">=</span><span class="n">shape</span><span class="p">)</span>
 
         <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">ps</span><span class="p">)</span>

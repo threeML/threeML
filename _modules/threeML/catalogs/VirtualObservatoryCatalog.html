@@ -112,7 +112,9 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.catalogs.VirtualObservatoryCatalog</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">astropy</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">astropy.table</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">astro_table</span>
@@ -125,10 +127,10 @@
 <span class="c1"># from astropy.vo.client.vos_catalog import VOSCatalog</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astroquery.vo_conesearch.vos_catalog</span><span class="w"> </span><span class="kn">import</span> <span class="n">VOSCatalog</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logger</span>
+
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.network</span><span class="w"> </span><span class="kn">import</span> <span class="n">internet_connection_is_active</span>
 
-<span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 <span class="c1"># Workaround to support astropy 4.1+</span>
 <span class="n">astropy_old</span> <span class="o">=</span> <span class="kc">True</span>

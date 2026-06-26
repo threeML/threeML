@@ -112,7 +112,9 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.utils.spectrum.pha_spectrum</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
@@ -120,7 +122,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.fits_file</span><span class="w"> </span><span class="kn">import</span> <span class="n">FITSFile</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logger</span>
+
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.OGIP.pha</span><span class="w"> </span><span class="kn">import</span> <span class="n">PHAII</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.OGIP.response</span><span class="w"> </span><span class="kn">import</span> <span class="n">InstrumentResponse</span><span class="p">,</span> <span class="n">OGIPResponse</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.progress_bar</span><span class="w"> </span><span class="kn">import</span> <span class="n">trange</span>
@@ -131,7 +133,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.spectrum.binned_spectrum_set</span><span class="w"> </span><span class="kn">import</span> <span class="n">BinnedSpectrumSet</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.time_interval</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimeIntervalSet</span>
 
-<span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 <span class="n">_required_keywords</span> <span class="o">=</span> <span class="p">{}</span>
 <span class="n">_required_keywords</span><span class="p">[</span><span class="s2">&quot;observed&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>

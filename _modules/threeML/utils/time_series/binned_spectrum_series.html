@@ -112,13 +112,15 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.utils.time_series.binned_spectrum_series</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">builtins</span><span class="w"> </span><span class="kn">import</span> <span class="nb">range</span><span class="p">,</span> <span class="nb">zip</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">builtins</span><span class="w"> </span><span class="kn">import</span> <span class="nb">range</span><span class="p">,</span> <span class="nb">zip</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.config.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">threeML_config</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logger</span><span class="p">,</span> <span class="n">silence_console_log</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">silence_console_log</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.plotting.light_curve_plots</span><span class="w"> </span><span class="kn">import</span> <span class="n">binned_light_curve_plot</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.parallel.parallel_client</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParallelClient</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.progress_bar</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
@@ -126,7 +128,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.time_series.polynomial</span><span class="w"> </span><span class="kn">import</span> <span class="n">polyfit</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.time_series.time_series</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimeSeries</span>
 
-<span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="BinnedSpectrumSeries">
@@ -488,7 +490,7 @@
         <span class="k">if</span> <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;parallel&quot;</span><span class="p">][</span><span class="s2">&quot;use_parallel&quot;</span><span class="p">]:</span>
 
             <span class="k">def</span><span class="w"> </span><span class="nf">worker</span><span class="p">(</span><span class="n">counts</span><span class="p">):</span>
-                <span class="k">with</span> <span class="n">silence_console_log</span><span class="p">():</span>
+                <span class="k">with</span> <span class="n">silence_console_log</span><span class="p">(</span><span class="n">log</span><span class="p">):</span>
                     <span class="n">polynomial</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">polyfit</span><span class="p">(</span>
                         <span class="n">selected_midpoints</span><span class="p">,</span>
                         <span class="n">counts</span><span class="p">,</span>
@@ -514,7 +516,7 @@
             <span class="k">for</span> <span class="n">counts</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
                 <span class="n">selected_counts</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Fitting </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_instrument</span><span class="si">}</span><span class="s2"> background&quot;</span>
             <span class="p">):</span>
-                <span class="k">with</span> <span class="n">silence_console_log</span><span class="p">():</span>
+                <span class="k">with</span> <span class="n">silence_console_log</span><span class="p">(</span><span class="n">log</span><span class="p">):</span>
                     <span class="n">polynomial</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">polyfit</span><span class="p">(</span>
                         <span class="n">selected_midpoints</span><span class="p">,</span>
                         <span class="n">counts</span><span class="p">,</span>

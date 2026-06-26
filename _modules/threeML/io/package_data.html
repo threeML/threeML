@@ -178,22 +178,6 @@
 
 
 
-<div class="viewcode-block" id="get_path_of_user_config">
-<a class="viewcode-back" href="../../../api/threeML.io.html#threeML.io.package_data.get_path_of_user_config">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_path_of_user_config</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
-    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;THREEML_CONFIG&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">config_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;THREEML_CONFIG&quot;</span><span class="p">))</span>
-
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">config_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">()</span><span class="o">.</span><span class="n">home</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;.config&quot;</span> <span class="o">/</span> <span class="s2">&quot;threeML&quot;</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">config_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-        <span class="n">config_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">config_path</span></div>
-
-
-
 <span class="k">def</span><span class="w"> </span><span class="nf">get_user_data_path</span><span class="p">():</span>
     <span class="n">user_data</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~&quot;</span><span class="p">),</span> <span class="s2">&quot;.threeml&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">)</span>
 
@@ -211,7 +195,6 @@
     <span class="s2">&quot;get_path_of_data_file&quot;</span><span class="p">,</span>
     <span class="s2">&quot;get_path_of_data_dir&quot;</span><span class="p">,</span>
     <span class="s2">&quot;get_path_of_user_dir&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;get_path_of_user_config&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 </pre></div>
 

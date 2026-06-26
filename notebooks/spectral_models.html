@@ -145,7 +145,7 @@
 </h2>
 <p>One of the most powerful aspects of astromodels and 3ML is the ability to quickly build custom models on the fly. The source code for a model can be pure python, FORTRAN linked via f2py, C++ linked via cython, etc. Anything that provides a python function can be used to fit data.</p>
 <p>To build a custom spectral model in 3ML, we need to import a few things that will allow astromodels to recognize your model.</p>
-<div class="nbinput docutils container">
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate">
 <div class="highlight"><pre><span></span>[1]:
 </pre></div>
@@ -157,33 +157,6 @@
     <span class="n">ModelAssertionViolation</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
-</div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">23:08:51 </span><span style="color: #af5fd7; text-decoration-color: #af5fd7">WARNING </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> The naima package is not available. Models that depend on it will not be         </span><a href="file:///home/runner/miniconda3/envs/test_env/lib/python3.11/site-packages/astromodels/functions/functions_1D/functions.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">functions.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/miniconda3/envs/test_env/lib/python3.11/site-packages/astromodels/functions/functions_1D/functions.py#43" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">43</span></a>
-<span style="color: #00ff00; text-decoration-color: #00ff00">         </span>         <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold">available                                                                         </span><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">               </span>
-</pre>
-</div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #af5fd7; text-decoration-color: #af5fd7">WARNING </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> The GSL library or the pygsl wrapper cannot be loaded. Models that depend on it  </span><a href="file:///home/runner/miniconda3/envs/test_env/lib/python3.11/site-packages/astromodels/functions/functions_1D/functions.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">functions.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/miniconda3/envs/test_env/lib/python3.11/site-packages/astromodels/functions/functions_1D/functions.py#65" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">65</span></a>
-<span style="color: #00ff00; text-decoration-color: #00ff00">         </span>         <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold">will not be available.                                                            </span><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">               </span>
-</pre>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #af5fd7; text-decoration-color: #af5fd7">WARNING </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> The ebltable package is not available. Models that depend on it will not be     </span><a href="file:///home/runner/miniconda3/envs/test_env/lib/python3.11/site-packages/astromodels/functions/functions_1D/absorption.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">absorption.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/miniconda3/envs/test_env/lib/python3.11/site-packages/astromodels/functions/functions_1D/absorption.py#33" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">33</span></a>
-<span style="color: #00ff00; text-decoration-color: #00ff00">         </span>         <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold">available                                                                        </span><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">                </span>
-</pre>
 </div>
 </div>
 <p>Function1D is the base class for 1D spectral models and FunctionMeta is ABC class that ensures all the needed parts of a model are in the class as well as making the class function as it should.</p>
@@ -469,10 +442,10 @@ $1 \; \mathrm{\frac{1}{keV\,s\,cm^{2}}}$</div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
-<div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">23:08:52 </span><span style="color: #af5fd7; text-decoration-color: #af5fd7">WARNING </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Energy unit is not a Quantity instance, so units has not been provided.    </span><a href="file:///home/runner/miniconda3/envs/test_env/lib/python3.11/site-packages/astromodels/functions/template_model.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">template_model.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/miniconda3/envs/test_env/lib/python3.11/site-packages/astromodels/functions/template_model.py#124" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">124</span></a>
-<span style="color: #00ff00; text-decoration-color: #00ff00">         </span>         <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold">Using keV.                                                                  </span><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">                     </span>
-</pre>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+Energy unit is not a Quantity instance, so units has not been provided. Using keV.
+</pre></div>
 </div>
 </div>
 <p>Now, define our grid in parameter space. While we are using a function here, this grid could be from a text file, a database of simulations, etc. We then assign these grid points to the template model factory.</p>

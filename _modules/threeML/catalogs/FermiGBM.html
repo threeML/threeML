@@ -112,7 +112,9 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.catalogs.FermiGBM</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astromodels</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">Band</span><span class="p">,</span>
     <span class="n">Cutoff_powerlaw</span><span class="p">,</span>
@@ -125,12 +127,12 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.config.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">threeML_config</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.dict_with_pretty_print</span><span class="w"> </span><span class="kn">import</span> <span class="n">DictWithPrettyPrint</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.get_heasarc_table_as_pandas</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_heasarc_table_as_pandas</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logger</span>
+
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.catalog_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">_gbm_and_lle_valid_source_check</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.VirtualObservatoryCatalog</span><span class="w"> </span><span class="kn">import</span> <span class="n">VirtualObservatoryCatalog</span>
 
-<span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="FermiGBMBurstCatalog">

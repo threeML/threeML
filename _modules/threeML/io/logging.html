@@ -134,6 +134,8 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.config.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">threeML_config</span>
 
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
 <span class="c1"># set up the console logging</span>
 
 
@@ -485,13 +487,11 @@
 <div class="viewcode-block" id="silence_console_log">
 <a class="viewcode-back" href="../../../api/threeML.io.html#threeML.io.logging.silence_console_log">[docs]</a>
 <span class="nd">@contextmanager</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">silence_console_log</span><span class="p">(</span><span class="n">and_progress_bars</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">silence_console_log</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="n">and_progress_bars</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Temporarily silence the console and progress bars.&quot;&quot;&quot;</span>
-    <span class="n">current_console_logging_level</span> <span class="o">=</span> <span class="n">threeML_console_log_handler</span><span class="o">.</span><span class="n">level</span>
-    <span class="n">current_usr_logging_level</span> <span class="o">=</span> <span class="n">threeML_usr_log_handler</span><span class="o">.</span><span class="n">level</span>
+    <span class="n">current_console_logging_level</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">level</span>
 
-    <span class="n">threeML_console_log_handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">CRITICAL</span><span class="p">)</span>
-    <span class="n">threeML_usr_log_handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">CRITICAL</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">CRITICAL</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">and_progress_bars</span><span class="p">:</span>
         <span class="n">progress_state</span> <span class="o">=</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">interface</span><span class="o">.</span><span class="n">progress_bars</span>
@@ -502,8 +502,7 @@
         <span class="k">yield</span>
 
     <span class="k">finally</span><span class="p">:</span>
-        <span class="n">threeML_console_log_handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">current_console_logging_level</span><span class="p">)</span>
-        <span class="n">threeML_usr_log_handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">current_usr_logging_level</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">current_console_logging_level</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">and_progress_bars</span><span class="p">:</span>
             <span class="n">threeML_config</span><span class="o">.</span><span class="n">interface</span><span class="o">.</span><span class="n">progress_bars</span> <span class="o">=</span> <span class="n">progress_state</span></div>
@@ -537,10 +536,37 @@
     <span class="k">if</span> <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;logging&quot;</span><span class="p">][</span><span class="s2">&quot;usr&quot;</span><span class="p">]:</span>
         <span class="n">log</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">threeML_usr_log_handler</span><span class="p">)</span>
 
-    <span class="c1"># we do not want to duplicate teh messages in the parents</span>
-    <span class="n">log</span><span class="o">.</span><span class="n">propagate</span> <span class="o">=</span> <span class="kc">False</span>
-
     <span class="k">return</span> <span class="n">log</span></div>
+
+
+<span class="c1"># Capture all startup warnings and log them on demand</span>
+
+
+<span class="n">_startup_warnings</span> <span class="o">=</span> <span class="p">[]</span>
+
+
+<div class="viewcode-block" id="add_startup_warning">
+<a class="viewcode-back" href="../../../api/threeML.io.html#threeML.io.logging.add_startup_warning">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_startup_warning</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span><span class="p">):</span>
+    <span class="n">fn</span><span class="p">,</span> <span class="n">lno</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">sinfo</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">findCaller</span><span class="p">(</span><span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">record</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">makeRecord</span><span class="p">(</span><span class="n">logger</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                               <span class="n">level</span><span class="p">,</span>
+                               <span class="n">fn</span><span class="p">,</span>
+                               <span class="n">lno</span><span class="p">,</span>
+                               <span class="n">msg</span><span class="p">,</span>
+                               <span class="p">(),</span>
+                               <span class="kc">None</span><span class="p">,</span>
+                               <span class="n">func</span><span class="o">=</span><span class="n">func</span><span class="p">,</span>
+                               <span class="n">sinfo</span><span class="o">=</span><span class="n">sinfo</span><span class="p">)</span>
+    <span class="n">_startup_warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">record</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="log_threeml_startup_warnings">
+<a class="viewcode-back" href="../../../api/threeML.io.html#threeML.io.logging.log_threeml_startup_warnings">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">log_threeml_startup_warnings</span><span class="p">(</span><span class="n">logger</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">_startup_warnings</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">handle</span><span class="p">(</span><span class="n">w</span><span class="p">)</span></div>
 
 </pre></div>
 

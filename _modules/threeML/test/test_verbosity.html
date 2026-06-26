@@ -138,6 +138,12 @@
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.progress_bar</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span><span class="p">,</span> <span class="n">trange</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">add_startup_warning</span><span class="p">,</span>
+                                <span class="n">log_threeml_startup_warnings</span><span class="p">,</span>
+                                <span class="n">setup_logger</span><span class="p">)</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
 
 <div class="viewcode-block" id="test_all_toggles">
 <a class="viewcode-back" href="../../../api/threeML.test.html#threeML.test.test_verbosity.test_all_toggles">[docs]</a>
@@ -281,6 +287,21 @@
     <span class="k">assert</span> <span class="n">astromodels_console_log_handler</span><span class="o">.</span><span class="n">level</span> <span class="o">==</span> <span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span>
 
     <span class="k">assert</span> <span class="n">astromodels_usr_log_handler</span><span class="o">.</span><span class="n">level</span> <span class="o">==</span> <span class="n">logging</span><span class="o">.</span><span class="n">CRITICAL</span></div>
+
+
+
+<div class="viewcode-block" id="test_startup_warnings">
+<a class="viewcode-back" href="../../../api/threeML.test.html#threeML.test.test_verbosity.test_startup_warnings">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_startup_warnings</span><span class="p">(</span><span class="n">caplog</span><span class="p">):</span>
+
+    <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;TEST_STARTUP_WARNINGS&quot;</span>
+
+    <span class="n">add_startup_warning</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">caplog</span><span class="o">.</span><span class="n">at_level</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span><span class="p">):</span>
+        <span class="n">log_threeml_startup_warnings</span><span class="p">(</span><span class="n">logger</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">caplog</span><span class="o">.</span><span class="n">text</span></div>
 
 </pre></div>
 
