@@ -8,7 +8,6 @@ from astromodels import use_astromodels_memoization
 from threeML.bayesian.sampler_base import UnitCubeSampler
 from threeML.config.config import threeML_config
 
-
 try:
     import nautilus
 
