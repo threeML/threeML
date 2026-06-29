@@ -64,6 +64,18 @@ our fast and customizable modeling language
 [astromodels](http://astromodels.readthedocs.org/en/latest/).
 
 
+## Watch 3ML in action
+
+A short tour of the framework — from multi-instrument data (optical to TeV, each through
+its own official software) to light curves, folded count spectra, a νFν spectrum spanning
+keV to GeV, and a joint fit you can run as Maximum Likelihood or fully Bayesian by changing
+a single line:
+
+<video src="https://raw.githubusercontent.com/threeML/threeML/master/brag-output/brag.mp4" controls muted width="820"></video>
+
+▶️ [Watch the intro video](brag-output/brag.mp4) (if it does not play inline above)
+
+
 ## Installation
 
 Installing with pip or conda is easy. However, you want to include models from
