@@ -239,10 +239,8 @@ def _setup_analysis_dictionaries(
         ):
             # if we have a source to use
 
-            if (
-                not use_components
-                or ("total" in components_to_use)
-                or ("main" in bayesian_analyses[key]["component_names"])
+            if not use_components or (
+                "main" in bayesian_analyses[key]["component_names"]
             ):
                 bayesian_analyses[key]["fitted point source"] = (
                     FittedPointSourceSpectralHandler(
@@ -269,7 +267,7 @@ def _setup_analysis_dictionaries(
                 for component in bayesian_analyses[key]["component_names"]:
                     # extracting all components
 
-                    if not components_to_use:
+                    if not components_to_use or "total" in components_to_use:
                         component_dict[component] = FittedPointSourceSpectralHandler(
                             bayesian_analyses[key]["analysis"],
                             bayesian_analyses[key]["source"],
