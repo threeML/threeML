@@ -1179,18 +1179,19 @@ class BayesianResults(_AnalysisResults):
             if "$" not in labels[i]:
                 labels[i] = val.replace("_", "")
 
-        cc = chainconsumer.ChainConsumer()
         samples = self._samples_transposed.T
         if samples.dtype.byteorder == ">":
             samples = samples.astype(samples.dtype.newbyteorder("="))
 
-        cc.add_chain(self._samples_transposed.T, parameters=labels)
         df = pd.DataFrame(samples, columns=list(self._free_parameters.keys()))
         log_post = np.nan_to_num(
             np.nan_to_num(self._log_probability, nan=-np.inf)
         ).astype(samples.dtype.newbyteorder("="))
 
         df["log_posterior"] = log_post
+        cc = chainconsumer.ChainConsumer()
+        cc.add_chain(chainconsumer.Chain(samples=df, name="3ML", parameters=labels))
+
         if not cc_kwargs:
             if "chain consumer style" in threeML_config["bayesian"].keys():
                 cc_kwargs = threeML_config["bayesian"]["chain consumer style"]
