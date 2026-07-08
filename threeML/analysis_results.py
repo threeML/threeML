@@ -1146,13 +1146,7 @@ class BayesianResults(_AnalysisResults):
 
         # these are the keywords for the plot command
 
-        _default_plot_args = {
-            "truth": None,
-            "figsize": "GROW",
-            "filename": None,
-            "display": False,
-            "legend": None,
-        }
+        _default_plot_args = {}
         keys = list(cc_kwargs.keys())
         for key in keys:
             if key in _default_plot_args:
@@ -1192,8 +1186,8 @@ class BayesianResults(_AnalysisResults):
         if not cc_kwargs:
             cc_kwargs = threeML_config["bayesian"]["chain consumer style"]
 
-        cc.configure(**cc_kwargs)
-        fig = cc.plotter.plot(parameters=parameters, **_default_plot_args)
+        # cc.configure(**cc_kwargs)
+        fig = cc.plotter.plot()
 
         return fig
 
