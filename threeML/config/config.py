@@ -30,7 +30,9 @@ def update_config_with_user_configs(threeML_config):
         if "logging" in _partial_conf.keys():
             if "startup_warnings" in _partial_conf["logging"].keys():
                 warnings.warn(
-                    f"You've provided 'logging.startup_warnings' in {user_config_file}. "
+                    "You've provided 'logging.startup_warnings' in "
+                    + str(user_config_file)
+                    + ". "
                     + "This is deprecated since v2.6.0 - will ignore it"
                 )
                 del _partial_conf.logging.startup_warnings
