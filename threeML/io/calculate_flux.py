@@ -150,11 +150,7 @@ def _setup_analysis_dictionaries(
     if mle_analyses:
         for key in tqdm(list(mle_analyses.keys()), desc="processing MLE analyses"):
             # if we want to use this source
-            if (
-                not use_components
-                or ("total" in components_to_use)
-                or ("main" in mle_analyses[key]["component_names"])
-            ):
+            if not use_components or ("main" in mle_analyses[key]["component_names"]):
                 mle_analyses[key]["fitted point source"] = (
                     FittedPointSourceSpectralHandler(
                         mle_analyses[key]["analysis"],
@@ -180,7 +176,7 @@ def _setup_analysis_dictionaries(
                 for component in mle_analyses[key]["component_names"]:
                     # if we want to plot all the components
 
-                    if not components_to_use:
+                    if not components_to_use or "total" in components_to_use:
                         component_dict[component] = FittedPointSourceSpectralHandler(
                             mle_analyses[key]["analysis"],
                             mle_analyses[key]["source"],
@@ -218,6 +214,9 @@ def _setup_analysis_dictionaries(
                 # save these to the dict
 
                 mle_analyses[key]["components"] = component_dict
+
+            if use_components and "total" in components_to_use:
+                mle_analyses[key]["fitted point source"] = sum(component_dict.values())
 
             # keep track of how many components we need to plot
 
