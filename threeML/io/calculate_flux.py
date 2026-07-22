@@ -301,6 +301,11 @@ def _setup_analysis_dictionaries(
 
                 bayesian_analyses[key]["components"] = component_dict
 
+            if use_components and "total" in components_to_use:
+                bayesian_analyses[key]["fitted point source"] = sum(
+                    component_dict.values()
+                )
+
             # keep track of everything we added on
 
             if use_components and num_components_to_use > 0:
