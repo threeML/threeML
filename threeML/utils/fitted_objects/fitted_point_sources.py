@@ -41,10 +41,14 @@ class InvalidUnitError(RuntimeError):
 
 class FluxConversion(object):
     def __init__(self, flux_unit, energy_unit, flux_model):
-        """A generic flux conversion class to handle transforming spectra
-        between different flux units :param flux_unit: the desired flux unit
-        :param energy_unit: the energy unit :param flux_model: the model to be
-        transformed."""
+        """
+        A generic flux conversion class to handle transforming spectra between different
+        flux units
+
+        :param flux_unit: an astropy unit string for flux
+        :param energy_unit: an astropy unit string for energy
+        :param flux_model: the base flux model to use
+        """
 
         self._flux_unit = flux_unit
 
@@ -61,6 +65,9 @@ class FluxConversion(object):
         self._calculate_conversion()
 
     def _determine_quantity(self):
+        """
+        Determine the type of flux quantity based on the flux unit provided.
+        """
         # scroll thru conversions until one works
 
         for k, v in self._flux_lookup.items():
@@ -78,6 +85,10 @@ class FluxConversion(object):
             )
 
     def _calculate_conversion(self):
+        """
+        Calculate the conversion factor needed to convert the model to the desired flux
+        unit.
+        """
         # convert the model to the right units so that we can
         # convert back later for speed
 
@@ -102,7 +113,8 @@ class FluxConversion(object):
 
     @property
     def model(self):
-        """The model converted.
+        """
+        The model converted.
 
         :return: a model in the proper units
         """
@@ -159,7 +171,7 @@ class DifferentialFluxConversion(FluxConversion):
 
 def trap_integral(func, e1, e2, **args):
     if e2 / e1 > 100:
-        e_grid = np.logspace(np.log10(e1), np.log10(e2), 50)
+        e_grid = np.geomspace(e1, e2, 50)
 
     else:
         e_grid = np.linspace(e1, e2, 50)
@@ -246,18 +258,22 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
         component=None,
         is_differential_flux=True,
     ):
-        """A 3ML fitted point source.
+        """A 3ML fitted point source spectral handler that can be used to extract the
+        flux and errors from a 3ML analysis result. This class can handle both
+        differential and integral fluxes, as well as composite models.
 
-        :param confidence_level:
-        :param equal_tailed:
-        :param is_differential_flux:
-        :param analysis_result: a 3ML analysis
-        :param source: the source to solve for
-        :param energy_range: an array of energies to calculate the
-            source over
-        :param energy_unit: string astropy unit
-        :param flux_unit: string astropy flux unit
-        :param component: the component name to calculate
+        :param analysis_result: a 3ML analysis result object
+        :param source: the name of the source to extract the flux from
+        :param energy_range: the energy range to extract the flux from
+        :param energy_unit: the energy unit to use for the flux extraction
+        :param flux_unit: the flux unit to use for the flux extraction
+        :param confidence_level: the confidence level to use for the flux extraction
+        :param equal_tailed: whether to use equal tailed or highest posterior density
+            intervals
+        :param component: the name of the component to extract the flux from (if
+            applicable)
+        :param is_differential_flux: whether to extract differential flux (True) or
+            integral flux (False)
         """
 
         # first extract the source

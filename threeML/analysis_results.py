@@ -558,7 +558,16 @@ class _AnalysisResults(object):
 
                 ANALYSIS_RESULTS_HDF(self, grp)
 
-    def get_variates(self, param_path):
+    def get_variates(self, param_path: str) -> RandomVariates:
+        """
+        Returns a RandomVariates instance for the parameter specified by
+        param_path. This allows for error propagation in arbitrary functions.
+
+        :param param_path: path of the parameter or parameter
+            instance
+        :return: a RandomVariates instance
+        """
+
         assert param_path in self._optimized_model.free_parameters, (
             "Parameter %s is not a free parameters of the model" % param_path
         )
@@ -575,7 +584,8 @@ class _AnalysisResults(object):
 
     @staticmethod
     def propagate(function, **kwargs):
-        """Allow for propagation of uncertainties on arbitrary functions. It
+        """
+        Allow for propagation of uncertainties on arbitrary functions. It
         returns a function which is a wrapper around the provided input
         function. Using the wrapper with RandomVariates instances as arguments
         will return a RandomVariates result, with the errors propagated.
