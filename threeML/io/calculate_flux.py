@@ -282,9 +282,7 @@ def _setup_analysis_dictionaries(
 
                         num_components_to_use += 1
 
-                    # or just some of them
-
-                    if component in components_to_use:
+                    elif component in components_to_use:
                         component_dict[component] = FittedPointSourceSpectralHandler(
                             bayesian_analyses[key]["analysis"],
                             bayesian_analyses[key]["source"],
