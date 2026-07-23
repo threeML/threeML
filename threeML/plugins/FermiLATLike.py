@@ -540,7 +540,7 @@ class FermiLATLike(PluginPrototype):
 
             my_function = gtlike_src_model.getSrcFuncs()["Spectrum"]
 
-            my_file_function = pyLike.FileFunction_cast(my_function)
+            my_file_function = pyLike.FileFunction.cast(my_function)
 
             my_file_function.setParam("Normalization", 1)
 
