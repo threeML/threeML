@@ -228,6 +228,8 @@
         <span class="c1"># Translate the 3 letter code to a more informative category, according</span>
         <span class="c1"># to the dictionary above</span>
         <span class="k">def</span><span class="w"> </span><span class="nf">translate</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">is_masked</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">fgl_types</span><span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
                 <span class="n">key</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;ascii&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;psr&quot;</span><span class="p">:</span>
