@@ -137,10 +137,10 @@ class DifferentialFluxConversion(FluxConversion):
         """Handles differential flux conversion and model building for point
         sources.
 
-        :param test_model: model to test the flux on
         :param flux_unit: an astropy unit string for differential flux
         :param energy_unit: an astropy unit string for energy
         :param flux_model: the base flux model to use
+        :param test_model: model to test the flux on
         """
 
         self._flux_lookup = {
@@ -281,11 +281,22 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
         self._point_source = analysis_result.optimized_model.sources[source]
 
         # extract the components
+        at_least_one_free = True
 
         try:
             composite_model = self._point_source.spectrum.main.composite
 
-            self._components = self._solve_for_component_flux(composite_model)
+            self._components, at_least_one_free = self._solve_for_component_flux(
+                composite_model
+            )
+            if not at_least_one_free:
+                log.warning(
+                    "You have provided a composite function, with one composing "
+                    "function only having fixed parameters - we cannot split that into "
+                    "components and will only plot the total"
+                )
+                self._components = None
+                component = None
 
         except Exception:
             try:
@@ -315,6 +326,7 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
                 raise NotCompositeModelError("This is not a composite model!")
 
         else:
+            # TODO: genealize this to handle components not named main as well
             model = self._point_source.spectrum.main.shape.evaluate_at
             parameters = self._point_source.spectrum.main.shape.parameters
             test_model = self._point_source.spectrum.main.shape
@@ -433,7 +445,12 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
         :return: dict of component properties
         """
 
+        # TODO: need to check if there are free parameters in every component of the
+        # composite model. If not the _build_propagated_function will not work.
+        # will need to evaluate them togheter with a different component
+
         function_dict = {}
+        at_least_one_free = False
 
         names = [f.name for f in composite_model.functions]
 
@@ -450,18 +467,22 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
 
         for i, function in enumerate(composite_model.functions):
             tmp_dict = {}
+            tmp_free = False
 
             # extract the parameter names using the static_name property
             # because this is what the children will use in evaluate_at
-
-            parameter_names = [
-                par.static_name for par in list(function.parameters.values())
-            ]
+            parameter_names = []
+            for p in function.parameters.values():
+                parameter_names.append(p.static_name)
+                if p.free:
+                    tmp_free = True
 
             tmp_dict["parameter_names"] = parameter_names
 
             tmp_dict["function"] = function
 
             function_dict[names[i]] = tmp_dict
+            if not tmp_free:
+                at_least_one_free = False
 
-        return function_dict
+        return function_dict, at_least_one_free
