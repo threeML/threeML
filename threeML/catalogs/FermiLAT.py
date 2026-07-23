@@ -110,6 +110,8 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
         # Translate the 3 letter code to a more informative category, according
         # to the dictionary above
         def translate(key):
+            if numpy.ma.is_masked(key):
+                return fgl_types[""]
             if isinstance(key, bytes):
                 key = key.decode("ascii")
             if key.lower() == "psr":
