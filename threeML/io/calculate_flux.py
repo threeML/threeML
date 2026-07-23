@@ -48,99 +48,56 @@ def _setup_analysis_dictionaries(
 
     bayesian_analyses = collections.OrderedDict()
     mle_analyses = collections.OrderedDict()
-
-    # first we split up the bayesian and mle analysis
-
     mle_sources = collections.OrderedDict()
     bayes_sources = collections.OrderedDict()
 
+    def _get_comps(source):
+        try:
+            return [c.name for c in source.spectrum.main.composite.functions]
+        except Exception:
+            try:
+                return [c for c in source.components]
+            except Exception:
+                return []
+
+    def _dedupe_comps(comps):
+        """
+        Removes duplicates from a list of components and appends a suffix to the name
+        if there are duplicates.
+
+        :param comps:
+        :return:
+        """
+        return [
+            "%s_n%i" % (s, suffix) if num > 1 else s
+            for s, num in collections.Counter(comps).items()
+            for suffix in range(1, num + 1)
+        ]
+
     for analysis in analysis_results:
-        items = (
-            list(analysis.optimized_model.point_sources.items())
-            if not include_extended
-            else list(analysis.optimized_model.sources.items())
+        items = list(
+            analysis.optimized_model.sources.items()
+            if include_extended
+            else analysis.optimized_model.point_sources.items()
         )
 
         for source_name, source in items:
-            if source_name in sources_to_use or not sources_to_use:
-                if analysis.analysis_type == "MLE":
-                    # keep track of duplicate sources
+            if sources_to_use and source_name not in sources_to_use:
+                continue
 
-                    mle_sources.setdefault(source_name, []).append(1)
+            is_mle = analysis.analysis_type == "MLE"
+            tracker = mle_sources if is_mle else bayes_sources
+            target = mle_analyses if is_mle else bayesian_analyses
 
-                    if len(mle_sources[source_name]) > 1:
-                        name = "%s_%d" % (
-                            source_name,
-                            len(mle_sources[source_name]),
-                        )
+            tracker.setdefault(source_name, []).append(1)
+            count = len(tracker[source_name])
+            name = "%s_%d" % (source_name, count) if count > 1 else source_name
 
-                    else:
-                        name = source_name
-
-                    try:
-                        comps = [
-                            c.name for c in source.spectrum.main.composite.functions
-                        ]
-
-                    except Exception:
-                        try:
-                            comps = [c for c in source.components]
-
-                        except Exception:
-                            comps = []
-
-                    # duplicate components
-                    comps = [
-                        "%s_n%i" % (s, suffix) if num > 1 else s
-                        for s, num in list(collections.Counter(comps).items())
-                        for suffix in range(1, num + 1)
-                    ]
-
-                    mle_analyses[name] = {
-                        "source": source_name,
-                        "analysis": analysis,
-                        "component_names": comps,
-                    }
-
-                else:
-                    bayes_sources.setdefault(source_name, []).append(1)
-
-                    # keep track of duplicate sources
-
-                    if len(bayes_sources[source_name]) > 1:
-                        name = "%s_%d" % (
-                            source_name,
-                            len(bayes_sources[source_name]),
-                        )
-
-                    else:
-                        name = source_name
-
-                    try:
-                        comps = [
-                            c.name for c in source.spectrum.main.composite.functions
-                        ]
-
-                    except Exception:
-                        try:
-                            comps = [c for c in source.components]
-
-                        except Exception:
-                            comps = []
-
-                    # duplicate components
-                    comps = [
-                        "%s_n%i" % (s, suffix) if num > 1 else s
-                        for s, num in list(collections.Counter(comps).items())
-                        for suffix in range(1, num + 1)
-                    ]
-
-                    bayesian_analyses[name] = {
-                        "source": source_name,
-                        "analysis": analysis,
-                        "component_names": comps,
-                    }
-
+            target[name] = {
+                "source": source_name,
+                "analysis": analysis,
+                "component_names": _dedupe_comps(_get_comps(source)),
+            }
     # keep track of the number of sources we will use
 
     num_sources_to_use = 0
