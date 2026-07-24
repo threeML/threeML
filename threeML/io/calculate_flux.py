@@ -238,20 +238,23 @@ def _setup_analysis_dictionaries(
 
                         num_components_to_use += 1
 
-                    elif component in components_to_use:
-                        component_dict[component] = FittedPointSourceSpectralHandler(
-                            bayesian_analyses[key]["analysis"],
-                            bayesian_analyses[key]["source"],
-                            energy_range,
-                            energy_unit,
-                            flux_unit,
-                            confidence_level,
-                            equal_tailed,
-                            component=component,
-                            is_differential_flux=differential,
-                        )
+                    else:
+                        if component in components_to_use:
+                            component_dict[component] = (
+                                FittedPointSourceSpectralHandler(
+                                    bayesian_analyses[key]["analysis"],
+                                    bayesian_analyses[key]["source"],
+                                    energy_range,
+                                    energy_unit,
+                                    flux_unit,
+                                    confidence_level,
+                                    equal_tailed,
+                                    component=component,
+                                    is_differential_flux=differential,
+                                )
+                            )
 
-                        num_components_to_use += 1
+                            num_components_to_use += 1
 
                 bayesian_analyses[key]["components"] = component_dict
 
@@ -259,14 +262,13 @@ def _setup_analysis_dictionaries(
                 bayesian_analyses[key]["fitted point source"] = sum(
                     component_dict.values()
                 )
+                num_sources_to_use += 1
 
             # keep track of everything we added on
 
             if use_components and num_components_to_use > 0:
                 num_sources_to_use += num_components_to_use
 
-                if "total" in components_to_use:
-                    num_sources_to_use += 1
             #
             # else:
             #

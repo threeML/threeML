@@ -456,3 +456,6 @@ class VariatesContainer(object):
                 self._transform,
                 self._equal_tailed,
             )
+
+    def __iter__(self):
+        return iter(self._values)

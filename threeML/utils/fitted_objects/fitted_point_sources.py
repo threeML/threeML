@@ -281,15 +281,13 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
         self._point_source = analysis_result.optimized_model.sources[source]
 
         # extract the components
-        at_least_one_free = True
 
         try:
+
             composite_model = self._point_source.spectrum.main.composite
 
-            self._components, at_least_one_free = self._solve_for_component_flux(
-                composite_model
-            )
-            if not at_least_one_free:
+            self._components, one_free = self._solve_for_component_flux(composite_model)
+            if not one_free:
                 log.warning(
                     "You have provided a composite function, with one composing "
                     "function only having fixed parameters - we cannot split that into "
@@ -450,7 +448,7 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
         # will need to evaluate them togheter with a different component
 
         function_dict = {}
-        at_least_one_free = False
+        at_least_one_free = True
 
         names = [f.name for f in composite_model.functions]
 
@@ -467,22 +465,18 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
 
         for i, function in enumerate(composite_model.functions):
             tmp_dict = {}
-            tmp_free = False
 
             # extract the parameter names using the static_name property
             # because this is what the children will use in evaluate_at
-            parameter_names = []
-            for p in function.parameters.values():
-                parameter_names.append(p.static_name)
-                if p.free:
-                    tmp_free = True
 
-            tmp_dict["parameter_names"] = parameter_names
+            tmp_dict["parameter_names"] = [
+                p.static_name for p in function.parameters.values()
+            ]
 
             tmp_dict["function"] = function
 
             function_dict[names[i]] = tmp_dict
-            if not tmp_free:
+            if not function.has_free_parameters:
                 at_least_one_free = False
 
         return function_dict, at_least_one_free
