@@ -175,17 +175,19 @@ def _setup_analysis_dictionaries(
             if use_components and "total" in components_to_use:
                 mle_analyses[key]["fitted point source"] = sum(component_dict.values())
 
-            # keep track of how many components we need to plot
+                # lets remove all components not explicitly asked for by the user
+                for c in list(mle_analyses[key]["components"].keys()).copy():
+                    if c not in components_to_use:
+                        log.debug(f"{c} not in components_to_use - removing entry")
+                        del mle_analyses[key]["components"][c]
+                        num_components_to_use -= 1
 
-            if use_components:
+                num_sources_to_use += 1
+
+            # keep track of everything we added on
+
+            if use_components and num_components_to_use > 0:
                 num_sources_to_use += num_components_to_use
-
-                if "total" in components_to_use:
-                    num_sources_to_use += 1
-
-            # else:
-            #
-            #     num_sources_to_use += 1
 
     # repeat for the bayes analyses
 
@@ -262,17 +264,18 @@ def _setup_analysis_dictionaries(
                 bayesian_analyses[key]["fitted point source"] = sum(
                     component_dict.values()
                 )
+                for c in list(bayesian_analyses[key]["components"].keys()).copy():
+                    if c not in components_to_use:
+                        log.debug(f"{c} not in components_to_use - removing entry")
+                        del bayesian_analyses[key]["components"][c]
+                        num_components_to_use -= 1
+
                 num_sources_to_use += 1
 
             # keep track of everything we added on
 
             if use_components and num_components_to_use > 0:
                 num_sources_to_use += num_components_to_use
-
-            #
-            # else:
-            #
-            #     num_sources_to_use += 1
 
         # we may have the same source in a bayesian and mle analysis.
         # we want to plot them, but make sure to label them differently.
