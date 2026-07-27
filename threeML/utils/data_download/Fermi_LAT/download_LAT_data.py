@@ -1,3 +1,5 @@
+import logging
+
 import html.parser
 import os
 import re
@@ -15,10 +17,10 @@ from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import TimeTypeNotKnown
 from threeML.io.download_from_http import ApacheDirectory
 from threeML.io.file_utils import sanitize_filename
-from threeML.io.logging import setup_logger
+
 from threeML.utils.unique_deterministic_tag import get_unique_deterministic_tag
 
-log = setup_logger(__name__)
+log = logging.getLogger(__name__)
 
 # Set default timeout for operations
 socket.setdefaulttimeout(180)
@@ -221,8 +223,7 @@ def download_LAT_data(
     # create output directory if it does not exists
     destination_directory = sanitize_filename(destination_directory, abspath=True)
 
-    if not destination_directory.exists():
-        destination_directory.mkdir(parents=True)
+    destination_directory.mkdir(parents=True, exist_ok=True)
 
     # This will complete automatically the form available at
     # http://fermi.gsfc.nasa.gov/cgi-bin/ssc/LAT/LATDataQuery.cgi

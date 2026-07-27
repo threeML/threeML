@@ -1,3 +1,5 @@
+import logging
+
 import os
 import shutil
 import tempfile
@@ -6,9 +8,7 @@ from builtins import str
 from contextlib import contextmanager
 from pathlib import Path
 
-from threeML.io.logging import setup_logger
-
-log = setup_logger(__name__)
+log = logging.getLogger(__name__)
 
 
 def sanitize_filename(filename, abspath: bool = False) -> Path:

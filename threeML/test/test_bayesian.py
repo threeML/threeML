@@ -137,13 +137,13 @@ def test_emcee(bayes_fitter):
 
 
 @skip_if_pymultinest_is_not_available
-def test_multinest(bayes_fitter, completed_bn090217206_bayesian_analysis):
+def test_multinest(bayes_fitter, completed_bn090217206_bayesian_analysis, tmp_path):
     bayes, _ = completed_bn090217206_bayesian_analysis
 
     bayes.set_sampler("multinest")
     assert bayes.sample() is None
 
-    bayes.sampler.setup(n_live_points=400)
+    bayes.sampler.setup(n_live_points=400, chain_name=str(tmp_path / "fit-"))
 
     bayes.sample()
 

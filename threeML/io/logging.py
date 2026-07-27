@@ -20,6 +20,8 @@ from rich.theme import Theme
 
 from threeML.config.config import threeML_config
 
+logger = logging.getLogger(__name__)
+
 # set up the console logging
 
 
@@ -42,9 +44,7 @@ def get_path_of_log_dir() -> Path:
     """Get the path to the logging directory."""
 
     log_path: Path = Path(threeML_config.logging.path).expanduser()
-
-    if not log_path.exists():
-        log_path.mkdir(parents=True)
+    log_path.mkdir(parents=True, exist_ok=True)
 
     return log_path
 
@@ -312,13 +312,11 @@ def debug_mode():
 
 
 @contextmanager
-def silence_console_log(and_progress_bars=True):
+def silence_console_log(logger, and_progress_bars=True):
     """Temporarily silence the console and progress bars."""
-    current_console_logging_level = threeML_console_log_handler.level
-    current_usr_logging_level = threeML_usr_log_handler.level
+    current_console_logging_level = logger.level
 
-    threeML_console_log_handler.setLevel(logging.CRITICAL)
-    threeML_usr_log_handler.setLevel(logging.CRITICAL)
+    logger.setLevel(logging.CRITICAL)
 
     if and_progress_bars:
         progress_state = threeML_config.interface.progress_bars
@@ -329,8 +327,7 @@ def silence_console_log(and_progress_bars=True):
         yield
 
     finally:
-        threeML_console_log_handler.setLevel(current_console_logging_level)
-        threeML_usr_log_handler.setLevel(current_usr_logging_level)
+        logger.setLevel(current_console_logging_level)
 
         if and_progress_bars:
             threeML_config.interface.progress_bars = progress_state
@@ -361,7 +358,23 @@ def setup_logger(name: str) -> logging.Logger:
     if threeML_config["logging"]["usr"]:
         log.addHandler(threeML_usr_log_handler)
 
-    # we do not want to duplicate teh messages in the parents
-    log.propagate = False
-
     return log
+
+
+# Capture all startup warnings and log them on demand
+
+
+_startup_warnings = []
+
+
+def add_startup_warning(logger, msg, level=logging.WARNING):
+    fn, lno, func, sinfo = logger.findCaller(stacklevel=2)
+    record = logger.makeRecord(
+        logger.name, level, fn, lno, msg, (), None, func=func, sinfo=sinfo
+    )
+    _startup_warnings.append(record)
+
+
+def log_threeml_startup_warnings(logger):
+    for w in _startup_warnings:
+        logger.handle(w)
