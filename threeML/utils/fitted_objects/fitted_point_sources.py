@@ -291,7 +291,7 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
                 log.warning(
                     "You have provided a composite function, with one composing "
                     "function only having fixed parameters - we cannot split that into "
-                    "components and will only plot the total"
+                    "components and will only calculate the total"
                 )
                 self._components = None
                 component = None

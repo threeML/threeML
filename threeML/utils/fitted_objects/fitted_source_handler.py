@@ -120,9 +120,13 @@ class GenericFittedSourceHandler(object):
                 break
 
         else:
-            log.error("There are no free parameters in the model!")
-
-            raise RuntimeError()
+            log.debug(
+                f"Got parameters {[x.name for x in self._parameters.values()]} but none"
+                " of them is free"
+            )
+            raise RuntimeError(
+                "There are no free parameters in this source or component!"
+            )
 
         test_variate = self._analysis_results.get_variates(test_par.path)
 
