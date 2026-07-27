@@ -1,15 +1,8 @@
-import os
-
 import numpy as np
 import pytest
 
 from threeML.utils.time_interval import TimeIntervalSet
 from threeML.utils.time_series.event_list import EventList, EventListWithDeadTime
-
-from .conftest import get_test_datasets_directory
-
-__this_dir__ = os.path.join(os.path.abspath(os.path.dirname(__file__)))
-datasets_dir = get_test_datasets_directory()
 
 
 def is_within_tolerance(truth, value, relative_tolerance=0.01):

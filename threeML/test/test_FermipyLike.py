@@ -2,6 +2,8 @@ import logging
 
 import numpy as np
 import pytest
+from pathlib import Path
+import shutil
 
 from threeML import is_plugin_available
 from threeML.catalogs.FermiLAT import FermiLATSourceCatalog, FermiPySourceCatalog
@@ -24,7 +26,7 @@ skip_if_fermipy_is_not_available = pytest.mark.skipif(
 
 @skip_if_internet_is_not_available
 @skip_if_fermipy_is_not_available
-def test_FermipyLike_fromVO():
+def test_FermipyLike_fromVO(tmp_path):
     from threeML.plugins.FermipyLike import FermipyLike
 
     # Crab coordinates
@@ -85,7 +87,7 @@ def test_FermipyLike_fromVO():
             tstart,
             tstop,
             time_type="Gregorian",
-            destination_directory="Crab_data",
+            destination_directory=tmp_path / "Crab_data",
         )
 
     except RuntimeError:
@@ -126,10 +128,14 @@ def test_FermipyLike_fromVO():
     # make sure galactic diffuse fit worked
     assert np.isclose(model.LAT_galdiff_Prefactor.value, 1.0, rtol=0.2, atol=0.2)
 
+    fermipy_output_directory = Path(config["fileio"]["outdir"])
+    if fermipy_output_directory.exists():
+        shutil.rmtree(fermipy_output_directory)
+
 
 @skip_if_internet_is_not_available
 @skip_if_fermipy_is_not_available
-def test_FermipyLike_fromDisk():
+def test_FermipyLike_fromDisk(tmp_path):
     from threeML.plugins.FermipyLike import FermipyLike
 
     # Crab coordinates
@@ -195,7 +201,7 @@ def test_FermipyLike_fromDisk():
             tstart,
             tstop,
             time_type="Gregorian",
-            destination_directory="Crab_data",
+            destination_directory=tmp_path / "Crab_data",
         )
 
     except RuntimeError:
@@ -236,3 +242,6 @@ def test_FermipyLike_fromDisk():
 
     # make sure galactic diffuse fit worked
     assert np.isclose(model.LAT_galdiff_Prefactor.value, 1.0, rtol=0.2, atol=0.2)
+    fermipy_output_directory = Path(config["fileio"]["outdir"])
+    if fermipy_output_directory.exists():
+        shutil.rmtree(fermipy_output_directory)

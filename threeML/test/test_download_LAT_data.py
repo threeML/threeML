@@ -35,14 +35,14 @@ skip_if_LAT_is_not_available = pytest.mark.skipif(
 
 @skip_if_internet_is_not_available
 @skip_if_LAT_is_not_available
-def test_download_LAT_data():
+def test_download_LAT_data(tmp_path):
     # Crab
     ra = 83.6331
     dec = 22.0199
     tstart = "2010-01-01 00:00:00"
     tstop = "2010-01-02 00:00:00"
 
-    temp_dir = "_download_temp"
+    temp_dir = tmp_path / "_download_temp"
     resp = requests.get(threeML_config.LAT.query_form)
     if "<title>FSSC LAT Data Server Maintenance page</title>" in resp.text:
         pytest.xfail()
@@ -64,11 +64,11 @@ def test_download_LAT_data():
 
 
 @skip_if_internet_is_not_available
-def test_download_LLE_data():
+def test_download_LLE_data(tmp_path):
     # test good trigger names
     good_triggers = ["080916009", "bn080916009", "GRB080916009"]
 
-    temp_dir = "_download_temp"
+    temp_dir = tmp_path / "_download_temp"
 
     for i, trigger in enumerate(good_triggers):
         dl_info = download_LLE_trigger_data(

@@ -47,16 +47,18 @@ evclass_irf = {
 }
 
 
-def do_the_test(cat_name):
+def do_the_test(cat_name, tmp_path):
     from fermipy.gtanalysis import GTAnalysis
 
-    gta = GTAnalysis(f"2config_Crab_{cat_name}.yaml", logging={"verbosity": 3})
+    gta = GTAnalysis(
+        tmp_path / f"2config_Crab_{cat_name}.yaml", logging={"verbosity": 3}
+    )
     gta.setup()
-    gta.write_roi(f"roi_{cat_name}")
+    gta.write_roi(tmp_path / f"roi_{cat_name}")
 
-    gta = GTAnalysis.create(f"roi_{cat_name}.npy")
+    gta = GTAnalysis.create(tmp_path / f"roi_{cat_name}.npy")
 
-    lat_catalog = FermiPySourceCatalog(f"roi_{cat_name}.fits")
+    lat_catalog = FermiPySourceCatalog(tmp_path / f"roi_{cat_name}.fits")
     try:
         ra, dec, table = lat_catalog.search_around_source("Crab", radius=30.0)
     except NameResolveError:
@@ -164,7 +166,7 @@ def do_the_test(cat_name):
 # @pytest.mark.xfail
 @skip_if_internet_is_not_available
 @skip_if_fermipy_is_not_available
-def test_read_model_from_catalogs():
+def test_read_model_from_catalogs(tmp_path):
     # Find crab and download data from Jan 01 2010 to Jan 8 2010 (needed for fermipy
     # instance)
 
@@ -210,7 +212,7 @@ def test_read_model_from_catalogs():
 
         the_config["model"] = model_dict
 
-        stream = open(f"2config_Crab_{cat_name}.yaml", "w")
+        stream = open(tmp_path / f"2config_Crab_{cat_name}.yaml", "w")
         yaml.dump(dict(the_config), stream, default_flow_style=False)
 
-        do_the_test(cat_name)
+        do_the_test(cat_name, tmp_path)
