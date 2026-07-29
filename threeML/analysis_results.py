@@ -1,12 +1,12 @@
-import logging
-
 import collections
 import datetime
 import functools
 import inspect
+import logging
 import math
 import os
 from builtins import map, object, range, str
+from importlib.util import find_spec
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -34,7 +34,6 @@ from threeML.io.hdf5_utils import (
     recursively_load_dict_contents_from_group,
     recursively_save_dict_contents_to_group,
 )
-
 from threeML.io.package_data import get_path_of_data_file
 from threeML.io.results_table import ResultsTable
 from threeML.io.rich_display import display
@@ -49,18 +48,18 @@ log = logging.getLogger(__name__)
 
 _rich_console = Console()
 
-try:
+if find_spec("chainconsumer") is not None:
     import chainconsumer
 
-except Exception:
+    has_chainconsumer = True
+
+    log.debug("chainconsumer is installed")
+
+else:
     has_chainconsumer = False
 
     log.debug("chainconsumer is NOT installed")
 
-else:
-    has_chainconsumer = True
-
-    log.debug("chainconsumer is installed")
 
 # These are special characters which cannot be safely saved in the keyword of a FITS
 # file. We substitute them with normal characters when we write the keyword, and we
