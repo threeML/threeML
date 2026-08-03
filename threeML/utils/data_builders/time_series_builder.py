@@ -1318,7 +1318,6 @@ class TimeSeriesBuilder(object):
     def from_pol_spectrum(
         cls,
         name,
-<<<<<<< HEAD
         polevents,
         specrsp,
         restore_background=None,
@@ -1381,9 +1380,6 @@ class TimeSeriesBuilder(object):
         name,
         polevents,
         polrsp,
-=======
-        polar_hdf5_file,
->>>>>>> dev
         restore_background=None,
         trigger_time=0.0,
         poly_order=-1,
@@ -1398,16 +1394,10 @@ class TimeSeriesBuilder(object):
 
         # extract the polar varaibles
 
-<<<<<<< HEAD
         polarization_data = PolData(polevents, trigger_time)
 
         # get the pa offset
         cls._pa_offset = polarization_data.get_pa_offset()
-=======
-        polar_data = POLARData(
-            polar_hdf5_file, polar_hdf5_response=None, reference_time=trigger_time
-        )
->>>>>>> dev
 
         # Create the the event list
 
@@ -1419,65 +1409,10 @@ class TimeSeriesBuilder(object):
             stop_time=polar_data.time.max(),
             dead_time_fraction=polar_data.dead_time_fraction,
             verbose=verbose,
-<<<<<<< HEAD
             first_channel=0,
             mission=polarization_data.mission,
             instrument=polarization_data.instrument,
             edges=polarization_data.scattering_edges
-=======
-            first_channel=1,
-            mission="Tiangong-2",
-            instrument="POLAR",
-        )
-
-        return cls(
-            name,
-            event_list,
-            response=polar_data.rsp,
-            poly_order=poly_order,
-            unbinned=unbinned,
-            verbose=verbose,
-            restore_poly_fit=restore_background,
-            container_type=BinnedSpectrumWithDispersion,
-        )
-
-    @classmethod
-    def from_polar_polarization(
-        cls,
-        name,
-        polar_hdf5_file,
-        polar_hdf5_response,
-        restore_background=None,
-        trigger_time=0.0,
-        poly_order=-1,
-        unbinned=True,
-        verbose=True,
-    ):
-        if not has_polarpy:
-            log.error("The polarpy module is not installed")
-            raise RuntimeError()
-
-        # self._default_unbinned = unbinned
-
-        # extract the polar varaibles
-
-        polar_data = POLARData(polar_hdf5_file, polar_hdf5_response, trigger_time)
-
-        # Create the the event list
-
-        event_list = EventListWithDeadTimeFraction(
-            arrival_times=polar_data.scattering_angle_time,
-            measurement=polar_data.scattering_angles,
-            n_channels=polar_data.n_scattering_bins,
-            start_time=polar_data.scattering_angle_time.min(),
-            stop_time=polar_data.scattering_angle_time.max(),
-            dead_time_fraction=polar_data.scattering_angle_dead_time_fraction,
-            verbose=verbose,
-            first_channel=1,
-            mission="Tiangong-2",
-            instrument="POLAR",
-            edges=polar_data.scattering_edges,
->>>>>>> dev
         )
 
         return cls(
