@@ -158,18 +158,18 @@
 <span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">polarpy.polar_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">POLARData</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">polarpy.polar_response</span><span class="w"> </span><span class="kn">import</span> <span class="n">PolarResponse</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">polarpy.polarlike</span><span class="w"> </span><span class="kn">import</span> <span class="n">PolarLike</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">polpy.poldata</span><span class="w"> </span><span class="kn">import</span> <span class="n">PolData</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">polpy.polresponse</span><span class="w"> </span><span class="kn">import</span> <span class="n">PolResponse</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">polpy.polarizationlike</span><span class="w"> </span><span class="kn">import</span> <span class="n">PolarizationLike</span>
 
-    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;POLAR plugins are available&quot;</span><span class="p">)</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;PolPy plugin is available&quot;</span><span class="p">)</span>
 
-    <span class="n">has_polarpy</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">has_polpy</span> <span class="o">=</span> <span class="kc">True</span>
 
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;POLAR plugins are unavailable&quot;</span><span class="p">)</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;PolPy plugin is unavailable&quot;</span><span class="p">)</span>
 
-    <span class="n">has_polarpy</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">has_polpy</span> <span class="o">=</span> <span class="kc">False</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">gbm_drm_gen</span>
@@ -1478,50 +1478,61 @@
         <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="TimeSeriesBuilder.from_polar_spectrum">
-<a class="viewcode-back" href="../../../../api/threeML.utils.data_builders.html#threeML.utils.data_builders.time_series_builder.TimeSeriesBuilder.from_polar_spectrum">[docs]</a>
+<div class="viewcode-block" id="TimeSeriesBuilder.from_pol_spectrum">
+<a class="viewcode-back" href="../../../../api/threeML.utils.data_builders.html#threeML.utils.data_builders.time_series_builder.TimeSeriesBuilder.from_pol_spectrum">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">from_polar_spectrum</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_pol_spectrum</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">name</span><span class="p">,</span>
-        <span class="n">polar_hdf5_file</span><span class="p">,</span>
+        <span class="n">polevents</span><span class="p">,</span>
+        <span class="n">specrsp</span><span class="p">,</span>
         <span class="n">restore_background</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">trigger_time</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
         <span class="n">poly_order</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
         <span class="n">unbinned</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">has_polarpy</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;The polarpy module is not installed&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">has_polpy</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;The PolPy module is not installed&quot;</span><span class="p">)</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
 
         <span class="c1"># self._default_unbinned = unbinned</span>
 
-        <span class="c1"># extract the polar varaibles</span>
+        <span class="c1"># extract spectral response</span>
+        <span class="n">hdu_spec</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">specrsp</span><span class="p">)</span>
+        <span class="n">mc_low</span> <span class="o">=</span> <span class="n">hdu_spec</span><span class="p">[</span><span class="s2">&quot;MATRIX&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;ENERG_LO&quot;</span><span class="p">)</span>
+        <span class="n">mc_high</span> <span class="o">=</span> <span class="n">hdu_spec</span><span class="p">[</span><span class="s2">&quot;MATRIX&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;ENERG_HI&quot;</span><span class="p">)</span>
+        <span class="n">ebounds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mc_low</span><span class="p">,</span> <span class="n">mc_high</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">matrix</span> <span class="o">=</span> <span class="n">hdu_spec</span><span class="p">[</span><span class="s2">&quot;MATRIX&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;MATRIX&quot;</span><span class="p">)</span>
+        <span class="n">matrix</span> <span class="o">=</span> <span class="n">matrix</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+        <span class="n">mc_energies</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mc_low</span><span class="p">,</span> <span class="n">mc_high</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
 
-        <span class="n">polar_data</span> <span class="o">=</span> <span class="n">POLARData</span><span class="p">(</span>
-            <span class="n">polar_hdf5_file</span><span class="p">,</span> <span class="n">polar_hdf5_response</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reference_time</span><span class="o">=</span><span class="n">trigger_time</span>
+        <span class="n">specrsp</span> <span class="o">=</span> <span class="n">InstrumentResponse</span><span class="p">(</span>
+            <span class="n">matrix</span><span class="o">=</span><span class="n">matrix</span><span class="p">,</span> <span class="n">ebounds</span><span class="o">=</span><span class="n">ebounds</span><span class="p">,</span> <span class="n">monte_carlo_energies</span><span class="o">=</span><span class="n">mc_energies</span>
         <span class="p">)</span>
+
+        <span class="c1"># extract the polarization variables</span>
+        <span class="n">polarization_data</span> <span class="o">=</span> <span class="n">PolData</span><span class="p">(</span><span class="n">polevents</span><span class="p">,</span> <span class="n">reference_time</span><span class="o">=</span><span class="n">trigger_time</span><span class="p">)</span>
 
         <span class="c1"># Create the the event list</span>
 
         <span class="n">event_list</span> <span class="o">=</span> <span class="n">EventListWithDeadTimeFraction</span><span class="p">(</span>
-            <span class="n">arrival_times</span><span class="o">=</span><span class="n">polar_data</span><span class="o">.</span><span class="n">time</span><span class="p">,</span>
-            <span class="n">measurement</span><span class="o">=</span><span class="n">polar_data</span><span class="o">.</span><span class="n">pha</span><span class="p">,</span>
-            <span class="n">n_channels</span><span class="o">=</span><span class="n">polar_data</span><span class="o">.</span><span class="n">n_channels</span><span class="p">,</span>
-            <span class="n">start_time</span><span class="o">=</span><span class="n">polar_data</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span>
-            <span class="n">stop_time</span><span class="o">=</span><span class="n">polar_data</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span>
-            <span class="n">dead_time_fraction</span><span class="o">=</span><span class="n">polar_data</span><span class="o">.</span><span class="n">dead_time_fraction</span><span class="p">,</span>
+            <span class="n">arrival_times</span><span class="o">=</span><span class="n">polarization_data</span><span class="o">.</span><span class="n">time</span><span class="p">,</span>
+            <span class="n">measurement</span><span class="o">=</span><span class="n">polarization_data</span><span class="o">.</span><span class="n">pha</span><span class="p">,</span>
+            <span class="n">n_channels</span><span class="o">=</span><span class="n">polarization_data</span><span class="o">.</span><span class="n">n_channels</span><span class="p">,</span>
+            <span class="n">start_time</span><span class="o">=</span><span class="n">polarization_data</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span>
+            <span class="n">stop_time</span><span class="o">=</span><span class="n">polarization_data</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span>
+            <span class="n">dead_time_fraction</span><span class="o">=</span><span class="n">polarization_data</span><span class="o">.</span><span class="n">dead_time_fraction</span><span class="p">,</span>
             <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
             <span class="n">first_channel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-            <span class="n">mission</span><span class="o">=</span><span class="s2">&quot;Tiangong-2&quot;</span><span class="p">,</span>
-            <span class="n">instrument</span><span class="o">=</span><span class="s2">&quot;POLAR&quot;</span><span class="p">,</span>
+            <span class="n">mission</span><span class="o">=</span><span class="n">polarization_data</span><span class="o">.</span><span class="n">mission</span><span class="p">,</span>
+            <span class="n">instrument</span><span class="o">=</span><span class="n">polarization_data</span><span class="o">.</span><span class="n">instrument</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
             <span class="n">name</span><span class="p">,</span>
             <span class="n">event_list</span><span class="p">,</span>
-            <span class="n">response</span><span class="o">=</span><span class="n">polar_data</span><span class="o">.</span><span class="n">rsp</span><span class="p">,</span>
+            <span class="n">response</span><span class="o">=</span><span class="n">specrsp</span><span class="p">,</span>
             <span class="n">poly_order</span><span class="o">=</span><span class="n">poly_order</span><span class="p">,</span>
             <span class="n">unbinned</span><span class="o">=</span><span class="n">unbinned</span><span class="p">,</span>
             <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
@@ -1530,50 +1541,53 @@
         <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="TimeSeriesBuilder.from_polar_polarization">
-<a class="viewcode-back" href="../../../../api/threeML.utils.data_builders.html#threeML.utils.data_builders.time_series_builder.TimeSeriesBuilder.from_polar_polarization">[docs]</a>
+<div class="viewcode-block" id="TimeSeriesBuilder.from_polarization">
+<a class="viewcode-back" href="../../../../api/threeML.utils.data_builders.html#threeML.utils.data_builders.time_series_builder.TimeSeriesBuilder.from_polarization">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">from_polar_polarization</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_polarization</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">name</span><span class="p">,</span>
-        <span class="n">polar_hdf5_file</span><span class="p">,</span>
-        <span class="n">polar_hdf5_response</span><span class="p">,</span>
+        <span class="n">polevents</span><span class="p">,</span>
+        <span class="n">polrsp</span><span class="p">,</span>
         <span class="n">restore_background</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">trigger_time</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
         <span class="n">poly_order</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
         <span class="n">unbinned</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">has_polarpy</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;The polarpy module is not installed&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">has_polpy</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;The PolPy module is not installed&quot;</span><span class="p">)</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
 
         <span class="c1"># self._default_unbinned = unbinned</span>
 
         <span class="c1"># extract the polar varaibles</span>
 
-        <span class="n">polar_data</span> <span class="o">=</span> <span class="n">POLARData</span><span class="p">(</span><span class="n">polar_hdf5_file</span><span class="p">,</span> <span class="n">polar_hdf5_response</span><span class="p">,</span> <span class="n">trigger_time</span><span class="p">)</span>
+        <span class="n">polarization_data</span> <span class="o">=</span> <span class="n">PolData</span><span class="p">(</span><span class="n">polevents</span><span class="p">,</span> <span class="n">trigger_time</span><span class="p">)</span>
+
+        <span class="c1"># get the pa offset</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_pa_offset</span> <span class="o">=</span> <span class="n">polarization_data</span><span class="o">.</span><span class="n">get_pa_offset</span><span class="p">()</span>
 
         <span class="c1"># Create the the event list</span>
 
         <span class="n">event_list</span> <span class="o">=</span> <span class="n">EventListWithDeadTimeFraction</span><span class="p">(</span>
-            <span class="n">arrival_times</span><span class="o">=</span><span class="n">polar_data</span><span class="o">.</span><span class="n">scattering_angle_time</span><span class="p">,</span>
-            <span class="n">measurement</span><span class="o">=</span><span class="n">polar_data</span><span class="o">.</span><span class="n">scattering_angles</span><span class="p">,</span>
-            <span class="n">n_channels</span><span class="o">=</span><span class="n">polar_data</span><span class="o">.</span><span class="n">n_scattering_bins</span><span class="p">,</span>
-            <span class="n">start_time</span><span class="o">=</span><span class="n">polar_data</span><span class="o">.</span><span class="n">scattering_angle_time</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span>
-            <span class="n">stop_time</span><span class="o">=</span><span class="n">polar_data</span><span class="o">.</span><span class="n">scattering_angle_time</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span>
-            <span class="n">dead_time_fraction</span><span class="o">=</span><span class="n">polar_data</span><span class="o">.</span><span class="n">scattering_angle_dead_time_fraction</span><span class="p">,</span>
+            <span class="n">arrival_times</span><span class="o">=</span><span class="n">polarization_data</span><span class="o">.</span><span class="n">scattering_angle_time</span><span class="p">,</span>
+            <span class="n">measurement</span><span class="o">=</span><span class="n">polarization_data</span><span class="o">.</span><span class="n">scattering_angles</span><span class="p">,</span>
+            <span class="n">n_channels</span><span class="o">=</span><span class="n">polarization_data</span><span class="o">.</span><span class="n">n_scattering_bins</span><span class="p">,</span>
+            <span class="n">start_time</span><span class="o">=</span><span class="n">polarization_data</span><span class="o">.</span><span class="n">scattering_angle_time</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span>
+            <span class="n">stop_time</span><span class="o">=</span><span class="n">polarization_data</span><span class="o">.</span><span class="n">scattering_angle_time</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span>
+            <span class="n">dead_time_fraction</span><span class="o">=</span><span class="n">polarization_data</span><span class="o">.</span><span class="n">scattering_angle_dead_time_fraction</span><span class="p">,</span>
             <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
-            <span class="n">first_channel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-            <span class="n">mission</span><span class="o">=</span><span class="s2">&quot;Tiangong-2&quot;</span><span class="p">,</span>
-            <span class="n">instrument</span><span class="o">=</span><span class="s2">&quot;POLAR&quot;</span><span class="p">,</span>
-            <span class="n">edges</span><span class="o">=</span><span class="n">polar_data</span><span class="o">.</span><span class="n">scattering_edges</span><span class="p">,</span>
+            <span class="n">first_channel</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">mission</span><span class="o">=</span><span class="n">polarization_data</span><span class="o">.</span><span class="n">mission</span><span class="p">,</span>
+            <span class="n">instrument</span><span class="o">=</span><span class="n">polarization_data</span><span class="o">.</span><span class="n">instrument</span><span class="p">,</span>
+            <span class="n">edges</span><span class="o">=</span><span class="n">polarization_data</span><span class="o">.</span><span class="n">scattering_edges</span>
         <span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
             <span class="n">name</span><span class="p">,</span>
             <span class="n">event_list</span><span class="p">,</span>
-            <span class="n">response</span><span class="o">=</span><span class="n">polar_hdf5_response</span><span class="p">,</span>
+            <span class="n">response</span><span class="o">=</span><span class="n">polrsp</span><span class="p">,</span>
             <span class="n">poly_order</span><span class="o">=</span><span class="n">poly_order</span><span class="p">,</span>
             <span class="n">unbinned</span><span class="o">=</span><span class="n">unbinned</span><span class="p">,</span>
             <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
@@ -1582,9 +1596,9 @@
         <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="TimeSeriesBuilder.to_polarlike">
-<a class="viewcode-back" href="../../../../api/threeML.utils.data_builders.html#threeML.utils.data_builders.time_series_builder.TimeSeriesBuilder.to_polarlike">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">to_polarlike</span><span class="p">(</span>
+<div class="viewcode-block" id="TimeSeriesBuilder.to_polarizationlike">
+<a class="viewcode-back" href="../../../../api/threeML.utils.data_builders.html#threeML.utils.data_builders.time_series_builder.TimeSeriesBuilder.to_polarizationlike">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_polarizationlike</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">from_bins</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -1592,11 +1606,14 @@
         <span class="n">interval_name</span><span class="o">=</span><span class="s2">&quot;_interval&quot;</span><span class="p">,</span>
         <span class="n">extract_measured_background</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="k">assert</span> <span class="n">has_polarpy</span><span class="p">,</span> <span class="s2">&quot;you must have the polarpy module installed&quot;</span>
+        <span class="k">assert</span> <span class="n">has_polpy</span><span class="p">,</span> <span class="s2">&quot;you must have the PolPy module installed&quot;</span>
 
         <span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_container_type</span><span class="p">,</span> <span class="n">BinnedModulationCurve</span>
-        <span class="p">),</span> <span class="s2">&quot;You are attempting to create a POLARLike plugin from the wrong data type&quot;</span>
+        <span class="p">),</span> <span class="p">(</span>
+            <span class="s2">&quot;You are attempting to create a PolarizationLike plugin &quot;</span>
+            <span class="s2">&quot;from the wrong data type&quot;</span>
+        <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">extract_measured_background</span><span class="p">:</span>
             <span class="n">this_background_spectrum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_measured_background_spectrum</span>
@@ -1605,7 +1622,7 @@
             <span class="n">this_background_spectrum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_spectrum</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_response</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_response</span> <span class="o">=</span> <span class="n">PolarResponse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_response</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_response</span> <span class="o">=</span> <span class="n">PolResponse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_response</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pa_offset</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">from_bins</span><span class="p">:</span>
             <span class="k">assert</span> <span class="p">(</span>
@@ -1618,14 +1635,12 @@
                     <span class="s2">&quot; background!&quot;</span>
                 <span class="p">)</span>
 
-            <span class="k">return</span> <span class="n">PolarLike</span><span class="p">(</span>
+            <span class="k">return</span> <span class="n">PolarizationLike</span><span class="p">(</span>
                 <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span>
                 <span class="n">observation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="p">,</span>
                 <span class="n">background</span><span class="o">=</span><span class="n">this_background_spectrum</span><span class="p">,</span>
                 <span class="n">response</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_response</span><span class="p">,</span>
-                <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">,</span>
-                <span class="c1">#                 tstart=self._tstart,</span>
-                <span class="c1">#                 tstop=self._tstop</span>
+                <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span>
             <span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
@@ -1643,7 +1658,7 @@
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span> <span class="o">=</span> <span class="kc">False</span>
 
-            <span class="n">list_of_polarlikes</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">list_of_polarizationlikes</span> <span class="o">=</span> <span class="p">[]</span>
 
             <span class="c1"># now we make one response to save time</span>
 
@@ -1678,23 +1693,24 @@
                             <span class="s2">&quot;contain no background!&quot;</span>
                         <span class="p">)</span>
 
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="n">pl</span> <span class="o">=</span> <span class="n">PolarLike</span><span class="p">(</span>
-                        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%s%s%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="n">interval_name</span><span class="p">,</span> <span class="n">i</span><span class="p">),</span>
-                        <span class="n">observation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="p">,</span>
-                        <span class="n">background</span><span class="o">=</span><span class="n">this_background_spectrum</span><span class="p">,</span>
-                        <span class="n">response</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_response</span><span class="p">,</span>
-                        <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">,</span>
-                        <span class="c1">#               tstart=self._tstart,</span>
-                        <span class="c1">#               tstop=self._tstop</span>
-                    <span class="p">)</span>
+                <span class="c1"># CODE TO FIX STILL USING POLAR LIKE</span>
+                <span class="c1"># try:</span>
+                <span class="c1">#     pl = PolarLike(</span>
+                <span class="c1">#         name=&quot;%s%s%d&quot; % (self._name, interval_name, i),</span>
+                <span class="c1">#         observation=self._observed_spectrum,</span>
+                <span class="c1">#         background=this_background_spectrum,</span>
+                <span class="c1">#         response=self._response,</span>
+                <span class="c1">#         verbose=self._verbose,</span>
+                <span class="c1">#         #               tstart=self._tstart,</span>
+                <span class="c1">#         #               tstop=self._tstop</span>
+                <span class="c1">#     )</span>
 
-                    <span class="n">list_of_polarlikes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pl</span><span class="p">)</span>
+                <span class="c1">#     list_of_polarizationlikes.append(pl)</span>
 
-                <span class="k">except</span> <span class="n">NegativeBackground</span><span class="p">:</span>
-                    <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                        <span class="s2">&quot;Something is wrong with interval </span><span class="si">%s</span><span class="s2">. skipping.&quot;</span> <span class="o">%</span> <span class="n">interval</span>
-                    <span class="p">)</span>
+                <span class="c1"># except NegativeBackground:</span>
+                <span class="c1">#     log.error(</span>
+                <span class="c1">#         &quot;Something is wrong with interval %s. skipping.&quot; % interval</span>
+                <span class="c1">#     )</span>
 
             <span class="c1"># restore the old interval</span>
 
@@ -1706,7 +1722,7 @@
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span> <span class="o">=</span> <span class="n">old_verbose</span>
 
-            <span class="k">return</span> <span class="n">list_of_polarlikes</span>
+            <span class="k">return</span> <span class="n">list_of_polarizationlikes</span>
             <span class="c1"># get the bins from the time series</span>
             <span class="c1"># for event lists, these are from created bins</span>
             <span class="c1"># for binned spectra sets, these are the native bines</span>
@@ -1739,7 +1755,8 @@
                         <span class="p">)</span>
 
                 <span class="k">try</span><span class="p">:</span>
-                    <span class="n">pl</span> <span class="o">=</span> <span class="n">PolarLike</span><span class="p">(</span>
+
+                    <span class="n">pl</span> <span class="o">=</span> <span class="n">PolarizationLike</span><span class="p">(</span>
                         <span class="n">name</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%s%s%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="n">interval_name</span><span class="p">,</span> <span class="n">i</span><span class="p">),</span>
                         <span class="n">observation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="p">,</span>
                         <span class="n">background</span><span class="o">=</span><span class="n">this_background_spectrum</span><span class="p">,</span>
@@ -1749,7 +1766,7 @@
                         <span class="c1">#               tstop=self._tstop</span>
                     <span class="p">)</span>
 
-                    <span class="n">list_of_polarlikes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pl</span><span class="p">)</span>
+                    <span class="n">list_of_polarizationlikes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pl</span><span class="p">)</span>
 
                 <span class="k">except</span> <span class="n">NegativeBackground</span><span class="p">:</span>
                     <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Something is wrong with interval </span><span class="si">{</span><span class="n">interval</span><span class="si">}</span><span class="s2">. skipping.&quot;</span><span class="p">)</span>
@@ -1764,7 +1781,7 @@
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span> <span class="o">=</span> <span class="n">old_verbose</span>
 
-            <span class="k">return</span> <span class="n">list_of_polarlikes</span></div>
+            <span class="k">return</span> <span class="n">list_of_polarizationlikes</span></div>
 </div>
 
 </pre></div>
