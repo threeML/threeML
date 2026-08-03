@@ -167,7 +167,7 @@
 <span class="sd">    :param components_to_use: (optional) list of string names of the</span>
 <span class="sd">        components to plot: including &#39;total&#39; will also plot the total</span>
 <span class="sd">        spectrum</span>
-<span class="sd">    :param sum_sources: (optional) some all the MLE and Bayesian sources</span>
+<span class="sd">    :param sum_sources: (optional) sum over all the MLE and Bayesian sources</span>
 <span class="sd">    :param show_contours: (optional) True or False to plot the contour</span>
 <span class="sd">        region</span>
 <span class="sd">    :param plot_style_kwargs: (optional) dictionary of MPL plot styling</span>
@@ -807,6 +807,20 @@
         <span class="n">emax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">subplot</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Class to handle plotting of multiple spectral models with contours.</span>
+
+<span class="sd">        :param n_total: total number of models to plot</span>
+<span class="sd">        :param xscale: &#39;log&#39; or &#39;linear&#39;</span>
+<span class="sd">        :param yscale: &#39;log&#39; or &#39;linear&#39;</span>
+<span class="sd">        :param show_legend: True or False to show legend</span>
+<span class="sd">        :param plot_kwargs: dictionary of MPL plot styling for the best fit curve</span>
+<span class="sd">        :param contour_kwargs: dictionary of MPL plot styling for the contour regions</span>
+<span class="sd">        :param legend_kwargs: dictionary of MPL plot styling for the legend</span>
+<span class="sd">        :param emin: minimum energy to plot</span>
+<span class="sd">        :param emax: maximum energy to plot</span>
+<span class="sd">        :param subplot: subplot to use</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_n_total</span> <span class="o">=</span> <span class="n">n_total</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_show_legend</span> <span class="o">=</span> <span class="n">show_legend</span>
@@ -842,6 +856,18 @@
         <span class="n">contour_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">label</span><span class="o">=</span><span class="s2">&quot;model&quot;</span><span class="p">,</span>
     <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a model to the plot.</span>
+
+<span class="sd">        :param energy_range: array of energies to plot</span>
+<span class="sd">        :param best_fit: array of best fit values to plot</span>
+<span class="sd">        :param color: color of the best fit line</span>
+<span class="sd">        :param upper_error: array of upper error values to plot</span>
+<span class="sd">        :param lower_error: array of lower error values to plot</span>
+<span class="sd">        :param contour_color: color of the contour region</span>
+<span class="sd">        :param label: label for the model</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
             <span class="n">energy_range</span><span class="p">,</span>
             <span class="n">best_fit</span><span class="p">,</span>
@@ -872,6 +898,17 @@
         <span class="n">contour_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">label</span><span class="o">=</span><span class="s2">&quot;model&quot;</span><span class="p">,</span>
     <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a dimensionless model to the plot.</span>
+
+<span class="sd">        :param energy_range: array of energies to plot</span>
+<span class="sd">        :param best_fit: array of best fit values to plot</span>
+<span class="sd">        :param color: color of the best fit line</span>
+<span class="sd">        :param upper_error: array of upper error values to plot</span>
+<span class="sd">        :param lower_error: array of lower error values to plot</span>
+<span class="sd">        :param contour_color: color of the contour region</span>
+<span class="sd">        :param label: label for the model</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_total</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ax_right</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_ax_right</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="o">.</span><span class="n">twinx</span><span class="p">()</span>
@@ -908,6 +945,11 @@
 <div class="viewcode-block" id="SpectralContourPlot.finalize">
 <a class="viewcode-back" href="../../../../api/threeML.io.plotting.html#threeML.io.plotting.model_plot.SpectralContourPlot.finalize">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">finalize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_defaults</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Finalize the plot by setting scales, legends, and limits.</span>
+<span class="sd">        :param _defaults: dictionary of default values</span>
+<span class="sd">        :return: matplotlib figure</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="o">.</span><span class="n">set_xscale</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_xscale</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_yscale</span><span class="p">)</span>
 

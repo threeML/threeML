@@ -112,7 +112,8 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.io.plotting.post_process_data_plots</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">importlib.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_spec</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -120,6 +121,12 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">threeML.plugins.PhotometryLike</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">photolike</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">threeML.plugins.SpectrumLike</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">speclike</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.config.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">threeML_config</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.config.plotting_structure</span><span class="w"> </span><span class="kn">import</span> <span class="n">BinnedSpectrumPlot</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.exceptions.custom_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">custom_warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.package_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_path_of_data_file</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.plotting.cmap_cycle</span><span class="w"> </span><span class="kn">import</span> <span class="n">cmap_intervals</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.plotting.data_residual_plot</span><span class="w"> </span><span class="kn">import</span> <span class="n">ResidualPlot</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.plugins.FermiLATLike</span><span class="w"> </span><span class="kn">import</span> <span class="n">FermiLATLike</span>
@@ -134,14 +141,10 @@
     <span class="n">FermipyLike_flag</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
     <span class="n">FermipyLike_flag</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">has_GammapyLike</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="k">if</span> <span class="n">find_spec</span><span class="p">(</span><span class="s2">&quot;gammapy_plugin&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">has_GammapyLike</span> <span class="o">=</span> <span class="kc">True</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.config.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">threeML_config</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.config.plotting_structure</span><span class="w"> </span><span class="kn">import</span> <span class="n">BinnedSpectrumPlot</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.exceptions.custom_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">custom_warnings</span>
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.package_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_path_of_data_file</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.plotting.cmap_cycle</span><span class="w"> </span><span class="kn">import</span> <span class="n">cmap_intervals</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.plotting.data_residual_plot</span><span class="w"> </span><span class="kn">import</span> <span class="n">ResidualPlot</span>
 
 <span class="k">if</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">use_threeml_style</span><span class="p">:</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">get_path_of_data_file</span><span class="p">(</span><span class="s2">&quot;threeml.mplstyle&quot;</span><span class="p">)))</span>
@@ -204,6 +207,8 @@
     <span class="c1"># Now we want to make sure that we only grab OGIP plugins</span>
 
     <span class="n">new_data_keys</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">has_GammapyLike</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">gammapy_plugin.gammapy_like</span><span class="w"> </span><span class="kn">import</span> <span class="n">GammapyLike</span>
 
     <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data_keys</span><span class="p">:</span>
         <span class="c1"># Make sure it is a valid key</span>
@@ -215,6 +220,8 @@
             <span class="p">):</span>
                 <span class="n">new_data_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
             <span class="k">elif</span> <span class="n">FermipyLike_flag</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">analysis</span><span class="o">.</span><span class="n">data_list</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">FermipyLike</span><span class="p">):</span>
+                <span class="n">new_data_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">has_GammapyLike</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">analysis</span><span class="o">.</span><span class="n">data_list</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">GammapyLike</span><span class="p">):</span>
                 <span class="n">new_data_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>

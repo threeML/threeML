@@ -163,10 +163,14 @@
 <a class="viewcode-back" href="../../../../api/threeML.utils.fitted_objects.html#threeML.utils.fitted_objects.fitted_point_sources.FluxConversion">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">FluxConversion</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flux_unit</span><span class="p">,</span> <span class="n">energy_unit</span><span class="p">,</span> <span class="n">flux_model</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A generic flux conversion class to handle transforming spectra</span>
-<span class="sd">        between different flux units :param flux_unit: the desired flux unit</span>
-<span class="sd">        :param energy_unit: the energy unit :param flux_model: the model to be</span>
-<span class="sd">        transformed.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A generic flux conversion class to handle transforming spectra between different</span>
+<span class="sd">        flux units</span>
+
+<span class="sd">        :param flux_unit: an astropy unit string for flux</span>
+<span class="sd">        :param energy_unit: an astropy unit string for energy</span>
+<span class="sd">        :param flux_model: the base flux model to use</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_flux_unit</span> <span class="o">=</span> <span class="n">flux_unit</span>
 
@@ -183,6 +187,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_conversion</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_determine_quantity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Determine the type of flux quantity based on the flux unit provided.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># scroll thru conversions until one works</span>
 
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flux_lookup</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -200,6 +207,10 @@
             <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_calculate_conversion</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the conversion factor needed to convert the model to the desired flux</span>
+<span class="sd">        unit.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># convert the model to the right units so that we can</span>
         <span class="c1"># convert back later for speed</span>
 
@@ -224,7 +235,8 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The model converted.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The model converted.</span>
 
 <span class="sd">        :return: a model in the proper units</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -250,10 +262,10 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Handles differential flux conversion and model building for point</span>
 <span class="sd">        sources.</span>
 
-<span class="sd">        :param test_model: model to test the flux on</span>
 <span class="sd">        :param flux_unit: an astropy unit string for differential flux</span>
 <span class="sd">        :param energy_unit: an astropy unit string for energy</span>
 <span class="sd">        :param flux_model: the base flux model to use</span>
+<span class="sd">        :param test_model: model to test the flux on</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_flux_lookup</span> <span class="o">=</span> <span class="p">{</span>
@@ -287,7 +299,7 @@
 <a class="viewcode-back" href="../../../../api/threeML.utils.fitted_objects.html#threeML.utils.fitted_objects.fitted_point_sources.trap_integral">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">trap_integral</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">e1</span><span class="p">,</span> <span class="n">e2</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">e2</span> <span class="o">/</span> <span class="n">e1</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">:</span>
-        <span class="n">e_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">e1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">e2</span><span class="p">),</span> <span class="mi">50</span><span class="p">)</span>
+        <span class="n">e_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">geomspace</span><span class="p">(</span><span class="n">e1</span><span class="p">,</span> <span class="n">e2</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
 
     <span class="k">else</span><span class="p">:</span>
         <span class="n">e_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">e1</span><span class="p">,</span> <span class="n">e2</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
@@ -380,18 +392,22 @@
         <span class="n">component</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">is_differential_flux</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A 3ML fitted point source.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A 3ML fitted point source spectral handler that can be used to extract the</span>
+<span class="sd">        flux and errors from a 3ML analysis result. This class can handle both</span>
+<span class="sd">        differential and integral fluxes, as well as composite models.</span>
 
-<span class="sd">        :param confidence_level:</span>
-<span class="sd">        :param equal_tailed:</span>
-<span class="sd">        :param is_differential_flux:</span>
-<span class="sd">        :param analysis_result: a 3ML analysis</span>
-<span class="sd">        :param source: the source to solve for</span>
-<span class="sd">        :param energy_range: an array of energies to calculate the</span>
-<span class="sd">            source over</span>
-<span class="sd">        :param energy_unit: string astropy unit</span>
-<span class="sd">        :param flux_unit: string astropy flux unit</span>
-<span class="sd">        :param component: the component name to calculate</span>
+<span class="sd">        :param analysis_result: a 3ML analysis result object</span>
+<span class="sd">        :param source: the name of the source to extract the flux from</span>
+<span class="sd">        :param energy_range: the energy range to extract the flux from</span>
+<span class="sd">        :param energy_unit: the energy unit to use for the flux extraction</span>
+<span class="sd">        :param flux_unit: the flux unit to use for the flux extraction</span>
+<span class="sd">        :param confidence_level: the confidence level to use for the flux extraction</span>
+<span class="sd">        :param equal_tailed: whether to use equal tailed or highest posterior density</span>
+<span class="sd">            intervals</span>
+<span class="sd">        :param component: the name of the component to extract the flux from (if</span>
+<span class="sd">            applicable)</span>
+<span class="sd">        :param is_differential_flux: whether to extract differential flux (True) or</span>
+<span class="sd">            integral flux (False)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># first extract the source</span>
@@ -401,9 +417,18 @@
         <span class="c1"># extract the components</span>
 
         <span class="k">try</span><span class="p">:</span>
+
             <span class="n">composite_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_point_source</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">composite</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">_components</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_solve_for_component_flux</span><span class="p">(</span><span class="n">composite_model</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_components</span><span class="p">,</span> <span class="n">one_free</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_solve_for_component_flux</span><span class="p">(</span><span class="n">composite_model</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">one_free</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;You have provided a composite function, with one composing &quot;</span>
+                    <span class="s2">&quot;function only having fixed parameters - we cannot split that into &quot;</span>
+                    <span class="s2">&quot;components and will only calculate the total&quot;</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_components</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">component</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
@@ -433,6 +458,7 @@
                 <span class="k">raise</span> <span class="n">NotCompositeModelError</span><span class="p">(</span><span class="s2">&quot;This is not a composite model!&quot;</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># TODO: genealize this to handle components not named main as well</span>
             <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_point_source</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">evaluate_at</span>
             <span class="n">parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_point_source</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">parameters</span>
             <span class="n">test_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_point_source</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">shape</span>
@@ -551,7 +577,12 @@
 <span class="sd">        :return: dict of component properties</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
+        <span class="c1"># TODO: need to check if there are free parameters in every component of the</span>
+        <span class="c1"># composite model. If not the _build_propagated_function will not work.</span>
+        <span class="c1"># will need to evaluate them togheter with a different component</span>
+
         <span class="n">function_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">at_least_one_free</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">composite_model</span><span class="o">.</span><span class="n">functions</span><span class="p">]</span>
 
@@ -572,17 +603,17 @@
             <span class="c1"># extract the parameter names using the static_name property</span>
             <span class="c1"># because this is what the children will use in evaluate_at</span>
 
-            <span class="n">parameter_names</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="n">par</span><span class="o">.</span><span class="n">static_name</span> <span class="k">for</span> <span class="n">par</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">function</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+            <span class="n">tmp_dict</span><span class="p">[</span><span class="s2">&quot;parameter_names&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">p</span><span class="o">.</span><span class="n">static_name</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">function</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
             <span class="p">]</span>
-
-            <span class="n">tmp_dict</span><span class="p">[</span><span class="s2">&quot;parameter_names&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">parameter_names</span>
 
             <span class="n">tmp_dict</span><span class="p">[</span><span class="s2">&quot;function&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">function</span>
 
             <span class="n">function_dict</span><span class="p">[</span><span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">tmp_dict</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">function</span><span class="o">.</span><span class="n">has_free_parameters</span><span class="p">:</span>
+                <span class="n">at_least_one_free</span> <span class="o">=</span> <span class="kc">False</span>
 
-        <span class="k">return</span> <span class="n">function_dict</span></div>
+        <span class="k">return</span> <span class="n">function_dict</span><span class="p">,</span> <span class="n">at_least_one_free</span></div>
 
 </pre></div>
 

@@ -112,15 +112,15 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.analysis_results</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
-
-<span class="kn">import</span><span class="w"> </span><span class="nn">collections</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">collections</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">builtins</span><span class="w"> </span><span class="kn">import</span> <span class="nb">map</span><span class="p">,</span> <span class="nb">object</span><span class="p">,</span> <span class="nb">range</span><span class="p">,</span> <span class="nb">str</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">importlib.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_spec</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
@@ -148,7 +148,6 @@
     <span class="n">recursively_load_dict_contents_from_group</span><span class="p">,</span>
     <span class="n">recursively_save_dict_contents_to_group</span><span class="p">,</span>
 <span class="p">)</span>
-
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.package_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_path_of_data_file</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.results_table</span><span class="w"> </span><span class="kn">import</span> <span class="n">ResultsTable</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.rich_display</span><span class="w"> </span><span class="kn">import</span> <span class="n">display</span>
@@ -163,18 +162,18 @@
 
 <span class="n">_rich_console</span> <span class="o">=</span> <span class="n">Console</span><span class="p">()</span>
 
-<span class="k">try</span><span class="p">:</span>
+<span class="k">if</span> <span class="n">find_spec</span><span class="p">(</span><span class="s2">&quot;chainconsumer&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">chainconsumer</span>
 
-<span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+    <span class="n">has_chainconsumer</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;chainconsumer is installed&quot;</span><span class="p">)</span>
+
+<span class="k">else</span><span class="p">:</span>
     <span class="n">has_chainconsumer</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;chainconsumer is NOT installed&quot;</span><span class="p">)</span>
 
-<span class="k">else</span><span class="p">:</span>
-    <span class="n">has_chainconsumer</span> <span class="o">=</span> <span class="kc">True</span>
-
-    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;chainconsumer is installed&quot;</span><span class="p">)</span>
 
 <span class="c1"># These are special characters which cannot be safely saved in the keyword of a FITS</span>
 <span class="c1"># file. We substitute them with normal characters when we write the keyword, and we</span>
@@ -684,7 +683,16 @@
 
                 <span class="n">ANALYSIS_RESULTS_HDF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grp</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_variates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param_path</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_variates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RandomVariates</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a RandomVariates instance for the parameter specified by</span>
+<span class="sd">        param_path. This allows for error propagation in arbitrary functions.</span>
+
+<span class="sd">        :param param_path: path of the parameter or parameter</span>
+<span class="sd">            instance</span>
+<span class="sd">        :return: a RandomVariates instance</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="k">assert</span> <span class="n">param_path</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optimized_model</span><span class="o">.</span><span class="n">free_parameters</span><span class="p">,</span> <span class="p">(</span>
             <span class="s2">&quot;Parameter </span><span class="si">%s</span><span class="s2"> is not a free parameters of the model&quot;</span> <span class="o">%</span> <span class="n">param_path</span>
         <span class="p">)</span>
@@ -701,7 +709,8 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">propagate</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Allow for propagation of uncertainties on arbitrary functions. It</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Allow for propagation of uncertainties on arbitrary functions. It</span>
 <span class="sd">        returns a function which is a wrapper around the provided input</span>
 <span class="sd">        function. Using the wrapper with RandomVariates instances as arguments</span>
 <span class="sd">        will return a RandomVariates result, with the errors propagated.</span>
@@ -1288,13 +1297,7 @@
 
         <span class="c1"># these are the keywords for the plot command</span>
 
-        <span class="n">_default_plot_args</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;truth&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;figsize&quot;</span><span class="p">:</span> <span class="s2">&quot;GROW&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;filename&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;display&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s2">&quot;legend&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="p">}</span>
+        <span class="n">_default_plot_args</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">cc_kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">_default_plot_args</span><span class="p">:</span>
@@ -1327,15 +1330,27 @@
             <span class="k">if</span> <span class="s2">&quot;$&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
                 <span class="n">labels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
 
-        <span class="n">cc</span> <span class="o">=</span> <span class="n">chainconsumer</span><span class="o">.</span><span class="n">ChainConsumer</span><span class="p">()</span>
+        <span class="n">samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_samples_transposed</span><span class="o">.</span><span class="n">T</span>
+        <span class="k">if</span> <span class="n">samples</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">byteorder</span> <span class="o">==</span> <span class="s2">&quot;&gt;&quot;</span><span class="p">:</span>
+            <span class="n">samples</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">newbyteorder</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">))</span>
 
-        <span class="n">cc</span><span class="o">.</span><span class="n">add_chain</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_samples_transposed</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="n">labels</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+        <span class="n">log_post</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_probability</span><span class="p">,</span> <span class="n">nan</span><span class="o">=-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">newbyteorder</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">))</span>
+
+        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;log_posterior&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">log_post</span>
+        <span class="n">cc</span> <span class="o">=</span> <span class="n">chainconsumer</span><span class="o">.</span><span class="n">ChainConsumer</span><span class="p">()</span>
+        <span class="n">cc</span><span class="o">.</span><span class="n">add_chain</span><span class="p">(</span><span class="n">chainconsumer</span><span class="o">.</span><span class="n">Chain</span><span class="p">(</span><span class="n">samples</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;3ML&quot;</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="n">labels</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">cc_kwargs</span><span class="p">:</span>
-            <span class="n">cc_kwargs</span> <span class="o">=</span> <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;bayesian&quot;</span><span class="p">][</span><span class="s2">&quot;chain consumer style&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="s2">&quot;chain consumer style&quot;</span> <span class="ow">in</span> <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;bayesian&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">cc_kwargs</span> <span class="o">=</span> <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;bayesian&quot;</span><span class="p">][</span><span class="s2">&quot;chain consumer style&quot;</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">cc_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
 
-        <span class="n">cc</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="o">**</span><span class="n">cc_kwargs</span><span class="p">)</span>
-        <span class="n">fig</span> <span class="o">=</span> <span class="n">cc</span><span class="o">.</span><span class="n">plotter</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">parameters</span><span class="o">=</span><span class="n">parameters</span><span class="p">,</span> <span class="o">**</span><span class="n">_default_plot_args</span><span class="p">)</span>
+        <span class="c1"># cc.configure(**cc_kwargs)</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">cc</span><span class="o">.</span><span class="n">plotter</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 
         <span class="k">return</span> <span class="n">fig</span></div>
 

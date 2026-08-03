@@ -498,21 +498,59 @@ passed to plot</p></li>
 <dt class="sig sig-object py" id="threeML.io.plotting.model_plot.SpectralContourPlot.add_dimensionless_model">
 <span class="sig-name descname"><span class="pre">add_dimensionless_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy_range</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">best_fit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contour_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'model'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/io/plotting/model_plot.html#SpectralContourPlot.add_dimensionless_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.model_plot.SpectralContourPlot.add_dimensionless_model" title="Link to this definition"></a>
 </dt>
-<dd></dd>
+<dd>
+<p>Add a dimensionless model to the plot.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<ul class="simple">
+<li><p><strong>energy_range</strong> – array of energies to plot</p></li>
+<li><p><strong>best_fit</strong> – array of best fit values to plot</p></li>
+<li><p><strong>color</strong> – color of the best fit line</p></li>
+<li><p><strong>upper_error</strong> – array of upper error values to plot</p></li>
+<li><p><strong>lower_error</strong> – array of lower error values to plot</p></li>
+<li><p><strong>contour_color</strong> – color of the contour region</p></li>
+<li><p><strong>label</strong> – label for the model</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
 </dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.io.plotting.model_plot.SpectralContourPlot.add_model">
 <span class="sig-name descname"><span class="pre">add_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy_range</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">best_fit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contour_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'model'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/io/plotting/model_plot.html#SpectralContourPlot.add_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.model_plot.SpectralContourPlot.add_model" title="Link to this definition"></a>
 </dt>
-<dd></dd>
+<dd>
+<p>Add a model to the plot.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<ul class="simple">
+<li><p><strong>energy_range</strong> – array of energies to plot</p></li>
+<li><p><strong>best_fit</strong> – array of best fit values to plot</p></li>
+<li><p><strong>color</strong> – color of the best fit line</p></li>
+<li><p><strong>upper_error</strong> – array of upper error values to plot</p></li>
+<li><p><strong>lower_error</strong> – array of lower error values to plot</p></li>
+<li><p><strong>contour_color</strong> – color of the contour region</p></li>
+<li><p><strong>label</strong> – label for the model</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
 </dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.io.plotting.model_plot.SpectralContourPlot.finalize">
 <span class="sig-name descname"><span class="pre">finalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_defaults</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/io/plotting/model_plot.html#SpectralContourPlot.finalize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.model_plot.SpectralContourPlot.finalize" title="Link to this definition"></a>
 </dt>
-<dd></dd>
+<dd>
+<p>Finalize the plot by setting scales, legends, and limits.
+:param _defaults: dictionary of default values
+:return: matplotlib figure</p>
+</dd>
 </dl>
 
 </dd>
@@ -553,7 +591,7 @@ components</p></li>
 <li><p><strong>components_to_use</strong> – (optional) list of string names of the
 components to plot: including ‘total’ will also plot the total
 spectrum</p></li>
-<li><p><strong>sum_sources</strong> – (optional) some all the MLE and Bayesian sources</p></li>
+<li><p><strong>sum_sources</strong> – (optional) sum over all the MLE and Bayesian sources</p></li>
 <li><p><strong>show_contours</strong> – (optional) True or False to plot the contour
 region</p></li>
 <li><p><strong>plot_style_kwargs</strong> – (optional) dictionary of MPL plot styling

@@ -148,8 +148,7 @@
 <span class="sd">        classed in general.</span>
 
 <span class="sd">        :param analysis_result: a 3ML analysis result</span>
-<span class="sd">        :param new_function: the function to use the fitted values to</span>
-<span class="sd">            compute new values</span>
+<span class="sd">        :param new_function: the function to use the fitted values to compute new values</span>
 <span class="sd">        :param parameter_names: a list of parameter names</span>
 <span class="sd">        :param parameters: astromodels parameter dictionary</span>
 <span class="sd">        :param confidence_level: the confidence level to compute error</span>
@@ -186,9 +185,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_evaluate</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The basics of adding are handled in the VariatesContainer :param</span>
-<span class="sd">        other: another fitted source handler :return: a VariatesContainer with</span>
-<span class="sd">        the summed values.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The basics of adding are handled in the VariatesContainer</span>
+
+<span class="sd">        :param other: another fitted source handler</span>
+<span class="sd">        :return: a VariatesContainer with the summed values.&quot;&quot;&quot;</span>
 
         <span class="c1"># assure that the shapes will be the same</span>
         <span class="k">if</span> <span class="n">other</span><span class="o">.</span><span class="n">_out_shape</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_out_shape</span><span class="p">:</span>
@@ -208,8 +208,9 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">values</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Dummy transform to be overridden in a subclass :param value:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Dummy transform to be overridden in a subclass</span>
 
+<span class="sd">        :param value: the value to transform</span>
 <span class="sd">        :return: transformed value</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -238,9 +239,13 @@
                 <span class="k">break</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;There are no free parameters in the model!&quot;</span><span class="p">)</span>
-
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Got parameters </span><span class="si">{</span><span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span><span class="si">}</span><span class="s2"> but none&quot;</span>
+                <span class="s2">&quot; of them is free&quot;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s2">&quot;There are no free parameters in this source or component!&quot;</span>
+            <span class="p">)</span>
 
         <span class="n">test_variate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_analysis_results</span><span class="o">.</span><span class="n">get_variates</span><span class="p">(</span><span class="n">test_par</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
 
@@ -332,7 +337,6 @@
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-
 <span class="sd">        :return: The VariatesContainer</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -341,7 +345,6 @@
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">samples</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-
 <span class="sd">        :return: the raw samples of the variates</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -350,7 +353,6 @@
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">median</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-
 <span class="sd">        :return: the median of the variates</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -359,7 +361,6 @@
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">average</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-
 <span class="sd">        :return: the average of the variates</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -368,7 +369,6 @@
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">upper_error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-
 <span class="sd">        :return: the upper error of the variates</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -377,7 +377,6 @@
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">lower_error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-
 <span class="sd">        :return: the lower error of the variates</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -389,9 +388,10 @@
 <a class="viewcode-back" href="../../../../api/threeML.utils.fitted_objects.html#threeML.utils.fitted_objects.fitted_source_handler.transform">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">transform</span><span class="p">(</span><span class="n">method</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A wrapper to call the _transform method for outputs of Variates</span>
-<span class="sd">    container class :param method:</span>
+<span class="sd">    container class</span>
 
-<span class="sd">    :return:</span>
+<span class="sd">    :param method: the method to wrap</span>
+<span class="sd">    :return: the wrapped method</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
@@ -584,7 +584,10 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_cl</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_transform</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_equal_tailed</span><span class="p">,</span>
-            <span class="p">)</span></div>
+            <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_values</span><span class="p">)</span></div>
 
 </pre></div>
 

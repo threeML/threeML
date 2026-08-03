@@ -114,6 +114,7 @@
   <h1>Source code for threeML.test.test_analysis_results</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">builtins</span><span class="w"> </span><span class="kn">import</span> <span class="nb">zip</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">importlib.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_spec</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -458,7 +459,10 @@
 
     <span class="n">ar</span><span class="o">.</span><span class="n">corner_plot</span><span class="p">()</span>
 
-    <span class="n">ar</span><span class="o">.</span><span class="n">corner_plot</span><span class="p">(</span><span class="n">components</span><span class="o">=</span><span class="p">[</span><span class="o">*</span><span class="n">ar</span><span class="o">.</span><span class="n">_free_parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">()][</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">])</span></div>
+    <span class="n">ar</span><span class="o">.</span><span class="n">corner_plot</span><span class="p">(</span><span class="n">components</span><span class="o">=</span><span class="p">[</span><span class="o">*</span><span class="n">ar</span><span class="o">.</span><span class="n">_free_parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">()][</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">find_spec</span><span class="p">(</span><span class="s2">&quot;chainconsumer&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">ar</span><span class="o">.</span><span class="n">corner_plot_cc</span><span class="p">()</span></div>
 
 
 
