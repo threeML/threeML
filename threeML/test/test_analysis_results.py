@@ -1,5 +1,6 @@
 import os
 from builtins import zip
+from importlib.util import find_spec
 
 import astropy.units as u
 import numpy as np
@@ -322,6 +323,9 @@ def test_corner_plotting(xy_completed_bayesian_analysis):
     ar.corner_plot()
 
     ar.corner_plot(components=[*ar._free_parameters.keys()][0:2])
+
+    if find_spec("chainconsumer") is not None:
+        _ = ar.corner_plot_cc()
 
 
 def test_one_free_parameter_input_output():

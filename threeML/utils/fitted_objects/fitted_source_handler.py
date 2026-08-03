@@ -32,8 +32,7 @@ class GenericFittedSourceHandler(object):
         classed in general.
 
         :param analysis_result: a 3ML analysis result
-        :param new_function: the function to use the fitted values to
-            compute new values
+        :param new_function: the function to use the fitted values to compute new values
         :param parameter_names: a list of parameter names
         :param parameters: astromodels parameter dictionary
         :param confidence_level: the confidence level to compute error
@@ -70,9 +69,10 @@ class GenericFittedSourceHandler(object):
         self._evaluate()
 
     def __add__(self, other):
-        """The basics of adding are handled in the VariatesContainer :param
-        other: another fitted source handler :return: a VariatesContainer with
-        the summed values."""
+        """The basics of adding are handled in the VariatesContainer
+
+        :param other: another fitted source handler
+        :return: a VariatesContainer with the summed values."""
 
         # assure that the shapes will be the same
         if other._out_shape != self._out_shape:
@@ -92,8 +92,9 @@ class GenericFittedSourceHandler(object):
             return self.values + other.values
 
     def _transform(self, value):
-        """Dummy transform to be overridden in a subclass :param value:
+        """Dummy transform to be overridden in a subclass
 
+        :param value: the value to transform
         :return: transformed value
         """
 
@@ -119,9 +120,13 @@ class GenericFittedSourceHandler(object):
                 break
 
         else:
-            log.error("There are no free parameters in the model!")
-
-            raise RuntimeError()
+            log.debug(
+                f"Got parameters {[x.name for x in self._parameters.values()]} but none"
+                " of them is free"
+            )
+            raise RuntimeError(
+                "There are no free parameters in this source or component!"
+            )
 
         test_variate = self._analysis_results.get_variates(test_par.path)
 
@@ -213,7 +218,6 @@ class GenericFittedSourceHandler(object):
     @property
     def values(self):
         """
-
         :return: The VariatesContainer
         """
 
@@ -222,7 +226,6 @@ class GenericFittedSourceHandler(object):
     @property
     def samples(self):
         """
-
         :return: the raw samples of the variates
         """
 
@@ -231,7 +234,6 @@ class GenericFittedSourceHandler(object):
     @property
     def median(self):
         """
-
         :return: the median of the variates
         """
 
@@ -240,7 +242,6 @@ class GenericFittedSourceHandler(object):
     @property
     def average(self):
         """
-
         :return: the average of the variates
         """
 
@@ -249,7 +250,6 @@ class GenericFittedSourceHandler(object):
     @property
     def upper_error(self):
         """
-
         :return: the upper error of the variates
         """
 
@@ -258,7 +258,6 @@ class GenericFittedSourceHandler(object):
     @property
     def lower_error(self):
         """
-
         :return: the lower error of the variates
         """
 
@@ -267,9 +266,10 @@ class GenericFittedSourceHandler(object):
 
 def transform(method):
     """A wrapper to call the _transform method for outputs of Variates
-    container class :param method:
+    container class
 
-    :return:
+    :param method: the method to wrap
+    :return: the wrapped method
     """
 
     @functools.wraps(method)
@@ -460,3 +460,6 @@ class VariatesContainer(object):
                 self._transform,
                 self._equal_tailed,
             )
+
+    def __iter__(self):
+        return iter(self._values)
