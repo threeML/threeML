@@ -18,7 +18,6 @@ from threeML.io.file_utils import (
     sanitize_filename,
 )
 
-
 log = logging.getLogger(__name__)
 
 

@@ -362,6 +362,7 @@ def setup_logger(name: str) -> logging.Logger:
 
     return log
 
+
 # Capture all startup warnings and log them on demand
 
 
@@ -370,15 +371,9 @@ _startup_warnings = []
 
 def add_startup_warning(logger, msg, level=logging.WARNING):
     fn, lno, func, sinfo = logger.findCaller(stacklevel=2)
-    record = logger.makeRecord(logger.name,
-                               level,
-                               fn,
-                               lno,
-                               msg,
-                               (),
-                               None,
-                               func=func,
-                               sinfo=sinfo)
+    record = logger.makeRecord(
+        logger.name, level, fn, lno, msg, (), None, func=func, sinfo=sinfo
+    )
     _startup_warnings.append(record)
 
 

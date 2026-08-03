@@ -12,7 +12,6 @@ from threeML.bayesian.sampler_base import UnitCubeSampler
 from threeML.config.config import threeML_config
 from threeML.data_list import DataList
 
-
 try:
     import pymultinest
 
