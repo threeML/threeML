@@ -155,7 +155,9 @@
 <span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;DISPLAY&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="n">add_startup_warning</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="s2">&quot;no display variable set. using backend for graphics without display (agg)&quot;</span><span class="p">)</span>
+    <span class="n">add_startup_warning</span><span class="p">(</span>
+        <span class="n">log</span><span class="p">,</span> <span class="s2">&quot;no display variable set. using backend for graphics without display (agg)&quot;</span>
+    <span class="p">)</span>
 
     <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpl</span>
 
@@ -228,8 +230,11 @@
     <span class="n">is_importable</span><span class="p">,</span> <span class="n">result</span> <span class="o">=</span> <span class="n">is_module_importable</span><span class="p">(</span><span class="n">module_full_path</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">is_importable</span><span class="p">:</span>
-        <span class="n">add_startup_warning</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Could not import plugin </span><span class="si">{</span><span class="n">module_full_path</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">. Do you have the relative instrument software installed &quot;</span>
-                <span class="s2">&quot;and configured?&quot;</span><span class="p">)</span>
+        <span class="n">add_startup_warning</span><span class="p">(</span>
+            <span class="n">log</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;Could not import plugin </span><span class="si">{</span><span class="n">module_full_path</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">. Do you have the relative instrument software installed &quot;</span>
+            <span class="s2">&quot;and configured?&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
 
         <span class="n">_not_working_plugins</span><span class="p">[</span><span class="n">plugin_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
 
@@ -271,11 +276,16 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_display_plugin_traceback</span><span class="p">(</span><span class="n">plugin</span><span class="p">):</span>
-    <span class="n">add_startup_warning</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="s2">&quot;#############################################################&quot;</span><span class="p">)</span>
+    <span class="n">add_startup_warning</span><span class="p">(</span>
+        <span class="n">log</span><span class="p">,</span> <span class="s2">&quot;#############################################################&quot;</span>
+    <span class="p">)</span>
     <span class="n">add_startup_warning</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Couldn&#39;t import plugin </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">plugin</span><span class="p">)</span>
     <span class="n">add_startup_warning</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Traceback:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="n">add_startup_warning</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="n">_not_working_plugins</span><span class="p">[</span><span class="n">plugin</span><span class="p">])</span>
-    <span class="n">add_startup_warning</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="s2">&quot;#############################################################&quot;</span><span class="p">)</span>
+    <span class="n">add_startup_warning</span><span class="p">(</span>
+        <span class="n">log</span><span class="p">,</span> <span class="s2">&quot;#############################################################&quot;</span>
+    <span class="p">)</span>
+
 
 <div class="viewcode-block" id="is_plugin_available">
 <a class="viewcode-back" href="../api/threeML.html#threeML.is_plugin_available">[docs]</a>
@@ -429,14 +439,18 @@
             <span class="n">num_threads</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">num_threads</span><span class="p">)</span>
 
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-            <span class="n">add_startup_warning</span><span class="p">(</span><span class="n">log</span><span class="p">,</span>
-                                <span class="s2">&quot;Your env. variable </span><span class="si">%s</span><span class="s2"> is not an integer, which doesn&#39;t make sense. Set it to 1 &quot;</span>
-                                <span class="s2">&quot;for optimum performances.&quot;</span> <span class="o">%</span> <span class="n">var</span><span class="p">)</span>
+            <span class="n">add_startup_warning</span><span class="p">(</span>
+                <span class="n">log</span><span class="p">,</span>
+                <span class="s2">&quot;Your env. variable </span><span class="si">%s</span><span class="s2"> is not an integer, which doesn&#39;t make sense. Set it to 1 &quot;</span>
+                <span class="s2">&quot;for optimum performances.&quot;</span> <span class="o">%</span> <span class="n">var</span><span class="p">,</span>
+            <span class="p">)</span>
 
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">add_startup_warning</span><span class="p">(</span><span class="n">log</span><span class="p">,</span>
-                            <span class="s2">&quot;Env. variable </span><span class="si">%s</span><span class="s2"> is not set. Please set it to 1 for optimal performances in 3ML&quot;</span>
-                <span class="o">%</span> <span class="n">var</span><span class="p">)</span>
+        <span class="n">add_startup_warning</span><span class="p">(</span>
+            <span class="n">log</span><span class="p">,</span>
+            <span class="s2">&quot;Env. variable </span><span class="si">%s</span><span class="s2"> is not set. Please set it to 1 for optimal performances in 3ML&quot;</span>
+            <span class="o">%</span> <span class="n">var</span><span class="p">,</span>
+        <span class="p">)</span>
 
 <span class="k">del</span> <span class="n">os</span>
 <span class="k">del</span> <span class="n">Path</span>
