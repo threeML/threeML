@@ -1,3 +1,5 @@
+import logging
+
 import copy
 from typing import Optional, Union
 
@@ -5,7 +7,7 @@ import numpy as np
 import pandas as pd
 from astromodels import Model
 
-from threeML.io.logging import setup_logger
+
 from threeML.plugins.SpectrumLike import SpectrumLike
 from threeML.plugins.XYLike import XYLike
 from threeML.utils.OGIP.response import InstrumentResponse
@@ -15,7 +17,7 @@ from threeML.utils.spectrum.binned_spectrum import (
     ChannelSet,
 )
 
-log = setup_logger(__name__)
+log = logging.getLogger(__name__)
 
 __instrument_name = "General binned spectral data with energy dispersion"
 

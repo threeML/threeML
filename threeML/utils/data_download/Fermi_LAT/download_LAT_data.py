@@ -1,3 +1,5 @@
+import logging
+
 import html.parser
 import os
 import re
@@ -15,10 +17,10 @@ from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import TimeTypeNotKnown
 from threeML.io.download_from_http import ApacheDirectory
 from threeML.io.file_utils import sanitize_filename
-from threeML.io.logging import setup_logger
+
 from threeML.utils.unique_deterministic_tag import get_unique_deterministic_tag
 
-log = setup_logger(__name__)
+log = logging.getLogger(__name__)
 
 # Set default timeout for operations
 socket.setdefaulttimeout(180)

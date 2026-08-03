@@ -33,13 +33,13 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Astronomy",
     "Intended Audience :: Science/Research",
     "Operating System :: POSIX",
-    "Programming Language :: Python :: 3.9",
-    "Environment :: Console",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
 ]
 dependencies = [
-    "numpy>=1.16",
-    "scipy>=1.4",
-    "emcee>=3",
+    "numpy>=1.26",
+    "scipy>=1.13",
     "astropy",
     "matplotlib",
     "uncertainties",
@@ -51,20 +51,18 @@ dependencies = [
     "corner",
     "pandas",
     "requests",
-    "speclite>=0.11",
+    "speclite>=0.20",
     "ipython",
     "ipyparallel",
     "joblib",
     "numexpr",
-    "dynesty",
     "numba",
     "numdifftools",
-    "tqdm>=4.56.0",
-    "colorama",
+    "tqdm>=4.67.2",
     "omegaconf",
-    "ipywidgets",
     "rich",
-    "packaging"
+    "packaging",
+    "emcee>3",
 ]
 
 [project.optional-dependencies]
@@ -78,6 +76,14 @@ docs = [
     "nbsphinx",
     "sphinx-autoapi",
 ]
+samplers = [
+    "emcee>=3",
+    "pymultinest",
+    "dynesty",
+    "zeus-mcmc",
+    "chainconsumer",
+    "ultranest",
+]
 
 [project.urls]
 Homepage = "https://github.com/threeml/threeML"
@@ -87,39 +93,12 @@ Repository = "https://github.com/threeML/threeML"
 "Source Code" = "https://github.com/threeML/threeML"
 
 [tool.setuptools]
-packages = [
-    "threeML",
-    "threeML.exceptions",
-    "threeML.bayesian",
-    "threeML.minimizer",
-    "threeML.utils",
-    "threeML.utils.OGIP",
-    "threeML.utils.spectrum",
-    "threeML.utils.polarization",
-    "threeML.utils.photometry",
-    "threeML.utils.time_series",
-    "threeML.utils.data_builders",
-    "threeML.utils.data_builders.fermi",
-    "threeML.utils.data_download",
-    "threeML.utils.data_download.Fermi_LAT",
-    "threeML.utils.data_download.Fermi_GBM",
-    "threeML.utils.fitted_objects",
-    "threeML.utils.statistics",
-    "threeML.plugins",
-    "threeML.classicMLE",
-    "threeML.catalogs",
-    "threeML.io",
-    "threeML.io.plotting",
-    "threeML.io.cern_root_utils",
-    "threeML.parallel",
-    "threeML.config",
-    "threeML.test",
-    "threeML.plugins.experimental",
-]
 include-package-data = true
+[tool.setuptools.packages.find]
+include = ["threeML","threeML.*"]
 
 [tool.setuptools.package-data]
-threeML = ["threeML/data/*"]
+threeML = ["threeML/data/*/**"]
 
 [tool.versioneer]
 VCS = "git"

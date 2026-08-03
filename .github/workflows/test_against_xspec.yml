@@ -37,13 +37,13 @@ jobs:
 
         steps:
             - name: Set up Python 3.11
-              uses: actions/setup-python@v5
+              uses: actions/setup-python@v6
               with:
                   python-version: 3.11
 
             - name: Add conda to system path (conda jobs only)
               if: matrix.use_conda
-              uses: conda-incubator/setup-miniconda@v3
+              uses: conda-incubator/setup-miniconda@v4
               with:
                   activate-environment: "test_env"
                   auto-activate: false
@@ -54,9 +54,10 @@ jobs:
                   channels: threeml, conda-forge, fermi, defaults
                   use-only-tar-bz2: false
                   channel-priority: true
+                  mamba-version: "2.5"
 
             - name: Cache XSPEC
-              uses: actions/cache@v4
+              uses: actions/cache@v5
               id: cache-xspec
               with:
                   path: ~/xspec_home
@@ -107,7 +108,7 @@ jobs:
                   fi
 
             - name: Checkout
-              uses: actions/checkout@v4
+              uses: actions/checkout@v6
 
             - name: Install dependencies
               shell: bash -l {0}
@@ -161,10 +162,10 @@ jobs:
 
         steps:
             - name: Checkout
-              uses: actions/checkout@v4
+              uses: actions/checkout@v6
 
             - name: Add conda to system path
-              uses: conda-incubator/setup-miniconda@v3
+              uses: conda-incubator/setup-miniconda@v4
               with:
                   activate-environment: "test_env"
                   auto-activate: false
@@ -175,6 +176,7 @@ jobs:
                   environment-file: ci/environment_xspec.yml
                   use-only-tar-bz2: false
                   channel-priority: true
+                  mamba-version: "2.5"
 
             - name: Install dependencies
               shell: bash -l {0}

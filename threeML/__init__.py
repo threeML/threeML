@@ -1,3 +1,5 @@
+import logging
+
 # We import matplotlib first, because we need control on the backend
 # Indeed, if no DISPLAY variable is set, matplotlib 2.0 crashes (at the moment, 05/26/2017)
 import os
@@ -5,6 +7,8 @@ import traceback
 import warnings
 
 import pandas as pd
+
+from .io.logging import add_startup_warning
 
 pd.set_option("display.max_columns", None)
 
@@ -29,30 +33,16 @@ from pathlib import Path
 # Import everything from astromodels
 from astromodels import *
 
-from .io.logging import setup_logger
-
 from .config import (
     threeML_config,
     show_configuration,
     get_current_configuration_copy,
 )
 
-log = setup_logger(__name__)
-log.propagate = False
-
-if threeML_config["logging"]["startup_warnings"]:
-    log.info("Starting 3ML!")
-    log.warning("WARNINGs here are [red]NOT[/red] errors")
-    log.warning("but are inform you about optional packages that can be installed")
-    log.warning(
-        "[red] to disable these messages, turn off start_warning in your config file[/red]"
-    )
+log = logging.getLogger(__name__)
 
 if os.environ.get("DISPLAY") is None:
-    if threeML_config["logging"]["startup_warnings"]:
-        log.warning(
-            "no display variable set. using backend for graphics without display (agg)"
-        )
+    add_startup_warning(log, "no display variable set. using backend for graphics without display (agg)")
 
     import matplotlib as mpl
 
@@ -122,12 +112,8 @@ for i, module_full_path in enumerate(found_plugins):
     is_importable, result = is_module_importable(module_full_path)
 
     if not is_importable:
-        if threeML_config.logging.startup_warnings:
-            log.warning(
-                f"Could not import plugin {module_full_path.name}. Do you have the relative instrument software installed "
-                "and configured?"
-                # custom_exceptions.CannotImportPlugin,
-            )
+        add_startup_warning(log, f"Could not import plugin {module_full_path.name}. Do you have the relative instrument software installed "
+                "and configured?")
 
         _not_working_plugins[plugin_name] = result
 
@@ -166,13 +152,11 @@ def get_available_plugins():
 
 
 def _display_plugin_traceback(plugin):
-    if threeML_config.logging.startup_warnings:
-        log.warning("#############################################################")
-        log.warning("\nCouldn't import plugin %s" % plugin)
-        log.warning("\nTraceback:\n")
-        log.warning(_not_working_plugins[plugin])
-        log.warning("#############################################################")
-
+    add_startup_warning(log, "#############################################################")
+    add_startup_warning(log, "\nCouldn't import plugin %s" % plugin)
+    add_startup_warning(log, "\nTraceback:\n")
+    add_startup_warning(log, _not_working_plugins[plugin])
+    add_startup_warning(log, "#############################################################")
 
 def is_plugin_available(plugin):
     """Test whether the plugin for the provided instrument is available.
@@ -323,21 +307,14 @@ for var in var_to_check:
             num_threads = int(num_threads)
 
         except ValueError:
-            if threeML_config.logging.startup_warnings:
-                log.warning(
-                    "Your env. variable %s is not an integer, which doesn't make sense. Set it to 1 "
-                    "for optimum performances." % var,
-                    # RuntimeWarning,
-                )
+            add_startup_warning(log,
+                                "Your env. variable %s is not an integer, which doesn't make sense. Set it to 1 "
+                                "for optimum performances." % var)
 
     else:
-        if threeML_config.logging.startup_warnings:
-            log.warning(
-                "Env. variable %s is not set. Please set it to 1 for optimal performances in 3ML"
-                % var
-                #            RuntimeWarning,
-            )
-
+        add_startup_warning(log,
+                            "Env. variable %s is not set. Please set it to 1 for optimal performances in 3ML"
+                % var)
 
 del os
 del Path

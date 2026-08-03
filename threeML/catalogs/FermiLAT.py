@@ -1,3 +1,5 @@
+import logging
+
 import re
 import os
 from builtins import map, str
@@ -9,7 +11,7 @@ from astropy.table import Table
 
 from threeML.config.config import threeML_config
 from threeML.io.get_heasarc_table_as_pandas import get_heasarc_table_as_pandas
-from threeML.io.logging import setup_logger
+
 
 from .catalog_utils import (
     ModelFromFGL,
@@ -26,7 +28,7 @@ except Exception:
     have_fermipy = False
 
 
-log = setup_logger(__name__)
+log = logging.getLogger(__name__)
 
 fgl_types = {
     "agn": "other non-blazar active galaxy",
@@ -108,6 +110,8 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
         # Translate the 3 letter code to a more informative category, according
         # to the dictionary above
         def translate(key):
+            if numpy.ma.is_masked(key):
+                return fgl_types[""]
             if isinstance(key, bytes):
                 key = key.decode("ascii")
             if key.lower() == "psr":

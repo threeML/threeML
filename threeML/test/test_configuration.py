@@ -7,7 +7,7 @@ from omegaconf.errors import ReadonlyConfigError
 
 from threeML.config import get_current_configuration_copy, show_configuration
 from threeML.config.config_structure import Config
-from threeML.io.package_data import get_path_of_user_config
+from threeML.config.config import get_path_of_user_config
 
 
 def test_default_configuration():
