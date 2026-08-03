@@ -1438,7 +1438,10 @@ class TimeSeriesBuilder(object):
 
         assert issubclass(
             self._container_type, BinnedModulationCurve
-        ), "You are attempting to create a PolarizationLike plugin from the wrong data type"
+        ), (
+            "You are attempting to create a PolarizationLike plugin "
+            "from the wrong data type"
+        )
 
         if extract_measured_background:
             this_background_spectrum = self._measured_background_spectrum
@@ -1518,23 +1521,24 @@ class TimeSeriesBuilder(object):
                             "contain no background!"
                         )
 
-                try:
-                    pl = PolarLike(
-                        name="%s%s%d" % (self._name, interval_name, i),
-                        observation=self._observed_spectrum,
-                        background=this_background_spectrum,
-                        response=self._response,
-                        verbose=self._verbose,
-                        #               tstart=self._tstart,
-                        #               tstop=self._tstop
-                    )
+                # CODE TO FIX STILL USING POLAR LIKE
+                # try:
+                #     pl = PolarLike(
+                #         name="%s%s%d" % (self._name, interval_name, i),
+                #         observation=self._observed_spectrum,
+                #         background=this_background_spectrum,
+                #         response=self._response,
+                #         verbose=self._verbose,
+                #         #               tstart=self._tstart,
+                #         #               tstop=self._tstop
+                #     )
 
-                    list_of_polarizationlikes.append(pl)
+                #     list_of_polarizationlikes.append(pl)
 
-                except NegativeBackground:
-                    log.error(
-                        "Something is wrong with interval %s. skipping." % interval
-                    )
+                # except NegativeBackground:
+                #     log.error(
+                #         "Something is wrong with interval %s. skipping." % interval
+                #     )
 
             # restore the old interval
 
