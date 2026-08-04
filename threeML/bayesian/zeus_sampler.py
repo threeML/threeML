@@ -45,7 +45,7 @@ class ZeusSampler(MCMCSampler):
 
         super(ZeusSampler, self).__init__(likelihood_model, data_list, **kwargs)
 
-    def setup(self, n_iterations, n_burn_in=None, n_walkers=20, seed=None):
+    def setup(self, n_iterations, n_burn_in=None, n_walkers=20):
         """Set up the zeus sampler.
 
         :param n_iterations:
@@ -60,7 +60,7 @@ class ZeusSampler(MCMCSampler):
         """
         log.debug(
             f"Setup for Zeus sampler: n_iterations:{n_iterations}, n_burn_in:"
-            f"{n_burn_in}, n_walkers: {n_walkers}, seed: {seed}."
+            f"{n_burn_in}, n_walkers: {n_walkers}."
         )
 
         self._n_iterations = int(n_iterations)
@@ -72,8 +72,6 @@ class ZeusSampler(MCMCSampler):
             self._n_burn_in = n_burn_in
 
         self._n_walkers = int(n_walkers)
-
-        self._seed = seed
 
         self._is_setup = True
 
@@ -104,13 +102,9 @@ class ZeusSampler(MCMCSampler):
                         pool=executor,
                     )
 
-                    # if self._seed is not None:
-
-                    #     sampler._random.seed(self._seed)
-
                     # Run the true sampling
                     log.debug("Start zeus run")
-                    _ = sampler.run(
+                    _ = sampler.run_mcmc(
                         p0,
                         self._n_iterations + self._n_burn_in,
                         progress=loud,
@@ -136,14 +130,12 @@ class ZeusSampler(MCMCSampler):
                 )
 
             # If a seed is provided, set the random number seed
-            # if self._seed is not None:
-
-            #     sampler._random.seed(self._seed)
-
             # Sample the burn-in
             if not using_mpi:
                 log.debug("Start zeus run")
-                _ = sampler.run(p0, self._n_iterations + self._n_burn_in, progress=loud)
+                _ = sampler.run_mcmc(
+                    p0, self._n_iterations + self._n_burn_in, progress=loud
+                )
                 log.debug("Zeus run done")
 
         self._sampler = sampler
