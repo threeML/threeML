@@ -1412,7 +1412,7 @@ class TimeSeriesBuilder(object):
             first_channel=0,
             mission=polarization_data.mission,
             instrument=polarization_data.instrument,
-            edges=polarization_data.scattering_edges
+            edges=polarization_data.scattering_edges,
         )
 
         return cls(
@@ -1436,9 +1436,7 @@ class TimeSeriesBuilder(object):
     ):
         assert has_polpy, "you must have the PolPy module installed"
 
-        assert issubclass(
-            self._container_type, BinnedModulationCurve
-        ), (
+        assert issubclass(self._container_type, BinnedModulationCurve), (
             "You are attempting to create a PolarizationLike plugin "
             "from the wrong data type"
         )
@@ -1468,7 +1466,7 @@ class TimeSeriesBuilder(object):
                 observation=self._observed_spectrum,
                 background=this_background_spectrum,
                 response=self._response,
-                verbose=self._verbose
+                verbose=self._verbose,
             )
 
         else:
