@@ -163,7 +163,7 @@
 
 <div class="viewcode-block" id="ZeusSampler.setup">
 <a class="viewcode-back" href="../../../api/threeML.bayesian.html#threeML.bayesian.zeus_sampler.ZeusSampler.setup">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_iterations</span><span class="p">,</span> <span class="n">n_burn_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_walkers</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_iterations</span><span class="p">,</span> <span class="n">n_burn_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_walkers</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set up the zeus sampler.</span>
 
 <span class="sd">        :param n_iterations:</span>
@@ -178,7 +178,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Setup for Zeus sampler: n_iterations:</span><span class="si">{</span><span class="n">n_iterations</span><span class="si">}</span><span class="s2">, n_burn_in:&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n_burn_in</span><span class="si">}</span><span class="s2">, n_walkers: </span><span class="si">{</span><span class="n">n_walkers</span><span class="si">}</span><span class="s2">, seed: </span><span class="si">{</span><span class="n">seed</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n_burn_in</span><span class="si">}</span><span class="s2">, n_walkers: </span><span class="si">{</span><span class="n">n_walkers</span><span class="si">}</span><span class="s2">.&quot;</span>
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_n_iterations</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_iterations</span><span class="p">)</span>
@@ -190,8 +190,6 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_n_burn_in</span> <span class="o">=</span> <span class="n">n_burn_in</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_n_walkers</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_walkers</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_seed</span> <span class="o">=</span> <span class="n">seed</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_is_setup</span> <span class="o">=</span> <span class="kc">True</span></div>
 
@@ -225,13 +223,9 @@
                         <span class="n">pool</span><span class="o">=</span><span class="n">executor</span><span class="p">,</span>
                     <span class="p">)</span>
 
-                    <span class="c1"># if self._seed is not None:</span>
-
-                    <span class="c1">#     sampler._random.seed(self._seed)</span>
-
                     <span class="c1"># Run the true sampling</span>
                     <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Start zeus run&quot;</span><span class="p">)</span>
-                    <span class="n">_</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                    <span class="n">_</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">run_mcmc</span><span class="p">(</span>
                         <span class="n">p0</span><span class="p">,</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">_n_iterations</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_burn_in</span><span class="p">,</span>
                         <span class="n">progress</span><span class="o">=</span><span class="n">loud</span><span class="p">,</span>
@@ -257,14 +251,12 @@
                 <span class="p">)</span>
 
             <span class="c1"># If a seed is provided, set the random number seed</span>
-            <span class="c1"># if self._seed is not None:</span>
-
-            <span class="c1">#     sampler._random.seed(self._seed)</span>
-
             <span class="c1"># Sample the burn-in</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">using_mpi</span><span class="p">:</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Start zeus run&quot;</span><span class="p">)</span>
-                <span class="n">_</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">p0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_iterations</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_burn_in</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="n">loud</span><span class="p">)</span>
+                <span class="n">_</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">run_mcmc</span><span class="p">(</span>
+                    <span class="n">p0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_iterations</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_burn_in</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="n">loud</span>
+                <span class="p">)</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Zeus run done&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_sampler</span> <span class="o">=</span> <span class="n">sampler</span>
