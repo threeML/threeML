@@ -1581,7 +1581,7 @@
             <span class="n">first_channel</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
             <span class="n">mission</span><span class="o">=</span><span class="n">polarization_data</span><span class="o">.</span><span class="n">mission</span><span class="p">,</span>
             <span class="n">instrument</span><span class="o">=</span><span class="n">polarization_data</span><span class="o">.</span><span class="n">instrument</span><span class="p">,</span>
-            <span class="n">edges</span><span class="o">=</span><span class="n">polarization_data</span><span class="o">.</span><span class="n">scattering_edges</span>
+            <span class="n">edges</span><span class="o">=</span><span class="n">polarization_data</span><span class="o">.</span><span class="n">scattering_edges</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
@@ -1608,9 +1608,7 @@
     <span class="p">):</span>
         <span class="k">assert</span> <span class="n">has_polpy</span><span class="p">,</span> <span class="s2">&quot;you must have the PolPy module installed&quot;</span>
 
-        <span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_container_type</span><span class="p">,</span> <span class="n">BinnedModulationCurve</span>
-        <span class="p">),</span> <span class="p">(</span>
+        <span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_container_type</span><span class="p">,</span> <span class="n">BinnedModulationCurve</span><span class="p">),</span> <span class="p">(</span>
             <span class="s2">&quot;You are attempting to create a PolarizationLike plugin &quot;</span>
             <span class="s2">&quot;from the wrong data type&quot;</span>
         <span class="p">)</span>
@@ -1640,7 +1638,7 @@
                 <span class="n">observation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="p">,</span>
                 <span class="n">background</span><span class="o">=</span><span class="n">this_background_spectrum</span><span class="p">,</span>
                 <span class="n">response</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_response</span><span class="p">,</span>
-                <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span>
+                <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">,</span>
             <span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
