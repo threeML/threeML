@@ -35,9 +35,6 @@ except Exception:
     using_mpi = False
 
 
-# un_logger = logging.getLogger("ultranest")
-# un_logger.propagate = False
-
 log = logging.getLogger(__name__)
 
 
@@ -132,7 +129,7 @@ class AutoEmceeSampler(UnitCubeSampler):
 
         if threeML_config["parallel"]["use_parallel"]:
             log.error(
-                "If you want to run ultranest in parallell you need to use an ad-hoc "
+                "If you want to run autoemcee in parallell you need to use an ad-hoc "
                 "method"
             )
 

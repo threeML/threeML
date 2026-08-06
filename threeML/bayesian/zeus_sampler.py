@@ -54,8 +54,6 @@ class ZeusSampler(MCMCSampler):
         :type n_burn_in:
         :param n_walkers:
         :type n_walkers:
-        :param seed:
-        :type seed:
         :returns:
         """
         log.debug(
@@ -129,7 +127,6 @@ class ZeusSampler(MCMCSampler):
                     ndim=n_dim,
                 )
 
-            # If a seed is provided, set the random number seed
             # Sample the burn-in
             if not using_mpi:
                 log.debug("Start zeus run")

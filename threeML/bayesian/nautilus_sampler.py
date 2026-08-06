@@ -124,15 +124,15 @@ class NautilusSampler(UnitCubeSampler):
 
         if threeML_config["parallel"]["use_parallel"]:
             raise RuntimeError(
-                "If you want to run ultranest in parallel you need to use an ad-hoc "
-                "method"
+                "If you want to run nautilus in parallel you need to use an ad-hoc "
+                "method or pass the 'pool=size_of_pool' keyword to the setup method"
             )
 
         else:
             with use_astromodels_memoization(False):
                 log.debug("Start nautilus run")
 
-                sampler.run(**self._run_dict,verbose = loud)
+                sampler.run(**self._run_dict, verbose=loud)
 
                 log.debug("nautilus run done")
 
