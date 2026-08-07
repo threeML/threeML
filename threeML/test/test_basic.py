@@ -209,7 +209,7 @@ def test_basic_bayesian_analysis_results_multicomp(
 
 
 @skip_if_internet_is_not_available
-def test_gbm_workflow():
+def test_gbm_workflow(tmp_path):
     import warnings
 
     warnings.simplefilter("ignore")
@@ -225,7 +225,11 @@ def test_gbm_workflow():
     best_fit_model = grb_info["best fit model"]["fluence"]
     _ = gbm_catalog.get_model(best_fit_model, "fluence")["GRB080916009"]
 
-    dload = download_GBM_trigger_data("bn080916009", detectors=gbm_detectors)
+    dload = download_GBM_trigger_data(
+        "bn080916009",
+        detectors=gbm_detectors,
+        destination_directory=tmp_path / "bn0800916009",
+    )
 
     fluence_plugins = []
     time_series = {}
@@ -236,17 +240,21 @@ def test_gbm_workflow():
         )
 
         ts_cspec.set_background_interval(*background_interval.split(","))
-        ts_cspec.save_background(f"{det}_bkg.h5", overwrite=True)
+        ts_cspec.save_background(tmp_path / f"{det}_bkg.h5", overwrite=True)
 
         ts_cspec.write_pha_from_binner(
-            "test_write", start=0, stop=10, overwrite=True, force_rsp_write=True
+            tmp_path / "test_write",
+            start=0,
+            stop=10,
+            overwrite=True,
+            force_rsp_write=True,
         )
 
         ts_tte = TimeSeriesBuilder.from_gbm_tte(
             det,
             tte_file=dload[det]["tte"],
             rsp_file=dload[det]["rsp"],
-            restore_background=f"{det}_bkg.h5",
+            restore_background=tmp_path / f"{det}_bkg.h5",
         )
 
         time_series[det] = ts_tte
@@ -268,21 +276,6 @@ def test_gbm_workflow():
         fluence_plugins.append(fluence_plugin)
 
         ts_tte.create_time_bins(start=0, stop=10, method="constant", dt=1)
-
-    # clean up
-    p = Path(".")
-
-    dl_files = p.glob("glg*080916009*")
-
-    [x.unlink() for x in dl_files]
-
-    dl_files = p.glob("test_write*")
-
-    [x.unlink() for x in dl_files]
-
-    dl_files = p.glob("*_bkg.h5")
-
-    [x.unlink() for x in dl_files]
 
 
 def test_uncertainty_formatter():
