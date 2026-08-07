@@ -127,21 +127,18 @@ def test_analysis_results_input_output(xy_fitted_joint_likelihood):
     _results_are_same(ar, ar_reloaded)
 
 
-def test_analysis_results_input_output_hdf(xy_fitted_joint_likelihood):
+def test_analysis_results_input_output_hdf(xy_fitted_joint_likelihood, tmp_path):
     jl, _, _ = xy_fitted_joint_likelihood  # type: JointLikelihood, None, None
 
     jl.restore_best_fit()
 
     ar = jl.results  # type: MLEResults
 
-    temp_file = "__test_mle.h5"
+    temp_file = tmp_path / "__test_mle.h5"
 
     ar.write_to(temp_file, overwrite=True, as_hdf=True)
 
     ar_reloaded = load_analysis_results_hdf(temp_file)
-
-    os.remove(temp_file)
-
     _results_are_same(ar, ar_reloaded)
 
 
@@ -299,18 +296,16 @@ def test_error_propagation(xy_fitted_joint_likelihood):
     assert abs(hi_b - 140) < 20
 
 
-def test_bayesian_input_output(xy_completed_bayesian_analysis):
+def test_bayesian_input_output(xy_completed_bayesian_analysis, tmp_path):
     bs, _ = xy_completed_bayesian_analysis
 
     rb1 = bs.results
 
-    temp_file = "_test_bayes.fits"
+    temp_file = tmp_path / "_test_bayes.fits"
 
     rb1.write_to(temp_file, overwrite=True)
 
     rb2 = load_analysis_results(temp_file)
-
-    os.remove(temp_file)
 
     _results_are_same(rb1, rb2, bayes=True)
 
@@ -328,10 +323,10 @@ def test_corner_plotting(xy_completed_bayesian_analysis):
         _ = ar.corner_plot_cc()
 
 
-def test_one_free_parameter_input_output():
+def test_one_free_parameter_input_output(tmp_path):
     fluxUnit = 1.0 / (u.TeV * u.cm**2 * u.s)
 
-    temp_file = "__test_mle.fits"
+    temp_file = tmp_path / "__test_mle.fits"
 
     spectrum = Powerlaw()
     source = PointSource("tst", ra=100, dec=20, spectral_shape=spectrum)
@@ -351,7 +346,7 @@ def test_one_free_parameter_input_output():
 
     ar.write_to(temp_file, overwrite=True)
     ar_reloaded = load_analysis_results(temp_file)
-    os.remove(temp_file)
+    temp_file.unlink()
     _results_are_same(ar, ar_reloaded)
 
     # one free parameter with units
@@ -362,7 +357,7 @@ def test_one_free_parameter_input_output():
 
     ar.write_to(temp_file, overwrite=True)
     ar_reloaded = load_analysis_results(temp_file)
-    os.remove(temp_file)
+    temp_file.unlink()
     _results_are_same(ar, ar_reloaded)
 
     # one free parameter without units
@@ -373,5 +368,5 @@ def test_one_free_parameter_input_output():
 
     ar.write_to(temp_file, overwrite=True)
     ar_reloaded = load_analysis_results(temp_file)
-    os.remove(temp_file)
+    temp_file.unlink()
     _results_are_same(ar, ar_reloaded)
