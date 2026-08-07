@@ -200,7 +200,7 @@ def test_read_model_from_catalogs(tmp_path):
     irfs = evclass_irf[int(config["selection"]["evclass"])]
     config["gtlike"] = {"irfs": irfs, "edisp": False}
 
-    for cat_name in ["4FGL", "4FGL-DR2", "4FGL-DR3", "4FGL-DR4"]:
+    for cat_name in ["4FGL", "4FGL-DR2", "4FGL-DR3", "4FGL-DR4", "FL16Y"]:
         the_config = copy.deepcopy(config)
         tmp = "$CONDA_PREFIX/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits"
         model_dict = {

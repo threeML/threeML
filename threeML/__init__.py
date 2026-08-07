@@ -42,7 +42,9 @@ from .config import (
 log = logging.getLogger(__name__)
 
 if os.environ.get("DISPLAY") is None:
-    add_startup_warning(log, "no display variable set. using backend for graphics without display (agg)")
+    add_startup_warning(
+        log, "no display variable set. using backend for graphics without display (agg)"
+    )
 
     import matplotlib as mpl
 
@@ -112,8 +114,11 @@ for i, module_full_path in enumerate(found_plugins):
     is_importable, result = is_module_importable(module_full_path)
 
     if not is_importable:
-        add_startup_warning(log, f"Could not import plugin {module_full_path.name}. Do you have the relative instrument software installed "
-                "and configured?")
+        add_startup_warning(
+            log,
+            f"Could not import plugin {module_full_path.name}. Do you have the relative instrument software installed "
+            "and configured?",
+        )
 
         _not_working_plugins[plugin_name] = result
 
@@ -152,11 +157,16 @@ def get_available_plugins():
 
 
 def _display_plugin_traceback(plugin):
-    add_startup_warning(log, "#############################################################")
+    add_startup_warning(
+        log, "#############################################################"
+    )
     add_startup_warning(log, "\nCouldn't import plugin %s" % plugin)
     add_startup_warning(log, "\nTraceback:\n")
     add_startup_warning(log, _not_working_plugins[plugin])
-    add_startup_warning(log, "#############################################################")
+    add_startup_warning(
+        log, "#############################################################"
+    )
+
 
 def is_plugin_available(plugin):
     """Test whether the plugin for the provided instrument is available.
@@ -307,14 +317,18 @@ for var in var_to_check:
             num_threads = int(num_threads)
 
         except ValueError:
-            add_startup_warning(log,
-                                "Your env. variable %s is not an integer, which doesn't make sense. Set it to 1 "
-                                "for optimum performances." % var)
+            add_startup_warning(
+                log,
+                "Your env. variable %s is not an integer, which doesn't make sense. Set it to 1 "
+                "for optimum performances." % var,
+            )
 
     else:
-        add_startup_warning(log,
-                            "Env. variable %s is not set. Please set it to 1 for optimal performances in 3ML"
-                % var)
+        add_startup_warning(
+            log,
+            "Env. variable %s is not set. Please set it to 1 for optimal performances in 3ML"
+            % var,
+        )
 
 del os
 del Path

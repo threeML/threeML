@@ -48,99 +48,56 @@ def _setup_analysis_dictionaries(
 
     bayesian_analyses = collections.OrderedDict()
     mle_analyses = collections.OrderedDict()
-
-    # first we split up the bayesian and mle analysis
-
     mle_sources = collections.OrderedDict()
     bayes_sources = collections.OrderedDict()
 
+    def _get_comps(source):
+        try:
+            return [c.name for c in source.spectrum.main.composite.functions]
+        except Exception:
+            try:
+                return [c for c in source.components]
+            except Exception:
+                return []
+
+    def _dedupe_comps(comps):
+        """
+        Removes duplicates from a list of components and appends a suffix to the name
+        if there are duplicates.
+
+        :param comps:
+        :return:
+        """
+        return [
+            "%s_n%i" % (s, suffix) if num > 1 else s
+            for s, num in collections.Counter(comps).items()
+            for suffix in range(1, num + 1)
+        ]
+
     for analysis in analysis_results:
-        items = (
-            list(analysis.optimized_model.point_sources.items())
-            if not include_extended
-            else list(analysis.optimized_model.sources.items())
+        items = list(
+            analysis.optimized_model.sources.items()
+            if include_extended
+            else analysis.optimized_model.point_sources.items()
         )
 
         for source_name, source in items:
-            if source_name in sources_to_use or not sources_to_use:
-                if analysis.analysis_type == "MLE":
-                    # keep track of duplicate sources
+            if sources_to_use and source_name not in sources_to_use:
+                continue
 
-                    mle_sources.setdefault(source_name, []).append(1)
+            is_mle = analysis.analysis_type == "MLE"
+            tracker = mle_sources if is_mle else bayes_sources
+            target = mle_analyses if is_mle else bayesian_analyses
 
-                    if len(mle_sources[source_name]) > 1:
-                        name = "%s_%d" % (
-                            source_name,
-                            len(mle_sources[source_name]),
-                        )
+            tracker.setdefault(source_name, []).append(1)
+            count = len(tracker[source_name])
+            name = "%s_%d" % (source_name, count) if count > 1 else source_name
 
-                    else:
-                        name = source_name
-
-                    try:
-                        comps = [
-                            c.name for c in source.spectrum.main.composite.functions
-                        ]
-
-                    except Exception:
-                        try:
-                            comps = [c for c in source.components]
-
-                        except Exception:
-                            comps = []
-
-                    # duplicate components
-                    comps = [
-                        "%s_n%i" % (s, suffix) if num > 1 else s
-                        for s, num in list(collections.Counter(comps).items())
-                        for suffix in range(1, num + 1)
-                    ]
-
-                    mle_analyses[name] = {
-                        "source": source_name,
-                        "analysis": analysis,
-                        "component_names": comps,
-                    }
-
-                else:
-                    bayes_sources.setdefault(source_name, []).append(1)
-
-                    # keep track of duplicate sources
-
-                    if len(bayes_sources[source_name]) > 1:
-                        name = "%s_%d" % (
-                            source_name,
-                            len(bayes_sources[source_name]),
-                        )
-
-                    else:
-                        name = source_name
-
-                    try:
-                        comps = [
-                            c.name for c in source.spectrum.main.composite.functions
-                        ]
-
-                    except Exception:
-                        try:
-                            comps = [c for c in source.components]
-
-                        except Exception:
-                            comps = []
-
-                    # duplicate components
-                    comps = [
-                        "%s_n%i" % (s, suffix) if num > 1 else s
-                        for s, num in list(collections.Counter(comps).items())
-                        for suffix in range(1, num + 1)
-                    ]
-
-                    bayesian_analyses[name] = {
-                        "source": source_name,
-                        "analysis": analysis,
-                        "component_names": comps,
-                    }
-
+            target[name] = {
+                "source": source_name,
+                "analysis": analysis,
+                "component_names": _dedupe_comps(_get_comps(source)),
+            }
     # keep track of the number of sources we will use
 
     num_sources_to_use = 0
@@ -150,11 +107,7 @@ def _setup_analysis_dictionaries(
     if mle_analyses:
         for key in tqdm(list(mle_analyses.keys()), desc="processing MLE analyses"):
             # if we want to use this source
-            if (
-                not use_components
-                or ("total" in components_to_use)
-                or ("main" in mle_analyses[key]["component_names"])
-            ):
+            if not use_components or ("main" in mle_analyses[key]["component_names"]):
                 mle_analyses[key]["fitted point source"] = (
                     FittedPointSourceSpectralHandler(
                         mle_analyses[key]["analysis"],
@@ -180,7 +133,7 @@ def _setup_analysis_dictionaries(
                 for component in mle_analyses[key]["component_names"]:
                     # if we want to plot all the components
 
-                    if not components_to_use:
+                    if not components_to_use or "total" in components_to_use:
                         component_dict[component] = FittedPointSourceSpectralHandler(
                             mle_analyses[key]["analysis"],
                             mle_analyses[key]["source"],
@@ -219,17 +172,22 @@ def _setup_analysis_dictionaries(
 
                 mle_analyses[key]["components"] = component_dict
 
-            # keep track of how many components we need to plot
+            if use_components and "total" in components_to_use:
+                mle_analyses[key]["fitted point source"] = sum(component_dict.values())
 
-            if use_components:
+                # lets remove all components not explicitly asked for by the user
+                for c in list(mle_analyses[key]["components"].keys()).copy():
+                    if c not in components_to_use:
+                        log.debug(f"{c} not in components_to_use - removing entry")
+                        del mle_analyses[key]["components"][c]
+                        num_components_to_use -= 1
+
+                num_sources_to_use += 1
+
+            # keep track of everything we added on
+
+            if use_components and num_components_to_use > 0:
                 num_sources_to_use += num_components_to_use
-
-                if "total" in components_to_use:
-                    num_sources_to_use += 1
-
-            # else:
-            #
-            #     num_sources_to_use += 1
 
     # repeat for the bayes analyses
 
@@ -239,10 +197,8 @@ def _setup_analysis_dictionaries(
         ):
             # if we have a source to use
 
-            if (
-                not use_components
-                or ("total" in components_to_use)
-                or ("main" in bayesian_analyses[key]["component_names"])
+            if not use_components or (
+                "main" in bayesian_analyses[key]["component_names"]
             ):
                 bayesian_analyses[key]["fitted point source"] = (
                     FittedPointSourceSpectralHandler(
@@ -269,7 +225,7 @@ def _setup_analysis_dictionaries(
                 for component in bayesian_analyses[key]["component_names"]:
                     # extracting all components
 
-                    if not components_to_use:
+                    if not components_to_use or "total" in components_to_use:
                         component_dict[component] = FittedPointSourceSpectralHandler(
                             bayesian_analyses[key]["analysis"],
                             bayesian_analyses[key]["source"],
@@ -284,36 +240,42 @@ def _setup_analysis_dictionaries(
 
                         num_components_to_use += 1
 
-                    # or just some of them
+                    else:
+                        if component in components_to_use:
+                            component_dict[component] = (
+                                FittedPointSourceSpectralHandler(
+                                    bayesian_analyses[key]["analysis"],
+                                    bayesian_analyses[key]["source"],
+                                    energy_range,
+                                    energy_unit,
+                                    flux_unit,
+                                    confidence_level,
+                                    equal_tailed,
+                                    component=component,
+                                    is_differential_flux=differential,
+                                )
+                            )
 
-                    if component in components_to_use:
-                        component_dict[component] = FittedPointSourceSpectralHandler(
-                            bayesian_analyses[key]["analysis"],
-                            bayesian_analyses[key]["source"],
-                            energy_range,
-                            energy_unit,
-                            flux_unit,
-                            confidence_level,
-                            equal_tailed,
-                            component=component,
-                            is_differential_flux=differential,
-                        )
-
-                        num_components_to_use += 1
+                            num_components_to_use += 1
 
                 bayesian_analyses[key]["components"] = component_dict
+
+            if use_components and "total" in components_to_use:
+                bayesian_analyses[key]["fitted point source"] = sum(
+                    component_dict.values()
+                )
+                for c in list(bayesian_analyses[key]["components"].keys()).copy():
+                    if c not in components_to_use:
+                        log.debug(f"{c} not in components_to_use - removing entry")
+                        del bayesian_analyses[key]["components"][c]
+                        num_components_to_use -= 1
+
+                num_sources_to_use += 1
 
             # keep track of everything we added on
 
             if use_components and num_components_to_use > 0:
                 num_sources_to_use += num_components_to_use
-
-                if "total" in components_to_use:
-                    num_sources_to_use += 1
-            #
-            # else:
-            #
-            #     num_sources_to_use += 1
 
         # we may have the same source in a bayesian and mle analysis.
         # we want to plot them, but make sure to label them differently.

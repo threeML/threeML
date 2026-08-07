@@ -24,9 +24,11 @@ from threeML.io.logging import (
 )
 from threeML.utils.progress_bar import tqdm, trange
 
-from threeML.io.logging import (add_startup_warning,
-                                log_threeml_startup_warnings,
-                                setup_logger)
+from threeML.io.logging import (
+    add_startup_warning,
+    log_threeml_startup_warnings,
+    setup_logger,
+)
 
 logger = setup_logger(__name__)
 

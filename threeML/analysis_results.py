@@ -1,12 +1,12 @@
-import logging
-
 import collections
 import datetime
 import functools
 import inspect
+import logging
 import math
 import os
 from builtins import map, object, range, str
+from importlib.util import find_spec
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -34,7 +34,6 @@ from threeML.io.hdf5_utils import (
     recursively_load_dict_contents_from_group,
     recursively_save_dict_contents_to_group,
 )
-
 from threeML.io.package_data import get_path_of_data_file
 from threeML.io.results_table import ResultsTable
 from threeML.io.rich_display import display
@@ -49,18 +48,18 @@ log = logging.getLogger(__name__)
 
 _rich_console = Console()
 
-try:
+if find_spec("chainconsumer") is not None:
     import chainconsumer
 
-except Exception:
+    has_chainconsumer = True
+
+    log.debug("chainconsumer is installed")
+
+else:
     has_chainconsumer = False
 
     log.debug("chainconsumer is NOT installed")
 
-else:
-    has_chainconsumer = True
-
-    log.debug("chainconsumer is installed")
 
 # These are special characters which cannot be safely saved in the keyword of a FITS
 # file. We substitute them with normal characters when we write the keyword, and we
@@ -558,7 +557,16 @@ class _AnalysisResults(object):
 
                 ANALYSIS_RESULTS_HDF(self, grp)
 
-    def get_variates(self, param_path):
+    def get_variates(self, param_path: str) -> RandomVariates:
+        """
+        Returns a RandomVariates instance for the parameter specified by
+        param_path. This allows for error propagation in arbitrary functions.
+
+        :param param_path: path of the parameter or parameter
+            instance
+        :return: a RandomVariates instance
+        """
+
         assert param_path in self._optimized_model.free_parameters, (
             "Parameter %s is not a free parameters of the model" % param_path
         )
@@ -575,7 +583,8 @@ class _AnalysisResults(object):
 
     @staticmethod
     def propagate(function, **kwargs):
-        """Allow for propagation of uncertainties on arbitrary functions. It
+        """
+        Allow for propagation of uncertainties on arbitrary functions. It
         returns a function which is a wrapper around the provided input
         function. Using the wrapper with RandomVariates instances as arguments
         will return a RandomVariates result, with the errors propagated.
@@ -1146,13 +1155,7 @@ class BayesianResults(_AnalysisResults):
 
         # these are the keywords for the plot command
 
-        _default_plot_args = {
-            "truth": None,
-            "figsize": "GROW",
-            "filename": None,
-            "display": False,
-            "legend": None,
-        }
+        _default_plot_args = {}
         keys = list(cc_kwargs.keys())
         for key in keys:
             if key in _default_plot_args:
@@ -1185,15 +1188,27 @@ class BayesianResults(_AnalysisResults):
             if "$" not in labels[i]:
                 labels[i] = val.replace("_", "")
 
-        cc = chainconsumer.ChainConsumer()
+        samples = self._samples_transposed.T
+        if samples.dtype.byteorder == ">":
+            samples = samples.astype(samples.dtype.newbyteorder("="))
 
-        cc.add_chain(self._samples_transposed.T, parameters=labels)
+        df = pd.DataFrame(samples, columns=list(self._free_parameters.keys()))
+        log_post = np.nan_to_num(
+            np.nan_to_num(self._log_probability, nan=-np.inf)
+        ).astype(samples.dtype.newbyteorder("="))
+
+        df["log_posterior"] = log_post
+        cc = chainconsumer.ChainConsumer()
+        cc.add_chain(chainconsumer.Chain(samples=df, name="3ML", parameters=labels))
 
         if not cc_kwargs:
-            cc_kwargs = threeML_config["bayesian"]["chain consumer style"]
+            if "chain consumer style" in threeML_config["bayesian"].keys():
+                cc_kwargs = threeML_config["bayesian"]["chain consumer style"]
+            else:
+                cc_kwargs = {}
 
-        cc.configure(**cc_kwargs)
-        fig = cc.plotter.plot(parameters=parameters, **_default_plot_args)
+        # cc.configure(**cc_kwargs)
+        fig = cc.plotter.plot()
 
         return fig
 

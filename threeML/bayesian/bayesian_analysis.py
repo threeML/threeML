@@ -11,7 +11,6 @@ from threeML.bayesian.sampler_base import SamplerBase
 from threeML.config import threeML_config
 from threeML.data_list import DataList
 
-
 log = logging.getLogger(__name__)
 
 

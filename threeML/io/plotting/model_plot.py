@@ -48,7 +48,7 @@ def plot_spectra(*analysis_results, **kwargs) -> plt.Figure:
     :param components_to_use: (optional) list of string names of the
         components to plot: including 'total' will also plot the total
         spectrum
-    :param sum_sources: (optional) some all the MLE and Bayesian sources
+    :param sum_sources: (optional) sum over all the MLE and Bayesian sources
     :param show_contours: (optional) True or False to plot the contour
         region
     :param plot_style_kwargs: (optional) dictionary of MPL plot styling
@@ -685,6 +685,20 @@ class SpectralContourPlot:
         emax=None,
         subplot=None,
     ):
+        """
+        Class to handle plotting of multiple spectral models with contours.
+
+        :param n_total: total number of models to plot
+        :param xscale: 'log' or 'linear'
+        :param yscale: 'log' or 'linear'
+        :param show_legend: True or False to show legend
+        :param plot_kwargs: dictionary of MPL plot styling for the best fit curve
+        :param contour_kwargs: dictionary of MPL plot styling for the contour regions
+        :param legend_kwargs: dictionary of MPL plot styling for the legend
+        :param emin: minimum energy to plot
+        :param emax: maximum energy to plot
+        :param subplot: subplot to use
+        """
         self._n_total = n_total
 
         self._show_legend = show_legend
@@ -718,6 +732,18 @@ class SpectralContourPlot:
         contour_color=None,
         label="model",
     ):
+        """
+        Add a model to the plot.
+
+        :param energy_range: array of energies to plot
+        :param best_fit: array of best fit values to plot
+        :param color: color of the best fit line
+        :param upper_error: array of upper error values to plot
+        :param lower_error: array of lower error values to plot
+        :param contour_color: color of the contour region
+        :param label: label for the model
+        """
+
         self._ax.plot(
             energy_range,
             best_fit,
@@ -745,6 +771,17 @@ class SpectralContourPlot:
         contour_color=None,
         label="model",
     ):
+        """
+        Add a dimensionless model to the plot.
+
+        :param energy_range: array of energies to plot
+        :param best_fit: array of best fit values to plot
+        :param color: color of the best fit line
+        :param upper_error: array of upper error values to plot
+        :param lower_error: array of lower error values to plot
+        :param contour_color: color of the contour region
+        :param label: label for the model
+        """
         if self._n_total > 1:
             if self._ax_right is None:
                 self._ax_right = self._ax.twinx()
@@ -778,6 +815,11 @@ class SpectralContourPlot:
             )
 
     def finalize(self, _defaults):
+        """
+        Finalize the plot by setting scales, legends, and limits.
+        :param _defaults: dictionary of default values
+        :return: matplotlib figure
+        """
         self._ax.set_xscale(self._xscale)
         self._ax.set_yscale(self._yscale)
 

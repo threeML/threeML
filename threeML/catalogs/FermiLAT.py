@@ -56,13 +56,7 @@ fgl_types = {
     "": "unknown",
 }
 
-fermipy_catalogs = [
-    '4FGL',
-    '4FGL-DR2',
-    '4FGL-DR3',
-    '4FGL-DR4',
-    'FL16Y'
-]
+fermipy_catalogs = ["4FGL", "4FGL-DR2", "4FGL-DR3", "4FGL-DR4", "FL16Y"]
 
 _FGL_name_match = re.compile(r"^[34]FGL J\d{4}.\d(\+|-)\d{4}\D?$")
 
@@ -110,6 +104,8 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
         # Translate the 3 letter code to a more informative category, according
         # to the dictionary above
         def translate(key):
+            if numpy.ma.is_masked(key):
+                return fgl_types[""]
             if isinstance(key, bytes):
                 key = key.decode("ascii")
             if key.lower() == "psr":

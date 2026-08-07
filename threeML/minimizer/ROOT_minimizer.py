@@ -13,7 +13,6 @@ from threeML.minimizer.minimization import (
     LocalMinimizer,
 )
 
-
 log = logging.getLogger(__name__)
 
 # These are the status returned by Minuit

@@ -4,7 +4,6 @@ import os
 import socket
 import requests
 
-
 log = logging.getLogger(__name__)
 
 

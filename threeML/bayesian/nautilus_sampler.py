@@ -8,7 +8,6 @@ from astromodels import use_astromodels_memoization
 from threeML.bayesian.sampler_base import UnitCubeSampler
 from threeML.config.config import threeML_config
 
-
 try:
     import nautilus
 
@@ -133,7 +132,7 @@ class NautilusSampler(UnitCubeSampler):
             with use_astromodels_memoization(False):
                 log.debug("Start nautilus run")
 
-                sampler.run(**self._run_dict)
+                sampler.run(**self._run_dict,verbose = loud)
 
                 log.debug("nautilus run done")
 

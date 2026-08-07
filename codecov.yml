@@ -1,13 +1,20 @@
 coverage:
   precision: 2
   round: down
-  range: 70...100
+  range: 70..100
 
   status:
-    # Learn more at https://codecov.io/docs#yaml_default_commit_status
-    project: true
-    patch: true
+    project:
+      default:
+        target: auto
+        threshold: 5 # allow drops by 5 percent
+        if_ci_failed: error
+    patch:
+      default:
+        target: auto
+        threshold: 0
     changes: false
+
   ignore:
     - "**/tutorial_material.py"
     - "threeML/test/.*"
@@ -15,8 +22,7 @@ coverage:
     - "**/__init__.py"
     - "threeML/_version.py"
     - "threeML/minimizer/ROOT_minimizer.py"
+
 comment:
-  layout: "header, diff"
-  behavior: default  # update if exists else create new
-
-
+    layout: "condensed_header, condensed_files, condensed_footer"
+    behavior: default
