@@ -98,18 +98,31 @@ class DispersionSpectrumLike(SpectrumLike):
 
         self._like_model: Model = likelihoodModel
 
-        # We assume there are no extended sources, since we cannot handle them here
-
-        if not self._like_model.get_number_of_extended_sources() == 0:
-            log.error("SpectrumLike plugins do not support extended sources")
-
         # check if we set a source name that the source is in the model
 
         if self._source_name is not None:
-            if self._source_name not in self._like_model.sources:
+            if self._source_name not in self._like_model.sources.keys():
                 log.error(
                     "Source %s is not contained in "
                     "the likelihood model" % self._source_name
+                )
+
+                raise RuntimeError()
+            if self._source_name in self._like_model.extended_sources.keys():
+                log.error(
+                    "SpectrumLike plugins do not support extended sources."
+                    "You specified an extended source via the assign_to_source "
+                    f"function - source name is {self._source_name}."
+                )
+
+                raise RuntimeError()
+
+        else:
+            if self._like_model.get_number_of_extended_sources() > 0:
+                log.error(
+                    "SpectrumLike plugins do not support extended sources."
+                    "In case those are not relevant for that plugin use "
+                    "assign_to_source to assign a PointSource."
                 )
 
                 raise RuntimeError()
@@ -121,7 +134,7 @@ class DispersionSpectrumLike(SpectrumLike):
             self._like_model, integrate_method=self._model_integrate_method
         )
 
-        log.debug(f"{self._name} passing intfral flux function to RSP")
+        log.debug(f"{self._name} passing integral flux function to RSP")
 
         self._integral_flux = integral
 
