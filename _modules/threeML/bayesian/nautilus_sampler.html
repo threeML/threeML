@@ -245,15 +245,15 @@
 
         <span class="k">if</span> <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;parallel&quot;</span><span class="p">][</span><span class="s2">&quot;use_parallel&quot;</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                <span class="s2">&quot;If you want to run ultranest in parallel you need to use an ad-hoc &quot;</span>
-                <span class="s2">&quot;method&quot;</span>
+                <span class="s2">&quot;If you want to run nautilus in parallel you need to use an ad-hoc &quot;</span>
+                <span class="s2">&quot;method or pass the &#39;pool=size_of_pool&#39; keyword to the setup method&quot;</span>
             <span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="k">with</span> <span class="n">use_astromodels_memoization</span><span class="p">(</span><span class="kc">False</span><span class="p">):</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Start nautilus run&quot;</span><span class="p">)</span>
 
-                <span class="n">sampler</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_run_dict</span><span class="p">)</span>
+                <span class="n">sampler</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_run_dict</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">loud</span><span class="p">)</span>
 
                 <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;nautilus run done&quot;</span><span class="p">)</span>
 

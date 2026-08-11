@@ -1917,7 +1917,7 @@
         <span class="k">if</span> <span class="n">new_model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">new_model</span> <span class="o">=</span> <span class="n">new_model</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
 
-            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">new_model</span> <span class="ow">in</span> <span class="n">_known_noise_models</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">new_model</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_known_noise_models</span><span class="p">:</span>
 
                 <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
                     <span class="s2">&quot;Noise model </span><span class="si">%s</span><span class="s2"> not recognized. &quot;</span>
@@ -1958,7 +1958,7 @@
         <span class="c1"># Do not make differences between upper and lower cases</span>
         <span class="n">new_model</span> <span class="o">=</span> <span class="n">new_model</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">new_model</span> <span class="ow">in</span> <span class="n">_known_noise_models</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">new_model</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_known_noise_models</span><span class="p">:</span>
 
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
                 <span class="s2">&quot;Noise model </span><span class="si">%s</span><span class="s2"> not recognized. &quot;</span>
@@ -2026,24 +2026,35 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_like_model</span> <span class="o">=</span> <span class="n">likelihoodModel</span>
 
-        <span class="c1"># We assume there are no extended sources, since we cannot handle them here</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_like_model</span><span class="o">.</span><span class="n">get_number_of_extended_sources</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;SpectrumLike plugins do not support &quot;</span> <span class="s2">&quot;extended sources&quot;</span><span class="p">)</span>
-
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
-
         <span class="c1"># check if we set a source name that the source is in the model</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_like_model</span><span class="o">.</span><span class="n">sources</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_like_model</span><span class="o">.</span><span class="n">sources</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
                     <span class="s2">&quot;Source </span><span class="si">%s</span><span class="s2"> is not contained in &quot;</span>
                     <span class="s2">&quot;the likelihood model&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_name</span>
                 <span class="p">)</span>
 
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_like_model</span><span class="o">.</span><span class="n">extended_sources</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                    <span class="s2">&quot;SpectrumLike plugins do not support extended sources.&quot;</span>
+                    <span class="s2">&quot;You specified an extended source via the assign_to_source &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;function - source name is </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_source_name</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span>
+
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_like_model</span><span class="o">.</span><span class="n">get_number_of_extended_sources</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                    <span class="s2">&quot;SpectrumLike plugins do not support extended sources.&quot;</span>
+                    <span class="s2">&quot;In case those are not relevant for that plugin use &quot;</span>
+                    <span class="s2">&quot;assign_to_source to assign a PointSource.&quot;</span>
+                <span class="p">)</span>
+
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
+
         <span class="c1"># Get the differential flux function, and the integral function, with no</span>
         <span class="c1"># dispersion, we simply integrate the model over the bins</span>
 
