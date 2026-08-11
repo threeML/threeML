@@ -120,6 +120,7 @@ class MultiNestSampler(UnitCubeSampler):
         )
 
         loud = not quiet
+        self._kwargs["verbose"] = loud
 
         self._update_free_parameters()
 
