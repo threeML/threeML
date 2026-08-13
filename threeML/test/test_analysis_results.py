@@ -4,12 +4,15 @@ from importlib.util import find_spec
 
 import astropy.units as u
 import numpy as np
-from astromodels import Powerlaw
+from astromodels.functions import Powerlaw
+import pytest
 
-from threeML import (
+from astromodels import (
     Model,
     PointSource,
 )
+from threeML import JointLikelihood, DataList
+from threeML.plugins.XYLike import XYLike
 from threeML.analysis_results import (
     AnalysisResultsSet,
     MLEResults,
@@ -375,3 +378,35 @@ def test_one_free_parameter_input_output():
     ar_reloaded = load_analysis_results(temp_file)
     os.remove(temp_file)
     _results_are_same(ar, ar_reloaded)
+
+
+def test_sample_frac_warning():
+    gen_function = Powerlaw()
+    gen_function.K.value = 100
+    gen_function.index.value = -3
+
+    x = np.logspace(0, 2, 50)
+
+    xyl_generator = XYLike.from_function(
+        "sim_data", function=gen_function, x=x, yerr=0.01 * gen_function(x)
+    )
+
+    y = xyl_generator.y
+    y_err = xyl_generator.yerr
+
+    pl = Powerlaw()
+    xyl = XYLike("data", x, y, y_err)
+    ps = PointSource("test", ra=0, dec=0, spectral_shape=pl)
+    pl.index.value = -2.7
+    pl.index.min_value = -2.8
+    pl.index.max_value = -2.6
+    pl.K.value = 100
+    pl.K.min_value = 105
+    pl.K.max_value = 115
+
+    model = Model(ps)
+    dl = DataList(xyl)
+    jl = JointLikelihood(model, dl)
+    with pytest.warns():
+        jl.fit()
+        print(jl.results)
