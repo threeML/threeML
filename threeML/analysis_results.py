@@ -5,11 +5,11 @@ import inspect
 import logging
 import math
 import os
-from builtins import map, object, range, str
+import warnings
+from builtins import map, range, str
 from importlib.util import find_spec
 from pathlib import Path
 from typing import Dict, List, Optional
-import warnings
 
 import astromodels
 import astropy.units as u
@@ -101,13 +101,13 @@ class SEQUENCE(FITSExtension):
     def __init__(self, name, data_tuple):
         # Init FITS extension
 
-        super(SEQUENCE, self).__init__(data_tuple, self._HEADER_KEYWORDS)
+        super().__init__(data_tuple, self._HEADER_KEYWORDS)
 
         # Update keywords
         self.hdu.header.set("SEQ_TYPE", name)
 
 
-class ANALYSIS_RESULTS_HDF(object):
+class ANALYSIS_RESULTS_HDF:
     def __init__(self, analysis_results, hdf_obj):
         optimized_model = analysis_results.optimized_model
 
@@ -384,7 +384,7 @@ class ANALYSIS_RESULTS(FITSExtension):
 
         # Init FITS extension
 
-        super(ANALYSIS_RESULTS, self).__init__(data_tuple, self._HEADER_KEYWORDS)
+        super().__init__(data_tuple, self._HEADER_KEYWORDS)
 
         # Update keywords with their values for this instance
         self.hdu.header.set("MODEL", yaml_model_serialization)
@@ -447,7 +447,7 @@ class AnalysisResultsFITS(FITSFile):
         extensions.extend(results_ext)
 
         # Create FITS file
-        super(AnalysisResultsFITS, self).__init__(fits_extensions=extensions)
+        super().__init__(fits_extensions=extensions)
 
         # Set a couple of keywords in the primary header
         self._hdu_list[0].header.set("DATE", datetime.datetime.now().isoformat())
@@ -458,7 +458,7 @@ class AnalysisResultsFITS(FITSFile):
         )
 
 
-class _AnalysisResults(object):
+class _AnalysisResults:
     """A unified class to store results from a maximum likelihood or a Bayesian
     analysis, which provides a unique interface and allows for "error
     propagation" (which means different things in the two contexts) in
@@ -952,7 +952,7 @@ class BayesianResults(_AnalysisResults):
         statistical_measures,
         log_probabilty,
     ):
-        super(BayesianResults, self).__init__(
+        super().__init__(
             optimized_model,
             samples,
             posterior_values,
@@ -1186,7 +1186,7 @@ class BayesianResults(_AnalysisResults):
             i,
             val,
         ) in enumerate(labels):
-            if "$" not in labels[i]:
+            if "$" not in val:
                 labels[i] = val.replace("_", "")
 
         samples = self._samples_transposed.T
@@ -1310,7 +1310,7 @@ class BayesianResults(_AnalysisResults):
                 i,
                 val,
             ) in enumerate(labels_other):
-                if "$" not in labels_other[i]:
+                if "$" not in val:
                     labels_other[i] = val.replace("_", " ")
 
             if names is not None:
@@ -1345,7 +1345,7 @@ class BayesianResults(_AnalysisResults):
             i,
             val,
         ) in enumerate(labels):
-            if "$" not in labels[i]:
+            if "$" not in val:
                 labels[i] = val.replace("_", " ")
 
         if names is not None:
@@ -1667,12 +1667,12 @@ class MLEResults(_AnalysisResults):
             )
             warnings.warn(
                 UserWarning(
-                    f"{n_removed_samples / samples.shape[0] * 100.0:.1f}% of samples have "
-                    "been thrown away because they failed the constraints on the "
-                    "parameters. This result might not be suitable for error propagation. "
-                    "Enlarge the boundaries until you lose less than 1% of the samples.\n"
-                    f"Discarded samples in excluded parameter space ({n_removed_samples} "
-                    f"samples):\n{summary}"
+                    f"{n_removed_samples / samples.shape[0] * 100.0:.1f}% of samples "
+                    "have been thrown away because they failed the constraints on the "
+                    "parameters. This result might not be suitable for error "
+                    "propagation. Enlarge the boundaries until you lose less than 1% of"
+                    "the samples.\nDiscarded samples in excluded parameter space "
+                    f"({n_removed_samples} samples):\n{summary}"
                 )
             )
 
@@ -1684,7 +1684,7 @@ class MLEResults(_AnalysisResults):
                 samples[:, i] = parameter.transformation.backward(samples[:, i])
         # Finally build the class
 
-        super(MLEResults, self).__init__(
+        super().__init__(
             optimized_model,
             samples,
             likelihood_values,
