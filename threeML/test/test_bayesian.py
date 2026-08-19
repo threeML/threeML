@@ -77,6 +77,18 @@ skip_if_nautilus_is_not_available = pytest.mark.skipif(
     not has_nautilus, reason="No nautilus available"
 )
 
+try:
+    import pocomc
+
+    print(pocomc.__doc__)
+except ModuleNotFoundError:
+    has_pocomc = False
+else:
+    has_pocomc = True
+skip_if_pocomc_is_not_available = pytest.mark.skipif(
+    not has_pocomc, reason="No pocomc available"
+)
+
 
 def remove_priors(model):
     for parameter in model:
@@ -248,6 +260,26 @@ def test_nautilus(bayes_fitter, completed_bn090217206_bayesian_analysis):
     bayes.sample()
 
     res = bayes.results.get_data_frame()
+
+    bayes.restore_median_fit()
+
+    check_results(res)
+
+
+@skip_if_pocomc_is_not_available
+def test_pocomc(bayes_fitter, completed_bn090217206_bayesian_analysis):
+    bayes, _ = completed_bn090217206_bayesian_analysis
+
+    bayes.set_sampler("pocomc")
+    assert bayes.sample() is None
+
+    bayes.sampler.setup(n_effective=1024, precondition=False)
+
+    bayes.sample()
+
+    res = bayes.results.get_data_frame()
+
+    bayes.results.write_to("/home/tobi/sw/threeML/poco_test.fits", overwrite=True)
 
     bayes.restore_median_fit()
 
