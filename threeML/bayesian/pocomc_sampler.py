@@ -71,10 +71,8 @@ class PocoMCSampler(MCMCSampler):
         self._sampler = sampler
 
         samples, weights, logl, logp = sampler.posterior()
+
         self._raw_samples = samples
-
-        print(f"THIS IS THE SAMPELS SHAPE: {samples.shape}")
-
         self._log_like_values = logl
         self._log_probability_values = self._log_like_values + logp
 

@@ -279,8 +279,6 @@ def test_pocomc(bayes_fitter, completed_bn090217206_bayesian_analysis):
 
     res = bayes.results.get_data_frame()
 
-    bayes.results.write_to("/home/tobi/sw/threeML/poco_test.fits", overwrite=True)
-
     bayes.restore_median_fit()
 
     check_results(res)
