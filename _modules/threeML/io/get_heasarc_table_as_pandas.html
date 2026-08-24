@@ -139,7 +139,7 @@
 <div class="viewcode-block" id="get_heasarc_table_as_pandas">
 <a class="viewcode-back" href="../../../api/threeML.io.html#threeML.io.get_heasarc_table_as_pandas.get_heasarc_table_as_pandas">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_heasarc_table_as_pandas</span><span class="p">(</span><span class="n">heasarc_table_name</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cache_time_days</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Obtain a a VO table from the HEASARC archives and return it as a pandas</span>
+<span class="w">    </span><span class="sd">"""Obtain a a VO table from the HEASARC archives and return it as a pandas</span>
 <span class="sd">    table indexed by object/trigger names. The heasarc_table_name values are</span>
 <span class="sd">    the ones referenced at:</span>
 
@@ -154,7 +154,7 @@
 <span class="sd">    :param update: force web read of the table and update cache</span>
 <span class="sd">    :param cache_time_days: number of days to hold the current cache</span>
 <span class="sd">    :return: pandas DataFrame with results and astropy table</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="c1"># make sure the table is a string</span>
 
@@ -162,23 +162,23 @@
 
     <span class="c1"># point to the cache directory and create it if it is not existing</span>
 
-    <span class="n">cache_directory</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;~/.threeML/.cache&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span>
+    <span class="n">cache_directory</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">"~/.threeML/.cache"</span><span class="p">)</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span>
 
     <span class="n">if_directory_not_existing_then_make</span><span class="p">(</span><span class="n">cache_directory</span><span class="p">)</span>
 
-    <span class="n">cache_file</span> <span class="o">=</span> <span class="n">cache_directory</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">heasarc_table_name</span><span class="si">}</span><span class="s2">_cache.yml&quot;</span>
+    <span class="n">cache_file</span> <span class="o">=</span> <span class="n">cache_directory</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">heasarc_table_name</span><span class="si">}</span><span class="s2">_cache.yml"</span>
 
     <span class="n">cache_file_sanatized</span> <span class="o">=</span> <span class="n">sanitize_filename</span><span class="p">(</span><span class="n">cache_file</span><span class="p">)</span>
 
     <span class="c1"># build and sanitize the votable XML file that will be saved</span>
 
-    <span class="n">file_name</span> <span class="o">=</span> <span class="n">cache_directory</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">heasarc_table_name</span><span class="si">}</span><span class="s2">_votable.xml&quot;</span>
+    <span class="n">file_name</span> <span class="o">=</span> <span class="n">cache_directory</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">heasarc_table_name</span><span class="si">}</span><span class="s2">_votable.xml"</span>
 
     <span class="n">file_name_sanatized</span> <span class="o">=</span> <span class="n">sanitize_filename</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">abspath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">file_existing_and_readable</span><span class="p">(</span><span class="n">cache_file_sanatized</span><span class="p">):</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-            <span class="s2">&quot;The cache for </span><span class="si">%s</span><span class="s2"> does not yet exist. We will try to build it</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">"The cache for </span><span class="si">%s</span><span class="s2"> does not yet exist. We will try to build it</span><span class="se">\n</span><span class="s2">"</span>
             <span class="o">%</span> <span class="n">heasarc_table_name</span>
         <span class="p">)</span>
 
@@ -192,16 +192,16 @@
             <span class="n">yaml_cache</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">cache</span><span class="p">,</span> <span class="n">Loader</span><span class="o">=</span><span class="n">yaml</span><span class="o">.</span><span class="n">SafeLoader</span><span class="p">)</span>
 
             <span class="n">cached_time</span> <span class="o">=</span> <span class="n">astro_time</span><span class="o">.</span><span class="n">Time</span><span class="p">(</span>
-                <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="o">*</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">yaml_cache</span><span class="p">[</span><span class="s2">&quot;last save&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">))))</span>
+                <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="o">*</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">yaml_cache</span><span class="p">[</span><span class="s2">"last save"</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"-"</span><span class="p">))))</span>
             <span class="p">)</span>
 
             <span class="c1"># the second line how many seconds to keep the file around</span>
 
-            <span class="n">cache_valid_for</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">yaml_cache</span><span class="p">[</span><span class="s2">&quot;cache time&quot;</span><span class="p">])</span>
+            <span class="n">cache_valid_for</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">yaml_cache</span><span class="p">[</span><span class="s2">"cache time"</span><span class="p">])</span>
 
             <span class="c1"># now we will compare it to the current time in UTC</span>
             <span class="n">current_time</span> <span class="o">=</span> <span class="n">astro_time</span><span class="o">.</span><span class="n">Time</span><span class="p">(</span>
-                <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">),</span> <span class="n">scale</span><span class="o">=</span><span class="s2">&quot;utc&quot;</span>
+                <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">),</span> <span class="n">scale</span><span class="o">=</span><span class="s2">"utc"</span>
             <span class="p">)</span>
 
             <span class="n">delta_time</span> <span class="o">=</span> <span class="n">current_time</span> <span class="o">-</span> <span class="n">cached_time</span>
@@ -217,36 +217,36 @@
                 <span class="n">write_cache</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="k">if</span> <span class="n">write_cache</span> <span class="ow">or</span> <span class="n">update</span><span class="p">:</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Building cache for </span><span class="si">{</span><span class="n">heasarc_table_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Building cache for </span><span class="si">{</span><span class="n">heasarc_table_name</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
         <span class="c1"># go to HEASARC and get the requested table</span>
         <span class="n">heasarc_url</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="s2">&quot;https://heasarc.gsfc.nasa.gov/cgi-bin/W3Browse/getvotable.pl?name=</span><span class="si">%s</span><span class="s2">&quot;</span>
+            <span class="s2">"https://heasarc.gsfc.nasa.gov/cgi-bin/W3Browse/getvotable.pl?name=</span><span class="si">%s</span><span class="s2">"</span>
             <span class="o">%</span> <span class="n">heasarc_table_name</span>
         <span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Trying to urlretrieve </span><span class="si">{</span><span class="n">heasarc_url</span><span class="si">}</span><span class="s2"> and safe it to &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">file_name_sanatized</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"Trying to urlretrieve </span><span class="si">{</span><span class="n">heasarc_url</span><span class="si">}</span><span class="s2"> and safe it to "</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">file_name_sanatized</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
             <span class="k">with</span> <span class="n">requests</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
                 <span class="n">retries</span> <span class="o">=</span> <span class="n">Retry</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">backoff_factor</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
-                <span class="n">session</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="s2">&quot;https://&quot;</span><span class="p">,</span> <span class="n">HTTPAdapter</span><span class="p">(</span><span class="n">max_retries</span><span class="o">=</span><span class="n">retries</span><span class="p">))</span>
-                <span class="n">session</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="s2">&quot;http://&quot;</span><span class="p">,</span> <span class="n">HTTPAdapter</span><span class="p">(</span><span class="n">max_retries</span><span class="o">=</span><span class="n">retries</span><span class="p">))</span>
+                <span class="n">session</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="s2">"https://"</span><span class="p">,</span> <span class="n">HTTPAdapter</span><span class="p">(</span><span class="n">max_retries</span><span class="o">=</span><span class="n">retries</span><span class="p">))</span>
+                <span class="n">session</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="s2">"http://"</span><span class="p">,</span> <span class="n">HTTPAdapter</span><span class="p">(</span><span class="n">max_retries</span><span class="o">=</span><span class="n">retries</span><span class="p">))</span>
 
                 <span class="k">with</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">heasarc_url</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span> <span class="k">as</span> <span class="n">response</span><span class="p">:</span>
                     <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
 
-                    <span class="k">with</span> <span class="n">file_name_sanatized</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="k">with</span> <span class="n">file_name_sanatized</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">"wb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                         <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">iter_content</span><span class="p">(</span><span class="n">chunk_size</span><span class="o">=</span><span class="mi">8</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">):</span>
                             <span class="k">if</span> <span class="n">chunk</span><span class="p">:</span>
                                 <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
 
         <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">RequestException</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;The cache is outdated but the internet cannot be reached. &quot;</span>
-                <span class="s2">&quot;Please check your connection&quot;</span>
+                <span class="s2">"The cache is outdated but the internet cannot be reached. "</span>
+                <span class="s2">"Please check your connection"</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Make sure the lines are interpreted as Unicode (otherwise some characters</span>
@@ -259,34 +259,34 @@
                 <span class="n">new_lines</span> <span class="o">=</span> <span class="n">table_file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
 
             <span class="c1"># now write the decoded lines back to the file</span>
-            <span class="k">with</span> <span class="n">codecs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">file_name_sanatized</span><span class="p">,</span> <span class="s2">&quot;w+&quot;</span><span class="p">,</span> <span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">table_file</span><span class="p">:</span>
-                <span class="n">table_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">new_lines</span><span class="p">))</span>
+            <span class="k">with</span> <span class="n">codecs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">file_name_sanatized</span><span class="p">,</span> <span class="s2">"w+"</span><span class="p">,</span> <span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">table_file</span><span class="p">:</span>
+                <span class="n">table_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">new_lines</span><span class="p">))</span>
 
             <span class="c1">#        save the time that we go this table</span>
 
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">cache_file_sanatized</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">cache</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">cache_file_sanatized</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">cache</span><span class="p">:</span>
                 <span class="n">yaml_dict</span> <span class="o">=</span> <span class="p">{}</span>
 
                 <span class="n">current_time</span> <span class="o">=</span> <span class="n">astro_time</span><span class="o">.</span><span class="n">Time</span><span class="p">(</span>
-                    <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">),</span> <span class="n">scale</span><span class="o">=</span><span class="s2">&quot;utc&quot;</span>
+                    <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">),</span> <span class="n">scale</span><span class="o">=</span><span class="s2">"utc"</span>
                 <span class="p">)</span>
 
-                <span class="n">yaml_dict</span><span class="p">[</span><span class="s2">&quot;last save&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">current_time</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span>
-                    <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">-%H-%M-%S&quot;</span>
+                <span class="n">yaml_dict</span><span class="p">[</span><span class="s2">"last save"</span><span class="p">]</span> <span class="o">=</span> <span class="n">current_time</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span>
+                    <span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2">-%H-%M-%S"</span>
                 <span class="p">)</span>
 
                 <span class="n">seconds_in_day</span> <span class="o">=</span> <span class="mf">86400.0</span>
 
-                <span class="n">yaml_dict</span><span class="p">[</span><span class="s2">&quot;cache time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">seconds_in_day</span> <span class="o">*</span> <span class="n">cache_time_days</span>
+                <span class="n">yaml_dict</span><span class="p">[</span><span class="s2">"cache time"</span><span class="p">]</span> <span class="o">=</span> <span class="n">seconds_in_day</span> <span class="o">*</span> <span class="n">cache_time_days</span>
 
                 <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">yaml_dict</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span> <span class="n">default_flow_style</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="c1"># use astropy routines to read the votable</span>
     <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">"ignore"</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">file_existing_and_readable</span><span class="p">(</span>
             <span class="n">file_name_sanatized</span>
-        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">file_name_sanatized</span><span class="si">}</span><span class="s2"> does not exists. Likely the download failed&quot;</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">file_name_sanatized</span><span class="si">}</span><span class="s2"> does not exists. Likely the download failed"</span>
         <span class="n">vo_table</span> <span class="o">=</span> <span class="n">votable</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">file_name_sanatized</span><span class="p">)</span>
 
     <span class="n">table</span> <span class="o">=</span> <span class="n">vo_table</span><span class="o">.</span><span class="n">get_first_table</span><span class="p">()</span><span class="o">.</span><span class="n">to_table</span><span class="p">(</span><span class="n">use_names_over_ids</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -297,14 +297,14 @@
 
         <span class="c1"># create a pandas table indexed by name</span>
 
-        <span class="n">pandas_df</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">()</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
+        <span class="n">pandas_df</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">()</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">"name"</span><span class="p">)</span>
 
         <span class="k">del</span> <span class="n">vo_table</span>
 
         <span class="k">return</span> <span class="n">pandas_df</span>
 
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Your search did not return any results&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"Your search did not return any results"</span><span class="p">)</span>
 
         <span class="k">del</span> <span class="n">vo_table</span>
 

@@ -124,7 +124,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.plotting.step_plot</span><span class="w"> </span><span class="kn">import</span> <span class="n">step_plot</span>
 
 <span class="k">if</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">use_threeml_style</span><span class="p">:</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">get_path_of_data_file</span><span class="p">(</span><span class="s2">&quot;threeml.mplstyle&quot;</span><span class="p">)))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">get_path_of_data_file</span><span class="p">(</span><span class="s2">"threeml.mplstyle"</span><span class="p">)))</span>
 
 
 <span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -134,39 +134,39 @@
 <a class="viewcode-back" href="../../../../api/threeML.io.plotting.html#threeML.io.plotting.data_residual_plot.ResidualPlot">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ResidualPlot</span><span class="p">:</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A class that makes data/residual plots.</span>
+<span class="w">        </span><span class="sd">"""A class that makes data/residual plots.</span>
 
 <span class="sd">        :param show_residuals: to show the residuals</span>
 <span class="sd">        :param ratio_residuals: to use ratios instead of sigma</span>
 <span class="sd">        :param model_subplot: and axis or list of axes to plot to rather</span>
 <span class="sd">            than create a new one</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_ratio_residuals</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_show_residuals</span> <span class="o">=</span> <span class="kc">True</span>
 
-        <span class="k">if</span> <span class="s2">&quot;show_residuals&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_show_residuals</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;show_residuals&quot;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="s2">"show_residuals"</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_show_residuals</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"show_residuals"</span><span class="p">))</span>
 
-        <span class="k">if</span> <span class="s2">&quot;ratio_residuals&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_ratio_residuals</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;ratio_residuals&quot;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="s2">"ratio_residuals"</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ratio_residuals</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"ratio_residuals"</span><span class="p">))</span>
 
         <span class="c1"># this lets you overplot other fits</span>
 
-        <span class="k">if</span> <span class="s2">&quot;model_subplot&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-            <span class="n">model_subplot</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;model_subplot&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">"model_subplot"</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">model_subplot</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"model_subplot"</span><span class="p">)</span>
 
             <span class="c1"># turn on or off residuals</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_show_residuals</span><span class="p">:</span>
                 <span class="k">assert</span> <span class="p">(</span>
                     <span class="nb">type</span><span class="p">(</span><span class="n">model_subplot</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">list</span>
-                <span class="p">),</span> <span class="s2">&quot;you must supply a list of axes to plot to residual&quot;</span>
+                <span class="p">),</span> <span class="s2">"you must supply a list of axes to plot to residual"</span>
 
                 <span class="k">assert</span> <span class="p">(</span>
                     <span class="nb">len</span><span class="p">(</span><span class="n">model_subplot</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
-                <span class="p">),</span> <span class="s2">&quot;you have requested to overplot a model with residuals, but only &quot;</span>
-                <span class="s2">&quot;provided one axis to plot&quot;</span>
+                <span class="p">),</span> <span class="s2">"you have requested to overplot a model with residuals, but only "</span>
+                <span class="s2">"provided one axis to plot"</span>
 
                 <span class="bp">self</span><span class="o">.</span><span class="n">_data_axis</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_residual_axis</span> <span class="o">=</span> <span class="n">model_subplot</span>
 
@@ -197,7 +197,7 @@
                         <span class="bp">self</span><span class="o">.</span><span class="n">_residual_axis</span><span class="p">,</span>
                     <span class="p">),</span>
                 <span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
-                    <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">gridspec_kw</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;height_ratios&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]},</span> <span class="o">**</span><span class="n">kwargs</span>
+                    <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">gridspec_kw</span><span class="o">=</span><span class="p">{</span><span class="s2">"height_ratios"</span><span class="p">:</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]},</span> <span class="o">**</span><span class="n">kwargs</span>
                 <span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
@@ -213,30 +213,30 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">figure</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 
 <span class="sd">        :return: the figure instance</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fig</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">data_axis</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 
 <span class="sd">        :return: the top or data axis</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_axis</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">residual_axis</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 
 <span class="sd">        :return: the bottom or residual axis</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_show_residuals</span><span class="p">,</span> <span class="s2">&quot;this plot has no residual axis&quot;</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_show_residuals</span><span class="p">,</span> <span class="s2">"this plot has no residual axis"</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_residual_axis</span>
 
@@ -251,7 +251,7 @@
 <div class="viewcode-block" id="ResidualPlot.add_model_step">
 <a class="viewcode-back" href="../../../../api/threeML.io.plotting.html#threeML.io.plotting.data_residual_plot.ResidualPlot.add_model_step">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_model_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">xwidth</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a model but use discontinuous steps for the plotting.</span>
+<span class="w">        </span><span class="sd">"""Add a model but use discontinuous steps for the plotting.</span>
 
 <span class="sd">        :param xmin: the low end boundaries</span>
 <span class="sd">        :param xmax: the high end boundaries</span>
@@ -260,7 +260,7 @@
 <span class="sd">        :param label: the label of the model :param **kwargs: any kwargs</span>
 <span class="sd">            passed to plot</span>
 <span class="sd">        :return: None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">step_plot</span><span class="p">(</span>
             <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">))),</span>
@@ -274,7 +274,7 @@
 <div class="viewcode-block" id="ResidualPlot.add_model">
 <a class="viewcode-back" href="../../../../api/threeML.io.plotting.html#threeML.io.plotting.data_residual_plot.ResidualPlot.add_model">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a model and interpolate it across the energy span for the</span>
+<span class="w">        </span><span class="sd">"""Add a model and interpolate it across the energy span for the</span>
 <span class="sd">        plotting.</span>
 
 <span class="sd">        :param x: the evaluation energies</span>
@@ -282,7 +282,7 @@
 <span class="sd">        :param label: the label of the model :param **kwargs: any kwargs</span>
 <span class="sd">            passed to plot</span>
 <span class="sd">        :return: None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data_axis</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
@@ -300,7 +300,7 @@
         <span class="n">show_data</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add the data for the this model.</span>
+<span class="w">        </span><span class="sd">"""Add the data for the this model.</span>
 
 <span class="sd">        :param x: energy of the data</span>
 <span class="sd">        :param y: value of the data</span>
@@ -310,7 +310,7 @@
 <span class="sd">        :param yerr: the errorbars of the data :param **kwargs: any</span>
 <span class="sd">            kwargs passed to plot</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># if we want to show the data</span>
 
@@ -329,7 +329,7 @@
 
             <span class="n">residuals</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">_residual_axis</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_residual_axis</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"k"</span><span class="p">)</span>
 
             <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">residuals</span><span class="p">)</span>
 
@@ -342,14 +342,14 @@
 <a class="viewcode-back" href="../../../../api/threeML.io.plotting.html#threeML.io.plotting.data_residual_plot.ResidualPlot.finalize">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">finalize</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span>
-        <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">,</span>
-        <span class="n">xscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span>
-        <span class="n">yscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span>
+        <span class="n">xlabel</span><span class="o">=</span><span class="s2">"x"</span><span class="p">,</span>
+        <span class="n">ylabel</span><span class="o">=</span><span class="s2">"y"</span><span class="p">,</span>
+        <span class="n">xscale</span><span class="o">=</span><span class="s2">"log"</span><span class="p">,</span>
+        <span class="n">yscale</span><span class="o">=</span><span class="s2">"log"</span><span class="p">,</span>
         <span class="n">show_legend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">invert_y</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 
 <span class="sd">        :param xlabel:</span>
 <span class="sd">        :param ylabel:</span>
@@ -357,7 +357,7 @@
 <span class="sd">        :param yscale:</span>
 <span class="sd">        :param show_legend:</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="n">show_legend</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_data_axis</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span>
@@ -368,8 +368,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_data_axis</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_data_axis</span><span class="o">.</span><span class="n">set_xscale</span><span class="p">(</span><span class="n">xscale</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">yscale</span> <span class="o">==</span> <span class="s2">&quot;log&quot;</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_data_axis</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="n">yscale</span><span class="p">,</span> <span class="n">nonpositive</span><span class="o">=</span><span class="s2">&quot;clip&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">yscale</span> <span class="o">==</span> <span class="s2">"log"</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data_axis</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="n">yscale</span><span class="p">,</span> <span class="n">nonpositive</span><span class="o">=</span><span class="s2">"clip"</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_data_axis</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="n">yscale</span><span class="p">)</span>
@@ -377,19 +377,19 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_show_residuals</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_residual_axis</span><span class="o">.</span><span class="n">set_xscale</span><span class="p">(</span><span class="n">xscale</span><span class="p">)</span>
 
-            <span class="n">locator</span> <span class="o">=</span> <span class="n">MaxNLocator</span><span class="p">(</span><span class="n">prune</span><span class="o">=</span><span class="s2">&quot;upper&quot;</span><span class="p">,</span> <span class="n">nbins</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+            <span class="n">locator</span> <span class="o">=</span> <span class="n">MaxNLocator</span><span class="p">(</span><span class="n">prune</span><span class="o">=</span><span class="s2">"upper"</span><span class="p">,</span> <span class="n">nbins</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_residual_axis</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">locator</span><span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_residual_axis</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ratio_residuals</span><span class="p">:</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                    <span class="s2">&quot;Residuals plotted as ratios: beware that they are not statistical &quot;</span>
-                    <span class="s2">&quot;quantites, and can not be used to asses fit quality&quot;</span>
+                    <span class="s2">"Residuals plotted as ratios: beware that they are not statistical "</span>
+                    <span class="s2">"quantites, and can not be used to asses fit quality"</span>
                 <span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_residual_axis</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Residuals</span><span class="se">\n</span><span class="s2">(fraction of model)&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_residual_axis</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Residuals</span><span class="se">\n</span><span class="s2">(fraction of model)"</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_residual_axis</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Residuals</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;($\sigma$)&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_residual_axis</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Residuals</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">"($\sigma$)"</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_data_axis</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">)</span>

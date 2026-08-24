@@ -114,7 +114,7 @@
   <h1>Source code for threeML.utils.fitted_objects.fitted_point_sources</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 
-<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;grburgess&quot;</span>
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">"grburgess"</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">collections</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">packaging.version</span><span class="w"> </span><span class="kn">import</span> <span class="n">Version</span>
@@ -134,7 +134,7 @@
 <span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 <span class="n">np_version</span> <span class="o">=</span> <span class="n">Version</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span>
-<span class="k">if</span> <span class="n">np_version</span> <span class="o">&lt;</span> <span class="n">Version</span><span class="p">(</span><span class="s2">&quot;2.0.0&quot;</span><span class="p">):</span>
+<span class="k">if</span> <span class="n">np_version</span> <span class="o">&lt;</span> <span class="n">Version</span><span class="p">(</span><span class="s2">"2.0.0"</span><span class="p">):</span>
     <span class="n">trapezoid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span>
 <span class="k">else</span><span class="p">:</span>
     <span class="n">trapezoid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapezoid</span>
@@ -163,14 +163,14 @@
 <a class="viewcode-back" href="../../../../api/threeML.utils.fitted_objects.html#threeML.utils.fitted_objects.fitted_point_sources.FluxConversion">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">FluxConversion</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flux_unit</span><span class="p">,</span> <span class="n">energy_unit</span><span class="p">,</span> <span class="n">flux_model</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        A generic flux conversion class to handle transforming spectra between different</span>
 <span class="sd">        flux units</span>
 
 <span class="sd">        :param flux_unit: an astropy unit string for flux</span>
 <span class="sd">        :param energy_unit: an astropy unit string for energy</span>
 <span class="sd">        :param flux_model: the base flux model to use</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_flux_unit</span> <span class="o">=</span> <span class="n">flux_unit</span>
 
@@ -187,9 +187,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_conversion</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_determine_quantity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Determine the type of flux quantity based on the flux unit provided.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># scroll thru conversions until one works</span>
 
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flux_lookup</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -203,14 +203,14 @@
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flux_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">InvalidUnitError</span><span class="p">(</span>
-                <span class="s2">&quot;The flux_unit provided is not a valid flux quantity&quot;</span>
+                <span class="s2">"The flux_unit provided is not a valid flux quantity"</span>
             <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_calculate_conversion</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Calculate the conversion factor needed to convert the model to the desired flux</span>
 <span class="sd">        unit.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># convert the model to the right units so that we can</span>
         <span class="c1"># convert back later for speed</span>
 
@@ -235,21 +235,21 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        The model converted.</span>
 
 <span class="sd">        :return: a model in the proper units</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_builder</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_flux_type</span><span class="p">]</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">conversion_factor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The conversion factor needed to finalize the model into the proper</span>
+<span class="w">        </span><span class="sd">"""The conversion factor needed to finalize the model into the proper</span>
 <span class="sd">        units after computations.</span>
 
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conversion</span></div>
 
@@ -259,32 +259,32 @@
 <a class="viewcode-back" href="../../../../api/threeML.utils.fitted_objects.html#threeML.utils.fitted_objects.fitted_point_sources.DifferentialFluxConversion">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DifferentialFluxConversion</span><span class="p">(</span><span class="n">FluxConversion</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flux_unit</span><span class="p">,</span> <span class="n">energy_unit</span><span class="p">,</span> <span class="n">flux_model</span><span class="p">,</span> <span class="n">test_model</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Handles differential flux conversion and model building for point</span>
+<span class="w">        </span><span class="sd">"""Handles differential flux conversion and model building for point</span>
 <span class="sd">        sources.</span>
 
 <span class="sd">        :param flux_unit: an astropy unit string for differential flux</span>
 <span class="sd">        :param energy_unit: an astropy unit string for energy</span>
 <span class="sd">        :param flux_model: the base flux model to use</span>
 <span class="sd">        :param test_model: model to test the flux on</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_flux_lookup</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;photon_flux&quot;</span><span class="p">:</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">),</span>
-            <span class="s2">&quot;energy_flux&quot;</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">erg</span> <span class="o">/</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">),</span>
-            <span class="s2">&quot;nufnu_flux&quot;</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">erg</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">),</span>
+            <span class="s2">"photon_flux"</span><span class="p">:</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">),</span>
+            <span class="s2">"energy_flux"</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">erg</span> <span class="o">/</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">),</span>
+            <span class="s2">"nufnu_flux"</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">erg</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">),</span>
         <span class="p">}</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_model_converter</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;photon_flux&quot;</span><span class="p">:</span> <span class="n">test_model</span><span class="p">,</span>
-            <span class="s2">&quot;energy_flux&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="n">test_model</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
-            <span class="s2">&quot;nufnu_flux&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="n">test_model</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
+            <span class="s2">"photon_flux"</span><span class="p">:</span> <span class="n">test_model</span><span class="p">,</span>
+            <span class="s2">"energy_flux"</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="n">test_model</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
+            <span class="s2">"nufnu_flux"</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="n">test_model</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
         <span class="p">}</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_model_builder</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;photon_flux&quot;</span><span class="p">:</span> <span class="n">flux_model</span><span class="p">,</span>
-            <span class="s2">&quot;energy_flux&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">param_specification</span><span class="p">:</span> <span class="n">x</span>
+            <span class="s2">"photon_flux"</span><span class="p">:</span> <span class="n">flux_model</span><span class="p">,</span>
+            <span class="s2">"energy_flux"</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">param_specification</span><span class="p">:</span> <span class="n">x</span>
             <span class="o">*</span> <span class="n">flux_model</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">param_specification</span><span class="p">),</span>
-            <span class="s2">&quot;nufnu_flux&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">param_specification</span><span class="p">:</span> <span class="n">x</span>
+            <span class="s2">"nufnu_flux"</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">param_specification</span><span class="p">:</span> <span class="n">x</span>
             <span class="o">*</span> <span class="n">x</span>
             <span class="o">*</span> <span class="n">flux_model</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">param_specification</span><span class="p">),</span>
         <span class="p">}</span>
@@ -314,24 +314,24 @@
 <a class="viewcode-back" href="../../../../api/threeML.utils.fitted_objects.html#threeML.utils.fitted_objects.fitted_point_sources.IntegralFluxConversion">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">IntegralFluxConversion</span><span class="p">(</span><span class="n">FluxConversion</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flux_unit</span><span class="p">,</span> <span class="n">energy_unit</span><span class="p">,</span> <span class="n">flux_model</span><span class="p">,</span> <span class="n">test_model</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Handles integral flux conversion and model building for point</span>
+<span class="w">        </span><span class="sd">"""Handles integral flux conversion and model building for point</span>
 <span class="sd">        sources.</span>
 
 <span class="sd">        :param flux_unit: an astropy unit string for integral flux</span>
 <span class="sd">        :param energy_unit: an astropy unit string for energy</span>
 <span class="sd">        :param flux_model: the base flux model to use</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_flux_lookup</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;photon_flux&quot;</span><span class="p">:</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">),</span>
-            <span class="s2">&quot;energy_flux&quot;</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">erg</span> <span class="o">/</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">),</span>
-            <span class="s2">&quot;nufnu_flux&quot;</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">erg</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">),</span>
+            <span class="s2">"photon_flux"</span><span class="p">:</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">),</span>
+            <span class="s2">"energy_flux"</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">erg</span> <span class="o">/</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">),</span>
+            <span class="s2">"nufnu_flux"</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">erg</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">),</span>
         <span class="p">}</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_model_converter</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;photon_flux&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="n">test_model</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
-            <span class="s2">&quot;energy_flux&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="n">test_model</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
-            <span class="s2">&quot;nufnu_flux&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">**</span><span class="mi">3</span> <span class="o">*</span> <span class="n">test_model</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
+            <span class="s2">"photon_flux"</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="n">test_model</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
+            <span class="s2">"energy_flux"</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="n">test_model</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
+            <span class="s2">"nufnu_flux"</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">**</span><span class="mi">3</span> <span class="o">*</span> <span class="n">test_model</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
         <span class="p">}</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">photon_integrand</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">param_specification</span><span class="p">):</span>
@@ -345,31 +345,31 @@
 
         <span class="k">if</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">point_source</span><span class="o">.</span><span class="n">integrate_flux_method</span> <span class="o">==</span> <span class="n">IntegrateMethod</span><span class="o">.</span><span class="n">trapz</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_model_builder</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="s2">&quot;photon_flux&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">e1</span><span class="p">,</span> <span class="n">e2</span><span class="p">,</span> <span class="o">**</span><span class="n">param_specification</span><span class="p">:</span> <span class="n">trap_integral</span><span class="p">(</span>
+                <span class="s2">"photon_flux"</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">e1</span><span class="p">,</span> <span class="n">e2</span><span class="p">,</span> <span class="o">**</span><span class="n">param_specification</span><span class="p">:</span> <span class="n">trap_integral</span><span class="p">(</span>
                     <span class="n">photon_integrand</span><span class="p">,</span> <span class="n">e1</span><span class="p">,</span> <span class="n">e2</span><span class="p">,</span> <span class="o">**</span><span class="n">param_specification</span>
                 <span class="p">),</span>
-                <span class="s2">&quot;energy_flux&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">e1</span><span class="p">,</span> <span class="n">e2</span><span class="p">,</span> <span class="o">**</span><span class="n">param_specification</span><span class="p">:</span> <span class="n">trap_integral</span><span class="p">(</span>
+                <span class="s2">"energy_flux"</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">e1</span><span class="p">,</span> <span class="n">e2</span><span class="p">,</span> <span class="o">**</span><span class="n">param_specification</span><span class="p">:</span> <span class="n">trap_integral</span><span class="p">(</span>
                     <span class="n">energy_integrand</span><span class="p">,</span> <span class="n">e1</span><span class="p">,</span> <span class="n">e2</span><span class="p">,</span> <span class="o">**</span><span class="n">param_specification</span>
                 <span class="p">),</span>
-                <span class="s2">&quot;nufnu_flux&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">e1</span><span class="p">,</span> <span class="n">e2</span><span class="p">,</span> <span class="o">**</span><span class="n">param_specification</span><span class="p">:</span> <span class="n">trap_integral</span><span class="p">(</span>
+                <span class="s2">"nufnu_flux"</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">e1</span><span class="p">,</span> <span class="n">e2</span><span class="p">,</span> <span class="o">**</span><span class="n">param_specification</span><span class="p">:</span> <span class="n">trap_integral</span><span class="p">(</span>
                     <span class="n">nufnu_integrand</span><span class="p">,</span> <span class="n">e1</span><span class="p">,</span> <span class="n">e2</span><span class="p">,</span> <span class="o">**</span><span class="n">param_specification</span>
                 <span class="p">),</span>
             <span class="p">}</span>
         <span class="k">elif</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">point_source</span><span class="o">.</span><span class="n">integrate_flux_method</span> <span class="o">==</span> <span class="n">IntegrateMethod</span><span class="o">.</span><span class="n">quad</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_model_builder</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="s2">&quot;photon_flux&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">e1</span><span class="p">,</span> <span class="n">e2</span><span class="p">,</span> <span class="o">**</span><span class="n">param_specification</span><span class="p">:</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span>
+                <span class="s2">"photon_flux"</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">e1</span><span class="p">,</span> <span class="n">e2</span><span class="p">,</span> <span class="o">**</span><span class="n">param_specification</span><span class="p">:</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span>
                     <span class="n">photon_integrand</span><span class="p">,</span> <span class="n">e1</span><span class="p">,</span> <span class="n">e2</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">param_specification</span><span class="p">)</span>
                 <span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
-                <span class="s2">&quot;energy_flux&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">e1</span><span class="p">,</span> <span class="n">e2</span><span class="p">,</span> <span class="o">**</span><span class="n">param_specification</span><span class="p">:</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span>
+                <span class="s2">"energy_flux"</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">e1</span><span class="p">,</span> <span class="n">e2</span><span class="p">,</span> <span class="o">**</span><span class="n">param_specification</span><span class="p">:</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span>
                     <span class="n">energy_integrand</span><span class="p">,</span> <span class="n">e1</span><span class="p">,</span> <span class="n">e2</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">param_specification</span><span class="p">)</span>
                 <span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
-                <span class="s2">&quot;nufnu_flux&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">e1</span><span class="p">,</span> <span class="n">e2</span><span class="p">,</span> <span class="o">**</span><span class="n">param_specification</span><span class="p">:</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span>
+                <span class="s2">"nufnu_flux"</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">e1</span><span class="p">,</span> <span class="n">e2</span><span class="p">,</span> <span class="o">**</span><span class="n">param_specification</span><span class="p">:</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span>
                     <span class="n">nufnu_integrand</span><span class="p">,</span> <span class="n">e1</span><span class="p">,</span> <span class="n">e2</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">param_specification</span><span class="p">)</span>
                 <span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
             <span class="p">}</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;This is not a valid integratio method&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"This is not a valid integratio method"</span><span class="p">)</span>
 
             <span class="k">raise</span> <span class="ne">RuntimeError</span>
 
@@ -392,7 +392,7 @@
         <span class="n">component</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">is_differential_flux</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A 3ML fitted point source spectral handler that can be used to extract the</span>
+<span class="w">        </span><span class="sd">"""A 3ML fitted point source spectral handler that can be used to extract the</span>
 <span class="sd">        flux and errors from a 3ML analysis result. This class can handle both</span>
 <span class="sd">        differential and integral fluxes, as well as composite models.</span>
 
@@ -408,7 +408,7 @@
 <span class="sd">            applicable)</span>
 <span class="sd">        :param is_differential_flux: whether to extract differential flux (True) or</span>
 <span class="sd">            integral flux (False)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># first extract the source</span>
 
@@ -423,9 +423,9 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_components</span><span class="p">,</span> <span class="n">one_free</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_solve_for_component_flux</span><span class="p">(</span><span class="n">composite_model</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">one_free</span><span class="p">:</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                    <span class="s2">&quot;You have provided a composite function, with one composing &quot;</span>
-                    <span class="s2">&quot;function only having fixed parameters - we cannot split that into &quot;</span>
-                    <span class="s2">&quot;components and will only calculate the total&quot;</span>
+                    <span class="s2">"You have provided a composite function, with one composing "</span>
+                    <span class="s2">"function only having fixed parameters - we cannot split that into "</span>
+                    <span class="s2">"components and will only calculate the total"</span>
                 <span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_components</span> <span class="o">=</span> <span class="kc">None</span>
                 <span class="n">component</span> <span class="o">=</span> <span class="kc">None</span>
@@ -440,10 +440,10 @@
         <span class="k">if</span> <span class="n">component</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_components</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_components</span><span class="p">[</span><span class="n">component</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
-                    <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_components</span><span class="p">[</span><span class="n">component</span><span class="p">][</span><span class="s2">&quot;function&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">evaluate_at</span>
-                    <span class="n">parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_components</span><span class="p">[</span><span class="n">component</span><span class="p">][</span><span class="s2">&quot;function&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">parameters</span>
-                    <span class="n">test_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_components</span><span class="p">[</span><span class="n">component</span><span class="p">][</span><span class="s2">&quot;function&quot;</span><span class="p">]</span>
-                    <span class="n">parameter_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_components</span><span class="p">[</span><span class="n">component</span><span class="p">][</span><span class="s2">&quot;parameter_names&quot;</span><span class="p">]</span>
+                    <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_components</span><span class="p">[</span><span class="n">component</span><span class="p">][</span><span class="s2">"function"</span><span class="p">]</span><span class="o">.</span><span class="n">evaluate_at</span>
+                    <span class="n">parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_components</span><span class="p">[</span><span class="n">component</span><span class="p">][</span><span class="s2">"function"</span><span class="p">]</span><span class="o">.</span><span class="n">parameters</span>
+                    <span class="n">test_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_components</span><span class="p">[</span><span class="n">component</span><span class="p">][</span><span class="s2">"function"</span><span class="p">]</span>
+                    <span class="n">parameter_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_components</span><span class="p">[</span><span class="n">component</span><span class="p">][</span><span class="s2">"parameter_names"</span><span class="p">]</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_components</span><span class="p">[</span><span class="n">component</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">evaluate_at</span>
                     <span class="n">parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_components</span><span class="p">[</span><span class="n">component</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">parameters</span>
@@ -455,7 +455,7 @@
                         <span class="p">)</span>
                     <span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">NotCompositeModelError</span><span class="p">(</span><span class="s2">&quot;This is not a composite model!&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">NotCompositeModelError</span><span class="p">(</span><span class="s2">"This is not a composite model!"</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># TODO: genealize this to handle components not named main as well</span>
@@ -477,11 +477,11 @@
         <span class="c1"># energy units</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">energy_range</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
-            <span class="n">energy_range</span> <span class="o">=</span> <span class="p">(</span><span class="n">energy_range</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">&quot;keV&quot;</span><span class="p">,</span> <span class="n">equivalencies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">spectral</span><span class="p">())</span>
+            <span class="n">energy_range</span> <span class="o">=</span> <span class="p">(</span><span class="n">energy_range</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">"keV"</span><span class="p">,</span> <span class="n">equivalencies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">spectral</span><span class="p">())</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="n">energy_range</span> <span class="o">=</span> <span class="p">(</span><span class="n">energy_range</span> <span class="o">*</span> <span class="n">energy_unit</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span>
-                <span class="s2">&quot;keV&quot;</span><span class="p">,</span> <span class="n">equivalencies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">spectral</span><span class="p">()</span>
+                <span class="s2">"keV"</span><span class="p">,</span> <span class="n">equivalencies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">spectral</span><span class="p">()</span>
             <span class="p">)</span>
 
         <span class="n">energy_unit</span> <span class="o">=</span> <span class="n">energy_range</span><span class="o">.</span><span class="n">unit</span>
@@ -552,30 +552,30 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">components</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 
 <span class="sd">        :return: the components of the function</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_components</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Transform the values into the proper flux unit and apply the units</span>
+<span class="w">        </span><span class="sd">"""Transform the values into the proper flux unit and apply the units</span>
 <span class="sd">        :param value:</span>
 
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conversion</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flux_unit</span> <span class="o">*</span> <span class="n">value</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_solve_for_component_flux</span><span class="p">(</span><span class="n">composite_model</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Now that we are using RandomVariates, we only need to compute the</span>
+<span class="w">        </span><span class="sd">"""Now that we are using RandomVariates, we only need to compute the</span>
 <span class="sd">        function directly to see the error in a component.</span>
 
 <span class="sd">        :param composite_model: an astromodels composite model</span>
 <span class="sd">        :return: dict of component properties</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># TODO: need to check if there are free parameters in every component of the</span>
         <span class="c1"># composite model. If not the _build_propagated_function will not work.</span>
@@ -592,7 +592,7 @@
                 <span class="k">for</span> <span class="n">suffix</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span>
                     <span class="mi">1</span><span class="p">,</span> <span class="n">num</span> <span class="o">+</span> <span class="mi">1</span>
                 <span class="p">):</span>  <span class="c1"># suffix starts at 1 and increases by 1 each time</span>
-                    <span class="n">names</span><span class="p">[</span><span class="n">names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">s</span><span class="p">)]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">_n</span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+                    <span class="n">names</span><span class="p">[</span><span class="n">names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">s</span><span class="p">)]</span> <span class="o">=</span> <span class="s2">"</span><span class="si">%s</span><span class="s2">_n</span><span class="si">%i</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span>
                         <span class="n">s</span><span class="p">,</span>
                         <span class="n">suffix</span><span class="p">,</span>
                     <span class="p">)</span>  <span class="c1"># replace each appearance of s</span>
@@ -603,11 +603,11 @@
             <span class="c1"># extract the parameter names using the static_name property</span>
             <span class="c1"># because this is what the children will use in evaluate_at</span>
 
-            <span class="n">tmp_dict</span><span class="p">[</span><span class="s2">&quot;parameter_names&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">tmp_dict</span><span class="p">[</span><span class="s2">"parameter_names"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="n">p</span><span class="o">.</span><span class="n">static_name</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">function</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
             <span class="p">]</span>
 
-            <span class="n">tmp_dict</span><span class="p">[</span><span class="s2">&quot;function&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">function</span>
+            <span class="n">tmp_dict</span><span class="p">[</span><span class="s2">"function"</span><span class="p">]</span> <span class="o">=</span> <span class="n">function</span>
 
             <span class="n">function_dict</span><span class="p">[</span><span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">tmp_dict</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">function</span><span class="o">.</span><span class="n">has_free_parameters</span><span class="p">:</span>

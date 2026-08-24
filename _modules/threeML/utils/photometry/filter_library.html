@@ -131,14 +131,14 @@
 <div class="viewcode-block" id="get_speclite_filter_path">
 <a class="viewcode-back" href="../../../../api/threeML.utils.photometry.html#threeML.utils.photometry.filter_library.get_speclite_filter_path">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_speclite_filter_path</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
-    <span class="k">return</span> <span class="n">get_path_of_data_dir</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;optical_filters&quot;</span></div>
+    <span class="k">return</span> <span class="n">get_path_of_data_dir</span><span class="p">()</span> <span class="o">/</span> <span class="s2">"optical_filters"</span></div>
 
 
 
 <div class="viewcode-block" id="get_speclite_filter_library">
 <a class="viewcode-back" href="../../../../api/threeML.utils.photometry.html#threeML.utils.photometry.filter_library.get_speclite_filter_library">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_speclite_filter_library</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
-    <span class="k">return</span> <span class="n">get_speclite_filter_path</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;filter_library.h5&quot;</span></div>
+    <span class="k">return</span> <span class="n">get_speclite_filter_path</span><span class="p">()</span> <span class="o">/</span> <span class="s2">"filter_library.h5"</span></div>
 
 
 
@@ -157,18 +157,18 @@
 <a class="viewcode-back" href="../../../../api/threeML.utils.photometry.html#threeML.utils.photometry.filter_library.FilterLibrary">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">FilterLibrary</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Holds all the observatories/instruments/filters.</span>
+<span class="w">        </span><span class="sd">"""Holds all the observatories/instruments/filters.</span>
 
 <span class="sd">        :param library_file:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># get the filter file</span>
 
-        <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">get_speclite_filter_library</span><span class="p">(),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">get_speclite_filter_library</span><span class="p">(),</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_instruments</span> <span class="o">=</span> <span class="p">[]</span>
 
-            <span class="k">for</span> <span class="n">observatory</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Loading photometric filters&quot;</span><span class="p">):</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;loading </span><span class="si">{</span><span class="n">observatory</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">observatory</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">desc</span><span class="o">=</span><span class="s2">"Loading photometric filters"</span><span class="p">):</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"loading </span><span class="si">{</span><span class="n">observatory</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
                 <span class="n">sub_dict</span> <span class="o">=</span> <span class="p">{}</span>
                 <span class="k">for</span> <span class="n">instrument</span> <span class="ow">in</span> <span class="n">f</span><span class="p">[</span><span class="n">observatory</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
@@ -179,8 +179,8 @@
 
                 <span class="c1"># attach it to the object</span>
 
-                <span class="k">if</span> <span class="n">observatory</span> <span class="o">==</span> <span class="s2">&quot;2MASS&quot;</span><span class="p">:</span>
-                    <span class="n">xx</span> <span class="o">=</span> <span class="s2">&quot;TwoMass&quot;</span>
+                <span class="k">if</span> <span class="n">observatory</span> <span class="o">==</span> <span class="s2">"2MASS"</span><span class="p">:</span>
+                    <span class="n">xx</span> <span class="o">=</span> <span class="s2">"TwoMass"</span>
 
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">xx</span> <span class="o">=</span> <span class="n">observatory</span>
@@ -203,8 +203,8 @@
                         <span class="n">grp</span> <span class="o">=</span> <span class="n">this_grp</span><span class="p">[</span><span class="n">ff</span><span class="p">]</span>
 
                         <span class="n">this_filter</span> <span class="o">=</span> <span class="n">spec_filter</span><span class="o">.</span><span class="n">FilterResponse</span><span class="p">(</span>
-                            <span class="n">wavelength</span><span class="o">=</span><span class="n">grp</span><span class="p">[</span><span class="s2">&quot;wavelength&quot;</span><span class="p">][()]</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Angstrom</span><span class="p">,</span>
-                            <span class="n">response</span><span class="o">=</span><span class="n">grp</span><span class="p">[</span><span class="s2">&quot;transmission&quot;</span><span class="p">][()],</span>
+                            <span class="n">wavelength</span><span class="o">=</span><span class="n">grp</span><span class="p">[</span><span class="s2">"wavelength"</span><span class="p">][()]</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Angstrom</span><span class="p">,</span>
+                            <span class="n">response</span><span class="o">=</span><span class="n">grp</span><span class="p">[</span><span class="s2">"transmission"</span><span class="p">][()],</span>
                             <span class="n">meta</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
                                 <span class="n">group_name</span><span class="o">=</span><span class="n">instrument</span><span class="p">,</span>
                                 <span class="n">band_name</span><span class="o">=</span><span class="n">ff</span><span class="p">,</span>
@@ -232,12 +232,12 @@
 <div class="viewcode-block" id="get_photometric_filter_library">
 <a class="viewcode-back" href="../../../../api/threeML.utils.photometry.html#threeML.utils.photometry.filter_library.get_photometric_filter_library">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_photometric_filter_library</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the 3ML filter library.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Get the 3ML filter library."""</span>
     <span class="k">if</span> <span class="n">get_speclite_filter_library</span><span class="p">()</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">FilterLibrary</span><span class="p">()</span>
 
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;The threeML filter library does not exist!&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"The threeML filter library does not exist!"</span><span class="p">)</span></div>
 
 </pre></div>
 

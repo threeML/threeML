@@ -157,14 +157,14 @@
 <a class="viewcode-back" href="../../../api/threeML.bayesian.html#threeML.bayesian.zeus_sampler.ZeusSampler">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ZeusSampler</span><span class="p">(</span><span class="n">MCMCSampler</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">likelihood_model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="n">has_zeus</span><span class="p">,</span> <span class="s2">&quot;You must install zeus-mcmc to use this sampler&quot;</span>
+        <span class="k">assert</span> <span class="n">has_zeus</span><span class="p">,</span> <span class="s2">"You must install zeus-mcmc to use this sampler"</span>
 
         <span class="nb">super</span><span class="p">(</span><span class="n">ZeusSampler</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">likelihood_model</span><span class="p">,</span> <span class="n">data_list</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ZeusSampler.setup">
 <a class="viewcode-back" href="../../../api/threeML.bayesian.html#threeML.bayesian.zeus_sampler.ZeusSampler.setup">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_iterations</span><span class="p">,</span> <span class="n">n_burn_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_walkers</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set up the zeus sampler.</span>
+<span class="w">        </span><span class="sd">"""Set up the zeus sampler.</span>
 
 <span class="sd">        :param n_iterations:</span>
 <span class="sd">        :type n_iterations:</span>
@@ -173,10 +173,10 @@
 <span class="sd">        :param n_walkers:</span>
 <span class="sd">        :type n_walkers:</span>
 <span class="sd">        :returns:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Setup for Zeus sampler: n_iterations:</span><span class="si">{</span><span class="n">n_iterations</span><span class="si">}</span><span class="s2">, n_burn_in:&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n_burn_in</span><span class="si">}</span><span class="s2">, n_walkers: </span><span class="si">{</span><span class="n">n_walkers</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="sa">f</span><span class="s2">"Setup for Zeus sampler: n_iterations:</span><span class="si">{</span><span class="n">n_iterations</span><span class="si">}</span><span class="s2">, n_burn_in:"</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">n_burn_in</span><span class="si">}</span><span class="s2">, n_walkers: </span><span class="si">{</span><span class="n">n_walkers</span><span class="si">}</span><span class="s2">."</span>
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_n_iterations</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_iterations</span><span class="p">)</span>
@@ -196,7 +196,7 @@
 <a class="viewcode-back" href="../../../api/threeML.bayesian.html#threeML.bayesian.zeus_sampler.ZeusSampler.sample">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_setup</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;You forgot to setup the sampler!&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"You forgot to setup the sampler!"</span><span class="p">)</span>
             <span class="k">return</span>
 
         <span class="n">loud</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">quiet</span>
@@ -222,15 +222,15 @@
                     <span class="p">)</span>
 
                     <span class="c1"># Run the true sampling</span>
-                    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Start zeus run&quot;</span><span class="p">)</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Start zeus run"</span><span class="p">)</span>
                     <span class="n">_</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">run_mcmc</span><span class="p">(</span>
                         <span class="n">p0</span><span class="p">,</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">_n_iterations</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_burn_in</span><span class="p">,</span>
                         <span class="n">progress</span><span class="o">=</span><span class="n">loud</span><span class="p">,</span>
                     <span class="p">)</span>
-                    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Zeus run done&quot;</span><span class="p">)</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Zeus run done"</span><span class="p">)</span>
 
-            <span class="k">elif</span> <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;parallel&quot;</span><span class="p">][</span><span class="s2">&quot;use_parallel&quot;</span><span class="p">]:</span>
+            <span class="k">elif</span> <span class="n">threeML_config</span><span class="p">[</span><span class="s2">"parallel"</span><span class="p">][</span><span class="s2">"use_parallel"</span><span class="p">]:</span>
                 <span class="n">c</span> <span class="o">=</span> <span class="n">ParallelClient</span><span class="p">()</span>
                 <span class="n">view</span> <span class="o">=</span> <span class="n">c</span><span class="p">[:]</span>
 
@@ -250,11 +250,11 @@
 
             <span class="c1"># Sample the burn-in</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">using_mpi</span><span class="p">:</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Start zeus run&quot;</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Start zeus run"</span><span class="p">)</span>
                 <span class="n">_</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">run_mcmc</span><span class="p">(</span>
                     <span class="n">p0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_iterations</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_burn_in</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="n">loud</span>
                 <span class="p">)</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Zeus run done&quot;</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Zeus run done"</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_sampler</span> <span class="o">=</span> <span class="n">sampler</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_raw_samples</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">get_chain</span><span class="p">(</span><span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">discard</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_burn_in</span><span class="p">)</span>

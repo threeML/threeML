@@ -122,11 +122,11 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.package_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_path_of_data_file</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.plugins.XYLike</span><span class="w"> </span><span class="kn">import</span> <span class="n">XYLike</span>
 
-<span class="n">__instrument_name</span> <span class="o">=</span> <span class="s2">&quot;n.a.&quot;</span>
+<span class="n">__instrument_name</span> <span class="o">=</span> <span class="s2">"n.a."</span>
 
 
 <span class="k">if</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">use_threeml_style</span><span class="p">:</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">get_path_of_data_file</span><span class="p">(</span><span class="s2">&quot;threeml.mplstyle&quot;</span><span class="p">)))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">get_path_of_data_file</span><span class="p">(</span><span class="s2">"threeml.mplstyle"</span><span class="p">)))</span>
 
 
 <span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -160,17 +160,17 @@
 <div class="viewcode-block" id="UnresolvedExtendedXYLike.assign_to_source">
 <a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.UnresolvedExtendedXYLike.UnresolvedExtendedXYLike.assign_to_source">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">assign_to_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_name</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign these data to the given source (instead of to the sum of all</span>
+<span class="w">        </span><span class="sd">"""Assign these data to the given source (instead of to the sum of all</span>
 <span class="sd">        sources, which is the default)</span>
 
 <span class="sd">        :param source_name: name of the source (must be contained in the</span>
 <span class="sd">            likelihood model)</span>
 <span class="sd">        :return: none</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_likelihood_model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">source_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">assert</span> <span class="n">source_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_likelihood_model</span><span class="o">.</span><span class="n">sources</span><span class="p">,</span> <span class="p">(</span>
-                <span class="s2">&quot;Source </span><span class="si">%s</span><span class="s2"> is not contained in the likelihood model&quot;</span> <span class="o">%</span> <span class="n">source_name</span>
+                <span class="s2">"Source </span><span class="si">%s</span><span class="s2"> is not contained in the likelihood model"</span> <span class="o">%</span> <span class="n">source_name</span>
             <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_source_name</span> <span class="o">=</span> <span class="n">source_name</span></div>
@@ -179,12 +179,12 @@
 <div class="viewcode-block" id="UnresolvedExtendedXYLike.set_model">
 <a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.UnresolvedExtendedXYLike.UnresolvedExtendedXYLike.set_model">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">likelihood_model_instance</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the model to be used in the joint minimization. Must be a</span>
+<span class="w">        </span><span class="sd">"""Set the model to be used in the joint minimization. Must be a</span>
 <span class="sd">        LikelihoodModel instance.</span>
 
 <span class="sd">        :param likelihood_model_instance: instance of Model</span>
 <span class="sd">        :type likelihood_model_instance: astromodels.Model</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="n">likelihood_model_instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
@@ -192,8 +192,8 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># Make sure that the source is in the model</span>
             <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_name</span> <span class="ow">in</span> <span class="n">likelihood_model_instance</span><span class="o">.</span><span class="n">sources</span><span class="p">,</span> <span class="p">(</span>
-                <span class="s2">&quot;This XYLike plugin refers to the source </span><span class="si">%s</span><span class="s2">, &quot;</span>
-                <span class="s2">&quot;but that source is not in the likelihood model&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_source_name</span><span class="p">)</span>
+                <span class="s2">"This XYLike plugin refers to the source </span><span class="si">%s</span><span class="s2">, "</span>
+                <span class="s2">"but that source is not in the likelihood model"</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_source_name</span><span class="p">)</span>
             <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_likelihood_model</span> <span class="o">=</span> <span class="n">likelihood_model_instance</span></div>
@@ -206,7 +206,7 @@
 
             <span class="k">assert</span> <span class="p">(</span>
                 <span class="n">n_point_sources</span> <span class="o">+</span> <span class="n">n_ext_sources</span> <span class="o">&gt;</span> <span class="mi">0</span>
-            <span class="p">),</span> <span class="s2">&quot;You need to have at least one source defined&quot;</span>
+            <span class="p">),</span> <span class="s2">"You need to have at least one source defined"</span>
 
             <span class="c1"># Make a function which will stack all point sources (XYLike do not support</span>
             <span class="c1"># spatial dimension)</span>
@@ -247,19 +247,19 @@
 
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
-                    <span class="s2">&quot;This XYLike plugin has been assigned to source &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_source_name</span><span class="si">}</span><span class="s2">, which is neither a point soure not an &quot;</span>
-                    <span class="s2">&quot;extended source in the current model&quot;</span>
+                    <span class="s2">"This XYLike plugin has been assigned to source "</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_source_name</span><span class="si">}</span><span class="s2">, which is neither a point soure not an "</span>
+                    <span class="s2">"extended source in the current model"</span>
                 <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">expectation</span>
 
 <div class="viewcode-block" id="UnresolvedExtendedXYLike.plot">
 <a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.UnresolvedExtendedXYLike.UnresolvedExtendedXYLike.plot">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_label</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">y_label</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">x_scale</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="n">y_scale</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_label</span><span class="o">=</span><span class="s2">"x"</span><span class="p">,</span> <span class="n">y_label</span><span class="o">=</span><span class="s2">"y"</span><span class="p">,</span> <span class="n">x_scale</span><span class="o">=</span><span class="s2">"linear"</span><span class="p">,</span> <span class="n">y_scale</span><span class="o">=</span><span class="s2">"linear"</span><span class="p">):</span>
         <span class="n">fig</span><span class="p">,</span> <span class="n">sub</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
-        <span class="n">sub</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">yerr</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;data&quot;</span><span class="p">)</span>
+        <span class="n">sub</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">yerr</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">"."</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"data"</span><span class="p">)</span>
 
         <span class="n">sub</span><span class="o">.</span><span class="n">set_xscale</span><span class="p">(</span><span class="n">x_scale</span><span class="p">)</span>
         <span class="n">sub</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="n">y_scale</span><span class="p">)</span>
@@ -271,11 +271,11 @@
             <span class="n">flux</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_total_expectation</span><span class="p">()</span>
 
             <span class="n">label</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="s2">&quot;model&quot;</span>
+                <span class="s2">"model"</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_name</span> <span class="ow">is</span> <span class="kc">None</span>
-                <span class="k">else</span> <span class="s2">&quot;model (</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_name</span>
+                <span class="k">else</span> <span class="s2">"model (</span><span class="si">%s</span><span class="s2">)"</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_name</span>
             <span class="p">)</span>
-            <span class="n">sub</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">flux</span><span class="p">,</span> <span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+            <span class="n">sub</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">flux</span><span class="p">,</span> <span class="s2">"--"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
 
             <span class="n">sub</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 

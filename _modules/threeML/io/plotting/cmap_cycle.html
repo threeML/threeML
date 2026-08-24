@@ -114,38 +114,38 @@
   <h1>Source code for threeML.io.plotting.cmap_cycle</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span><span class="w"> </span><span class="nn">builtins</span><span class="w"> </span><span class="kn">import</span> <span class="nb">range</span>
 
-<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;grburgess&quot;</span>
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">"grburgess"</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">colormaps</span>
 
 <span class="c1"># reverse these colormaps so that it goes from light to dark</span>
 
-<span class="n">REVERSE_CMAP</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;summer&quot;</span><span class="p">,</span> <span class="s2">&quot;autumn&quot;</span><span class="p">,</span> <span class="s2">&quot;winter&quot;</span><span class="p">,</span> <span class="s2">&quot;spring&quot;</span><span class="p">,</span> <span class="s2">&quot;copper&quot;</span><span class="p">]</span>
+<span class="n">REVERSE_CMAP</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"summer"</span><span class="p">,</span> <span class="s2">"autumn"</span><span class="p">,</span> <span class="s2">"winter"</span><span class="p">,</span> <span class="s2">"spring"</span><span class="p">,</span> <span class="s2">"copper"</span><span class="p">]</span>
 
-<span class="c1"># clip some colormaps so the colors aren&#39;t too light</span>
+<span class="c1"># clip some colormaps so the colors aren't too light</span>
 
 <span class="n">CMAP_RANGE</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-    <span class="n">gray</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span> <span class="s2">&quot;stop&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
-    <span class="n">Blues</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span> <span class="s2">&quot;stop&quot;</span><span class="p">:</span> <span class="mi">255</span><span class="p">},</span>
-    <span class="n">Oranges</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s2">&quot;stop&quot;</span><span class="p">:</span> <span class="mi">255</span><span class="p">},</span>
-    <span class="n">OrRd</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span> <span class="s2">&quot;stop&quot;</span><span class="p">:</span> <span class="mi">255</span><span class="p">},</span>
-    <span class="n">BuGn</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span> <span class="s2">&quot;stop&quot;</span><span class="p">:</span> <span class="mi">255</span><span class="p">},</span>
-    <span class="n">PuRd</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span> <span class="s2">&quot;stop&quot;</span><span class="p">:</span> <span class="mi">255</span><span class="p">},</span>
-    <span class="n">YlGn</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span> <span class="s2">&quot;stop&quot;</span><span class="p">:</span> <span class="mi">255</span><span class="p">},</span>
-    <span class="n">YlGnBu</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span> <span class="s2">&quot;stop&quot;</span><span class="p">:</span> <span class="mi">255</span><span class="p">},</span>
-    <span class="n">YlOrBr</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span> <span class="s2">&quot;stop&quot;</span><span class="p">:</span> <span class="mi">255</span><span class="p">},</span>
-    <span class="n">YlOrRd</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span> <span class="s2">&quot;stop&quot;</span><span class="p">:</span> <span class="mi">255</span><span class="p">},</span>
-    <span class="n">hot</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="mi">230</span><span class="p">,</span> <span class="s2">&quot;stop&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
-    <span class="n">bone</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span> <span class="s2">&quot;stop&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
-    <span class="n">pink</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="mi">160</span><span class="p">,</span> <span class="s2">&quot;stop&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
+    <span class="n">gray</span><span class="o">=</span><span class="p">{</span><span class="s2">"start"</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span> <span class="s2">"stop"</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
+    <span class="n">Blues</span><span class="o">=</span><span class="p">{</span><span class="s2">"start"</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span> <span class="s2">"stop"</span><span class="p">:</span> <span class="mi">255</span><span class="p">},</span>
+    <span class="n">Oranges</span><span class="o">=</span><span class="p">{</span><span class="s2">"start"</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s2">"stop"</span><span class="p">:</span> <span class="mi">255</span><span class="p">},</span>
+    <span class="n">OrRd</span><span class="o">=</span><span class="p">{</span><span class="s2">"start"</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span> <span class="s2">"stop"</span><span class="p">:</span> <span class="mi">255</span><span class="p">},</span>
+    <span class="n">BuGn</span><span class="o">=</span><span class="p">{</span><span class="s2">"start"</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span> <span class="s2">"stop"</span><span class="p">:</span> <span class="mi">255</span><span class="p">},</span>
+    <span class="n">PuRd</span><span class="o">=</span><span class="p">{</span><span class="s2">"start"</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span> <span class="s2">"stop"</span><span class="p">:</span> <span class="mi">255</span><span class="p">},</span>
+    <span class="n">YlGn</span><span class="o">=</span><span class="p">{</span><span class="s2">"start"</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span> <span class="s2">"stop"</span><span class="p">:</span> <span class="mi">255</span><span class="p">},</span>
+    <span class="n">YlGnBu</span><span class="o">=</span><span class="p">{</span><span class="s2">"start"</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span> <span class="s2">"stop"</span><span class="p">:</span> <span class="mi">255</span><span class="p">},</span>
+    <span class="n">YlOrBr</span><span class="o">=</span><span class="p">{</span><span class="s2">"start"</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span> <span class="s2">"stop"</span><span class="p">:</span> <span class="mi">255</span><span class="p">},</span>
+    <span class="n">YlOrRd</span><span class="o">=</span><span class="p">{</span><span class="s2">"start"</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span> <span class="s2">"stop"</span><span class="p">:</span> <span class="mi">255</span><span class="p">},</span>
+    <span class="n">hot</span><span class="o">=</span><span class="p">{</span><span class="s2">"start"</span><span class="p">:</span> <span class="mi">230</span><span class="p">,</span> <span class="s2">"stop"</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
+    <span class="n">bone</span><span class="o">=</span><span class="p">{</span><span class="s2">"start"</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span> <span class="s2">"stop"</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
+    <span class="n">pink</span><span class="o">=</span><span class="p">{</span><span class="s2">"start"</span><span class="p">:</span> <span class="mi">160</span><span class="p">,</span> <span class="s2">"stop"</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
 <span class="p">)</span>
 
 
 <div class="viewcode-block" id="cmap_intervals">
 <a class="viewcode-back" href="../../../../api/threeML.io.plotting.html#threeML.io.plotting.cmap_cycle.cmap_intervals">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">cmap_intervals</span><span class="p">(</span><span class="n">length</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;YlOrBr&quot;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return evenly spaced intervals of a given colormap `cmap`.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">cmap_intervals</span><span class="p">(</span><span class="n">length</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">"YlOrBr"</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Return evenly spaced intervals of a given colormap `cmap`.</span>
 
 <span class="sd">    Colormaps listed in REVERSE_CMAP will be cycled in reverse order.</span>
 <span class="sd">    Certain colormaps have pre-specified color ranges in CMAP_RANGE.</span>
@@ -158,23 +158,23 @@
 <span class="sd">        are very similar.</span>
 <span class="sd">    :param cmap: str name of a matplotlib colormap (see</span>
 <span class="sd">        matplotlib.pyplot.cm)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">cm</span> <span class="o">=</span> <span class="n">colormaps</span><span class="p">[</span><span class="n">cmap</span><span class="p">]</span>
 
     <span class="c1"># qualitative color maps</span>
     <span class="k">if</span> <span class="n">cmap</span> <span class="ow">in</span> <span class="p">[</span>
-        <span class="s2">&quot;Accent&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;Dark2&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;Paired&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;Pastel1&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;Pastel2&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;Set1&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;Set2&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;Set3&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;Vega10&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;Vega20&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;Vega20b&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;Vega20c&quot;</span><span class="p">,</span>
+        <span class="s2">"Accent"</span><span class="p">,</span>
+        <span class="s2">"Dark2"</span><span class="p">,</span>
+        <span class="s2">"Paired"</span><span class="p">,</span>
+        <span class="s2">"Pastel1"</span><span class="p">,</span>
+        <span class="s2">"Pastel2"</span><span class="p">,</span>
+        <span class="s2">"Set1"</span><span class="p">,</span>
+        <span class="s2">"Set2"</span><span class="p">,</span>
+        <span class="s2">"Set3"</span><span class="p">,</span>
+        <span class="s2">"Vega10"</span><span class="p">,</span>
+        <span class="s2">"Vega20"</span><span class="p">,</span>
+        <span class="s2">"Vega20b"</span><span class="p">,</span>
+        <span class="s2">"Vega20c"</span><span class="p">,</span>
     <span class="p">]:</span>
         <span class="n">base_n_colors</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">N</span>
 
@@ -189,13 +189,13 @@
 
     <span class="n">crange</span> <span class="o">=</span> <span class="n">CMAP_RANGE</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">cmap</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="mi">255</span><span class="p">))</span>
     <span class="k">if</span> <span class="n">cmap</span> <span class="ow">in</span> <span class="n">REVERSE_CMAP</span><span class="p">:</span>
-        <span class="n">crange</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">crange</span><span class="p">[</span><span class="s2">&quot;stop&quot;</span><span class="p">],</span> <span class="n">stop</span><span class="o">=</span><span class="n">crange</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">])</span>
+        <span class="n">crange</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">crange</span><span class="p">[</span><span class="s2">"stop"</span><span class="p">],</span> <span class="n">stop</span><span class="o">=</span><span class="n">crange</span><span class="p">[</span><span class="s2">"start"</span><span class="p">])</span>
     <span class="k">if</span> <span class="n">start</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">crange</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">start</span>
+        <span class="n">crange</span><span class="p">[</span><span class="s2">"start"</span><span class="p">]</span> <span class="o">=</span> <span class="n">start</span>
     <span class="k">if</span> <span class="n">stop</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">crange</span><span class="p">[</span><span class="s2">&quot;stop&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stop</span>
+        <span class="n">crange</span><span class="p">[</span><span class="s2">"stop"</span><span class="p">]</span> <span class="o">=</span> <span class="n">stop</span>
 
-    <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">crange</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">],</span> <span class="n">crange</span><span class="p">[</span><span class="s2">&quot;stop&quot;</span><span class="p">],</span> <span class="n">length</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">crange</span><span class="p">[</span><span class="s2">"start"</span><span class="p">],</span> <span class="n">crange</span><span class="p">[</span><span class="s2">"stop"</span><span class="p">],</span> <span class="n">length</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">cm</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span></div>
 
 </pre></div>

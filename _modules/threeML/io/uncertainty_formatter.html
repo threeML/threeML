@@ -125,13 +125,13 @@
 <div class="viewcode-block" id="interval_to_errors">
 <a class="viewcode-back" href="../../../api/threeML.io.html#threeML.io.uncertainty_formatter.interval_to_errors">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">interval_to_errors</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">low_bound</span><span class="p">,</span> <span class="n">hi_bound</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert error intervals to errors.</span>
+<span class="w">    </span><span class="sd">"""Convert error intervals to errors.</span>
 
 <span class="sd">    :param value: central value</span>
 <span class="sd">    :param low_bound: interval low bound</span>
 <span class="sd">    :param hi_bound: interval high bound</span>
 <span class="sd">    :return: (error minus, error plus)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">error_plus</span> <span class="o">=</span> <span class="n">hi_bound</span> <span class="o">-</span> <span class="n">value</span>
     <span class="n">error_minus</span> <span class="o">=</span> <span class="n">value</span> <span class="o">-</span> <span class="n">low_bound</span>
@@ -143,37 +143,37 @@
 <div class="viewcode-block" id="get_uncertainty_tokens">
 <a class="viewcode-back" href="../../../api/threeML.io.html#threeML.io.uncertainty_formatter.get_uncertainty_tokens">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_uncertainty_tokens</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Split the given uncertainty in number, error and exponent.</span>
+<span class="w">    </span><span class="sd">"""Split the given uncertainty in number, error and exponent.</span>
 
 <span class="sd">    :param x: an uncertainty instance</span>
 <span class="sd">    :return: number, error and exponent</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">this_str</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
 
     <span class="n">is_inf</span> <span class="o">=</span> <span class="kc">False</span>
 
-    <span class="k">if</span> <span class="s2">&quot;inf&quot;</span> <span class="ow">in</span> <span class="n">this_str</span><span class="p">:</span>
+    <span class="k">if</span> <span class="s2">"inf"</span> <span class="ow">in</span> <span class="n">this_str</span><span class="p">:</span>
         <span class="n">is_inf</span> <span class="o">=</span> <span class="kc">True</span>
 
-        <span class="n">this_str</span> <span class="o">=</span> <span class="n">this_str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">,</span> <span class="s2">&quot;nan&quot;</span><span class="p">)</span>
+        <span class="n">this_str</span> <span class="o">=</span> <span class="n">this_str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"inf"</span><span class="p">,</span> <span class="s2">"nan"</span><span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="n">number</span><span class="p">,</span> <span class="n">uncertainty</span><span class="p">,</span> <span class="n">exponent</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span>
-            <span class="sa">r</span><span class="s2">&quot;\(?(\-?[0-9]+\.?[0-9]*) ([0-9]+\.?[0-9]*)\)?(e[\+|\-][0-9]+)?&quot;</span><span class="p">,</span>
-            <span class="n">this_str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;+/-&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">),</span>
+            <span class="sa">r</span><span class="s2">"\(?(\-?[0-9]+\.?[0-9]*) ([0-9]+\.?[0-9]*)\)?(e[\+|\-][0-9]+)?"</span><span class="p">,</span>
+            <span class="n">this_str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"+/-"</span><span class="p">,</span> <span class="s2">" "</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"nan"</span><span class="p">,</span> <span class="s2">"0"</span><span class="p">),</span>
         <span class="p">)</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
 
     <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
         <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Could not extract number, uncertainty and exponent from  </span><span class="si">{</span><span class="n">x</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span><span class="si">}</span><span class="s2">. &quot;</span>
-            <span class="s2">&quot;This is likely a bug.&quot;</span>
+            <span class="sa">f</span><span class="s2">"Could not extract number, uncertainty and exponent from  </span><span class="si">{</span><span class="n">x</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span><span class="si">}</span><span class="s2">. "</span>
+            <span class="s2">"This is likely a bug."</span>
         <span class="p">)</span>
 
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">is_inf</span><span class="p">:</span>
-        <span class="n">uncertainty</span> <span class="o">=</span> <span class="s2">&quot;inf&quot;</span>
+        <span class="n">uncertainty</span> <span class="o">=</span> <span class="s2">"inf"</span>
 
     <span class="k">return</span> <span class="n">number</span><span class="p">,</span> <span class="n">uncertainty</span><span class="p">,</span> <span class="n">exponent</span></div>
 
@@ -186,14 +186,14 @@
 <div class="viewcode-block" id="uncertainty_formatter">
 <a class="viewcode-back" href="../../../api/threeML.io.html#threeML.io.uncertainty_formatter.uncertainty_formatter">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">uncertainty_formatter</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">low_bound</span><span class="p">,</span> <span class="n">hi_bound</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Gets a value and its error in input, and returns the value, the</span>
+<span class="w">    </span><span class="sd">"""Gets a value and its error in input, and returns the value, the</span>
 <span class="sd">    uncertainty and the common exponent with the proper number of significant</span>
 <span class="sd">    digits in a string like (4.2 -0.023 +5.23) x 10^5.</span>
 
 <span class="sd">    :param value:</span>
 <span class="sd">    :param error: a *positive* value</span>
 <span class="sd">    :return: string representation of interval</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="c1"># Get the errors (instead of the boundaries)</span>
 
@@ -203,12 +203,12 @@
     <span class="n">error_m_is_nan</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">error_p</span><span class="p">):</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;the positive uncertainty is not finite &quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"the positive uncertainty is not finite "</span><span class="p">)</span>
 
         <span class="n">error_p_is_nan</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">error_m</span><span class="p">):</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;the negative uncertainty is not finite &quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"the negative uncertainty is not finite "</span><span class="p">)</span>
 
         <span class="n">error_m_is_nan</span> <span class="o">=</span> <span class="kc">True</span>
 
@@ -268,45 +268,45 @@
     <span class="k">if</span> <span class="n">unc1</span> <span class="o">!=</span> <span class="n">unc2</span><span class="p">:</span>
         <span class="c1"># Asymmetric error</span>
 
-        <span class="n">repr1</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">sign_m</span><span class="p">,</span> <span class="n">unc1</span><span class="p">)</span>
-        <span class="n">repr2</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">sign_p</span><span class="p">,</span> <span class="n">unc2</span><span class="p">)</span>
+        <span class="n">repr1</span> <span class="o">=</span> <span class="s2">"</span><span class="si">%s%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">sign_m</span><span class="p">,</span> <span class="n">unc1</span><span class="p">)</span>
+        <span class="n">repr2</span> <span class="o">=</span> <span class="s2">"</span><span class="si">%s%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">sign_p</span><span class="p">,</span> <span class="n">unc2</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">expon</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="c1"># No need to show any power of 10</span>
 
-            <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">repr1</span><span class="p">,</span> <span class="n">repr2</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s2">"</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">repr1</span><span class="p">,</span> <span class="n">repr2</span><span class="p">)</span>
 
         <span class="k">elif</span> <span class="n">expon</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="c1"># Display 10 instead of 10^1</span>
 
-            <span class="k">return</span> <span class="s2">&quot;(</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">) x 10&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">repr1</span><span class="p">,</span> <span class="n">repr2</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s2">"(</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">) x 10"</span> <span class="o">%</span> <span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">repr1</span><span class="p">,</span> <span class="n">repr2</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Display 10^expon</span>
 
-            <span class="k">return</span> <span class="s2">&quot;(</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">) x 10^</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">repr1</span><span class="p">,</span> <span class="n">repr2</span><span class="p">,</span> <span class="n">expon</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s2">"(</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">) x 10^</span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">repr1</span><span class="p">,</span> <span class="n">repr2</span><span class="p">,</span> <span class="n">expon</span><span class="p">)</span>
 
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># Symmetric error</span>
-        <span class="n">repr1</span> <span class="o">=</span> <span class="s2">&quot;+/- </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">unc1</span>
+        <span class="n">repr1</span> <span class="o">=</span> <span class="s2">"+/- </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">unc1</span>
 
         <span class="k">if</span> <span class="n">expon</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">repr1</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s2">"</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">repr1</span><span class="p">)</span>
 
         <span class="k">elif</span> <span class="n">expon</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s2">&quot;(</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">) x 10&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">repr1</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s2">"(</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">) x 10"</span> <span class="o">%</span> <span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">repr1</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s2">&quot;(</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">) x 10^</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">repr1</span><span class="p">,</span> <span class="n">expon</span><span class="p">)</span></div>
+            <span class="k">return</span> <span class="s2">"(</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">) x 10^</span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">repr1</span><span class="p">,</span> <span class="n">expon</span><span class="p">)</span></div>
 
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_sign</span><span class="p">(</span><span class="n">number</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">number</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;-&quot;</span>
+        <span class="k">return</span> <span class="s2">"-"</span>
 
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;+&quot;</span>
+        <span class="k">return</span> <span class="s2">"+"</span>
 </pre></div>
 
            </div>

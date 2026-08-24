@@ -125,38 +125,38 @@
 <span class="c1"># Codes for the data type of binary table columns and/or for the</span>
 <span class="c1"># data type of variables when reading or writing keywords or data:</span>
 <span class="c1">#                               DATATYPE               TFORM CODE</span>
-<span class="c1">#   #define TBIT          1  /*                            &#39;X&#39; */</span>
-<span class="c1">#   #define TBYTE        11  /* 8-bit unsigned byte,       &#39;B&#39; */</span>
+<span class="c1">#   #define TBIT          1  /*                            'X' */</span>
+<span class="c1">#   #define TBYTE        11  /* 8-bit unsigned byte,       'B' */</span>
 <span class="c1">#   #define TLOGICAL     14  /* logicals (int for keywords     */</span>
-<span class="c1">#                            /*  and char for table cols   &#39;L&#39; */</span>
-<span class="c1">#   #define TSTRING      16  /* ASCII string,              &#39;A&#39; */</span>
-<span class="c1">#   #define TSHORT       21  /* signed short,              &#39;I&#39; */</span>
+<span class="c1">#                            /*  and char for table cols   'L' */</span>
+<span class="c1">#   #define TSTRING      16  /* ASCII string,              'A' */</span>
+<span class="c1">#   #define TSHORT       21  /* signed short,              'I' */</span>
 <span class="c1">#   #define TLONG        41  /* signed long,                   */</span>
-<span class="c1">#   #define TLONGLONG    81  /* 64-bit long signed integer &#39;K&#39; */</span>
-<span class="c1">#   #define TFLOAT       42  /* single precision float,    &#39;E&#39; */</span>
-<span class="c1">#   #define TDOUBLE      82  /* double precision float,    &#39;D&#39; */</span>
-<span class="c1">#   #define TCOMPLEX     83  /* complex (pair of floats)   &#39;C&#39; */</span>
-<span class="c1">#   #define TDBLCOMPLEX 163  /* double complex (2 doubles) &#39;M&#39; */</span>
+<span class="c1">#   #define TLONGLONG    81  /* 64-bit long signed integer 'K' */</span>
+<span class="c1">#   #define TFLOAT       42  /* single precision float,    'E' */</span>
+<span class="c1">#   #define TDOUBLE      82  /* double precision float,    'D' */</span>
+<span class="c1">#   #define TCOMPLEX     83  /* complex (pair of floats)   'C' */</span>
+<span class="c1">#   #define TDBLCOMPLEX 163  /* double complex (2 doubles) 'M' */</span>
 <span class="c1">#   The following data type codes are also supported by CFITSIO:</span>
 <span class="c1">#   #define TINT         31  /* int                            */</span>
-<span class="c1">#   #define TSBYTE       12  /* 8-bit signed byte,         &#39;S&#39; */</span>
-<span class="c1">#   #define TUINT        30  /* unsigned int               &#39;V&#39; */</span>
-<span class="c1">#   #define TUSHORT      20  /* unsigned short             &#39;U&#39;  */</span>
+<span class="c1">#   #define TSBYTE       12  /* 8-bit signed byte,         'S' */</span>
+<span class="c1">#   #define TUINT        30  /* unsigned int               'V' */</span>
+<span class="c1">#   #define TUSHORT      20  /* unsigned short             'U'  */</span>
 <span class="c1">#   #define TULONG       40  /* unsigned long                  */</span>
 <span class="c1">#   The following data type code is only for use with fits\_get\_coltype</span>
-<span class="c1">#   #define TINT32BIT    41  /* signed 32-bit int,         &#39;J&#39; */</span>
+<span class="c1">#   #define TINT32BIT    41  /* signed 32-bit int,         'J' */</span>
 
 
 <span class="n">_NUMPY_TO_FITS_CODE</span> <span class="o">=</span> <span class="p">{</span>
     <span class="c1"># Integers</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">:</span> <span class="s2">&quot;I&quot;</span><span class="p">,</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">:</span> <span class="s2">&quot;J&quot;</span><span class="p">,</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">:</span> <span class="s2">&quot;K&quot;</span><span class="p">,</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">uint16</span><span class="p">:</span> <span class="s2">&quot;I&quot;</span><span class="p">,</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">uint32</span><span class="p">:</span> <span class="s2">&quot;J&quot;</span><span class="p">,</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">:</span> <span class="s2">"I"</span><span class="p">,</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">:</span> <span class="s2">"J"</span><span class="p">,</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">:</span> <span class="s2">"K"</span><span class="p">,</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">uint16</span><span class="p">:</span> <span class="s2">"I"</span><span class="p">,</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">uint32</span><span class="p">:</span> <span class="s2">"J"</span><span class="p">,</span>
     <span class="c1"># Floating point</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">:</span> <span class="s2">&quot;E&quot;</span><span class="p">,</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">:</span> <span class="s2">&quot;D&quot;</span><span class="p">,</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">:</span> <span class="s2">"E"</span><span class="p">,</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">:</span> <span class="s2">"D"</span><span class="p">,</span>
 <span class="p">}</span>
 
 
@@ -181,7 +181,7 @@
 
         <span class="c1"># We embed instead of subclassing because the HDUList class has some weird</span>
         <span class="c1"># interaction with the __init__ and __new__ methods which makes difficult to do</span>
-        <span class="c1"># so (we couldn&#39;t figure it out)</span>
+        <span class="c1"># so (we couldn't figure it out)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_hdu_list</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">HDUList</span><span class="p">(</span><span class="n">hdus</span><span class="o">=</span><span class="n">hdu_list</span><span class="p">)</span>
 
@@ -260,7 +260,7 @@
                 <span class="c1"># check if this is a vector of quantities</span>
 
                 <span class="k">if</span> <span class="n">test_value</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
-                    <span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%i%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">test_value</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">format</span><span class="p">)</span>
+                    <span class="nb">format</span> <span class="o">=</span> <span class="s2">"</span><span class="si">%i%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">test_value</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">format</span><span class="p">)</span>
 
                 <span class="c1"># Store the unit as text</span>
 
@@ -272,7 +272,7 @@
 
                 <span class="n">max_string_length</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">column_data</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="nb">len</span><span class="p">)),</span> <span class="mi">1</span><span class="p">)</span>
 
-                <span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%i</span><span class="s2">A&quot;</span> <span class="o">%</span> <span class="n">max_string_length</span>
+                <span class="nb">format</span> <span class="o">=</span> <span class="s2">"</span><span class="si">%i</span><span class="s2">A"</span> <span class="o">%</span> <span class="n">max_string_length</span>
 
             <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">test_value</span><span class="p">):</span>
                 <span class="nb">format</span> <span class="o">=</span> <span class="n">_NUMPY_TO_FITS_CODE</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">test_value</span><span class="p">)</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">type</span><span class="p">]</span>
@@ -288,7 +288,7 @@
 
                 <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                        <span class="s2">&quot;Could not understand type of column </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">column_name</span>
+                        <span class="s2">"Could not understand type of column </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">column_name</span>
                     <span class="p">)</span>
 
                 <span class="c1"># Make sure we are not dealing with objects</span>
@@ -299,7 +299,7 @@
 
                 <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                        <span class="s2">&quot;Column </span><span class="si">%s</span><span class="s2"> contain data which cannot be coerced to </span><span class="si">%s</span><span class="s2">&quot;</span>
+                        <span class="s2">"Column </span><span class="si">%s</span><span class="s2"> contain data which cannot be coerced to </span><span class="si">%s</span><span class="s2">"</span>
                         <span class="o">%</span> <span class="p">(</span><span class="n">column_name</span><span class="p">,</span> <span class="n">col_type</span><span class="p">)</span>
                     <span class="p">)</span>
 
@@ -309,19 +309,19 @@
                     <span class="k">if</span> <span class="n">test_value</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">bytes_</span><span class="p">:</span>
                         <span class="n">max_string_length</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">column_data</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="nb">len</span><span class="p">)</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">itemsize</span>
 
-                        <span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%i</span><span class="s2">A&quot;</span> <span class="o">%</span> <span class="n">max_string_length</span>
+                        <span class="nb">format</span> <span class="o">=</span> <span class="s2">"</span><span class="si">%i</span><span class="s2">A"</span> <span class="o">%</span> <span class="n">max_string_length</span>
 
                     <span class="k">else</span><span class="p">:</span>
                         <span class="c1"># All good. Check the length</span>
                         <span class="c1"># NOTE: variable length arrays are not supported</span>
                         <span class="n">line_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">test_value</span><span class="p">)</span>
-                        <span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%i%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">line_length</span><span class="p">,</span> <span class="n">_NUMPY_TO_FITS_CODE</span><span class="p">[</span><span class="n">col_type</span><span class="p">])</span>
+                        <span class="nb">format</span> <span class="o">=</span> <span class="s2">"</span><span class="si">%i%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">line_length</span><span class="p">,</span> <span class="n">_NUMPY_TO_FITS_CODE</span><span class="p">[</span><span class="n">col_type</span><span class="p">])</span>
 
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># Something we do not know</span>
 
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                    <span class="s2">&quot;Column </span><span class="si">%s</span><span class="s2"> in dataframe contains objects which are not strings&quot;</span>
+                    <span class="s2">"Column </span><span class="si">%s</span><span class="s2"> in dataframe contains objects which are not strings"</span>
                     <span class="o">%</span> <span class="n">column_name</span>
                 <span class="p">)</span>
 
@@ -339,9 +339,9 @@
 
         <span class="c1"># update the header to indicate that the file was created by 3ML</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_hdu</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-            <span class="s2">&quot;CREATOR&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;3ML v.</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">version</span><span class="p">(</span><span class="s2">&quot;threeML&quot;</span><span class="p">)),</span>
-            <span class="s2">&quot;(G.Vianello, giacomov@slac.stanford.edu)&quot;</span><span class="p">,</span>
+            <span class="s2">"CREATOR"</span><span class="p">,</span>
+            <span class="s2">"3ML v.</span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">version</span><span class="p">(</span><span class="s2">"threeML"</span><span class="p">)),</span>
+            <span class="s2">"(G.Vianello, giacomov@slac.stanford.edu)"</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="nd">@property</span>

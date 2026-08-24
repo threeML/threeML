@@ -133,7 +133,7 @@
 <a class="viewcode-back" href="../../../../api/threeML.utils.OGIP.html#threeML.utils.OGIP.pha.PHAWrite">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">PHAWrite</span><span class="p">:</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">ogiplike</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;This class handles writing of PHA files from OGIPLike style plugins.</span>
+<span class="w">        </span><span class="sd">"""This class handles writing of PHA files from OGIPLike style plugins.</span>
 <span class="sd">        It takes an arbitrary number of plugins as input. While OGIPLike</span>
 <span class="sd">        provides a write_pha method, it is only for writing the given instance</span>
 <span class="sd">        to disk. The class in general can be used to save an entire series of</span>
@@ -141,32 +141,32 @@
 <span class="sd">        example implentation is given in FermiGBMTTELike.</span>
 
 <span class="sd">        :param ogiplike: OGIPLike plugin(s) to be written to disk</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_ogiplike</span> <span class="o">=</span> <span class="n">ogiplike</span>
 
-        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;registered </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ogiplike</span><span class="p">)</span><span class="si">}</span><span class="s2"> plugins&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"registered </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ogiplike</span><span class="p">)</span><span class="si">}</span><span class="s2"> plugins"</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_n_spectra</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ogiplike</span><span class="p">)</span>
 
         <span class="c1"># The following lists corresponds to the different columns in the PHA/CSPEC</span>
         <span class="c1"># formats, and they will be filled up by addSpectrum()</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_tstart</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;pha&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;bak&quot;</span><span class="p">:</span> <span class="p">[]}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_tstop</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;pha&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;bak&quot;</span><span class="p">:</span> <span class="p">[]}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_channel</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;pha&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;bak&quot;</span><span class="p">:</span> <span class="p">[]}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_rate</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;pha&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;bak&quot;</span><span class="p">:</span> <span class="p">[]}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_stat_err</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;pha&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;bak&quot;</span><span class="p">:</span> <span class="p">[]}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_sys_err</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;pha&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;bak&quot;</span><span class="p">:</span> <span class="p">[]}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_backscal</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;pha&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;bak&quot;</span><span class="p">:</span> <span class="p">[]}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_quality</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;pha&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;bak&quot;</span><span class="p">:</span> <span class="p">[]}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_grouping</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;pha&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;bak&quot;</span><span class="p">:</span> <span class="p">[]}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_exposure</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;pha&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;bak&quot;</span><span class="p">:</span> <span class="p">[]}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_backfile</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;pha&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;bak&quot;</span><span class="p">:</span> <span class="p">[]}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_respfile</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;pha&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;bak&quot;</span><span class="p">:</span> <span class="p">[]}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_ancrfile</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;pha&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;bak&quot;</span><span class="p">:</span> <span class="p">[]}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_mission</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;pha&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;bak&quot;</span><span class="p">:</span> <span class="p">[]}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_instrument</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;pha&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;bak&quot;</span><span class="p">:</span> <span class="p">[]}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tstart</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"pha"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"bak"</span><span class="p">:</span> <span class="p">[]}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tstop</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"pha"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"bak"</span><span class="p">:</span> <span class="p">[]}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_channel</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"pha"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"bak"</span><span class="p">:</span> <span class="p">[]}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rate</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"pha"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"bak"</span><span class="p">:</span> <span class="p">[]}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stat_err</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"pha"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"bak"</span><span class="p">:</span> <span class="p">[]}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sys_err</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"pha"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"bak"</span><span class="p">:</span> <span class="p">[]}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_backscal</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"pha"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"bak"</span><span class="p">:</span> <span class="p">[]}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_quality</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"pha"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"bak"</span><span class="p">:</span> <span class="p">[]}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_grouping</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"pha"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"bak"</span><span class="p">:</span> <span class="p">[]}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_exposure</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"pha"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"bak"</span><span class="p">:</span> <span class="p">[]}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_backfile</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"pha"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"bak"</span><span class="p">:</span> <span class="p">[]}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_respfile</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"pha"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"bak"</span><span class="p">:</span> <span class="p">[]}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ancrfile</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"pha"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"bak"</span><span class="p">:</span> <span class="p">[]}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mission</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"pha"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"bak"</span><span class="p">:</span> <span class="p">[]}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_instrument</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"pha"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"bak"</span><span class="p">:</span> <span class="p">[]}</span>
 
         <span class="c1"># If the PHAs have existing background files</span>
         <span class="c1"># then it is assumed that we will not need to write them</span>
@@ -176,7 +176,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_write_bak_file</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="c1"># Assuming all entries will have one answer</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_is_poisson</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;pha&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;bak&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_poisson</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"pha"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">"bak"</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_pseudo_time</span> <span class="o">=</span> <span class="mf">0.0</span>
 
@@ -187,28 +187,28 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">outfile_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">force_rsp_write</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write a PHA Type II and BAK file for the given OGIP plugin.</span>
+<span class="w">        </span><span class="sd">"""Write a PHA Type II and BAK file for the given OGIP plugin.</span>
 <span class="sd">        Automatically determines if BAK files should be generated.</span>
 
 <span class="sd">        :param outfile_name: string (excluding .pha) of the PHA to write</span>
 <span class="sd">        :param overwrite: (optional) bool to overwrite existing file</span>
 <span class="sd">        :param force_rsp_write: force the writing of an RSP</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">outfile_name</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">sanitize_filename</span><span class="p">(</span><span class="n">outfile_name</span><span class="p">)</span>
 
         <span class="c1"># Remove the .pha extension if any</span>
-        <span class="k">if</span> <span class="n">outfile_name</span><span class="o">.</span><span class="n">suffix</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;.pha&quot;</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;stripping </span><span class="si">{</span><span class="n">outfile_name</span><span class="si">}</span><span class="s2"> of its suffix&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">outfile_name</span><span class="o">.</span><span class="n">suffix</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">".pha"</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"stripping </span><span class="si">{</span><span class="n">outfile_name</span><span class="si">}</span><span class="s2"> of its suffix"</span><span class="p">)</span>
 
             <span class="n">outfile_name</span> <span class="o">=</span> <span class="n">outfile_name</span><span class="o">.</span><span class="n">stem</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_outfile_basename</span> <span class="o">=</span> <span class="n">outfile_name</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_outfile_name</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;pha&quot;</span><span class="p">:</span> <span class="n">Path</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">outfile_name</span><span class="si">}</span><span class="s2">.pha&quot;</span><span class="p">),</span>
-            <span class="s2">&quot;bak&quot;</span><span class="p">:</span> <span class="n">Path</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">outfile_name</span><span class="si">}</span><span class="s2">_bak.pha&quot;</span><span class="p">),</span>
+            <span class="s2">"pha"</span><span class="p">:</span> <span class="n">Path</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">outfile_name</span><span class="si">}</span><span class="s2">.pha"</span><span class="p">),</span>
+            <span class="s2">"bak"</span><span class="p">:</span> <span class="n">Path</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">outfile_name</span><span class="si">}</span><span class="s2">_bak.pha"</span><span class="p">),</span>
         <span class="p">}</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_out_rsp</span> <span class="o">=</span> <span class="p">[]</span>
@@ -220,39 +220,39 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_append_ogip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ogip</span><span class="p">,</span> <span class="n">force_rsp_write</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add an ogip instance&#39;s data into the data list.</span>
+<span class="w">        </span><span class="sd">"""Add an ogip instance's data into the data list.</span>
 
 <span class="sd">        :param ogip: and OGIPLike instance</span>
 <span class="sd">        :param force_rsp_write: force the writing of an rsp</span>
 <span class="sd">        :return: None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># grab the ogip pha info</span>
         <span class="n">pha_info</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">ogip</span><span class="o">.</span><span class="n">get_pha_files</span><span class="p">()</span>
 
-        <span class="n">first_channel</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">pha_info</span><span class="p">[</span><span class="s2">&quot;rsp&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">first_channel</span>
+        <span class="n">first_channel</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">pha_info</span><span class="p">[</span><span class="s2">"rsp"</span><span class="p">]</span><span class="o">.</span><span class="n">first_channel</span>
 
-        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;pha&quot;</span><span class="p">,</span> <span class="s2">&quot;bak&quot;</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"pha"</span><span class="p">,</span> <span class="s2">"bak"</span><span class="p">]:</span>
             <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">pha_info</span><span class="p">:</span>
                 <span class="k">continue</span>
 
-            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;pha&quot;</span> <span class="ow">and</span> <span class="s2">&quot;bak&quot;</span> <span class="ow">in</span> <span class="n">pha_info</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">"pha"</span> <span class="ow">and</span> <span class="s2">"bak"</span> <span class="ow">in</span> <span class="n">pha_info</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">pha_info</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">background_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot; keeping original bak file: </span><span class="si">{</span><span class="n">pha_info</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">background_file</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="sa">f</span><span class="s2">" keeping original bak file: </span><span class="si">{</span><span class="n">pha_info</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">background_file</span><span class="si">}</span><span class="s2">"</span>
                     <span class="p">)</span>
 
                     <span class="bp">self</span><span class="o">.</span><span class="n">_backfile</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pha_info</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">background_file</span><span class="p">)</span>
 
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;creating new bak file: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_outfile_basename</span><span class="si">}</span><span class="s2">_bak.pha&quot;</span>
-                        <span class="o">+</span> <span class="s2">&quot;{</span><span class="si">%d</span><span class="s2">}&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spec_iterator</span>
+                        <span class="sa">f</span><span class="s2">"creating new bak file: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_outfile_basename</span><span class="si">}</span><span class="s2">_bak.pha"</span>
+                        <span class="o">+</span> <span class="s2">"{</span><span class="si">%d</span><span class="s2">}"</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spec_iterator</span>
                     <span class="p">)</span>
 
                     <span class="bp">self</span><span class="o">.</span><span class="n">_backfile</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_outfile_basename</span><span class="si">}</span><span class="s2">_bak.pha&quot;</span>
-                        <span class="o">+</span> <span class="s2">&quot;{</span><span class="si">%d</span><span class="s2">}&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spec_iterator</span>
+                        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_outfile_basename</span><span class="si">}</span><span class="s2">_bak.pha"</span>
+                        <span class="o">+</span> <span class="s2">"{</span><span class="si">%d</span><span class="s2">}"</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spec_iterator</span>
                     <span class="p">)</span>
 
                     <span class="c1"># We want to write the bak file</span>
@@ -260,56 +260,56 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">_write_bak_file</span> <span class="o">=</span> <span class="kc">True</span>
 
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;not creating a bak file&quot;</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"not creating a bak file"</span><span class="p">)</span>
 
                 <span class="bp">self</span><span class="o">.</span><span class="n">_backfile</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
             <span class="k">if</span> <span class="n">pha_info</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">ancillary_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;appending the ancillary file&quot;</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"appending the ancillary file"</span><span class="p">)</span>
 
                 <span class="bp">self</span><span class="o">.</span><span class="n">_ancrfile</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pha_info</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">ancillary_file</span><span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># There is no ancillary file, so we need to flag it.</span>
 
-                <span class="bp">self</span><span class="o">.</span><span class="n">_ancrfile</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;NONE&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_ancrfile</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"NONE"</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">pha_info</span><span class="p">[</span><span class="s2">&quot;rsp&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">rsp_filename</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">force_rsp_write</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">pha_info</span><span class="p">[</span><span class="s2">"rsp"</span><span class="p">]</span><span class="o">.</span><span class="n">rsp_filename</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">force_rsp_write</span><span class="p">:</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                    <span class="s2">&quot;not creating a new response and keeping &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pha_info</span><span class="p">[</span><span class="s1">&#39;rsp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">rsp_filename</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="s2">"not creating a new response and keeping "</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">pha_info</span><span class="p">[</span><span class="s1">'rsp'</span><span class="p">]</span><span class="o">.</span><span class="n">rsp_filename</span><span class="si">}</span><span class="s2">"</span>
                 <span class="p">)</span>
 
-                <span class="bp">self</span><span class="o">.</span><span class="n">_respfile</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pha_info</span><span class="p">[</span><span class="s2">&quot;rsp&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">rsp_filename</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_respfile</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pha_info</span><span class="p">[</span><span class="s2">"rsp"</span><span class="p">]</span><span class="o">.</span><span class="n">rsp_filename</span><span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># This will be reached in the case that a response was generated from a</span>
                 <span class="c1"># plugin e.g. if we want to use weighted DRMs from GBM.</span>
 
                 <span class="n">rsp_file_name</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_outfile_basename</span><span class="si">}</span><span class="s2">.rsp&quot;</span> <span class="o">+</span> <span class="s2">&quot;{</span><span class="si">%d</span><span class="s2">}&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spec_iterator</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_outfile_basename</span><span class="si">}</span><span class="s2">.rsp"</span> <span class="o">+</span> <span class="s2">"{</span><span class="si">%d</span><span class="s2">}"</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spec_iterator</span>
                 <span class="p">)</span>
 
-                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;creating a new response and saving it to </span><span class="si">{</span><span class="n">rsp_file_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"creating a new response and saving it to </span><span class="si">{</span><span class="n">rsp_file_name</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
                 <span class="bp">self</span><span class="o">.</span><span class="n">_respfile</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rsp_file_name</span><span class="p">)</span>
 
-                <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;pha&quot;</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_out_rsp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pha_info</span><span class="p">[</span><span class="s2">&quot;rsp&quot;</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">"pha"</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_out_rsp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pha_info</span><span class="p">[</span><span class="s2">"rsp"</span><span class="p">])</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_rate</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pha_info</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_backscal</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pha_info</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">scale_factor</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="n">pha_info</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">is_poisson</span><span class="p">:</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;this file is not Poisson and we save the errors&quot;</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"this file is not Poisson and we save the errors"</span><span class="p">)</span>
 
                 <span class="bp">self</span><span class="o">.</span><span class="n">_is_poisson</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">pha_info</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">is_poisson</span>
 
                 <span class="bp">self</span><span class="o">.</span><span class="n">_stat_err</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pha_info</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">rate_errors</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
 
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;this file is Poisson and we do not save the errors&quot;</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"this file is Poisson and we do not save the errors"</span><span class="p">)</span>
 
                 <span class="bp">self</span><span class="o">.</span><span class="n">_stat_err</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -345,7 +345,7 @@
 
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                        <span class="s2">&quot;OGIP TSTART is a number but TSTOP is None. This is a bug.&quot;</span>
+                        <span class="s2">"OGIP TSTART is a number but TSTOP is None. This is a bug."</span>
                     <span class="p">)</span>
 
                     <span class="ne">RuntimeError</span><span class="p">()</span>
@@ -354,7 +354,7 @@
             <span class="c1"># and assign starts and stops accordingly. This means</span>
             <span class="c1"># we are most likely are dealing with a simulation.</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;setting duration to exposure&quot;</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"setting duration to exposure"</span><span class="p">)</span>
 
                 <span class="bp">self</span><span class="o">.</span><span class="n">_tstart</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pseudo_time</span><span class="p">)</span>
 
@@ -368,44 +368,44 @@
         <span class="c1"># Fix this later... if needed.</span>
         <span class="n">trigger_time</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_backfile</span><span class="p">[</span><span class="s2">&quot;pha&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_backfile</span><span class="p">[</span><span class="s2">"pha"</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># Assuming background and pha files have the same</span>
             <span class="c1"># number of channels</span>
 
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rate</span><span class="p">[</span><span class="s2">&quot;pha&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rate</span><span class="p">[</span><span class="s2">&quot;bak&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rate</span><span class="p">[</span><span class="s2">"pha"</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rate</span><span class="p">[</span><span class="s2">"bak"</span><span class="p">][</span><span class="mi">0</span><span class="p">]):</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                    <span class="s2">&quot;PHA and BAK files do not have the same number of channels. &quot;</span>
-                    <span class="s2">&quot;Something is wrong.&quot;</span>
+                    <span class="s2">"PHA and BAK files do not have the same number of channels. "</span>
+                    <span class="s2">"Something is wrong."</span>
                 <span class="p">)</span>
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
 
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instrument</span><span class="p">[</span><span class="s2">&quot;pha&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instrument</span><span class="p">[</span><span class="s2">&quot;bak&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instrument</span><span class="p">[</span><span class="s2">"pha"</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instrument</span><span class="p">[</span><span class="s2">"bak"</span><span class="p">]:</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Instrument for PHA and BAK (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_instrument</span><span class="p">[</span><span class="s1">&#39;pha&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">, &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_instrument</span><span class="p">[</span><span class="s1">&#39;bak&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">) are not the same. Something is &quot;</span>
-                    <span class="s2">&quot;wrong with the files. &quot;</span>
+                    <span class="sa">f</span><span class="s2">"Instrument for PHA and BAK (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_instrument</span><span class="p">[</span><span class="s1">'pha'</span><span class="p">]</span><span class="si">}</span><span class="s2">, "</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_instrument</span><span class="p">[</span><span class="s1">'bak'</span><span class="p">]</span><span class="si">}</span><span class="s2">) are not the same. Something is "</span>
+                    <span class="s2">"wrong with the files. "</span>
                 <span class="p">)</span>
 
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
 
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mission</span><span class="p">[</span><span class="s2">&quot;pha&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mission</span><span class="p">[</span><span class="s2">&quot;bak&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mission</span><span class="p">[</span><span class="s2">"pha"</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mission</span><span class="p">[</span><span class="s2">"bak"</span><span class="p">]:</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Mission for PHA and BAK (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_mission</span><span class="p">[</span><span class="s1">&#39;pha&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">, &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_mission</span><span class="p">[</span><span class="s1">&#39;bak&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">) are not the same. Something is &quot;</span>
-                    <span class="s2">&quot;wrong with the files. &quot;</span>
+                    <span class="sa">f</span><span class="s2">"Mission for PHA and BAK (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_mission</span><span class="p">[</span><span class="s1">'pha'</span><span class="p">]</span><span class="si">}</span><span class="s2">, "</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_mission</span><span class="p">[</span><span class="s1">'bak'</span><span class="p">]</span><span class="si">}</span><span class="s2">) are not the same. Something is "</span>
+                    <span class="s2">"wrong with the files. "</span>
                 <span class="p">)</span>
 
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_write_bak_file</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;will attempt to also write a BAK file&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"will attempt to also write a BAK file"</span><span class="p">)</span>
 
-            <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;pha&quot;</span><span class="p">,</span> <span class="s2">&quot;bak&quot;</span><span class="p">]</span>
+            <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"pha"</span><span class="p">,</span> <span class="s2">"bak"</span><span class="p">]</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;not attempting to write a BAK file&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"not attempting to write a BAK file"</span><span class="p">)</span>
 
-            <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;pha&quot;</span><span class="p">]</span>
+            <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"pha"</span><span class="p">]</span>
 
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">trigger_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -455,13 +455,13 @@
 
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ext</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">extensions</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
                 <span class="c1"># Set telescope and instrument name</span>
-                <span class="n">ext</span><span class="o">.</span><span class="n">hdu</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;TELESCOP&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mission</span><span class="p">[</span><span class="s2">&quot;pha&quot;</span><span class="p">])</span>
-                <span class="n">ext</span><span class="o">.</span><span class="n">hdu</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;INSTRUME&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instrument</span><span class="p">[</span><span class="s2">&quot;pha&quot;</span><span class="p">])</span>
-                <span class="n">ext</span><span class="o">.</span><span class="n">hdu</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;EXTVER&quot;</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">ext</span><span class="o">.</span><span class="n">hdu</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">"TELESCOP"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mission</span><span class="p">[</span><span class="s2">"pha"</span><span class="p">])</span>
+                <span class="n">ext</span><span class="o">.</span><span class="n">hdu</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">"INSTRUME"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instrument</span><span class="p">[</span><span class="s2">"pha"</span><span class="p">])</span>
+                <span class="n">ext</span><span class="o">.</span><span class="n">hdu</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">"EXTVER"</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
 
             <span class="n">rsp2</span> <span class="o">=</span> <span class="n">FITSFile</span><span class="p">(</span><span class="n">fits_extensions</span><span class="o">=</span><span class="n">extensions</span><span class="p">)</span>
 
-            <span class="n">rsp2</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.rsp&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outfile_basename</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+            <span class="n">rsp2</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2">.rsp"</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outfile_basename</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 
 
@@ -482,9 +482,9 @@
             <span class="c1"># convert None to NONE</span>
             <span class="c1"># which is needed for None Type args</span>
             <span class="c1"># to string arrays</span>
-            <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">char</span><span class="o">.</span><span class="n">lower</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">char</span><span class="o">.</span><span class="n">lower</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="s2">"none"</span>
 
-            <span class="n">value</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;NONE&quot;</span>
+            <span class="n">value</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"NONE"</span>
 
     <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
@@ -495,27 +495,27 @@
 <a class="viewcode-back" href="../../../../api/threeML.utils.OGIP.html#threeML.utils.OGIP.pha.SPECTRUM">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SPECTRUM</span><span class="p">(</span><span class="n">FITSExtension</span><span class="p">):</span>
     <span class="n">_HEADER_KEYWORDS</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="p">(</span><span class="s2">&quot;EXTNAME&quot;</span><span class="p">,</span> <span class="s2">&quot;SPECTRUM&quot;</span><span class="p">,</span> <span class="s2">&quot;Extension name&quot;</span><span class="p">),</span>
-        <span class="p">(</span><span class="s2">&quot;CONTENT&quot;</span><span class="p">,</span> <span class="s2">&quot;OGIP PHA data&quot;</span><span class="p">,</span> <span class="s2">&quot;File content&quot;</span><span class="p">),</span>
-        <span class="p">(</span><span class="s2">&quot;HDUCLASS&quot;</span><span class="p">,</span> <span class="s2">&quot;OGIP    &quot;</span><span class="p">,</span> <span class="s2">&quot;format conforms to OGIP standard&quot;</span><span class="p">),</span>
-        <span class="p">(</span><span class="s2">&quot;HDUVERS&quot;</span><span class="p">,</span> <span class="s2">&quot;1.1.0   &quot;</span><span class="p">,</span> <span class="s2">&quot;Version of format (OGIP memo CAL/GEN/92-002a)&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"EXTNAME"</span><span class="p">,</span> <span class="s2">"SPECTRUM"</span><span class="p">,</span> <span class="s2">"Extension name"</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"CONTENT"</span><span class="p">,</span> <span class="s2">"OGIP PHA data"</span><span class="p">,</span> <span class="s2">"File content"</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"HDUCLASS"</span><span class="p">,</span> <span class="s2">"OGIP    "</span><span class="p">,</span> <span class="s2">"format conforms to OGIP standard"</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"HDUVERS"</span><span class="p">,</span> <span class="s2">"1.1.0   "</span><span class="p">,</span> <span class="s2">"Version of format (OGIP memo CAL/GEN/92-002a)"</span><span class="p">),</span>
         <span class="p">(</span>
-            <span class="s2">&quot;HDUDOC&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;OGIP memos CAL/GEN/92-002 &amp; 92-002a&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Documents describing the forma&quot;</span><span class="p">,</span>
+            <span class="s2">"HDUDOC"</span><span class="p">,</span>
+            <span class="s2">"OGIP memos CAL/GEN/92-002 &amp; 92-002a"</span><span class="p">,</span>
+            <span class="s2">"Documents describing the forma"</span><span class="p">,</span>
         <span class="p">),</span>
-        <span class="p">(</span><span class="s2">&quot;HDUVERS1&quot;</span><span class="p">,</span> <span class="s2">&quot;1.0.0   &quot;</span><span class="p">,</span> <span class="s2">&quot;Obsolete - included for backwards compatibility&quot;</span><span class="p">),</span>
-        <span class="p">(</span><span class="s2">&quot;HDUVERS2&quot;</span><span class="p">,</span> <span class="s2">&quot;1.1.0   &quot;</span><span class="p">,</span> <span class="s2">&quot;Obsolete - included for backwards compatibility&quot;</span><span class="p">),</span>
-        <span class="p">(</span><span class="s2">&quot;HDUCLAS1&quot;</span><span class="p">,</span> <span class="s2">&quot;SPECTRUM&quot;</span><span class="p">,</span> <span class="s2">&quot;Extension contains spectral data  &quot;</span><span class="p">),</span>
-        <span class="p">(</span><span class="s2">&quot;HDUCLAS2&quot;</span><span class="p">,</span> <span class="s2">&quot;TOTAL &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
-        <span class="p">(</span><span class="s2">&quot;HDUCLAS3&quot;</span><span class="p">,</span> <span class="s2">&quot;RATE &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
-        <span class="p">(</span><span class="s2">&quot;HDUCLAS4&quot;</span><span class="p">,</span> <span class="s2">&quot;TYPE:II &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
-        <span class="p">(</span><span class="s2">&quot;FILTER&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;Filter used&quot;</span><span class="p">),</span>
-        <span class="p">(</span><span class="s2">&quot;CHANTYPE&quot;</span><span class="p">,</span> <span class="s2">&quot;PHA&quot;</span><span class="p">,</span> <span class="s2">&quot;Channel type&quot;</span><span class="p">),</span>
-        <span class="p">(</span><span class="s2">&quot;POISSERR&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;Are the rates Poisson distributed&quot;</span><span class="p">),</span>
-        <span class="p">(</span><span class="s2">&quot;DETCHANS&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;Number of channels&quot;</span><span class="p">),</span>
-        <span class="p">(</span><span class="s2">&quot;CORRSCAL&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
-        <span class="p">(</span><span class="s2">&quot;AREASCAL&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"HDUVERS1"</span><span class="p">,</span> <span class="s2">"1.0.0   "</span><span class="p">,</span> <span class="s2">"Obsolete - included for backwards compatibility"</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"HDUVERS2"</span><span class="p">,</span> <span class="s2">"1.1.0   "</span><span class="p">,</span> <span class="s2">"Obsolete - included for backwards compatibility"</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"HDUCLAS1"</span><span class="p">,</span> <span class="s2">"SPECTRUM"</span><span class="p">,</span> <span class="s2">"Extension contains spectral data  "</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"HDUCLAS2"</span><span class="p">,</span> <span class="s2">"TOTAL "</span><span class="p">,</span> <span class="s2">""</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"HDUCLAS3"</span><span class="p">,</span> <span class="s2">"RATE "</span><span class="p">,</span> <span class="s2">""</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"HDUCLAS4"</span><span class="p">,</span> <span class="s2">"TYPE:II "</span><span class="p">,</span> <span class="s2">""</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"FILTER"</span><span class="p">,</span> <span class="s2">""</span><span class="p">,</span> <span class="s2">"Filter used"</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"CHANTYPE"</span><span class="p">,</span> <span class="s2">"PHA"</span><span class="p">,</span> <span class="s2">"Channel type"</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"POISSERR"</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">"Are the rates Poisson distributed"</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"DETCHANS"</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">"Number of channels"</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"CORRSCAL"</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s2">""</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"AREASCAL"</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s2">""</span><span class="p">),</span>
     <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
@@ -535,7 +535,7 @@
         <span class="n">stat_err</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">is_poisson</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Represents the SPECTRUM extension of a PHAII file.</span>
+<span class="w">        </span><span class="sd">"""Represents the SPECTRUM extension of a PHAII file.</span>
 
 <span class="sd">        :param tstart: array of interval start times</span>
 <span class="sd">        :param telapse: array of times elapsed since start</span>
@@ -551,40 +551,40 @@
 <span class="sd">        :param sys_err: array of optional systematic errors</span>
 <span class="sd">        :param stat_err: array of optional statistical errors (required</span>
 <span class="sd">            of non poisson!)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">n_spectra</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tstart</span><span class="p">)</span>
 
         <span class="n">data_list</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="p">(</span><span class="s2">&quot;TSTART&quot;</span><span class="p">,</span> <span class="n">tstart</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;TELAPSE&quot;</span><span class="p">,</span> <span class="n">telapse</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;SPEC_NUM&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_spectra</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">)),</span>
-            <span class="p">(</span><span class="s2">&quot;CHANNEL&quot;</span><span class="p">,</span> <span class="n">channel</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;RATE&quot;</span><span class="p">,</span> <span class="n">rate</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;QUALITY&quot;</span><span class="p">,</span> <span class="n">quality</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;BACKSCAL&quot;</span><span class="p">,</span> <span class="n">backscale</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;GROUPING&quot;</span><span class="p">,</span> <span class="n">grouping</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;EXPOSURE&quot;</span><span class="p">,</span> <span class="n">exposure</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;RESPFILE&quot;</span><span class="p">,</span> <span class="n">respfile</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;ANCRFILE&quot;</span><span class="p">,</span> <span class="n">ancrfile</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"TSTART"</span><span class="p">,</span> <span class="n">tstart</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"TELAPSE"</span><span class="p">,</span> <span class="n">telapse</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"SPEC_NUM"</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_spectra</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">)),</span>
+            <span class="p">(</span><span class="s2">"CHANNEL"</span><span class="p">,</span> <span class="n">channel</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"RATE"</span><span class="p">,</span> <span class="n">rate</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"QUALITY"</span><span class="p">,</span> <span class="n">quality</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"BACKSCAL"</span><span class="p">,</span> <span class="n">backscale</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"GROUPING"</span><span class="p">,</span> <span class="n">grouping</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"EXPOSURE"</span><span class="p">,</span> <span class="n">exposure</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"RESPFILE"</span><span class="p">,</span> <span class="n">respfile</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"ANCRFILE"</span><span class="p">,</span> <span class="n">ancrfile</span><span class="p">),</span>
         <span class="p">]</span>
 
         <span class="k">if</span> <span class="n">back_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">data_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;BACKFILE&quot;</span><span class="p">,</span> <span class="n">back_file</span><span class="p">))</span>
+            <span class="n">data_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">"BACKFILE"</span><span class="p">,</span> <span class="n">back_file</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="n">stat_err</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">is_poisson</span><span class="p">:</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Tying to enter STAT_ERR error but have POISSERR set true&quot;</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"Tying to enter STAT_ERR error but have POISSERR set true"</span><span class="p">)</span>
 
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
-            <span class="n">data_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;STAT_ERR&quot;</span><span class="p">,</span> <span class="n">stat_err</span><span class="p">))</span>
+            <span class="n">data_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">"STAT_ERR"</span><span class="p">,</span> <span class="n">stat_err</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="n">sys_err</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">data_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;SYS_ERR&quot;</span><span class="p">,</span> <span class="n">sys_err</span><span class="p">))</span>
+            <span class="n">data_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">"SYS_ERR"</span><span class="p">,</span> <span class="n">sys_err</span><span class="p">))</span>
 
         <span class="nb">super</span><span class="p">(</span><span class="n">SPECTRUM</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">data_list</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_HEADER_KEYWORDS</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">hdu</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;POISSERR&quot;</span><span class="p">,</span> <span class="n">is_poisson</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hdu</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">"POISSERR"</span><span class="p">,</span> <span class="n">is_poisson</span><span class="p">)</span></div>
 
 
 
@@ -610,7 +610,7 @@
         <span class="n">stat_err</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">is_poisson</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A generic PHAII fits file.</span>
+<span class="w">        </span><span class="sd">"""A generic PHAII fits file.</span>
 
 <span class="sd">        :param instrument_name: name of the instrument</span>
 <span class="sd">        :param telescope_name: name of the telescope</span>
@@ -628,7 +628,7 @@
 <span class="sd">        :param sys_err: array of optional systematic errors</span>
 <span class="sd">        :param stat_err: array of optional statistical errors (required</span>
 <span class="sd">            of non poisson!)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># collect the data so that we can have a general</span>
         <span class="c1"># extension builder</span>
@@ -659,7 +659,7 @@
         <span class="k">if</span> <span class="n">back_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_back_file</span> <span class="o">=</span> <span class="n">_atleast_1d_with_dtype</span><span class="p">(</span><span class="n">back_file</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_back_file</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s2">&quot;NONE&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tstart</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_back_file</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s2">"NONE"</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tstart</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
         <span class="c1"># Create the SPECTRUM extension</span>
 
@@ -682,16 +682,16 @@
 
         <span class="c1"># Set telescope and instrument name</span>
 
-        <span class="n">spectrum_extension</span><span class="o">.</span><span class="n">hdu</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;TELESCOP&quot;</span><span class="p">,</span> <span class="n">telescope_name</span><span class="p">)</span>
-        <span class="n">spectrum_extension</span><span class="o">.</span><span class="n">hdu</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;INSTRUME&quot;</span><span class="p">,</span> <span class="n">instrument_name</span><span class="p">)</span>
-        <span class="n">spectrum_extension</span><span class="o">.</span><span class="n">hdu</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;DETCHANS&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_channel</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="n">spectrum_extension</span><span class="o">.</span><span class="n">hdu</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">"TELESCOP"</span><span class="p">,</span> <span class="n">telescope_name</span><span class="p">)</span>
+        <span class="n">spectrum_extension</span><span class="o">.</span><span class="n">hdu</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">"INSTRUME"</span><span class="p">,</span> <span class="n">instrument_name</span><span class="p">)</span>
+        <span class="n">spectrum_extension</span><span class="o">.</span><span class="n">hdu</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">"DETCHANS"</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_channel</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
 
         <span class="nb">super</span><span class="p">(</span><span class="n">PHAII</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">fits_extensions</span><span class="o">=</span><span class="p">[</span><span class="n">spectrum_extension</span><span class="p">])</span>
 
 <div class="viewcode-block" id="PHAII.from_time_series">
 <a class="viewcode-back" href="../../../../api/threeML.utils.OGIP.html#threeML.utils.OGIP.pha.PHAII.from_time_series">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">from_time_series</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">time_series</span><span class="p">,</span> <span class="n">use_poly</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PHAII&quot;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_time_series</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">time_series</span><span class="p">,</span> <span class="n">use_poly</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"PHAII"</span><span class="p">:</span>
         <span class="n">pha_information</span> <span class="o">=</span> <span class="n">time_series</span><span class="o">.</span><span class="n">get_information_dict</span><span class="p">(</span><span class="n">use_poly</span><span class="p">)</span>
 
         <span class="n">is_poisson</span> <span class="o">=</span> <span class="kc">True</span>
@@ -711,7 +711,7 @@
             <span class="n">grouping</span><span class="o">=</span><span class="n">pha_information</span><span class="o">.</span><span class="n">grouping</span><span class="p">,</span>
             <span class="n">exposure</span><span class="o">=</span><span class="n">pha_information</span><span class="o">.</span><span class="n">exposure</span><span class="p">,</span>
             <span class="n">backscale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
-            <span class="n">respfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># pha_information[&#39;response_file&#39;],</span>
+            <span class="n">respfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># pha_information['response_file'],</span>
             <span class="n">ancrfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">is_poisson</span><span class="o">=</span><span class="n">is_poisson</span><span class="p">,</span>
         <span class="p">)</span></div>
@@ -722,29 +722,29 @@
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_fits_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">fits_file</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FITSFile</span><span class="p">:</span>
         <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fits_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="k">if</span> <span class="s2">&quot;SPECTRUM&quot;</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
-                <span class="n">spectrum_extension</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;SPECTRUM&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="s2">"SPECTRUM"</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">spectrum_extension</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s2">"SPECTRUM"</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;unable to find SPECTRUM extension: not OGIP PHA!&quot;</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"unable to find SPECTRUM extension: not OGIP PHA!"</span><span class="p">)</span>
 
                 <span class="n">spectrum_extension</span> <span class="o">=</span> <span class="kc">None</span>
 
                 <span class="k">for</span> <span class="n">extension</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
-                    <span class="n">hduclass</span> <span class="o">=</span> <span class="n">extension</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;HDUCLASS&quot;</span><span class="p">)</span>
-                    <span class="n">hduclas1</span> <span class="o">=</span> <span class="n">extension</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;HDUCLAS1&quot;</span><span class="p">)</span>
+                    <span class="n">hduclass</span> <span class="o">=</span> <span class="n">extension</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"HDUCLASS"</span><span class="p">)</span>
+                    <span class="n">hduclas1</span> <span class="o">=</span> <span class="n">extension</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"HDUCLAS1"</span><span class="p">)</span>
 
-                    <span class="k">if</span> <span class="n">hduclass</span> <span class="o">==</span> <span class="s2">&quot;OGIP&quot;</span> <span class="ow">and</span> <span class="n">hduclas1</span> <span class="o">==</span> <span class="s2">&quot;SPECTRUM&quot;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">hduclass</span> <span class="o">==</span> <span class="s2">"OGIP"</span> <span class="ow">and</span> <span class="n">hduclas1</span> <span class="o">==</span> <span class="s2">"SPECTRUM"</span><span class="p">:</span>
                         <span class="n">spectrum_extension</span> <span class="o">=</span> <span class="n">extension</span>
                         <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                            <span class="s2">&quot;File has no SPECTRUM extension, but found a spectrum in &quot;</span>
-                            <span class="s2">&quot;extension </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">spectrum_extension</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;EXTNAME&quot;</span><span class="p">))</span>
+                            <span class="s2">"File has no SPECTRUM extension, but found a spectrum in "</span>
+                            <span class="s2">"extension </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">spectrum_extension</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"EXTNAME"</span><span class="p">))</span>
                         <span class="p">)</span>
-                        <span class="n">spectrum_extension</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;EXTNAME&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;SPECTRUM&quot;</span>
+                        <span class="n">spectrum_extension</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">"EXTNAME"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"SPECTRUM"</span>
                         <span class="k">break</span>
 
             <span class="n">spectrum</span> <span class="o">=</span> <span class="n">FITSExtension</span><span class="o">.</span><span class="n">from_fits_file_extension</span><span class="p">(</span><span class="n">spectrum_extension</span><span class="p">)</span>
 
-            <span class="n">out</span> <span class="o">=</span> <span class="n">FITSFile</span><span class="p">(</span><span class="n">primary_hdu</span><span class="o">=</span><span class="n">f</span><span class="p">[</span><span class="s2">&quot;PRIMARY&quot;</span><span class="p">],</span> <span class="n">fits_extensions</span><span class="o">=</span><span class="p">[</span><span class="n">spectrum</span><span class="p">])</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">FITSFile</span><span class="p">(</span><span class="n">primary_hdu</span><span class="o">=</span><span class="n">f</span><span class="p">[</span><span class="s2">"PRIMARY"</span><span class="p">],</span> <span class="n">fits_extensions</span><span class="o">=</span><span class="p">[</span><span class="n">spectrum</span><span class="p">])</span>
 
         <span class="k">return</span> <span class="n">out</span></div>
 

@@ -126,7 +126,7 @@
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;bayesian_blocks&quot;</span><span class="p">,</span> <span class="s2">&quot;bayesian_blocks_not_unique&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"bayesian_blocks"</span><span class="p">,</span> <span class="s2">"bayesian_blocks_not_unique"</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="bayesian_blocks_not_unique">
@@ -154,7 +154,7 @@
 
     <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">block_length</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-            <span class="s2">&quot;Events appears to be out of order! Check for order, or duplicated events.&quot;</span>
+            <span class="s2">"Events appears to be out of order! Check for order, or duplicated events."</span>
         <span class="p">)</span>
 
     <span class="n">N</span> <span class="o">=</span> <span class="n">unique_t</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -178,7 +178,7 @@
     <span class="n">argmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span>
     <span class="n">numexpr_evaluate</span> <span class="o">=</span> <span class="n">numexpr</span><span class="o">.</span><span class="n">evaluate</span>
 
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Finding blocks...&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Finding blocks..."</span><span class="p">)</span>
 
     <span class="c1"># This is where the computation happens. Following Scargle et al. 2012.</span>
     <span class="c1"># This loop has been optimized for speed:</span>
@@ -190,7 +190,7 @@
 
     <span class="c1"># Set numexpr precision to low (more than enough for us), which is</span>
     <span class="c1"># faster than high</span>
-    <span class="n">oldaccuracy</span> <span class="o">=</span> <span class="n">numexpr</span><span class="o">.</span><span class="n">set_vml_accuracy_mode</span><span class="p">(</span><span class="s2">&quot;low&quot;</span><span class="p">)</span>
+    <span class="n">oldaccuracy</span> <span class="o">=</span> <span class="n">numexpr</span><span class="o">.</span><span class="n">set_vml_accuracy_mode</span><span class="p">(</span><span class="s2">"low"</span><span class="p">)</span>
     <span class="n">numexpr</span><span class="o">.</span><span class="n">set_num_threads</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">numexpr</span><span class="o">.</span><span class="n">set_vml_num_threads</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
@@ -207,13 +207,13 @@
         <span class="c1"># N_k = arange(R + 1, 0, -1)</span>
 
         <span class="c1"># Evaluate fitness function</span>
-        <span class="c1"># This is the slowest part, which I&#39;m speeding up by using</span>
+        <span class="c1"># This is the slowest part, which I'm speeding up by using</span>
         <span class="c1"># numexpr. It provides a ~40% gain in execution speed.</span>
 
         <span class="n">fit_vec</span> <span class="o">=</span> <span class="n">numexpr_evaluate</span><span class="p">(</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;N_k * log(N_k/ T_k) &quot;&quot;&quot;</span><span class="p">,</span>
-            <span class="n">optimization</span><span class="o">=</span><span class="s2">&quot;aggressive&quot;</span><span class="p">,</span>
-            <span class="n">local_dict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;N_k&quot;</span><span class="p">:</span> <span class="n">N_k</span><span class="p">,</span> <span class="s2">&quot;T_k&quot;</span><span class="p">:</span> <span class="n">T_k</span><span class="p">},</span>
+<span class="w">            </span><span class="sd">"""N_k * log(N_k/ T_k) """</span><span class="p">,</span>
+            <span class="n">optimization</span><span class="o">=</span><span class="s2">"aggressive"</span><span class="p">,</span>
+            <span class="n">local_dict</span><span class="o">=</span><span class="p">{</span><span class="s2">"N_k"</span><span class="p">:</span> <span class="n">N_k</span><span class="p">,</span> <span class="s2">"T_k"</span><span class="p">:</span> <span class="n">T_k</span><span class="p">},</span>
         <span class="p">)</span>
 
         <span class="n">p</span> <span class="o">=</span> <span class="n">priors</span><span class="p">[</span><span class="n">R</span><span class="p">]</span>
@@ -229,7 +229,7 @@
 
     <span class="n">numexpr</span><span class="o">.</span><span class="n">set_vml_accuracy_mode</span><span class="p">(</span><span class="n">oldaccuracy</span><span class="p">)</span>
 
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Done</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Done</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="c1"># Now find blocks</span>
     <span class="n">change_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
@@ -255,7 +255,7 @@
 <div class="viewcode-block" id="bayesian_blocks">
 <a class="viewcode-back" href="../../../api/threeML.utils.html#threeML.utils.bayesian_blocks.bayesian_blocks">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">bayesian_blocks</span><span class="p">(</span><span class="n">tt</span><span class="p">,</span> <span class="n">ttstart</span><span class="p">,</span> <span class="n">ttstop</span><span class="p">,</span> <span class="n">p0</span><span class="p">,</span> <span class="n">bkg_integral_distribution</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Divide a series of events characterized by their arrival time in blocks</span>
+<span class="w">    </span><span class="sd">"""Divide a series of events characterized by their arrival time in blocks</span>
 <span class="sd">    of perceptibly constant count rate. If the background integral distribution</span>
 <span class="sd">    is given, divide the series in blocks where the difference with respect to</span>
 <span class="sd">    the background is perceptibly constant.</span>
@@ -270,7 +270,7 @@
 <span class="sd">        algorithm account for the presence of the background and finds</span>
 <span class="sd">        changes in rate with respect to the background</span>
 <span class="sd">    :return: the np.array containing the edges of the blocks</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="c1"># Verify that the input array is one-dimensional</span>
     <span class="n">tt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">tt</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
@@ -281,11 +281,11 @@
         <span class="c1"># Transforming the inhomogeneous Poisson process into an homogeneous one with</span>
         <span class="c1"># rate 1, by changing the time axis according to the background rate</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-            <span class="s2">&quot;Transforming the inhomogeneous Poisson process to a homogeneous one with &quot;</span>
-            <span class="s2">&quot;rate 1...&quot;</span>
+            <span class="s2">"Transforming the inhomogeneous Poisson process to a homogeneous one with "</span>
+            <span class="s2">"rate 1..."</span>
         <span class="p">)</span>
         <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bkg_integral_distribution</span><span class="p">(</span><span class="n">tt</span><span class="p">))</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;done&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"done"</span><span class="p">)</span>
 
         <span class="c1"># Now compute the start and stop time in the new system</span>
         <span class="n">tstop</span> <span class="o">=</span> <span class="n">bkg_integral_distribution</span><span class="p">(</span><span class="n">ttstop</span><span class="p">)</span>
@@ -309,7 +309,7 @@
 
     <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">block_length</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-            <span class="s2">&quot;Events appears to be out of order! Check for order, or duplicated events.&quot;</span>
+            <span class="s2">"Events appears to be out of order! Check for order, or duplicated events."</span>
         <span class="p">)</span>
 
     <span class="n">N</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -321,7 +321,7 @@
     <span class="c1"># eq. 21 from Scargle 2012</span>
     <span class="n">prior</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">73.53</span> <span class="o">*</span> <span class="n">p0</span> <span class="o">*</span> <span class="p">(</span><span class="n">N</span><span class="o">**-</span><span class="mf">0.478</span><span class="p">))</span>
 
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Finding blocks...&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Finding blocks..."</span><span class="p">)</span>
 
     <span class="c1"># This is where the computation happens. Following Scargle et al. 2012.</span>
     <span class="c1"># This loop has been optimized for speed:</span>
@@ -333,7 +333,7 @@
 
     <span class="c1"># Set numexpr precision to low (more than enough for us), which is</span>
     <span class="c1"># faster than high</span>
-    <span class="n">oldaccuracy</span> <span class="o">=</span> <span class="n">numexpr</span><span class="o">.</span><span class="n">set_vml_accuracy_mode</span><span class="p">(</span><span class="s2">&quot;low&quot;</span><span class="p">)</span>
+    <span class="n">oldaccuracy</span> <span class="o">=</span> <span class="n">numexpr</span><span class="o">.</span><span class="n">set_vml_accuracy_mode</span><span class="p">(</span><span class="s2">"low"</span><span class="p">)</span>
     <span class="n">numexpr</span><span class="o">.</span><span class="n">set_num_threads</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">numexpr</span><span class="o">.</span><span class="n">set_vml_num_threads</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
@@ -363,21 +363,21 @@
         <span class="c1"># where aranges has been pre-computed</span>
 
         <span class="c1"># Evaluate fitness function</span>
-        <span class="c1"># This is the slowest part, which I&#39;m speeding up by using</span>
+        <span class="c1"># This is the slowest part, which I'm speeding up by using</span>
         <span class="c1"># numexpr. It provides a ~40% gain in execution speed.</span>
 
-        <span class="c1"># The first time we need to &quot;compile&quot; the expression in numexpr,</span>
+        <span class="c1"># The first time we need to "compile" the expression in numexpr,</span>
         <span class="c1"># all the other times we can reuse it</span>
 
         <span class="k">if</span> <span class="n">R</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">fit_vec</span> <span class="o">=</span> <span class="n">numexpr_evaluate</span><span class="p">(</span>
-<span class="w">                </span><span class="sd">&quot;&quot;&quot;N_k * log(N_k/ T_k) &quot;&quot;&quot;</span><span class="p">,</span>
-                <span class="n">optimization</span><span class="o">=</span><span class="s2">&quot;aggressive&quot;</span><span class="p">,</span>
-                <span class="n">local_dict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;N_k&quot;</span><span class="p">:</span> <span class="n">N_k</span><span class="p">,</span> <span class="s2">&quot;T_k&quot;</span><span class="p">:</span> <span class="n">T_k</span><span class="p">},</span>
+<span class="w">                </span><span class="sd">"""N_k * log(N_k/ T_k) """</span><span class="p">,</span>
+                <span class="n">optimization</span><span class="o">=</span><span class="s2">"aggressive"</span><span class="p">,</span>
+                <span class="n">local_dict</span><span class="o">=</span><span class="p">{</span><span class="s2">"N_k"</span><span class="p">:</span> <span class="n">N_k</span><span class="p">,</span> <span class="s2">"T_k"</span><span class="p">:</span> <span class="n">T_k</span><span class="p">},</span>
             <span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">fit_vec</span> <span class="o">=</span> <span class="n">numexpr_re_evaluate</span><span class="p">(</span><span class="n">local_dict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;N_k&quot;</span><span class="p">:</span> <span class="n">N_k</span><span class="p">,</span> <span class="s2">&quot;T_k&quot;</span><span class="p">:</span> <span class="n">T_k</span><span class="p">})</span>
+            <span class="n">fit_vec</span> <span class="o">=</span> <span class="n">numexpr_re_evaluate</span><span class="p">(</span><span class="n">local_dict</span><span class="o">=</span><span class="p">{</span><span class="s2">"N_k"</span><span class="p">:</span> <span class="n">N_k</span><span class="p">,</span> <span class="s2">"T_k"</span><span class="p">:</span> <span class="n">T_k</span><span class="p">})</span>
 
         <span class="n">A_R</span> <span class="o">=</span> <span class="n">fit_vec</span> <span class="o">-</span> <span class="n">prior</span>  <span class="c1"># type: np.ndarray</span>
 
@@ -390,7 +390,7 @@
 
     <span class="n">numexpr</span><span class="o">.</span><span class="n">set_vml_accuracy_mode</span><span class="p">(</span><span class="n">oldaccuracy</span><span class="p">)</span>
 
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Done</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Done</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="c1"># Now peel off and find the blocks (see the algorithm in Scargle et al.)</span>
     <span class="n">change_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
@@ -428,13 +428,13 @@
 
 
 <span class="c1"># To be run with a profiler</span>
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
     <span class="n">tt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
     <span class="n">tt</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
 
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;sim.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;w+&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"sim.txt"</span><span class="p">,</span> <span class="s2">"w+"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tt</span><span class="p">:</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">t</span><span class="p">))</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="se">\n</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">t</span><span class="p">))</span>
 
     <span class="n">res</span> <span class="o">=</span> <span class="n">bayesian_blocks</span><span class="p">(</span><span class="n">tt</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>

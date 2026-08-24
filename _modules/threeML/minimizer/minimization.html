@@ -131,7 +131,7 @@
 
 <span class="c1"># Set the warnings to be issued always for this module</span>
 
-<span class="n">custom_warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;always&quot;</span><span class="p">,</span> <span class="ne">RuntimeWarning</span><span class="p">)</span>
+<span class="n">custom_warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">"always"</span><span class="p">,</span> <span class="ne">RuntimeWarning</span><span class="p">)</span>
 
 <span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -192,17 +192,17 @@
 <div class="viewcode-block" id="get_minimizer">
 <a class="viewcode-back" href="../../../api/threeML.minimizer.html#threeML.minimizer.minimization.get_minimizer">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_minimizer</span><span class="p">(</span><span class="n">minimizer_type</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the requested minimizer *class* (not instance)</span>
+<span class="w">    </span><span class="sd">"""Return the requested minimizer *class* (not instance)</span>
 
 <span class="sd">    :param minimizer_type: MINUIT, ROOT, PYOPT...</span>
 <span class="sd">    :return: the class (i.e., the type) for the requested minimizer</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">_minimizers</span><span class="p">[</span><span class="n">minimizer_type</span><span class="o">.</span><span class="n">upper</span><span class="p">()]</span>
 
     <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Minimizer </span><span class="si">%s</span><span class="s2"> is not available on your system&quot;</span> <span class="o">%</span> <span class="n">minimizer_type</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"Minimizer </span><span class="si">%s</span><span class="s2"> is not available on your system"</span> <span class="o">%</span> <span class="n">minimizer_type</span><span class="p">)</span>
 
         <span class="k">raise</span> <span class="n">MinimizerNotAvailable</span><span class="p">()</span></div>
 
@@ -212,12 +212,12 @@
 <a class="viewcode-back" href="../../../api/threeML.minimizer.html#threeML.minimizer.minimization.FunctionWrapper">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">FunctionWrapper</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">all_parameters</span><span class="p">,</span> <span class="n">fixed_parameters</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 
 <span class="sd">        :param function:</span>
 <span class="sd">        :param all_parameters:</span>
 <span class="sd">        :param fixed_parameters: list of fixed parameters</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_function</span> <span class="o">=</span> <span class="n">function</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_all_parameters</span> <span class="o">=</span> <span class="n">all_parameters</span>
@@ -264,7 +264,7 @@
 
         <span class="k">assert</span> <span class="p">(</span>
             <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fixed_parameters</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">2</span>
-        <span class="p">),</span> <span class="s2">&quot;Can handle only one or two fixed parameters&quot;</span>
+        <span class="p">),</span> <span class="s2">"Can handle only one or two fixed parameters"</span>
 
         <span class="c1"># Get some info from the original minimizer</span>
 
@@ -312,11 +312,11 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_transform_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter_name</span><span class="p">,</span> <span class="n">steps</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;If the parameter has a transformation, use it for the steps and</span>
+<span class="w">        </span><span class="sd">"""If the parameter has a transformation, use it for the steps and</span>
 <span class="sd">        return the transformed steps.</span>
 
 <span class="sd">        :return: transformed steps</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_parameters</span><span class="p">[</span><span class="n">parameter_name</span><span class="p">]</span><span class="o">.</span><span class="n">has_transformation</span><span class="p">():</span>
             <span class="n">new_steps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_parameters</span><span class="p">[</span><span class="n">parameter_name</span><span class="p">]</span><span class="o">.</span><span class="n">transformation</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span>
@@ -336,7 +336,7 @@
         <span class="k">if</span> <span class="n">steps2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">assert</span> <span class="p">(</span>
                 <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fixed_parameters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
-            <span class="p">),</span> <span class="s2">&quot;Cannot step in 2d if you fix only one parameter&quot;</span>
+            <span class="p">),</span> <span class="s2">"Cannot step in 2d if you fix only one parameter"</span>
 
             <span class="c1"># Find out if the user is giving flipped steps (i.e. param_1 is after</span>
             <span class="c1"># param_2 in the parameters dictionary)</span>
@@ -370,7 +370,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">assert</span> <span class="p">(</span>
                 <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fixed_parameters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
-            <span class="p">),</span> <span class="s2">&quot;You cannot step in 1d if you fix 2 parameters&quot;</span>
+            <span class="p">),</span> <span class="s2">"You cannot step in 1d if you fix 2 parameters"</span>
 
             <span class="n">param_1_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fixed_parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
@@ -390,7 +390,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_step1d</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">steps1</span><span class="p">):</span>
         <span class="n">log_likes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">steps1</span><span class="p">)</span>
 
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tqdm</span><span class="p">(</span><span class="n">steps1</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Profiling likelihood&quot;</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tqdm</span><span class="p">(</span><span class="n">steps1</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">"Profiling likelihood"</span><span class="p">)):</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_free_parameters</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="c1"># Profile out the free parameters</span>
 
@@ -411,7 +411,7 @@
         <span class="n">log_likes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">steps1</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">steps2</span><span class="p">)))</span>
 
         <span class="k">if</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">interface</span><span class="o">.</span><span class="n">progress_bars</span><span class="p">:</span>
-            <span class="n">p</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">steps1</span><span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">steps2</span><span class="p">),</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Profiling likelihood&quot;</span><span class="p">)</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">steps1</span><span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">steps2</span><span class="p">),</span> <span class="n">desc</span><span class="o">=</span><span class="s2">"Profiling likelihood"</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">step1</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">steps1</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">step2</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">steps2</span><span class="p">):</span>
@@ -462,7 +462,7 @@
         <span class="c1"># Check that the setup has been specified well</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">setup_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
             <span class="k">assert</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">valid_setup_keys</span><span class="p">,</span> <span class="p">(</span>
-                <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> is not a valid setup parameter for this minimizer&quot;</span> <span class="o">%</span> <span class="n">key</span>
+                <span class="s2">"</span><span class="si">%s</span><span class="s2"> is not a valid setup parameter for this minimizer"</span> <span class="o">%</span> <span class="n">key</span>
             <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_setup_dict</span> <span class="o">=</span> <span class="n">setup_dict</span>
@@ -484,7 +484,7 @@
         <span class="nb">super</span><span class="p">(</span><span class="n">LocalMinimization</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">minimizer_type</span><span class="p">)</span>
 
         <span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_minimizer_type</span><span class="p">,</span> <span class="n">LocalMinimizer</span><span class="p">),</span> <span class="p">(</span>
-            <span class="s2">&quot;Minimizer </span><span class="si">%s</span><span class="s2"> is not a local minimizer&quot;</span> <span class="o">%</span> <span class="n">minimizer_type</span>
+            <span class="s2">"Minimizer </span><span class="si">%s</span><span class="s2"> is not a local minimizer"</span> <span class="o">%</span> <span class="n">minimizer_type</span>
         <span class="p">)</span>
 
 <div class="viewcode-block" id="LocalMinimization.get_instance">
@@ -510,7 +510,7 @@
         <span class="nb">super</span><span class="p">(</span><span class="n">GlobalMinimization</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">minimizer_type</span><span class="p">)</span>
 
         <span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_minimizer_type</span><span class="p">,</span> <span class="n">GlobalMinimizer</span><span class="p">),</span> <span class="p">(</span>
-            <span class="s2">&quot;Minimizer </span><span class="si">%s</span><span class="s2"> is not a local minimizer&quot;</span> <span class="o">%</span> <span class="n">minimizer_type</span>
+            <span class="s2">"Minimizer </span><span class="si">%s</span><span class="s2"> is not a local minimizer"</span> <span class="o">%</span> <span class="n">minimizer_type</span>
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_2nd_minimization</span> <span class="o">=</span> <span class="kc">None</span>
@@ -518,12 +518,12 @@
 <div class="viewcode-block" id="GlobalMinimization.setup">
 <a class="viewcode-back" href="../../../api/threeML.minimizer.html#threeML.minimizer.minimization.GlobalMinimization.setup">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">setup_dict</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="s2">&quot;second_minimization&quot;</span> <span class="ow">in</span> <span class="n">setup_dict</span><span class="p">,</span> <span class="p">(</span>
-            <span class="s2">&quot;You have to provide a secondary minimizer during setup, &quot;</span>
-            <span class="s2">&quot;using the second_minimization keyword&quot;</span>
+        <span class="k">assert</span> <span class="s2">"second_minimization"</span> <span class="ow">in</span> <span class="n">setup_dict</span><span class="p">,</span> <span class="p">(</span>
+            <span class="s2">"You have to provide a secondary minimizer during setup, "</span>
+            <span class="s2">"using the second_minimization keyword"</span>
         <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_2nd_minimization</span> <span class="o">=</span> <span class="n">setup_dict</span><span class="p">[</span><span class="s2">&quot;second_minimization&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_2nd_minimization</span> <span class="o">=</span> <span class="n">setup_dict</span><span class="p">[</span><span class="s2">"second_minimization"</span><span class="p">]</span>
 
         <span class="nb">super</span><span class="p">(</span><span class="n">GlobalMinimization</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="o">**</span><span class="n">setup_dict</span><span class="p">)</span></div>
 
@@ -554,7 +554,7 @@
 <a class="viewcode-back" href="../../../api/threeML.minimizer.html#threeML.minimizer.minimization.Minimizer">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Minimizer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">verbosity</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">setup_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 
 <span class="sd">        :param function: function to be minimized</span>
 <span class="sd">        :param parameters: ordered dictionary of the FREE parameters in the fit. The</span>
@@ -564,7 +564,7 @@
 <span class="sd">        :param type: type of the optimizer (use the enums LOCAL_OPTIMIZER or</span>
 <span class="sd">        GLOBAL_OPTIMIZER)</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_function</span> <span class="o">=</span> <span class="n">function</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_external_parameters</span> <span class="o">=</span> <span class="n">parameters</span>
@@ -584,7 +584,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer_type</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_update_internal_parameter_dictionary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a dictionary parameter_name -&gt; (current value, delta,</span>
+<span class="w">        </span><span class="sd">"""Returns a dictionary parameter_name -&gt; (current value, delta,</span>
 <span class="sd">        minimum, maximum) in the internal frame (if the parameter has a</span>
 <span class="sd">        transformation set).</span>
 
@@ -592,14 +592,14 @@
 <span class="sd">        get the parameters to optimize.</span>
 
 <span class="sd">        :return: dictionary</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># Prepare the dictionary for the parameters which will be used by iminuit</span>
 
         <span class="n">internal_parameter_dictionary</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
 
         <span class="c1"># NOTE: we use the internal_ versions of value, min_value and max_value because</span>
-        <span class="c1"># they don&#39;t have units, and they are transformed to make the fit easier (for</span>
+        <span class="c1"># they don't have units, and they are transformed to make the fit easier (for</span>
         <span class="c1"># example in log scale)</span>
 
         <span class="c1"># NOTE as well that as in the entire class here, the .parameters dictionary only</span>
@@ -642,8 +642,8 @@
                     <span class="c1"># the boundary</span>
                     <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">current_value</span><span class="p">,</span> <span class="n">current_min</span><span class="p">,</span> <span class="nb">abs</span><span class="p">(</span><span class="n">current_value</span><span class="p">)</span> <span class="o">/</span> <span class="mi">20</span><span class="p">):</span>
                         <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                            <span class="s2">&quot;The current value of parameter </span><span class="si">%s</span><span class="s2"> is very close to &quot;</span>
-                            <span class="s2">&quot;its lower bound when starting the fit. Fixing it&quot;</span>
+                            <span class="s2">"The current value of parameter </span><span class="si">%s</span><span class="s2"> is very close to "</span>
+                            <span class="s2">"its lower bound when starting the fit. Fixing it"</span>
                             <span class="o">%</span> <span class="n">par</span><span class="o">.</span><span class="n">name</span>
                         <span class="p">)</span>
 
@@ -663,8 +663,8 @@
                     <span class="c1"># the boundary</span>
                     <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">current_value</span><span class="p">,</span> <span class="n">current_max</span><span class="p">,</span> <span class="nb">abs</span><span class="p">(</span><span class="n">current_value</span><span class="p">)</span> <span class="o">/</span> <span class="mi">20</span><span class="p">):</span>
                         <span class="n">log</span><span class="o">.</span><span class="n">warnings</span><span class="p">(</span>
-                            <span class="s2">&quot;The current value of parameter </span><span class="si">%s</span><span class="s2"> is very close to &quot;</span>
-                            <span class="s2">&quot;its upper bound when starting the fit. Fixing it&quot;</span>
+                            <span class="s2">"The current value of parameter </span><span class="si">%s</span><span class="s2"> is very close to "</span>
+                            <span class="s2">"its upper bound when starting the fit. Fixing it"</span>
                             <span class="o">%</span> <span class="n">par</span><span class="o">.</span><span class="n">name</span>
                         <span class="p">)</span>
 
@@ -708,7 +708,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_verbosity</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">setup_dict</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;You have to implement this.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"You have to implement this."</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">algorithm_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -717,13 +717,13 @@
 <div class="viewcode-block" id="Minimizer.minimize">
 <a class="viewcode-back" href="../../../api/threeML.minimizer.html#threeML.minimizer.minimization.Minimizer.minimize">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">minimize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">compute_covar</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Minimize objective function. This call _minimize, which is</span>
+<span class="w">        </span><span class="sd">"""Minimize objective function. This call _minimize, which is</span>
 <span class="sd">        implemented by each subclass.</span>
 
 <span class="sd">        :param compute_covar:</span>
 <span class="sd">        :return: best fit values (in external reference) and minimum of</span>
 <span class="sd">            the objective function</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># Gather the best fit values from the minimizer and the covariance matrix (if</span>
         <span class="c1"># provided)</span>
@@ -739,8 +739,8 @@
         <span class="c1"># Check that the best_fit_values are finite</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">internal_best_fit_values</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="n">FitFailed</span><span class="p">(</span>
-                <span class="s2">&quot;_Minimization apparently succeeded, &quot;</span>
-                <span class="s2">&quot;but best fit values are not all finite: </span><span class="si">%s</span><span class="s2">&quot;</span>
+                <span class="s2">"_Minimization apparently succeeded, "</span>
+                <span class="s2">"but best fit values are not all finite: </span><span class="si">%s</span><span class="s2">"</span>
                 <span class="o">%</span> <span class="p">(</span><span class="n">internal_best_fit_values</span><span class="p">)</span>
             <span class="p">)</span>
 
@@ -773,16 +773,16 @@
         <span class="c1"># function</span>
 
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-            <span class="s2">&quot;This is the method of the base class. Must be implemented by the actual &quot;</span>
-            <span class="s2">&quot;minimizer&quot;</span>
+            <span class="s2">"This is the method of the base class. Must be implemented by the actual "</span>
+            <span class="s2">"minimizer"</span>
         <span class="p">)</span>
 
 <div class="viewcode-block" id="Minimizer.set_algorithm">
 <a class="viewcode-back" href="../../../api/threeML.minimizer.html#threeML.minimizer.minimization.Minimizer.set_algorithm">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_algorithm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">algorithm</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-            <span class="s2">&quot;Must be implemented by the actual minimizer if it provides more than one &quot;</span>
-            <span class="s2">&quot;algorithm&quot;</span>
+            <span class="s2">"Must be implemented by the actual minimizer if it provides more than one "</span>
+            <span class="s2">"algorithm"</span>
         <span class="p">)</span></div>
 
 
@@ -817,7 +817,7 @@
                     <span class="n">error</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">covariance_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">])</span>
 
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Negative element on diagonal of covariance matrix&quot;</span><span class="p">)</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Negative element on diagonal of covariance matrix"</span><span class="p">)</span>
 
                     <span class="n">error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
 
@@ -828,8 +828,8 @@
             <span class="n">errors</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">error</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;error&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">"value"</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">"error"</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_fit_results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_covariance_matrix</span> <span class="o">=</span> <span class="n">covariance_matrix</span>
@@ -852,7 +852,7 @@
                         <span class="p">)</span>
 
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="c1"># We already issued a warning about this, so let&#39;s quietly fail</span>
+                        <span class="c1"># We already issued a warning about this, so let's quietly fail</span>
 
                         <span class="bp">self</span><span class="o">.</span><span class="n">_correlation_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
 
@@ -871,28 +871,28 @@
 <div class="viewcode-block" id="Minimizer.restore_best_fit">
 <a class="viewcode-back" href="../../../api/threeML.minimizer.html#threeML.minimizer.minimization.Minimizer.restore_best_fit">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">restore_best_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset all the parameters to their best fit value (from the last run</span>
+<span class="w">        </span><span class="sd">"""Reset all the parameters to their best fit value (from the last run</span>
 <span class="sd">        fit)</span>
 
 <span class="sd">        :return: none</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
-        <span class="n">best_fit_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_results</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">best_fit_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_results</span><span class="p">[</span><span class="s2">"value"</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
 
-        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Restoring best fit:&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Restoring best fit:"</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">parameter_name</span><span class="p">,</span> <span class="n">best_fit_value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
             <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="n">best_fit_values</span>
         <span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">parameter_name</span><span class="p">]</span><span class="o">.</span><span class="n">_set_internal_value</span><span class="p">(</span><span class="n">best_fit_value</span><span class="p">)</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">parameter_name</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">best_fit_value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">parameter_name</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">best_fit_value</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
         <span class="c1"># Regenerate the internal parameter dictionary with the new values</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_internal_parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_update_internal_parameter_dictionary</span><span class="p">()</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_compute_covariance_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">best_fit_values</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;This function compute the approximate covariance matrix as the</span>
+<span class="w">        </span><span class="sd">"""This function compute the approximate covariance matrix as the</span>
 <span class="sd">        inverse of the Hessian matrix, which is the matrix of second</span>
 <span class="sd">        derivatives of the likelihood function with respect to the parameters.</span>
 
@@ -903,7 +903,7 @@
 <span class="sd">        Derivatives are computed numerically.</span>
 
 <span class="sd">        :return: the covariance matrix</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">minima</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">parameter</span><span class="o">.</span><span class="n">_get_internal_min_value</span><span class="p">()</span>
@@ -936,8 +936,8 @@
 
         <span class="k">except</span> <span class="n">ParameterOnBoundary</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;One or more of the parameters are at their boundaries. Cannot compute &quot;</span>
-                <span class="s2">&quot;covariance and errors&quot;</span>
+                <span class="s2">"One or more of the parameters are at their boundaries. Cannot compute "</span>
+                <span class="s2">"covariance and errors"</span>
             <span class="p">)</span>
 
             <span class="n">n_dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">best_fit_values</span><span class="p">)</span>
@@ -951,7 +951,7 @@
 
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;Cannot invert Hessian matrix, looks like the matrix is singular&quot;</span>
+                <span class="s2">"Cannot invert Hessian matrix, looks like the matrix is singular"</span>
             <span class="p">)</span>
 
             <span class="n">n_dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">best_fit_values</span><span class="p">)</span>
@@ -970,15 +970,15 @@
 
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;Covariance matrix is NOT semi-positive definite. Cannot estimate &quot;</span>
-                <span class="s2">&quot;errors. This can happen for many reasons, the most common being one or&quot;</span>
-                <span class="s2">&quot; more unconstrained parameters&quot;</span>
+                <span class="s2">"Covariance matrix is NOT semi-positive definite. Cannot estimate "</span>
+                <span class="s2">"errors. This can happen for many reasons, the most common being one or"</span>
+                <span class="s2">" more unconstrained parameters"</span>
             <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">covariance_matrix</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_one_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter_name</span><span class="p">,</span> <span class="n">target_delta_log_like</span><span class="p">,</span> <span class="n">sign</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A generic procedure to numerically compute the error for the</span>
+<span class="w">        </span><span class="sd">"""A generic procedure to numerically compute the error for the</span>
 <span class="sd">        parameters. You can override this if the minimizer provides its own</span>
 <span class="sd">        method to compute the error of one parameter. If it provides a method</span>
 <span class="sd">        to compute all errors are once, override the _get_errors method</span>
@@ -988,7 +988,7 @@
 <span class="sd">        :param target_delta_log_like:</span>
 <span class="sd">        :param sign:</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># Since the procedure might find a better minimum, we can repeat it</span>
         <span class="c1"># up to a maximum of 10 times</span>
@@ -996,7 +996,7 @@
         <span class="n">repeats</span> <span class="o">=</span> <span class="mi">0</span>
 
         <span class="k">while</span> <span class="n">repeats</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>
-            <span class="c1"># Let&#39;s start optimistic...</span>
+            <span class="c1"># Let's start optimistic...</span>
 
             <span class="n">repeat</span> <span class="o">=</span> <span class="kc">False</span>
 
@@ -1039,7 +1039,7 @@
 
             <span class="n">trials</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">trials</span><span class="p">,</span> <span class="n">extreme_allowed</span><span class="p">)</span>
 
-            <span class="c1"># Make sure we don&#39;t go below the allowed minimum or above the allowed</span>
+            <span class="c1"># Make sure we don't go below the allowed minimum or above the allowed</span>
             <span class="c1"># maximum</span>
 
             <span class="k">if</span> <span class="n">sign</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
@@ -1049,7 +1049,7 @@
                 <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">trials</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">extreme_allowed</span><span class="p">,</span> <span class="n">trials</span><span class="p">)</span>
 
             <span class="c1"># There might be more than one value which was below the minimum (or above</span>
-            <span class="c1"># the maximum), so let&#39;s take only unique elements</span>
+            <span class="c1"># the maximum), so let's take only unique elements</span>
 
             <span class="n">trials</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">trials</span><span class="p">)</span>
 
@@ -1074,8 +1074,8 @@
 
                 <span class="k">if</span> <span class="n">delta</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">:</span>
                     <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                        <span class="s2">&quot;Found a better minimum (</span><span class="si">%.2f</span><span class="s2">) for </span><span class="si">%s</span><span class="s2"> = </span><span class="si">%s</span><span class="s2"> during error &quot;</span>
-                        <span class="s2">&quot;computation.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">this_log_like</span><span class="p">,</span> <span class="n">parameter_name</span><span class="p">,</span> <span class="n">trial</span><span class="p">)</span>
+                        <span class="s2">"Found a better minimum (</span><span class="si">%.2f</span><span class="s2">) for </span><span class="si">%s</span><span class="s2"> = </span><span class="si">%s</span><span class="s2"> during error "</span>
+                        <span class="s2">"computation."</span> <span class="o">%</span> <span class="p">(</span><span class="n">this_log_like</span><span class="p">,</span> <span class="n">parameter_name</span><span class="p">,</span> <span class="n">trial</span><span class="p">)</span>
                     <span class="p">)</span>
 
                     <span class="n">xs</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">())]</span>
@@ -1105,20 +1105,20 @@
             <span class="k">if</span> <span class="n">repeat</span><span class="p">:</span>
                 <span class="c1"># We found a better minimum, restart from scratch</span>
 
-                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Restarting search...&quot;</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Restarting search..."</span><span class="p">)</span>
 
                 <span class="k">continue</span>
 
             <span class="k">if</span> <span class="n">minimum_bound</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="c1"># Cannot find error in this direction (it&#39;s probably outside the allowed</span>
+                <span class="c1"># Cannot find error in this direction (it's probably outside the allowed</span>
                 <span class="c1"># boundaries)</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Cannot find boundary for parameter </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">parameter_name</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Cannot find boundary for parameter </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">parameter_name</span><span class="p">)</span>
 
                 <span class="n">error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
                 <span class="k">break</span>
 
             <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># Define the &quot;biased likelihood&quot;, since brenq only finds zeros of</span>
+                <span class="c1"># Define the "biased likelihood", since brenq only finds zeros of</span>
                 <span class="c1"># function</span>
 
                 <span class="k">def</span><span class="w"> </span><span class="nf">biased_likelihood</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
@@ -1134,7 +1134,7 @@
                     <span class="p">)</span>  <span class="c1"># type: float</span>
                 <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
                     <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                        <span class="s2">&quot;Cannot find boundary for parameter </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">parameter_name</span>
+                        <span class="s2">"Cannot find boundary for parameter </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">parameter_name</span>
                     <span class="p">)</span>
 
                     <span class="n">error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
@@ -1149,11 +1149,11 @@
 <div class="viewcode-block" id="Minimizer.get_errors">
 <a class="viewcode-back" href="../../../api/threeML.minimizer.html#threeML.minimizer.minimization.Minimizer.get_errors">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute asymmetric errors using the profile likelihood method (slow,</span>
+<span class="w">        </span><span class="sd">"""Compute asymmetric errors using the profile likelihood method (slow,</span>
 <span class="sd">        but accurate).</span>
 
 <span class="sd">        :return: a dictionary with asymmetric errors for each parameter</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># Restore best fit so error computation starts from there</span>
 
@@ -1165,7 +1165,7 @@
 
         <span class="c1"># Transform in external reference if needed</span>
 
-        <span class="n">best_fit_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_results</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
+        <span class="n">best_fit_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_results</span><span class="p">[</span><span class="s2">"value"</span><span class="p">]</span>
 
         <span class="k">for</span> <span class="n">par_name</span><span class="p">,</span> <span class="p">(</span><span class="n">negative_error</span><span class="p">,</span> <span class="n">positive_error</span><span class="p">)</span> <span class="ow">in</span> <span class="n">errors_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">parameter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">par_name</span><span class="p">]</span>
@@ -1192,13 +1192,13 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Override this method if the minimizer provide a function to get all</span>
+<span class="w">        </span><span class="sd">"""Override this method if the minimizer provide a function to get all</span>
 <span class="sd">        errors at once. If instead it provides a method to get one error at the</span>
 <span class="sd">        time, override the _get_one_error method.</span>
 
 <span class="sd">        :return: a ordered dictionary parameter_path -&gt; (negative_error,</span>
 <span class="sd">            positive_error)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># TODO: options for other significance levels</span>
 
@@ -1206,7 +1206,7 @@
 
         <span class="n">errors</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
 
-        <span class="n">p</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">),</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Computing errors&quot;</span><span class="p">)</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">),</span> <span class="n">desc</span><span class="o">=</span><span class="s2">"Computing errors"</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">parameter_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">:</span>
             <span class="n">negative_error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_one_error</span><span class="p">(</span>
@@ -1240,7 +1240,7 @@
         <span class="n">progress</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="o">**</span><span class="n">options</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate confidence contours for the given parameters by stepping</span>
+<span class="w">        </span><span class="sd">"""Generate confidence contours for the given parameters by stepping</span>
 <span class="sd">        for the given number of steps between the given boundaries. Call it</span>
 <span class="sd">        specifying only source_1, param_1, param_1_minimum and param_1_maximum</span>
 <span class="sd">        to generate the profile of the likelihood for parameter 1. Specify all</span>
@@ -1257,10 +1257,10 @@
 <span class="sd">        :param progress: (True or False) whether to display progress or not</span>
 <span class="sd">        :param log: by default the steps are taken linearly. With this optional</span>
 <span class="sd">        parameter you can provide a tuple of booleans which specify whether the steps</span>
-<span class="sd">        are to be taken logarithmically. For example, &#39;log=(True,False)&#39; specify that</span>
+<span class="sd">        are to be taken logarithmically. For example, 'log=(True,False)' specify that</span>
 <span class="sd">        the steps for the first parameter are to be taken logarithmically, while they</span>
 <span class="sd">        are linear for the second parameter. If you are generating the profile for only</span>
-<span class="sd">        one parameter, you can specify &#39;log=(True,)&#39; or &#39;log=(False,)&#39; (optional)</span>
+<span class="sd">        one parameter, you can specify 'log=(True,)' or 'log=(False,)' (optional)</span>
 <span class="sd">        :param: parallel: whether to use or not parallel computation (default:False)</span>
 <span class="sd">        :return:</span>
 <span class="sd">           a : an array corresponding to the steps for the first parameter</span>
@@ -1270,7 +1270,7 @@
 <span class="sd">           of the function at the corresponding points in the grid. If param_2_steps is</span>
 <span class="sd">           None (only one parameter), then this reduces to an array of size</span>
 <span class="sd">           param_1_steps.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># Figure out if we are making a 1d or a 2d contour</span>
 
@@ -1287,16 +1287,16 @@
         <span class="n">p1log</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="n">p2log</span> <span class="o">=</span> <span class="kc">False</span>
 
-        <span class="k">if</span> <span class="s2">&quot;log&quot;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
-            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;log&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="n">n_dimensions</span><span class="p">,</span> <span class="p">(</span>
-                <span class="s2">&quot;When specifying the &#39;log&#39; option you have to provide a &quot;</span>
-                <span class="o">+</span> <span class="s2">&quot;boolean for each dimension you are stepping on.&quot;</span>
+        <span class="k">if</span> <span class="s2">"log"</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">options</span><span class="p">[</span><span class="s2">"log"</span><span class="p">])</span> <span class="o">==</span> <span class="n">n_dimensions</span><span class="p">,</span> <span class="p">(</span>
+                <span class="s2">"When specifying the 'log' option you have to provide a "</span>
+                <span class="o">+</span> <span class="s2">"boolean for each dimension you are stepping on."</span>
             <span class="p">)</span>
 
-            <span class="n">p1log</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;log&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">p1log</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">options</span><span class="p">[</span><span class="s2">"log"</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
 
             <span class="k">if</span> <span class="n">param_2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">p2log</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;log&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">p2log</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">options</span><span class="p">[</span><span class="s2">"log"</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
 
         <span class="c1"># Generate the steps</span>
 
@@ -1343,8 +1343,8 @@
 
         <span class="k">else</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;No best fit to restore before contours computation. &quot;</span>
-                <span class="s2">&quot;Perform the fit before running contours to remove this warnings.&quot;</span>
+                <span class="s2">"No best fit to restore before contours computation. "</span>
+                <span class="s2">"Perform the fit before running contours to remove this warnings."</span>
             <span class="p">)</span>
 
         <span class="n">pr</span> <span class="o">=</span> <span class="n">ProfileLikelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fixed_parameters</span><span class="p">)</span>
@@ -1386,52 +1386,52 @@
     <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.minimizer.minuit_minimizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">MinuitMinimizer</span>
 
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="n">add_startup_warning</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="s2">&quot;Minuit minimizer not available&quot;</span><span class="p">)</span>
+    <span class="n">add_startup_warning</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="s2">"Minuit minimizer not available"</span><span class="p">)</span>
 
 <span class="k">else</span><span class="p">:</span>
-    <span class="n">_minimizers</span><span class="p">[</span><span class="s2">&quot;MINUIT&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">MinuitMinimizer</span>
+    <span class="n">_minimizers</span><span class="p">[</span><span class="s2">"MINUIT"</span><span class="p">]</span> <span class="o">=</span> <span class="n">MinuitMinimizer</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.minimizer.ROOT_minimizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">ROOTMinimizer</span>
 
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="n">add_startup_warning</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="s2">&quot;ROOT minimizer not available&quot;</span><span class="p">)</span>
+    <span class="n">add_startup_warning</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="s2">"ROOT minimizer not available"</span><span class="p">)</span>
 
 <span class="k">else</span><span class="p">:</span>
-    <span class="n">_minimizers</span><span class="p">[</span><span class="s2">&quot;ROOT&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ROOTMinimizer</span>
+    <span class="n">_minimizers</span><span class="p">[</span><span class="s2">"ROOT"</span><span class="p">]</span> <span class="o">=</span> <span class="n">ROOTMinimizer</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.minimizer.multinest_minimizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultinestMinimizer</span>
 
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="n">add_startup_warning</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="s2">&quot;Multinest minimizer not available&quot;</span><span class="p">)</span>
+    <span class="n">add_startup_warning</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="s2">"Multinest minimizer not available"</span><span class="p">)</span>
 
 <span class="k">else</span><span class="p">:</span>
-    <span class="n">_minimizers</span><span class="p">[</span><span class="s2">&quot;MULTINEST&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">MultinestMinimizer</span>
+    <span class="n">_minimizers</span><span class="p">[</span><span class="s2">"MULTINEST"</span><span class="p">]</span> <span class="o">=</span> <span class="n">MultinestMinimizer</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.minimizer.pagmo_minimizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">PAGMOMinimizer</span>
 
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="n">add_startup_warning</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="s2">&quot;PyGMO is not available&quot;</span><span class="p">)</span>
+    <span class="n">add_startup_warning</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="s2">"PyGMO is not available"</span><span class="p">)</span>
 
 <span class="k">else</span><span class="p">:</span>
-    <span class="n">_minimizers</span><span class="p">[</span><span class="s2">&quot;PAGMO&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PAGMOMinimizer</span>
+    <span class="n">_minimizers</span><span class="p">[</span><span class="s2">"PAGMO"</span><span class="p">]</span> <span class="o">=</span> <span class="n">PAGMOMinimizer</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.minimizer.scipy_minimizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">ScipyMinimizer</span>
 
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="n">add_startup_warning</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="s2">&quot;Scipy minimizer is not available&quot;</span><span class="p">)</span>
+    <span class="n">add_startup_warning</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="s2">"Scipy minimizer is not available"</span><span class="p">)</span>
 
 <span class="k">else</span><span class="p">:</span>
-    <span class="n">_minimizers</span><span class="p">[</span><span class="s2">&quot;SCIPY&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ScipyMinimizer</span>
+    <span class="n">_minimizers</span><span class="p">[</span><span class="s2">"SCIPY"</span><span class="p">]</span> <span class="o">=</span> <span class="n">ScipyMinimizer</span>
 
 <span class="c1"># Check that we have at least one minimizer available</span>
 
 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">_minimizers</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
     <span class="k">raise</span> <span class="ne">SystemError</span><span class="p">(</span>
-        <span class="s2">&quot;You do not have any minimizer available! You need to install at least iminuit.&quot;</span>
+        <span class="s2">"You do not have any minimizer available! You need to install at least iminuit."</span>
     <span class="p">)</span>
 
 
@@ -1440,7 +1440,7 @@
 
     <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.minimizer.grid_minimizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">GridMinimizer</span>
 
-    <span class="n">_minimizers</span><span class="p">[</span><span class="s2">&quot;GRID&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">GridMinimizer</span>
+    <span class="n">_minimizers</span><span class="p">[</span><span class="s2">"GRID"</span><span class="p">]</span> <span class="o">=</span> <span class="n">GridMinimizer</span>
 </pre></div>
 
            </div>

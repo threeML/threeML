@@ -122,11 +122,11 @@
 <div class="viewcode-block" id="my_format_warning">
 <a class="viewcode-back" href="../../../api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.my_format_warning">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">my_format_warning</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">category</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">lineo</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Override the default showwarning to customize the appearance of warnings</span>
-<span class="sd">    :return:&quot;&quot;&quot;</span>
-    <span class="c1"># if message.message.find(&quot;may indicate binary incompatibility&quot;) &gt;= 0:</span>
-    <span class="c1">#     return &#39;&#39;</span>
-    <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">WARNING </span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="se">\n\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">category</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span></div>
+<span class="w">    </span><span class="sd">"""Override the default showwarning to customize the appearance of warnings</span>
+<span class="sd">    :return:"""</span>
+    <span class="c1"># if message.message.find("may indicate binary incompatibility") &gt;= 0:</span>
+    <span class="c1">#     return ''</span>
+    <span class="k">return</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">WARNING </span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="se">\n\n</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">category</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span></div>
 
 
 
@@ -236,21 +236,21 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">deprecated</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reason</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isclass</span><span class="p">(</span><span class="n">reason</span><span class="p">)</span> <span class="ow">or</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">(</span><span class="n">reason</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Reason for deprecation must be supplied&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"Reason for deprecation must be supplied"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reason</span> <span class="o">=</span> <span class="n">reason</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cls_or_func</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">(</span><span class="n">cls_or_func</span><span class="p">):</span>
-            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cls_or_func</span><span class="p">,</span> <span class="s2">&quot;func_code&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cls_or_func</span><span class="p">,</span> <span class="s2">"func_code"</span><span class="p">):</span>
                 <span class="n">_code</span> <span class="o">=</span> <span class="n">cls_or_func</span><span class="o">.</span><span class="n">func_code</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">_code</span> <span class="o">=</span> <span class="n">cls_or_func</span><span class="o">.</span><span class="vm">__code__</span>
-            <span class="n">fmt</span> <span class="o">=</span> <span class="s2">&quot;Call to deprecated function or method </span><span class="si">{name}</span><span class="s2"> (</span><span class="si">{reason}</span><span class="s2">).&quot;</span>
+            <span class="n">fmt</span> <span class="o">=</span> <span class="s2">"Call to deprecated function or method </span><span class="si">{name}</span><span class="s2"> (</span><span class="si">{reason}</span><span class="s2">)."</span>
             <span class="n">filename</span> <span class="o">=</span> <span class="n">_code</span><span class="o">.</span><span class="n">co_filename</span>
             <span class="n">lineno</span> <span class="o">=</span> <span class="n">_code</span><span class="o">.</span><span class="n">co_firstlineno</span> <span class="o">+</span> <span class="mi">1</span>
 
         <span class="k">elif</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isclass</span><span class="p">(</span><span class="n">cls_or_func</span><span class="p">):</span>
-            <span class="n">fmt</span> <span class="o">=</span> <span class="s2">&quot;Call to deprecated class </span><span class="si">{name}</span><span class="s2"> (</span><span class="si">{reason}</span><span class="s2">).&quot;</span>
+            <span class="n">fmt</span> <span class="o">=</span> <span class="s2">"Call to deprecated class </span><span class="si">{name}</span><span class="s2"> (</span><span class="si">{reason}</span><span class="s2">)."</span>
             <span class="n">filename</span> <span class="o">=</span> <span class="n">cls_or_func</span><span class="o">.</span><span class="vm">__module__</span>
             <span class="n">lineno</span> <span class="o">=</span> <span class="mi">1</span>
 
@@ -262,12 +262,12 @@
         <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">cls_or_func</span><span class="p">)</span>
         <span class="k">def</span><span class="w"> </span><span class="nf">new_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
             <span class="n">custom_warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span>
-                <span class="s2">&quot;always&quot;</span><span class="p">,</span> <span class="ne">DeprecationWarning</span>
+                <span class="s2">"always"</span><span class="p">,</span> <span class="ne">DeprecationWarning</span>
             <span class="p">)</span>  <span class="c1"># turn off filter</span>
             <span class="n">custom_warnings</span><span class="o">.</span><span class="n">warn_explicit</span><span class="p">(</span>
                 <span class="n">msg</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">DeprecationWarning</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">lineno</span><span class="o">=</span><span class="n">lineno</span>
             <span class="p">)</span>
-            <span class="n">custom_warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="ne">DeprecationWarning</span><span class="p">)</span>  <span class="c1"># reset filter</span>
+            <span class="n">custom_warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">"default"</span><span class="p">,</span> <span class="ne">DeprecationWarning</span><span class="p">)</span>  <span class="c1"># reset filter</span>
             <span class="k">return</span> <span class="n">cls_or_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">new_func</span></div>

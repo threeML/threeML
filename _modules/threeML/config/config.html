@@ -128,11 +128,11 @@
 <div class="viewcode-block" id="get_path_of_user_config">
 <a class="viewcode-back" href="../../../api/threeML.config.html#threeML.config.config.get_path_of_user_config">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_path_of_user_config</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
-    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;THREEML_CONFIG&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">config_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;THREEML_CONFIG&quot;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"THREEML_CONFIG"</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">config_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"THREEML_CONFIG"</span><span class="p">))</span>
 
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">config_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">()</span><span class="o">.</span><span class="n">home</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;.config&quot;</span> <span class="o">/</span> <span class="s2">&quot;threeML&quot;</span>
+        <span class="n">config_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">()</span><span class="o">.</span><span class="n">home</span><span class="p">()</span> <span class="o">/</span> <span class="s2">".config"</span> <span class="o">/</span> <span class="s2">"threeML"</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">config_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
         <span class="n">config_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -144,15 +144,15 @@
 <div class="viewcode-block" id="update_config_with_user_configs">
 <a class="viewcode-back" href="../../../api/threeML.config.html#threeML.config.config.update_config_with_user_configs">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">update_config_with_user_configs</span><span class="p">(</span><span class="n">threeML_config</span><span class="p">):</span>
-    <span class="k">for</span> <span class="n">user_config_file</span> <span class="ow">in</span> <span class="n">get_path_of_user_config</span><span class="p">()</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.yml&quot;</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">user_config_file</span> <span class="ow">in</span> <span class="n">get_path_of_user_config</span><span class="p">()</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">"*.yml"</span><span class="p">):</span>
         <span class="n">_partial_conf</span> <span class="o">=</span> <span class="n">OmegaConf</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">user_config_file</span><span class="p">)</span>
-        <span class="k">if</span> <span class="s2">&quot;logging&quot;</span> <span class="ow">in</span> <span class="n">_partial_conf</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="k">if</span> <span class="s2">&quot;startup_warnings&quot;</span> <span class="ow">in</span> <span class="n">_partial_conf</span><span class="p">[</span><span class="s2">&quot;logging&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">if</span> <span class="s2">"logging"</span> <span class="ow">in</span> <span class="n">_partial_conf</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="s2">"startup_warnings"</span> <span class="ow">in</span> <span class="n">_partial_conf</span><span class="p">[</span><span class="s2">"logging"</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                 <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                    <span class="s2">&quot;You&#39;ve provided &#39;logging.startup_warnings&#39; in &quot;</span>
+                    <span class="s2">"You've provided 'logging.startup_warnings' in "</span>
                     <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">user_config_file</span><span class="p">)</span>
-                    <span class="o">+</span> <span class="s2">&quot;. &quot;</span>
-                    <span class="o">+</span> <span class="s2">&quot;This is deprecated since v2.6.0 - will ignore it&quot;</span>
+                    <span class="o">+</span> <span class="s2">". "</span>
+                    <span class="o">+</span> <span class="s2">"This is deprecated since v2.6.0 - will ignore it"</span>
                 <span class="p">)</span>
                 <span class="k">del</span> <span class="n">_partial_conf</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">startup_warnings</span>
 

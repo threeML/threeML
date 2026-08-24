@@ -125,7 +125,7 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.plugin_prototype</span><span class="w"> </span><span class="kn">import</span> <span class="n">PluginPrototype</span>
 
-<span class="n">__instrument_name</span> <span class="o">=</span> <span class="s2">&quot;n.a.&quot;</span>
+<span class="n">__instrument_name</span> <span class="o">=</span> <span class="s2">"n.a."</span>
 
 
 <span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -173,11 +173,11 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_n_events</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_events</span><span class="p">)</span>
 
-        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Created event observation with </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_start</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_stop</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Created event observation with </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_start</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_stop</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_for_timeseries</span> <span class="o">=</span> <span class="n">for_timeseries</span>
         <span class="k">if</span> <span class="n">for_timeseries</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;This EventObservation is for a time series fit!&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"This EventObservation is for a time series fit!"</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">events</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
@@ -218,13 +218,13 @@
         <span class="n">observation</span><span class="p">:</span> <span class="n">EventObservation</span><span class="p">,</span>
         <span class="n">source_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;This is a generic likelihood for unbinned Poisson data. It is very</span>
+<span class="w">        </span><span class="sd">"""This is a generic likelihood for unbinned Poisson data. It is very</span>
 <span class="sd">        slow for many events.</span>
 
 <span class="sd">        :param name: the plugin name</span>
 <span class="sd">        :param observation: and EventObservation container</span>
 <span class="sd">        :param source_name: option source name to apply to the source</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">observation</span><span class="p">,</span> <span class="n">EventObservation</span><span class="p">)</span>
 
@@ -252,10 +252,10 @@
 <div class="viewcode-block" id="UnbinnedPoissonLike.set_model">
 <a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.UnbinnedPoissonLike.UnbinnedPoissonLike.set_model">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">astromodels</span><span class="o">.</span><span class="n">Model</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the model to be used in the joint minimization.</span>
+<span class="w">        </span><span class="sd">"""Set the model to be used in the joint minimization.</span>
 
 <span class="sd">        Must be a LikelihoodModel instance.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_like_model</span><span class="p">:</span> <span class="n">astromodels</span><span class="o">.</span><span class="n">Model</span> <span class="o">=</span> <span class="n">model</span>
 
@@ -263,13 +263,13 @@
 
         <span class="k">assert</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_like_model</span><span class="o">.</span><span class="n">get_number_of_extended_sources</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span>
-        <span class="p">),</span> <span class="s2">&quot;SpectrumLike plugins do not support extended sources&quot;</span>
+        <span class="p">),</span> <span class="s2">"SpectrumLike plugins do not support extended sources"</span>
 
         <span class="c1"># check if we set a source name that the source is in the model</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_like_model</span><span class="o">.</span><span class="n">sources</span><span class="p">,</span> <span class="p">(</span>
-                <span class="s2">&quot;Source </span><span class="si">%s</span><span class="s2"> is not contained in the likelihood model&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_name</span>
+                <span class="s2">"Source </span><span class="si">%s</span><span class="s2"> is not contained in the likelihood model"</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_name</span>
             <span class="p">)</span>
 
         <span class="n">differential</span><span class="p">,</span> <span class="n">integral</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_diff_and_integral</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_like_model</span><span class="p">)</span>
@@ -316,14 +316,14 @@
 
             <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
-                    <span class="s2">&quot;This plugin has been assigned to source </span><span class="si">%s</span><span class="s2">, &quot;</span>
-                    <span class="s2">&quot;which does not exist in the current model&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_name</span>
+                    <span class="s2">"This plugin has been assigned to source </span><span class="si">%s</span><span class="s2">, "</span>
+                    <span class="s2">"which does not exist in the current model"</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_name</span>
                 <span class="p">)</span>
 
         <span class="c1"># New way with simpson rule.</span>
         <span class="c1"># Make sure to not calculate the model twice for the same energies</span>
         <span class="k">def</span><span class="w"> </span><span class="nf">integral</span><span class="p">(</span><span class="n">e1</span><span class="p">,</span> <span class="n">e2</span><span class="p">):</span>
-            <span class="c1"># Simpson&#39;s rule</span>
+            <span class="c1"># Simpson's rule</span>
             <span class="c1"># single energy values given</span>
             <span class="k">return</span> <span class="p">(</span>
                 <span class="p">(</span><span class="n">e2</span> <span class="o">-</span> <span class="n">e1</span><span class="p">)</span>
@@ -340,8 +340,8 @@
 <div class="viewcode-block" id="UnbinnedPoissonLike.get_log_like">
 <a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.UnbinnedPoissonLike.UnbinnedPoissonLike.get_log_like">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_log_like</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the value of the log-likelihood with the current values for</span>
-<span class="sd">        the parameters.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return the value of the log-likelihood with the current values for</span>
+<span class="sd">        the parameters."""</span>
 
         <span class="n">n_expected_counts</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
 
@@ -370,14 +370,14 @@
 <div class="viewcode-block" id="UnbinnedPoissonLike.inner_fit">
 <a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.UnbinnedPoissonLike.UnbinnedPoissonLike.inner_fit">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">inner_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;This is used for the profile likelihood.</span>
+<span class="w">        </span><span class="sd">"""This is used for the profile likelihood.</span>
 
 <span class="sd">        Keeping fixed all parameters in the LikelihoodModel, this method</span>
 <span class="sd">        minimize the logLike over the remaining nuisance parameters,</span>
 <span class="sd">        i.e., the parameters belonging only to the model for this</span>
 <span class="sd">        particular detector. If there are no nuisance parameters, simply</span>
 <span class="sd">        return the logLike value.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_log_like</span><span class="p">()</span></div>
 

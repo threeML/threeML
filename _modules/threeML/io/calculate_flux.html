@@ -114,7 +114,7 @@
   <h1>Source code for threeML.io.calculate_flux</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 
-<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;grburgess&quot;</span>
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">"grburgess"</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">collections</span>
 
@@ -143,7 +143,7 @@
     <span class="n">sources_to_use</span><span class="p">,</span>
     <span class="n">include_extended</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper function to pull out analysis details that are common to flux and</span>
+<span class="w">    </span><span class="sd">"""Helper function to pull out analysis details that are common to flux and</span>
 <span class="sd">    plotting functions.</span>
 
 <span class="sd">    :param analysis_results:</span>
@@ -158,7 +158,7 @@
 <span class="sd">    :param sources_to_use:</span>
 <span class="sd">    :param include_extended:</span>
 <span class="sd">    :return:</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">bayesian_analyses</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
     <span class="n">mle_analyses</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
@@ -175,15 +175,15 @@
                 <span class="k">return</span> <span class="p">[]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_dedupe_comps</span><span class="p">(</span><span class="n">comps</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Removes duplicates from a list of components and appends a suffix to the name</span>
 <span class="sd">        if there are duplicates.</span>
 
 <span class="sd">        :param comps:</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="p">[</span>
-            <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">_n</span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">suffix</span><span class="p">)</span> <span class="k">if</span> <span class="n">num</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">s</span>
+            <span class="s2">"</span><span class="si">%s</span><span class="s2">_n</span><span class="si">%i</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">suffix</span><span class="p">)</span> <span class="k">if</span> <span class="n">num</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">s</span>
             <span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">collections</span><span class="o">.</span><span class="n">Counter</span><span class="p">(</span><span class="n">comps</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
             <span class="k">for</span> <span class="n">suffix</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="p">]</span>
@@ -199,18 +199,18 @@
             <span class="k">if</span> <span class="n">sources_to_use</span> <span class="ow">and</span> <span class="n">source_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sources_to_use</span><span class="p">:</span>
                 <span class="k">continue</span>
 
-            <span class="n">is_mle</span> <span class="o">=</span> <span class="n">analysis</span><span class="o">.</span><span class="n">analysis_type</span> <span class="o">==</span> <span class="s2">&quot;MLE&quot;</span>
+            <span class="n">is_mle</span> <span class="o">=</span> <span class="n">analysis</span><span class="o">.</span><span class="n">analysis_type</span> <span class="o">==</span> <span class="s2">"MLE"</span>
             <span class="n">tracker</span> <span class="o">=</span> <span class="n">mle_sources</span> <span class="k">if</span> <span class="n">is_mle</span> <span class="k">else</span> <span class="n">bayes_sources</span>
             <span class="n">target</span> <span class="o">=</span> <span class="n">mle_analyses</span> <span class="k">if</span> <span class="n">is_mle</span> <span class="k">else</span> <span class="n">bayesian_analyses</span>
 
             <span class="n">tracker</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">source_name</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
             <span class="n">count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tracker</span><span class="p">[</span><span class="n">source_name</span><span class="p">])</span>
-            <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">_</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">source_name</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span> <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">source_name</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="s2">"</span><span class="si">%s</span><span class="s2">_</span><span class="si">%d</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">source_name</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span> <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">source_name</span>
 
             <span class="n">target</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="n">source_name</span><span class="p">,</span>
-                <span class="s2">&quot;analysis&quot;</span><span class="p">:</span> <span class="n">analysis</span><span class="p">,</span>
-                <span class="s2">&quot;component_names&quot;</span><span class="p">:</span> <span class="n">_dedupe_comps</span><span class="p">(</span><span class="n">_get_comps</span><span class="p">(</span><span class="n">source</span><span class="p">)),</span>
+                <span class="s2">"source"</span><span class="p">:</span> <span class="n">source_name</span><span class="p">,</span>
+                <span class="s2">"analysis"</span><span class="p">:</span> <span class="n">analysis</span><span class="p">,</span>
+                <span class="s2">"component_names"</span><span class="p">:</span> <span class="n">_dedupe_comps</span><span class="p">(</span><span class="n">_get_comps</span><span class="p">(</span><span class="n">source</span><span class="p">)),</span>
             <span class="p">}</span>
     <span class="c1"># keep track of the number of sources we will use</span>
 
@@ -219,13 +219,13 @@
     <span class="c1"># go through the MLE analysis and build up some fitted sources</span>
 
     <span class="k">if</span> <span class="n">mle_analyses</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">mle_analyses</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;processing MLE analyses&quot;</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">mle_analyses</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="n">desc</span><span class="o">=</span><span class="s2">"processing MLE analyses"</span><span class="p">):</span>
             <span class="c1"># if we want to use this source</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">use_components</span> <span class="ow">or</span> <span class="p">(</span><span class="s2">&quot;main&quot;</span> <span class="ow">in</span> <span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;component_names&quot;</span><span class="p">]):</span>
-                <span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;fitted point source&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">use_components</span> <span class="ow">or</span> <span class="p">(</span><span class="s2">"main"</span> <span class="ow">in</span> <span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"component_names"</span><span class="p">]):</span>
+                <span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"fitted point source"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
                     <span class="n">FittedPointSourceSpectralHandler</span><span class="p">(</span>
-                        <span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;analysis&quot;</span><span class="p">],</span>
-                        <span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;source&quot;</span><span class="p">],</span>
+                        <span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"analysis"</span><span class="p">],</span>
+                        <span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"source"</span><span class="p">],</span>
                         <span class="n">energy_range</span><span class="p">,</span>
                         <span class="n">energy_unit</span><span class="p">,</span>
                         <span class="n">flux_unit</span><span class="p">,</span>
@@ -244,13 +244,13 @@
 
                 <span class="n">component_dict</span> <span class="o">=</span> <span class="p">{}</span>
 
-                <span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;component_names&quot;</span><span class="p">]:</span>
+                <span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"component_names"</span><span class="p">]:</span>
                     <span class="c1"># if we want to plot all the components</span>
 
-                    <span class="k">if</span> <span class="ow">not</span> <span class="n">components_to_use</span> <span class="ow">or</span> <span class="s2">&quot;total&quot;</span> <span class="ow">in</span> <span class="n">components_to_use</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">components_to_use</span> <span class="ow">or</span> <span class="s2">"total"</span> <span class="ow">in</span> <span class="n">components_to_use</span><span class="p">:</span>
                         <span class="n">component_dict</span><span class="p">[</span><span class="n">component</span><span class="p">]</span> <span class="o">=</span> <span class="n">FittedPointSourceSpectralHandler</span><span class="p">(</span>
-                            <span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;analysis&quot;</span><span class="p">],</span>
-                            <span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;source&quot;</span><span class="p">],</span>
+                            <span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"analysis"</span><span class="p">],</span>
+                            <span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"source"</span><span class="p">],</span>
                             <span class="n">energy_range</span><span class="p">,</span>
                             <span class="n">energy_unit</span><span class="p">,</span>
                             <span class="n">flux_unit</span><span class="p">,</span>
@@ -268,8 +268,8 @@
                         <span class="k">if</span> <span class="n">component</span> <span class="ow">in</span> <span class="n">components_to_use</span><span class="p">:</span>
                             <span class="n">component_dict</span><span class="p">[</span><span class="n">component</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
                                 <span class="n">FittedPointSourceSpectralHandler</span><span class="p">(</span>
-                                    <span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;analysis&quot;</span><span class="p">],</span>
-                                    <span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;source&quot;</span><span class="p">],</span>
+                                    <span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"analysis"</span><span class="p">],</span>
+                                    <span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"source"</span><span class="p">],</span>
                                     <span class="n">energy_range</span><span class="p">,</span>
                                     <span class="n">energy_unit</span><span class="p">,</span>
                                     <span class="n">flux_unit</span><span class="p">,</span>
@@ -284,16 +284,16 @@
 
                 <span class="c1"># save these to the dict</span>
 
-                <span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;components&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">component_dict</span>
+                <span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"components"</span><span class="p">]</span> <span class="o">=</span> <span class="n">component_dict</span>
 
-            <span class="k">if</span> <span class="n">use_components</span> <span class="ow">and</span> <span class="s2">&quot;total&quot;</span> <span class="ow">in</span> <span class="n">components_to_use</span><span class="p">:</span>
-                <span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;fitted point source&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">component_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+            <span class="k">if</span> <span class="n">use_components</span> <span class="ow">and</span> <span class="s2">"total"</span> <span class="ow">in</span> <span class="n">components_to_use</span><span class="p">:</span>
+                <span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"fitted point source"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">component_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
 
                 <span class="c1"># lets remove all components not explicitly asked for by the user</span>
-                <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;components&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">.</span><span class="n">copy</span><span class="p">():</span>
+                <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"components"</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">.</span><span class="n">copy</span><span class="p">():</span>
                     <span class="k">if</span> <span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">components_to_use</span><span class="p">:</span>
-                        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2"> not in components_to_use - removing entry&quot;</span><span class="p">)</span>
-                        <span class="k">del</span> <span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;components&quot;</span><span class="p">][</span><span class="n">c</span><span class="p">]</span>
+                        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2"> not in components_to_use - removing entry"</span><span class="p">)</span>
+                        <span class="k">del</span> <span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"components"</span><span class="p">][</span><span class="n">c</span><span class="p">]</span>
                         <span class="n">num_components_to_use</span> <span class="o">-=</span> <span class="mi">1</span>
 
                 <span class="n">num_sources_to_use</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -307,17 +307,17 @@
 
     <span class="k">if</span> <span class="n">bayesian_analyses</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
-            <span class="nb">list</span><span class="p">(</span><span class="n">bayesian_analyses</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;processing Bayesian analyses&quot;</span>
+            <span class="nb">list</span><span class="p">(</span><span class="n">bayesian_analyses</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="n">desc</span><span class="o">=</span><span class="s2">"processing Bayesian analyses"</span>
         <span class="p">):</span>
             <span class="c1"># if we have a source to use</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="n">use_components</span> <span class="ow">or</span> <span class="p">(</span>
-                <span class="s2">&quot;main&quot;</span> <span class="ow">in</span> <span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;component_names&quot;</span><span class="p">]</span>
+                <span class="s2">"main"</span> <span class="ow">in</span> <span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"component_names"</span><span class="p">]</span>
             <span class="p">):</span>
-                <span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;fitted point source&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"fitted point source"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
                     <span class="n">FittedPointSourceSpectralHandler</span><span class="p">(</span>
-                        <span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;analysis&quot;</span><span class="p">],</span>
-                        <span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;source&quot;</span><span class="p">],</span>
+                        <span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"analysis"</span><span class="p">],</span>
+                        <span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"source"</span><span class="p">],</span>
                         <span class="n">energy_range</span><span class="p">,</span>
                         <span class="n">energy_unit</span><span class="p">,</span>
                         <span class="n">flux_unit</span><span class="p">,</span>
@@ -336,13 +336,13 @@
 
                 <span class="n">component_dict</span> <span class="o">=</span> <span class="p">{}</span>
 
-                <span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;component_names&quot;</span><span class="p">]:</span>
+                <span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"component_names"</span><span class="p">]:</span>
                     <span class="c1"># extracting all components</span>
 
-                    <span class="k">if</span> <span class="ow">not</span> <span class="n">components_to_use</span> <span class="ow">or</span> <span class="s2">&quot;total&quot;</span> <span class="ow">in</span> <span class="n">components_to_use</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">components_to_use</span> <span class="ow">or</span> <span class="s2">"total"</span> <span class="ow">in</span> <span class="n">components_to_use</span><span class="p">:</span>
                         <span class="n">component_dict</span><span class="p">[</span><span class="n">component</span><span class="p">]</span> <span class="o">=</span> <span class="n">FittedPointSourceSpectralHandler</span><span class="p">(</span>
-                            <span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;analysis&quot;</span><span class="p">],</span>
-                            <span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;source&quot;</span><span class="p">],</span>
+                            <span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"analysis"</span><span class="p">],</span>
+                            <span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"source"</span><span class="p">],</span>
                             <span class="n">energy_range</span><span class="p">,</span>
                             <span class="n">energy_unit</span><span class="p">,</span>
                             <span class="n">flux_unit</span><span class="p">,</span>
@@ -358,8 +358,8 @@
                         <span class="k">if</span> <span class="n">component</span> <span class="ow">in</span> <span class="n">components_to_use</span><span class="p">:</span>
                             <span class="n">component_dict</span><span class="p">[</span><span class="n">component</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
                                 <span class="n">FittedPointSourceSpectralHandler</span><span class="p">(</span>
-                                    <span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;analysis&quot;</span><span class="p">],</span>
-                                    <span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;source&quot;</span><span class="p">],</span>
+                                    <span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"analysis"</span><span class="p">],</span>
+                                    <span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"source"</span><span class="p">],</span>
                                     <span class="n">energy_range</span><span class="p">,</span>
                                     <span class="n">energy_unit</span><span class="p">,</span>
                                     <span class="n">flux_unit</span><span class="p">,</span>
@@ -372,16 +372,16 @@
 
                             <span class="n">num_components_to_use</span> <span class="o">+=</span> <span class="mi">1</span>
 
-                <span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;components&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">component_dict</span>
+                <span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"components"</span><span class="p">]</span> <span class="o">=</span> <span class="n">component_dict</span>
 
-            <span class="k">if</span> <span class="n">use_components</span> <span class="ow">and</span> <span class="s2">&quot;total&quot;</span> <span class="ow">in</span> <span class="n">components_to_use</span><span class="p">:</span>
-                <span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;fitted point source&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+            <span class="k">if</span> <span class="n">use_components</span> <span class="ow">and</span> <span class="s2">"total"</span> <span class="ow">in</span> <span class="n">components_to_use</span><span class="p">:</span>
+                <span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"fitted point source"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
                     <span class="n">component_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
                 <span class="p">)</span>
-                <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;components&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">.</span><span class="n">copy</span><span class="p">():</span>
+                <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"components"</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">.</span><span class="n">copy</span><span class="p">():</span>
                     <span class="k">if</span> <span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">components_to_use</span><span class="p">:</span>
-                        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2"> not in components_to_use - removing entry&quot;</span><span class="p">)</span>
-                        <span class="k">del</span> <span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;components&quot;</span><span class="p">][</span><span class="n">c</span><span class="p">]</span>
+                        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2"> not in components_to_use - removing entry"</span><span class="p">)</span>
+                        <span class="k">del</span> <span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"components"</span><span class="p">][</span><span class="n">c</span><span class="p">]</span>
                         <span class="n">num_components_to_use</span> <span class="o">-=</span> <span class="mi">1</span>
 
                 <span class="n">num_sources_to_use</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -393,7 +393,7 @@
 
         <span class="c1"># we may have the same source in a bayesian and mle analysis.</span>
         <span class="c1"># we want to plot them, but make sure to label them differently.</span>
-        <span class="c1"># so let&#39;s keep track of them</span>
+        <span class="c1"># so let's keep track of them</span>
 
     <span class="n">duplicate_keys</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -405,13 +405,13 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_collect_sums_into_dictionaries</span><span class="p">(</span><span class="n">analyses</span><span class="p">,</span> <span class="n">use_components</span><span class="p">,</span> <span class="n">components_to_use</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 
 <span class="sd">    :param analyses:</span>
 <span class="sd">    :param use_components:</span>
 <span class="sd">    :param components_to_use:</span>
 <span class="sd">    :return:</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">total_analysis</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -420,7 +420,7 @@
     <span class="n">num_sources_to_use</span> <span class="o">=</span> <span class="mi">0</span>
 
     <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">analyses</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
-        <span class="c1"># we won&#39;t assume to plot the total until the end</span>
+        <span class="c1"># we won't assume to plot the total until the end</span>
 
         <span class="n">use_total</span> <span class="o">=</span> <span class="kc">False</span>
 
@@ -428,18 +428,18 @@
             <span class="c1"># append all the components we want to sum to their</span>
             <span class="c1"># own key</span>
 
-            <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">list</span><span class="p">(</span><span class="n">analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;components&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span> <span class="ow">or</span> <span class="p">(</span>
-                <span class="s2">&quot;total&quot;</span> <span class="ow">in</span> <span class="n">components_to_use</span>
+            <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">list</span><span class="p">(</span><span class="n">analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"components"</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span> <span class="ow">or</span> <span class="p">(</span>
+                <span class="s2">"total"</span> <span class="ow">in</span> <span class="n">components_to_use</span>
             <span class="p">):</span>
                 <span class="n">use_total</span> <span class="o">=</span> <span class="kc">True</span>
 
-            <span class="k">if</span> <span class="s2">&quot;main&quot;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;components&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="k">if</span> <span class="s2">"main"</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"components"</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
                 <span class="n">use_total</span> <span class="o">=</span> <span class="kc">True</span>
 
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;components&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"components"</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
                     <span class="n">component_sum_dict</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">component</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                        <span class="n">analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;components&quot;</span><span class="p">][</span><span class="n">component</span><span class="p">]</span>
+                        <span class="n">analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"components"</span><span class="p">][</span><span class="n">component</span><span class="p">]</span>
                     <span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
@@ -448,7 +448,7 @@
         <span class="k">if</span> <span class="n">use_total</span><span class="p">:</span>
             <span class="c1"># append the total spectrum</span>
 
-            <span class="n">total_analysis</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;fitted point source&quot;</span><span class="p">])</span>
+            <span class="n">total_analysis</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"fitted point source"</span><span class="p">])</span>
 
     <span class="k">if</span> <span class="n">use_components</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">component_sum_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
@@ -462,7 +462,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">_append_best_fit_and_errors</span><span class="p">(</span>
     <span class="n">samples</span><span class="p">,</span> <span class="n">_defaults</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">fluxes</span><span class="p">,</span> <span class="n">p_errors</span><span class="p">,</span> <span class="n">n_errors</span><span class="p">,</span> <span class="n">labels</span>
 <span class="p">):</span>
-    <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;best_fit&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;average&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">"best_fit"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"average"</span><span class="p">:</span>
         <span class="n">best_fit</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">average</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
 
     <span class="k">else</span><span class="p">:</span>
@@ -486,29 +486,29 @@
 
     <span class="c1"># go thru the mle analysis and get the fluxes</span>
     <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">analyses</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
-        <span class="c1"># we won&#39;t assume to plot the total until the end</span>
+        <span class="c1"># we won't assume to plot the total until the end</span>
 
         <span class="n">get_total</span> <span class="o">=</span> <span class="kc">False</span>
 
-        <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;use_components&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">"use_components"</span><span class="p">]:</span>
             <span class="c1"># if this source has no components or none that we wish to plot</span>
             <span class="c1"># then we will get the total flux after this</span>
 
-            <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">list</span><span class="p">(</span><span class="n">analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;components&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span> <span class="ow">or</span> <span class="p">(</span>
-                <span class="s2">&quot;total&quot;</span> <span class="ow">in</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;components_to_use&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">list</span><span class="p">(</span><span class="n">analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"components"</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span> <span class="ow">or</span> <span class="p">(</span>
+                <span class="s2">"total"</span> <span class="ow">in</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">"components_to_use"</span><span class="p">]</span>
             <span class="p">):</span>
                 <span class="n">get_total</span> <span class="o">=</span> <span class="kc">True</span>
 
-            <span class="k">if</span> <span class="s2">&quot;main&quot;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;components&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="k">if</span> <span class="s2">"main"</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"components"</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
                 <span class="n">get_total</span> <span class="o">=</span> <span class="kc">True</span>
 
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;components&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"components"</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
                     <span class="c1"># extract the information and plot it</span>
 
-                    <span class="n">samples</span> <span class="o">=</span> <span class="n">analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;components&quot;</span><span class="p">][</span><span class="n">component</span><span class="p">]</span>
+                    <span class="n">samples</span> <span class="o">=</span> <span class="n">analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"components"</span><span class="p">][</span><span class="n">component</span><span class="p">]</span>
 
-                    <span class="n">label</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">component</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="n">label</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">component</span><span class="si">}</span><span class="s2">"</span>
 
                     <span class="n">_append_best_fit_and_errors</span><span class="p">(</span>
                         <span class="n">samples</span><span class="p">,</span>
@@ -528,14 +528,14 @@
             <span class="c1"># which is just a repeat of the process</span>
 
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">samples</span> <span class="o">=</span> <span class="n">analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;fitted point source&quot;</span><span class="p">]</span>
+                <span class="n">samples</span> <span class="o">=</span> <span class="n">analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"fitted point source"</span><span class="p">]</span>
             <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                    <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> component(s) not available in source </span><span class="si">%s</span><span class="s2">&quot;</span>
-                    <span class="o">%</span> <span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;components_to_use&quot;</span><span class="p">],</span> <span class="n">key</span><span class="p">)</span>
+                    <span class="s2">"</span><span class="si">%s</span><span class="s2"> component(s) not available in source </span><span class="si">%s</span><span class="s2">"</span>
+                    <span class="o">%</span> <span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"components_to_use"</span><span class="p">],</span> <span class="n">key</span><span class="p">)</span>
                 <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">label</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">: total&quot;</span>
+                <span class="n">label</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">: total"</span>
 
                 <span class="n">_append_best_fit_and_errors</span><span class="p">(</span>
                     <span class="n">samples</span><span class="p">,</span> <span class="n">_defaults</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">fluxes</span><span class="p">,</span> <span class="n">p_errors</span><span class="p">,</span> <span class="n">n_errors</span><span class="p">,</span> <span class="n">labels</span>
@@ -545,11 +545,11 @@
         <span class="c1"># now make a data frame</span>
 
         <span class="n">mle_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
-            <span class="p">{</span><span class="s2">&quot;flux&quot;</span><span class="p">:</span> <span class="n">fluxes</span><span class="p">,</span> <span class="s2">&quot;low bound&quot;</span><span class="p">:</span> <span class="n">n_errors</span><span class="p">,</span> <span class="s2">&quot;hi bound&quot;</span><span class="p">:</span> <span class="n">p_errors</span><span class="p">},</span>
+            <span class="p">{</span><span class="s2">"flux"</span><span class="p">:</span> <span class="n">fluxes</span><span class="p">,</span> <span class="s2">"low bound"</span><span class="p">:</span> <span class="n">n_errors</span><span class="p">,</span> <span class="s2">"hi bound"</span><span class="p">:</span> <span class="n">p_errors</span><span class="p">},</span>
             <span class="n">index</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">mle_df</span> <span class="o">=</span> <span class="n">mle_df</span><span class="p">[[</span><span class="s2">&quot;flux&quot;</span><span class="p">,</span> <span class="s2">&quot;low bound&quot;</span><span class="p">,</span> <span class="s2">&quot;hi bound&quot;</span><span class="p">]]</span>
-        <span class="n">mle_df</span> <span class="o">=</span> <span class="n">mle_df</span><span class="p">[[</span><span class="s2">&quot;flux&quot;</span><span class="p">,</span> <span class="s2">&quot;low bound&quot;</span><span class="p">,</span> <span class="s2">&quot;hi bound&quot;</span><span class="p">]]</span>
+        <span class="n">mle_df</span> <span class="o">=</span> <span class="n">mle_df</span><span class="p">[[</span><span class="s2">"flux"</span><span class="p">,</span> <span class="s2">"low bound"</span><span class="p">,</span> <span class="s2">"hi bound"</span><span class="p">]]</span>
+        <span class="n">mle_df</span> <span class="o">=</span> <span class="n">mle_df</span><span class="p">[[</span><span class="s2">"flux"</span><span class="p">,</span> <span class="s2">"low bound"</span><span class="p">,</span> <span class="s2">"hi bound"</span><span class="p">]]</span>
         <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mle_df</span><span class="p">)</span>
 
         <span class="c1"># display(mle_df)</span>
@@ -564,13 +564,13 @@
     <span class="n">p_errors</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;use_components&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="nb">list</span><span class="p">(</span><span class="n">component_sum_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+    <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">"use_components"</span><span class="p">]</span> <span class="ow">and</span> <span class="nb">list</span><span class="p">(</span><span class="n">component_sum_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
         <span class="c1"># we have components to calculate</span>
 
         <span class="k">for</span> <span class="n">component</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">component_sum_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
             <span class="n">summed_analysis</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;best_fit&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;average&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">"best_fit"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"average"</span><span class="p">:</span>
                 <span class="n">best_fit</span> <span class="o">=</span> <span class="n">summed_analysis</span><span class="o">.</span><span class="n">average</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
 
             <span class="k">else</span><span class="p">:</span>
@@ -590,7 +590,7 @@
     <span class="k">if</span> <span class="n">total_analysis</span><span class="p">:</span>
         <span class="n">summed_analysis</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">total_analysis</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;best_fit&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;average&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">"best_fit"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"average"</span><span class="p">:</span>
             <span class="n">best_fit</span> <span class="o">=</span> <span class="n">summed_analysis</span><span class="o">.</span><span class="n">average</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
 
         <span class="k">else</span><span class="p">:</span>
@@ -600,7 +600,7 @@
 
         <span class="n">negative_error</span> <span class="o">=</span> <span class="n">summed_analysis</span><span class="o">.</span><span class="n">lower_error</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
 
-        <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;total&quot;</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="s2">"total"</span>
 
         <span class="n">fluxes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">best_fit</span><span class="p">)</span>
         <span class="n">p_errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">positive_error</span><span class="p">)</span>
@@ -611,10 +611,10 @@
         <span class="c1"># now make a data frame</span>
 
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
-            <span class="p">{</span><span class="s2">&quot;flux&quot;</span><span class="p">:</span> <span class="n">fluxes</span><span class="p">,</span> <span class="s2">&quot;low bound&quot;</span><span class="p">:</span> <span class="n">n_errors</span><span class="p">,</span> <span class="s2">&quot;hi bound&quot;</span><span class="p">:</span> <span class="n">p_errors</span><span class="p">},</span>
+            <span class="p">{</span><span class="s2">"flux"</span><span class="p">:</span> <span class="n">fluxes</span><span class="p">,</span> <span class="s2">"low bound"</span><span class="p">:</span> <span class="n">n_errors</span><span class="p">,</span> <span class="s2">"hi bound"</span><span class="p">:</span> <span class="n">p_errors</span><span class="p">},</span>
             <span class="n">index</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s2">&quot;flux&quot;</span><span class="p">,</span> <span class="s2">&quot;low bound&quot;</span><span class="p">,</span> <span class="s2">&quot;hi bound&quot;</span><span class="p">]]</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s2">"flux"</span><span class="p">,</span> <span class="s2">"low bound"</span><span class="p">,</span> <span class="s2">"hi bound"</span><span class="p">]]</span>
         <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
 
         <span class="c1"># display(df)</span>
@@ -627,9 +627,9 @@
 <a class="viewcode-back" href="../../../api/threeML.io.html#threeML.io.calculate_flux.calculate_point_source_flux">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">calculate_point_source_flux</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-        <span class="s2">&quot;The use of calculate_point_source_flux is deprecated. Please use the &quot;</span>
-        <span class="s2">&quot;.get_point_source_flux() method of the JointLikelihood.results or the &quot;</span>
-        <span class="s2">&quot;BayesianAnalysis.results member. For example: jl.results.get_flux().&quot;</span>
+        <span class="s2">"The use of calculate_point_source_flux is deprecated. Please use the "</span>
+        <span class="s2">".get_point_source_flux() method of the JointLikelihood.results or the "</span>
+        <span class="s2">"BayesianAnalysis.results member. For example: jl.results.get_flux()."</span>
     <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">_calculate_point_source_flux</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
@@ -637,7 +637,7 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_calculate_point_source_flux</span><span class="p">(</span><span class="n">ene_min</span><span class="p">,</span> <span class="n">ene_max</span><span class="p">,</span> <span class="o">*</span><span class="n">analyses</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 
 <span class="sd">    :param ene_min: lower energy bound for the flux</span>
 <span class="sd">    :param ene_max: upper energy bound for the flux</span>
@@ -651,26 +651,26 @@
 <span class="sd">    :param ene_max: (optional) maximum energy to plot</span>
 <span class="sd">    :param use_components: (optional) True or False to plot the spectral components</span>
 <span class="sd">    :param components_to_use: (optional) list of string names of the components to plot:</span>
-<span class="sd">    including &#39;total&#39; will also plot the total spectrum</span>
+<span class="sd">    including 'total' will also plot the total spectrum</span>
 <span class="sd">    :param include_extended: (optional) if True, plot extended source spectra (spatially</span>
 <span class="sd">    integrated) as well.</span>
 
 <span class="sd">    :return: mle_dataframe, bayes_dataframe</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">_defaults</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;confidence_level&quot;</span><span class="p">:</span> <span class="mf">0.68</span><span class="p">,</span>
-        <span class="s2">&quot;equal_tailed&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="s2">&quot;best_fit&quot;</span><span class="p">:</span> <span class="s2">&quot;median&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;energy_unit&quot;</span><span class="p">:</span> <span class="s2">&quot;keV&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;flux_unit&quot;</span><span class="p">:</span> <span class="s2">&quot;erg/(s cm2)&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;ene_min&quot;</span><span class="p">:</span> <span class="n">ene_min</span><span class="p">,</span>
-        <span class="s2">&quot;ene_max&quot;</span><span class="p">:</span> <span class="n">ene_max</span><span class="p">,</span>
-        <span class="s2">&quot;use_components&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="s2">&quot;components_to_use&quot;</span><span class="p">:</span> <span class="p">[],</span>
-        <span class="s2">&quot;sources_to_use&quot;</span><span class="p">:</span> <span class="p">[],</span>
-        <span class="s2">&quot;sum_sources&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="s2">&quot;include_extended&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">"confidence_level"</span><span class="p">:</span> <span class="mf">0.68</span><span class="p">,</span>
+        <span class="s2">"equal_tailed"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">"best_fit"</span><span class="p">:</span> <span class="s2">"median"</span><span class="p">,</span>
+        <span class="s2">"energy_unit"</span><span class="p">:</span> <span class="s2">"keV"</span><span class="p">,</span>
+        <span class="s2">"flux_unit"</span><span class="p">:</span> <span class="s2">"erg/(s cm2)"</span><span class="p">,</span>
+        <span class="s2">"ene_min"</span><span class="p">:</span> <span class="n">ene_min</span><span class="p">,</span>
+        <span class="s2">"ene_max"</span><span class="p">:</span> <span class="n">ene_max</span><span class="p">,</span>
+        <span class="s2">"use_components"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">"components_to_use"</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s2">"sources_to_use"</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s2">"sum_sources"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">"include_extended"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">}</span>
 
     <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
@@ -679,25 +679,25 @@
 
     <span class="c1"># set up the integral limits</span>
 
-    <span class="n">energy_range</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;ene_min&quot;</span><span class="p">],</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;ene_max&quot;</span><span class="p">]])</span>
+    <span class="n">energy_range</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"ene_min"</span><span class="p">],</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">"ene_max"</span><span class="p">]])</span>
 
     <span class="n">mle_analyses</span><span class="p">,</span> <span class="n">bayesian_analyses</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_setup_analysis_dictionaries</span><span class="p">(</span>
         <span class="n">analyses</span><span class="p">,</span>
         <span class="n">energy_range</span><span class="p">,</span>
-        <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;energy_unit&quot;</span><span class="p">],</span>
-        <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;flux_unit&quot;</span><span class="p">],</span>
-        <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;use_components&quot;</span><span class="p">],</span>
-        <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;components_to_use&quot;</span><span class="p">],</span>
-        <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;confidence_level&quot;</span><span class="p">],</span>
-        <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;equal_tailed&quot;</span><span class="p">],</span>
+        <span class="n">_defaults</span><span class="p">[</span><span class="s2">"energy_unit"</span><span class="p">],</span>
+        <span class="n">_defaults</span><span class="p">[</span><span class="s2">"flux_unit"</span><span class="p">],</span>
+        <span class="n">_defaults</span><span class="p">[</span><span class="s2">"use_components"</span><span class="p">],</span>
+        <span class="n">_defaults</span><span class="p">[</span><span class="s2">"components_to_use"</span><span class="p">],</span>
+        <span class="n">_defaults</span><span class="p">[</span><span class="s2">"confidence_level"</span><span class="p">],</span>
+        <span class="n">_defaults</span><span class="p">[</span><span class="s2">"equal_tailed"</span><span class="p">],</span>
         <span class="n">differential</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">sources_to_use</span><span class="o">=</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;sources_to_use&quot;</span><span class="p">],</span>
-        <span class="n">include_extended</span><span class="o">=</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;include_extended&quot;</span><span class="p">],</span>
+        <span class="n">sources_to_use</span><span class="o">=</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"sources_to_use"</span><span class="p">],</span>
+        <span class="n">include_extended</span><span class="o">=</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"include_extended"</span><span class="p">],</span>
     <span class="p">)</span>
 
     <span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;sum_sources&quot;</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">"sum_sources"</span><span class="p">]:</span>
         <span class="c1"># Process the MLE analyses</span>
 
         <span class="n">_compute_output</span><span class="p">(</span><span class="n">mle_analyses</span><span class="p">,</span> <span class="n">_defaults</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span>
@@ -716,8 +716,8 @@
             <span class="n">_</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">=</span> <span class="n">_collect_sums_into_dictionaries</span><span class="p">(</span>
             <span class="n">mle_analyses</span><span class="p">,</span>
-            <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;use_components&quot;</span><span class="p">],</span>
-            <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;components_to_use&quot;</span><span class="p">],</span>
+            <span class="n">_defaults</span><span class="p">[</span><span class="s2">"use_components"</span><span class="p">],</span>
+            <span class="n">_defaults</span><span class="p">[</span><span class="s2">"components_to_use"</span><span class="p">],</span>
         <span class="p">)</span>
 
         <span class="n">_compute_output_with_components</span><span class="p">(</span>
@@ -732,8 +732,8 @@
             <span class="n">_</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">=</span> <span class="n">_collect_sums_into_dictionaries</span><span class="p">(</span>
             <span class="n">bayesian_analyses</span><span class="p">,</span>
-            <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;use_components&quot;</span><span class="p">],</span>
-            <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;components_to_use&quot;</span><span class="p">],</span>
+            <span class="n">_defaults</span><span class="p">[</span><span class="s2">"use_components"</span><span class="p">],</span>
+            <span class="n">_defaults</span><span class="p">[</span><span class="s2">"components_to_use"</span><span class="p">],</span>
         <span class="p">)</span>
 
         <span class="n">_compute_output_with_components</span><span class="p">(</span>

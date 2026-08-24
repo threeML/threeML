@@ -121,26 +121,26 @@
 <div class="viewcode-block" id="get_path_of_data_file">
 <a class="viewcode-back" href="../../../api/threeML.io.html#threeML.io.package_data.get_path_of_data_file">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_path_of_data_file</span><span class="p">(</span><span class="n">data_file</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Used to get internal testing data and for examples. Not for user data.</span>
+<span class="w">    </span><span class="sd">"""Used to get internal testing data and for examples. Not for user data.</span>
 
 <span class="sd">    :param data_file: data file inside internal 3ML directory</span>
 <span class="sd">    :type data_file:</span>
 <span class="sd">    :returns:</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">data_file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">data_file</span><span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">resource_path</span> <span class="o">=</span> <span class="n">resources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="s2">&quot;threeML&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">data_file</span><span class="o">.</span><span class="n">parts</span><span class="p">)</span>
+        <span class="n">resource_path</span> <span class="o">=</span> <span class="n">resources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="s2">"threeML"</span><span class="p">)</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">"data"</span><span class="p">,</span> <span class="o">*</span><span class="n">data_file</span><span class="o">.</span><span class="n">parts</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">resource_path</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
             <span class="k">raise</span> <span class="ne">FileNotFoundError</span>
 
     <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Could not read or find data file </span><span class="si">{</span><span class="n">data_file</span><span class="si">}</span><span class="s2">. &quot;</span>
-            <span class="s2">&quot;Try reinstalling astromodels. &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;If this does not fix your problem, open an issue on github.&quot;</span>
+            <span class="sa">f</span><span class="s2">"Could not read or find data file </span><span class="si">{</span><span class="n">data_file</span><span class="si">}</span><span class="s2">. "</span>
+            <span class="s2">"Try reinstalling astromodels. "</span>
+            <span class="sa">f</span><span class="s2">"If this does not fix your problem, open an issue on github."</span>
         <span class="p">)</span>
 
     <span class="k">else</span><span class="p">:</span>
@@ -151,12 +151,12 @@
 <div class="viewcode-block" id="get_path_of_data_dir">
 <a class="viewcode-back" href="../../../api/threeML.io.html#threeML.io.package_data.get_path_of_data_dir">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_path_of_data_dir</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Used to get internal testing data and for examples. Not for user data.</span>
+<span class="w">    </span><span class="sd">"""Used to get internal testing data and for examples. Not for user data.</span>
 
 <span class="sd">    :returns:</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="n">file_path</span> <span class="o">=</span> <span class="n">resources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="s2">&quot;threeML&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)</span>
+    <span class="n">file_path</span> <span class="o">=</span> <span class="n">resources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="s2">"threeML"</span><span class="p">)</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">"data"</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span></div>
 
@@ -165,11 +165,11 @@
 <div class="viewcode-block" id="get_path_of_user_dir">
 <a class="viewcode-back" href="../../../api/threeML.io.html#threeML.io.package_data.get_path_of_user_dir">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_path_of_user_dir</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the path of the directory containing the user data (~/.threeML)</span>
+<span class="w">    </span><span class="sd">"""Returns the path of the directory containing the user data (~/.threeML)</span>
 
 <span class="sd">    :return: an absolute path</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">user_dir</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">()</span><span class="o">.</span><span class="n">home</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;.threeML&quot;</span>
+<span class="sd">    """</span>
+    <span class="n">user_dir</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">()</span><span class="o">.</span><span class="n">home</span><span class="p">()</span> <span class="o">/</span> <span class="s2">".threeML"</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">user_dir</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
         <span class="n">user_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">()</span>
@@ -179,9 +179,9 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">get_user_data_path</span><span class="p">():</span>
-    <span class="n">user_data</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~&quot;</span><span class="p">),</span> <span class="s2">&quot;.threeml&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">)</span>
+    <span class="n">user_data</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">"~"</span><span class="p">),</span> <span class="s2">".threeml"</span><span class="p">,</span> <span class="s2">"data"</span><span class="p">)</span>
 
-    <span class="c1"># Create it if doesn&#39;t exist</span>
+    <span class="c1"># Create it if doesn't exist</span>
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">user_data</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">user_data</span>
 
@@ -192,9 +192,9 @@
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;get_path_of_data_file&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;get_path_of_data_dir&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;get_path_of_user_dir&quot;</span><span class="p">,</span>
+    <span class="s2">"get_path_of_data_file"</span><span class="p">,</span>
+    <span class="s2">"get_path_of_data_dir"</span><span class="p">,</span>
+    <span class="s2">"get_path_of_user_dir"</span><span class="p">,</span>
 <span class="p">]</span>
 </pre></div>
 

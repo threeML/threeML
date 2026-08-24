@@ -155,7 +155,7 @@
 <div class="viewcode-block" id="MinuitMinimizer">
 <a class="viewcode-back" href="../../../api/threeML.minimizer.html#threeML.minimizer.minuit_minimizer.MinuitMinimizer">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">MinuitMinimizer</span><span class="p">(</span><span class="n">LocalMinimizer</span><span class="p">):</span>
-    <span class="n">valid_setup_keys</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;ftol&quot;</span><span class="p">,)</span>
+    <span class="n">valid_setup_keys</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"ftol"</span><span class="p">,)</span>
 
     <span class="c1"># TODO: Is this still relevant?</span>
     <span class="c1"># NOTE: this class is built to be able to work both with iMinuit and with a boost</span>
@@ -190,7 +190,7 @@
         <span class="n">variable_names_for_iminuit</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="c1"># NOTE: we use the internal_ versions of value, min_value and max_value because</span>
-        <span class="c1"># they don&#39;t have units, and they are transformed to make the fit easier (for</span>
+        <span class="c1"># they don't have units, and they are transformed to make the fit easier (for</span>
         <span class="c1"># example in log scale)</span>
 
         <span class="k">for</span> <span class="p">(</span>
@@ -202,20 +202,20 @@
             <span class="n">variable_names_for_iminuit</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_name</span><span class="p">)</span>
 
             <span class="c1"># Initial value</span>
-            <span class="n">iminuit_init_parameters</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">current_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="n">iminuit_init_parameters</span><span class="p">[</span><span class="s2">"</span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">current_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
             <span class="c1"># Initial delta</span>
-            <span class="n">iminuit_errors</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">current_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">delta</span>
+            <span class="n">iminuit_errors</span><span class="p">[</span><span class="s2">"</span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">current_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">delta</span>
 
             <span class="c1"># Limits</span>
-            <span class="n">iminuit_limits</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">current_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">minimum</span><span class="p">,</span> <span class="n">maximum</span><span class="p">)</span>
+            <span class="n">iminuit_limits</span><span class="p">[</span><span class="s2">"</span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">current_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">minimum</span><span class="p">,</span> <span class="n">maximum</span><span class="p">)</span>
 
             <span class="c1"># This is useless, since all parameters here are free,</span>
             <span class="c1"># but do it anyway for clarity</span>
-            <span class="n">iminuit_fixed_parameters</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">current_name</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">iminuit_fixed_parameters</span><span class="p">[</span><span class="s2">"</span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">current_name</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="c1"># Tell imnuit what parameter names are</span>
-        <span class="n">iminuit_init_parameters</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">variable_names_for_iminuit</span>
+        <span class="n">iminuit_init_parameters</span><span class="p">[</span><span class="s2">"name"</span><span class="p">]</span> <span class="o">=</span> <span class="n">variable_names_for_iminuit</span>
 
         <span class="c1"># Finally we can instance the Minuit class</span>
 
@@ -238,8 +238,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">minuit</span><span class="o">.</span><span class="n">print_level</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbosity</span>
 
         <span class="k">if</span> <span class="n">user_setup_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="s2">&quot;ftol&quot;</span> <span class="ow">in</span> <span class="n">user_setup_dict</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">minuit</span><span class="o">.</span><span class="n">tol</span> <span class="o">=</span> <span class="n">user_setup_dict</span><span class="p">[</span><span class="s2">&quot;ftol&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="s2">"ftol"</span> <span class="ow">in</span> <span class="n">user_setup_dict</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">minuit</span><span class="o">.</span><span class="n">tol</span> <span class="o">=</span> <span class="n">user_setup_dict</span><span class="p">[</span><span class="s2">"ftol"</span><span class="p">]</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Do nothing and leave the default in iminuit</span>
@@ -250,25 +250,25 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_parameter_name_to_minuit_name</span><span class="p">(</span><span class="n">parameter</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Translate the name of the parameter to the format accepted by</span>
+<span class="w">        </span><span class="sd">"""Translate the name of the parameter to the format accepted by</span>
 <span class="sd">        Minuit.</span>
 
 <span class="sd">        :param parameter: the parameter name, of the form</span>
 <span class="sd">            source.component.shape.parname</span>
 <span class="sd">        :return: a minuit-friendly name for the parameter, such as</span>
 <span class="sd">            source_component_shape_parname</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
-        <span class="k">return</span> <span class="n">parameter</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">parameter</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"."</span><span class="p">,</span> <span class="s2">"_"</span><span class="p">)</span>
 
     <span class="c1"># Override this because minuit uses different names</span>
 <div class="viewcode-block" id="MinuitMinimizer.restore_best_fit">
 <a class="viewcode-back" href="../../../api/threeML.minimizer.html#threeML.minimizer.minuit_minimizer.MinuitMinimizer.restore_best_fit">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">restore_best_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the parameters back to their best fit value.</span>
+<span class="w">        </span><span class="sd">"""Set the parameters back to their best fit value.</span>
 
 <span class="sd">        :return: none</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># Reset the internal value of all parameters</span>
 
@@ -283,9 +283,9 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_print_current_status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;To be used to print info before raising an exception :return:&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""To be used to print info before raising an exception :return:"""</span>
 
-        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Last status:&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"Last status:"</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_last_migrad_results</span><span class="o">.</span><span class="n">fmin</span><span class="p">)</span><span class="o">.</span><span class="n">splitlines</span><span class="p">():</span>
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
@@ -296,7 +296,7 @@
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_minimize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Minimize the function using MIGRAD.</span>
+<span class="w">        </span><span class="sd">"""Minimize the function using MIGRAD.</span>
 
 <span class="sd">        :param compute_covar: whether to compute the covariance (and error estimates) or</span>
 <span class="sd">        not</span>
@@ -306,7 +306,7 @@
 
 <span class="sd">                 NOTE: if the minimization fails, the dictionary will be empty and the</span>
 <span class="sd">                 function_minimum will be set to minimization.FIT_FAILED</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># Try a maximum of 10 times and break as soon as the fit is ok</span>
 
@@ -325,7 +325,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_print_current_status</span><span class="p">()</span>
 
             <span class="k">raise</span> <span class="n">FitFailed</span><span class="p">(</span>
-                <span class="s2">&quot;MIGRAD call failed. This is usually due to unconstrained parameters.&quot;</span>
+                <span class="s2">"MIGRAD call failed. This is usually due to unconstrained parameters."</span>
             <span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
@@ -355,7 +355,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_print_current_status</span><span class="p">()</span>
 
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="s2">&quot;HESSE failed. Most probably some of your parameters are unconstrained.&quot;</span>
+                <span class="s2">"HESSE failed. Most probably some of your parameters are unconstrained."</span>
             <span class="p">)</span>
 
             <span class="k">raise</span> <span class="n">CannotComputeCovariance</span><span class="p">()</span>
@@ -365,19 +365,19 @@
 <div class="viewcode-block" id="MinuitMinimizer.get_errors">
 <a class="viewcode-back" href="../../../api/threeML.minimizer.html#threeML.minimizer.minuit_minimizer.MinuitMinimizer.get_errors">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute asymmetric errors using MINOS (slow, but accurate) and print</span>
+<span class="w">        </span><span class="sd">"""Compute asymmetric errors using MINOS (slow, but accurate) and print</span>
 <span class="sd">        them.</span>
 
 <span class="sd">        NOTE: this should be called immediately after the minimize() method</span>
 
 <span class="sd">        :return: a dictionary containing the asymmetric errors for each parameter.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">restore_best_fit</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">minuit</span><span class="o">.</span><span class="n">valid</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">CannotComputeErrors</span><span class="p">(</span>
-                <span class="s2">&quot;MIGRAD results not valid, cannot compute errors.&quot;</span>
+                <span class="s2">"MIGRAD results not valid, cannot compute errors."</span>
             <span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
@@ -387,15 +387,15 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_print_current_status</span><span class="p">()</span>
 
             <span class="k">raise</span> <span class="n">MINOSFailed</span><span class="p">(</span>
-                <span class="s2">&quot;MINOS has failed. This is not necessarily a problem if:</span><span class="se">\n\n</span><span class="s2">&quot;</span>
-                <span class="s2">&quot;* There are unconstrained parameters (the error is undefined). This is&quot;</span>
-                <span class="s2">&quot; usually signaled by an approximated error, printed after the fit, &quot;</span>
-                <span class="s2">&quot;larger than the best fit value</span><span class="se">\n\n</span><span class="s2">* The fit is very difficult, because&quot;</span>
-                <span class="s2">&quot; of high correlation between parameters. This is signaled by values &quot;</span>
-                <span class="s2">&quot;close to 1.0 or -1.0 in the correlation matrix printed after the fit &quot;</span>
-                <span class="s2">&quot;step.</span><span class="se">\n\n</span><span class="s2"> In this cases you can check the contour plots with &quot;</span>
-                <span class="s2">&quot;get_contours(). If you are using a user-defined model, you can also &quot;</span>
-                <span class="s2">&quot;try to reformulate your model with less correlated parameters.&quot;</span>
+                <span class="s2">"MINOS has failed. This is not necessarily a problem if:</span><span class="se">\n\n</span><span class="s2">"</span>
+                <span class="s2">"* There are unconstrained parameters (the error is undefined). This is"</span>
+                <span class="s2">" usually signaled by an approximated error, printed after the fit, "</span>
+                <span class="s2">"larger than the best fit value</span><span class="se">\n\n</span><span class="s2">* The fit is very difficult, because"</span>
+                <span class="s2">" of high correlation between parameters. This is signaled by values "</span>
+                <span class="s2">"close to 1.0 or -1.0 in the correlation matrix printed after the fit "</span>
+                <span class="s2">"step.</span><span class="se">\n\n</span><span class="s2"> In this cases you can check the contour plots with "</span>
+                <span class="s2">"get_contours(). If you are using a user-defined model, you can also "</span>
+                <span class="s2">"try to reformulate your model with less correlated parameters."</span>
             <span class="p">)</span>
 
         <span class="c1"># Make a list for the results</span>
@@ -411,7 +411,7 @@
             <span class="k">if</span> <span class="n">par</span><span class="o">.</span><span class="n">has_transformation</span><span class="p">():</span>
                 <span class="c1"># Need to transform in the external reference</span>
 
-                <span class="n">best_fit_value_internal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_results</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">par</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">]</span>
+                <span class="n">best_fit_value_internal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_results</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">par</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">"value"</span><span class="p">]</span>
 
                 <span class="n">_</span><span class="p">,</span> <span class="n">minus_error_external</span> <span class="o">=</span> <span class="n">par</span><span class="o">.</span><span class="n">internal_to_external_delta</span><span class="p">(</span>
                     <span class="n">best_fit_value_internal</span><span class="p">,</span> <span class="n">minus_error</span>

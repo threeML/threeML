@@ -119,41 +119,41 @@
 <div class="viewcode-block" id="recursively_save_dict_contents_to_group">
 <a class="viewcode-back" href="../../../api/threeML.io.html#threeML.io.hdf5_utils.recursively_save_dict_contents_to_group">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">recursively_save_dict_contents_to_group</span><span class="p">(</span><span class="n">h5file</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">dic</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Save a dictionary to an HDf5 file.</span>
+<span class="w">    </span><span class="sd">"""Save a dictionary to an HDf5 file.</span>
 
 <span class="sd">    :param h5file:</span>
 <span class="sd">    :param path:</span>
 <span class="sd">    :param dic:</span>
 <span class="sd">    :returns:</span>
 <span class="sd">    :rtype:</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">dic</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
-            <span class="n">h5file</span><span class="p">[</span><span class="n">path</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span>
+            <span class="n">h5file</span><span class="p">[</span><span class="n">path</span> <span class="o">+</span> <span class="s2">"/"</span> <span class="o">+</span> <span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span>
 
         <span class="k">elif</span> <span class="n">item</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">h5file</span><span class="p">[</span><span class="n">path</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;NONE_TYPE&quot;</span>
+            <span class="n">h5file</span><span class="p">[</span><span class="n">path</span> <span class="o">+</span> <span class="s2">"/"</span> <span class="o">+</span> <span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"NONE_TYPE"</span>
 
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="n">recursively_save_dict_contents_to_group</span><span class="p">(</span>
-                <span class="n">h5file</span><span class="p">,</span> <span class="n">path</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">key</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="n">item</span>
+                <span class="n">h5file</span><span class="p">,</span> <span class="n">path</span> <span class="o">+</span> <span class="s2">"/"</span> <span class="o">+</span> <span class="n">key</span> <span class="o">+</span> <span class="s2">"/"</span><span class="p">,</span> <span class="n">item</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot save </span><span class="si">%s</span><span class="s2"> type&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="p">))</span></div>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Cannot save </span><span class="si">%s</span><span class="s2"> type"</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="p">))</span></div>
 
 
 
 <div class="viewcode-block" id="recursively_load_dict_contents_from_group">
 <a class="viewcode-back" href="../../../api/threeML.io.html#threeML.io.hdf5_utils.recursively_load_dict_contents_from_group">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">recursively_load_dict_contents_from_group</span><span class="p">(</span><span class="n">h5file</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read a dictionary from and HDF5 file.</span>
+<span class="w">    </span><span class="sd">"""Read a dictionary from and HDF5 file.</span>
 
 <span class="sd">    :param h5file:</span>
 <span class="sd">    :param path:</span>
 <span class="sd">    :returns:</span>
 <span class="sd">    :rtype:</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">ans</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -162,17 +162,17 @@
             <span class="n">tmp</span> <span class="o">=</span> <span class="n">item</span><span class="p">[()]</span>
 
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">ans</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+                <span class="n">ans</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">"utf-8"</span><span class="p">)</span>
 
             <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
                 <span class="n">ans</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span>
 
-            <span class="k">if</span> <span class="n">ans</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;NONE_TYPE&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">ans</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"NONE_TYPE"</span><span class="p">:</span>
                 <span class="n">ans</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">h5py</span><span class="o">.</span><span class="n">_hl</span><span class="o">.</span><span class="n">group</span><span class="o">.</span><span class="n">Group</span><span class="p">):</span>
             <span class="n">ans</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">recursively_load_dict_contents_from_group</span><span class="p">(</span>
-                <span class="n">h5file</span><span class="p">,</span> <span class="n">path</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">key</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span>
+                <span class="n">h5file</span><span class="p">,</span> <span class="n">path</span> <span class="o">+</span> <span class="s2">"/"</span> <span class="o">+</span> <span class="n">key</span> <span class="o">+</span> <span class="s2">"/"</span>
             <span class="p">)</span>
     <span class="k">return</span> <span class="n">ans</span></div>
 

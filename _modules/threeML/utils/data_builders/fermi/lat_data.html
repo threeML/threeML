@@ -132,44 +132,44 @@
 <a class="viewcode-back" href="../../../../../api/threeML.utils.data_builders.fermi.html#threeML.utils.data_builders.fermi.lat_data.LLEFile">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">LLEFile</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lle_file</span><span class="p">,</span> <span class="n">ft2_file</span><span class="p">,</span> <span class="n">rsp_file</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Class to read the LLE and FT2 files.</span>
+<span class="w">        </span><span class="sd">"""Class to read the LLE and FT2 files.</span>
 
 <span class="sd">        Inspired heavily by G. Vianello</span>
 
 <span class="sd">        :param lle_file:</span>
 <span class="sd">        :param ft2_file:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">rsp_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">rsp_</span><span class="p">:</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">rsp_</span><span class="p">[</span><span class="s2">&quot;EBOUNDS&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">rsp_</span><span class="p">[</span><span class="s2">"EBOUNDS"</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_emin</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">E_MIN</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_emax</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">E_MAX</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_channels</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">CHANNEL</span>
 
         <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">lle_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">ft1_</span><span class="p">:</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">ft1_</span><span class="p">[</span><span class="s2">&quot;EVENTS&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">ft1_</span><span class="p">[</span><span class="s2">"EVENTS"</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_events</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">TIME</span>  <span class="c1"># - trigger_time</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_energy</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">ENERGY</span> <span class="o">*</span> <span class="mf">1e3</span>  <span class="c1"># keV</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">_tstart</span> <span class="o">=</span> <span class="n">ft1_</span><span class="p">[</span><span class="s2">&quot;PRIMARY&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;TSTART&quot;</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_tstop</span> <span class="o">=</span> <span class="n">ft1_</span><span class="p">[</span><span class="s2">&quot;PRIMARY&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;TSTOP&quot;</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_utc_start</span> <span class="o">=</span> <span class="n">ft1_</span><span class="p">[</span><span class="s2">&quot;PRIMARY&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;DATE-OBS&quot;</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_utc_stop</span> <span class="o">=</span> <span class="n">ft1_</span><span class="p">[</span><span class="s2">&quot;PRIMARY&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;DATE-END&quot;</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_instrument</span> <span class="o">=</span> <span class="n">ft1_</span><span class="p">[</span><span class="s2">&quot;PRIMARY&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;INSTRUME&quot;</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_telescope</span> <span class="o">=</span> <span class="n">ft1_</span><span class="p">[</span><span class="s2">&quot;PRIMARY&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;TELESCOP&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;_LLE&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_gti_start</span> <span class="o">=</span> <span class="n">ft1_</span><span class="p">[</span><span class="s2">&quot;GTI&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;START&quot;</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_gti_stop</span> <span class="o">=</span> <span class="n">ft1_</span><span class="p">[</span><span class="s2">&quot;GTI&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;STOP&quot;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_tstart</span> <span class="o">=</span> <span class="n">ft1_</span><span class="p">[</span><span class="s2">"PRIMARY"</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">"TSTART"</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_tstop</span> <span class="o">=</span> <span class="n">ft1_</span><span class="p">[</span><span class="s2">"PRIMARY"</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">"TSTOP"</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_utc_start</span> <span class="o">=</span> <span class="n">ft1_</span><span class="p">[</span><span class="s2">"PRIMARY"</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">"DATE-OBS"</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_utc_stop</span> <span class="o">=</span> <span class="n">ft1_</span><span class="p">[</span><span class="s2">"PRIMARY"</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">"DATE-END"</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_instrument</span> <span class="o">=</span> <span class="n">ft1_</span><span class="p">[</span><span class="s2">"PRIMARY"</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">"INSTRUME"</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_telescope</span> <span class="o">=</span> <span class="n">ft1_</span><span class="p">[</span><span class="s2">"PRIMARY"</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">"TELESCOP"</span><span class="p">]</span> <span class="o">+</span> <span class="s2">"_LLE"</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_gti_start</span> <span class="o">=</span> <span class="n">ft1_</span><span class="p">[</span><span class="s2">"GTI"</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">"START"</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_gti_stop</span> <span class="o">=</span> <span class="n">ft1_</span><span class="p">[</span><span class="s2">"GTI"</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">"STOP"</span><span class="p">]</span>
 
             <span class="k">try</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_trigger_time</span> <span class="o">=</span> <span class="n">ft1_</span><span class="p">[</span><span class="s2">&quot;EVENTS&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;TRIGTIME&quot;</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_trigger_time</span> <span class="o">=</span> <span class="n">ft1_</span><span class="p">[</span><span class="s2">"EVENTS"</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">"TRIGTIME"</span><span class="p">]</span>
 
             <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
                 <span class="c1"># For whatever reason</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                    <span class="s2">&quot;There is no trigger time in the LLE file. Must be set manually or &quot;</span>
-                    <span class="s2">&quot;using MET relative times.&quot;</span>
+                    <span class="s2">"There is no trigger time in the LLE file. Must be set manually or "</span>
+                    <span class="s2">"using MET relative times."</span>
                 <span class="p">)</span>
 
                 <span class="bp">self</span><span class="o">.</span><span class="n">_trigger_time</span> <span class="o">=</span> <span class="mi">0</span>
@@ -183,16 +183,16 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_apply_gti_to_events</span><span class="p">()</span>
 
         <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">ft2_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">ft2_</span><span class="p">:</span>
-            <span class="n">ft2_tstart</span> <span class="o">=</span> <span class="n">ft2_</span><span class="p">[</span><span class="s2">&quot;SC_DATA&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;START&quot;</span><span class="p">)</span>  <span class="c1"># - trigger_time</span>
-            <span class="n">ft2_tstop</span> <span class="o">=</span> <span class="n">ft2_</span><span class="p">[</span><span class="s2">&quot;SC_DATA&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;STOP&quot;</span><span class="p">)</span>  <span class="c1"># - trigger_time</span>
-            <span class="n">ft2_livetime</span> <span class="o">=</span> <span class="n">ft2_</span><span class="p">[</span><span class="s2">&quot;SC_DATA&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;LIVETIME&quot;</span><span class="p">)</span>
+            <span class="n">ft2_tstart</span> <span class="o">=</span> <span class="n">ft2_</span><span class="p">[</span><span class="s2">"SC_DATA"</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">"START"</span><span class="p">)</span>  <span class="c1"># - trigger_time</span>
+            <span class="n">ft2_tstop</span> <span class="o">=</span> <span class="n">ft2_</span><span class="p">[</span><span class="s2">"SC_DATA"</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">"STOP"</span><span class="p">)</span>  <span class="c1"># - trigger_time</span>
+            <span class="n">ft2_livetime</span> <span class="o">=</span> <span class="n">ft2_</span><span class="p">[</span><span class="s2">"SC_DATA"</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">"LIVETIME"</span><span class="p">)</span>
 
         <span class="n">ft2_bin_size</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># seconds</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">ft2_livetime</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">):</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;You are using a 30s FT2 file. You should use a 1s Ft2 file otherwise &quot;</span>
-                <span class="s2">&quot;the livetime correction will not be accurate!&quot;</span>
+                <span class="s2">"You are using a 30s FT2 file. You should use a 1s Ft2 file otherwise "</span>
+                <span class="s2">"the livetime correction will not be accurate!"</span>
             <span class="p">)</span>
 
             <span class="n">ft2_bin_size</span> <span class="o">=</span> <span class="mf">30.0</span>  <span class="c1"># s</span>
@@ -218,7 +218,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_livetime</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_livetime</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_apply_gti_to_live_time</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;This function applies the GTIs to the live time intervals.</span>
+<span class="w">        </span><span class="sd">"""This function applies the GTIs to the live time intervals.</span>
 
 <span class="sd">        It will remove any livetime interval not falling within the</span>
 <span class="sd">        boundaries of a GTI. The FT2 bins are assumed to have the same</span>
@@ -227,7 +227,7 @@
 <span class="sd">        Events falling outside the GTI boundaries are already removed.</span>
 
 <span class="sd">        :return: none</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># First negate all FT2 entries</span>
 
@@ -249,13 +249,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_livetime</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_livetime</span><span class="p">[</span><span class="n">filter_idx</span><span class="p">]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_apply_gti_to_events</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;This created a filter index for events falling outside of the GTI.</span>
+<span class="w">        </span><span class="sd">"""This created a filter index for events falling outside of the GTI.</span>
 <span class="sd">        It must be run after the events are binned in energy because a filter</span>
 <span class="sd">        is set up in that function for events that have energies outside the</span>
 <span class="sd">        EBOUNDS of the DRM.</span>
 
 <span class="sd">        :return: none</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># initial filter</span>
         <span class="n">filter_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_events</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
@@ -274,11 +274,11 @@
 <div class="viewcode-block" id="LLEFile.is_in_gti">
 <a class="viewcode-back" href="../../../../../api/threeML.utils.data_builders.fermi.html#threeML.utils.data_builders.fermi.lat_data.LLEFile.is_in_gti">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_in_gti</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks if a time falls within a GTI.</span>
+<span class="w">        </span><span class="sd">"""Checks if a time falls within a GTI.</span>
 
 <span class="sd">        :param time: time in MET</span>
 <span class="sd">        :return: bool</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">in_gti</span> <span class="o">=</span> <span class="kc">False</span>
 
@@ -290,10 +290,10 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_bin_energies_into_pha</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Bins the LLE data into PHA channels.</span>
+<span class="w">        </span><span class="sd">"""Bins the LLE data into PHA channels.</span>
 
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_emin</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_emax</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
 
@@ -307,14 +307,14 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">trigger_time</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gets the trigger time in MET :return: trigger time in MET.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Gets the trigger time in MET :return: trigger time in MET."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trigger_time</span>
 
     <span class="nd">@trigger_time</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">trigger_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
         <span class="k">assert</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_tstart</span> <span class="o">&lt;=</span> <span class="n">val</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tstop</span>
-        <span class="p">),</span> <span class="s2">&quot;Trigger time must be within the interval (</span><span class="si">%f</span><span class="s2">,</span><span class="si">%f</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span>
+        <span class="p">),</span> <span class="s2">"Trigger time must be within the interval (</span><span class="si">%f</span><span class="s2">,</span><span class="si">%f</span><span class="s2">)"</span> <span class="o">%</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_tstart</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_tstop</span><span class="p">,</span>
         <span class="p">)</span>
@@ -331,12 +331,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">arrival_times</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The GTI/energy filtered arrival times in MET :return:&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""The GTI/energy filtered arrival times in MET :return:"""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_events</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_filter_idx</span><span class="p">]</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">energies</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The GTI/energy filtered pha energies :return:&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""The GTI/energy filtered pha energies :return:"""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pha</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_filter_idx</span><span class="p">]</span>
 
     <span class="nd">@property</span>
@@ -345,7 +345,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">mission</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the name of the mission :return:&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return the name of the mission :return:"""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instrument</span>
 
     <span class="nd">@property</span>
@@ -354,10 +354,10 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">instrument</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the name of the instrument and detector.</span>
+<span class="w">        </span><span class="sd">"""Return the name of the instrument and detector.</span>
 
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_telescope</span>
 
@@ -377,22 +377,22 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="p">()</span><span class="o">.</span><span class="n">to_string</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Examine the currently selected interval If connected to the</span>
+<span class="w">        </span><span class="sd">"""Examine the currently selected interval If connected to the</span>
 <span class="sd">        internet, will also look up info for other instruments to compare with</span>
 <span class="sd">        Fermi.</span>
 
 <span class="sd">        :return: none</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">mission_dict</span> <span class="o">=</span> <span class="n">compute_fermi_relative_mission_times</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_trigger_time</span><span class="p">)</span>
 
         <span class="n">fermi_dict</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
 
-        <span class="n">fermi_dict</span><span class="p">[</span><span class="s2">&quot;Fermi Trigger Time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%.3f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trigger_time</span>
-        <span class="n">fermi_dict</span><span class="p">[</span><span class="s2">&quot;Fermi MET OBS Start&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%.3f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tstart</span>
-        <span class="n">fermi_dict</span><span class="p">[</span><span class="s2">&quot;Fermi MET OBS Stop&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%.3f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tstop</span>
-        <span class="n">fermi_dict</span><span class="p">[</span><span class="s2">&quot;Fermi UTC OBS Start&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_utc_start</span>
-        <span class="n">fermi_dict</span><span class="p">[</span><span class="s2">&quot;Fermi UTC OBS Stop&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_utc_stop</span>
+        <span class="n">fermi_dict</span><span class="p">[</span><span class="s2">"Fermi Trigger Time"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"</span><span class="si">%.3f</span><span class="s2">"</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trigger_time</span>
+        <span class="n">fermi_dict</span><span class="p">[</span><span class="s2">"Fermi MET OBS Start"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"</span><span class="si">%.3f</span><span class="s2">"</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tstart</span>
+        <span class="n">fermi_dict</span><span class="p">[</span><span class="s2">"Fermi MET OBS Stop"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"</span><span class="si">%.3f</span><span class="s2">"</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tstop</span>
+        <span class="n">fermi_dict</span><span class="p">[</span><span class="s2">"Fermi UTC OBS Start"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_utc_start</span>
+        <span class="n">fermi_dict</span><span class="p">[</span><span class="s2">"Fermi UTC OBS Stop"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_utc_stop</span>
 
         <span class="n">fermi_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">fermi_dict</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">fermi_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 

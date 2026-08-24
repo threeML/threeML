@@ -124,22 +124,22 @@
 <a class="viewcode-back" href="../../../api/threeML.utils.html#threeML.utils.time_interval.TimeInterval">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">TimeInterval</span><span class="p">(</span><span class="n">Interval</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">number</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a new time interval equal to the original time interval</span>
+<span class="w">        </span><span class="sd">"""Return a new time interval equal to the original time interval</span>
 <span class="sd">        shifted to the right by number.</span>
 
 <span class="sd">        :param number: a float</span>
 <span class="sd">        :return: a new TimeInterval instance</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_start</span> <span class="o">+</span> <span class="n">number</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span> <span class="o">+</span> <span class="n">number</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">number</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a new time interval equal to the original time interval</span>
+<span class="w">        </span><span class="sd">"""Return a new time interval equal to the original time interval</span>
 <span class="sd">        shifted to the left by number.</span>
 
 <span class="sd">        :param number: a float</span>
 <span class="sd">        :return: a new TimeInterval instance</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_start</span> <span class="o">-</span> <span class="n">number</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span> <span class="o">-</span> <span class="n">number</span><span class="p">)</span>
 
@@ -160,7 +160,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mid_point</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s2">&quot;time interval </span><span class="si">%s</span><span class="s2"> - </span><span class="si">%s</span><span class="s2"> (duration: </span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span>
+        <span class="k">return</span> <span class="s2">"time interval </span><span class="si">%s</span><span class="s2"> - </span><span class="si">%s</span><span class="s2"> (duration: </span><span class="si">%s</span><span class="s2">)"</span> <span class="o">%</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">start_time</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">stop_time</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">duration</span><span class="p">,</span>
@@ -171,52 +171,52 @@
 <div class="viewcode-block" id="TimeIntervalSet">
 <a class="viewcode-back" href="../../../api/threeML.utils.html#threeML.utils.time_interval.TimeIntervalSet">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">TimeIntervalSet</span><span class="p">(</span><span class="n">IntervalSet</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A set of time intervals.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""A set of time intervals."""</span>
 
     <span class="n">INTERVAL_TYPE</span> <span class="o">=</span> <span class="n">TimeInterval</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">start_times</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the starts fo the set.</span>
+<span class="w">        </span><span class="sd">"""Return the starts fo the set.</span>
 
 <span class="sd">        :return: list of start times</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">starts</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">stop_times</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the stops of the set.</span>
+<span class="w">        </span><span class="sd">"""Return the stops of the set.</span>
 
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stops</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">absolute_start_time</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The minimum of the start times :return:&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""The minimum of the start times :return:"""</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">absolute_start</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">absolute_stop_time</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The maximum of the stop times :return:&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""The maximum of the stop times :return:"""</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">absolute_stop</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">time_edges</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return an array of time edges if contiguous :return:&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return an array of time edges if contiguous :return:"""</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">number</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Shift all time intervals to the right by number.</span>
+<span class="w">        </span><span class="sd">"""Shift all time intervals to the right by number.</span>
 
 <span class="sd">        :param number: a float</span>
 <span class="sd">        :return: new TimeIntervalSet instance</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">new_set</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">new</span><span class="p">()</span>
         <span class="n">new_set</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">time_interval</span> <span class="o">+</span> <span class="n">number</span> <span class="k">for</span> <span class="n">time_interval</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">])</span>
@@ -224,11 +224,11 @@
         <span class="k">return</span> <span class="n">new_set</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">number</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Shift all time intervals to the left by number (in place)</span>
+<span class="w">        </span><span class="sd">"""Shift all time intervals to the left by number (in place)</span>
 
 <span class="sd">        :param number: a float</span>
 <span class="sd">        :return: new TimeIntervalSet instance</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">new_set</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">new</span><span class="p">(</span>
             <span class="p">[</span><span class="n">time_interval</span> <span class="o">-</span> <span class="n">number</span> <span class="k">for</span> <span class="n">time_interval</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">]</span>
@@ -239,16 +239,16 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_create_pandas</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">time_interval_dict</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
 
-        <span class="n">time_interval_dict</span><span class="p">[</span><span class="s2">&quot;Start&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">time_interval_dict</span><span class="p">[</span><span class="s2">&quot;Stop&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">time_interval_dict</span><span class="p">[</span><span class="s2">&quot;Duration&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">time_interval_dict</span><span class="p">[</span><span class="s2">&quot;Midpoint&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">time_interval_dict</span><span class="p">[</span><span class="s2">"Start"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">time_interval_dict</span><span class="p">[</span><span class="s2">"Stop"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">time_interval_dict</span><span class="p">[</span><span class="s2">"Duration"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">time_interval_dict</span><span class="p">[</span><span class="s2">"Midpoint"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">interval</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">):</span>
-            <span class="n">time_interval_dict</span><span class="p">[</span><span class="s2">&quot;Start&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">interval</span><span class="o">.</span><span class="n">start</span><span class="p">)</span>
-            <span class="n">time_interval_dict</span><span class="p">[</span><span class="s2">&quot;Stop&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">interval</span><span class="o">.</span><span class="n">stop</span><span class="p">)</span>
-            <span class="n">time_interval_dict</span><span class="p">[</span><span class="s2">&quot;Duration&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">interval</span><span class="o">.</span><span class="n">duration</span><span class="p">)</span>
-            <span class="n">time_interval_dict</span><span class="p">[</span><span class="s2">&quot;Midpoint&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">interval</span><span class="o">.</span><span class="n">half_time</span><span class="p">)</span>
+            <span class="n">time_interval_dict</span><span class="p">[</span><span class="s2">"Start"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">interval</span><span class="o">.</span><span class="n">start</span><span class="p">)</span>
+            <span class="n">time_interval_dict</span><span class="p">[</span><span class="s2">"Stop"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">interval</span><span class="o">.</span><span class="n">stop</span><span class="p">)</span>
+            <span class="n">time_interval_dict</span><span class="p">[</span><span class="s2">"Duration"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">interval</span><span class="o">.</span><span class="n">duration</span><span class="p">)</span>
+            <span class="n">time_interval_dict</span><span class="p">[</span><span class="s2">"Midpoint"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">interval</span><span class="o">.</span><span class="n">half_time</span><span class="p">)</span>
 
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">time_interval_dict</span><span class="p">)</span>
 
@@ -257,10 +257,10 @@
 <div class="viewcode-block" id="TimeIntervalSet.display">
 <a class="viewcode-back" href="../../../api/threeML.utils.html#threeML.utils.time_interval.TimeIntervalSet.display">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">display</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Display the time intervals.</span>
+<span class="w">        </span><span class="sd">"""Display the time intervals.</span>
 
 <span class="sd">        :return: None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">display</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_create_pandas</span><span class="p">())</span></div>
 

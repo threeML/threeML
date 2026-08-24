@@ -131,7 +131,7 @@
         <span class="c1"># Make sure we have a fit</span>
         <span class="k">assert</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_jl_instance</span><span class="o">.</span><span class="n">results</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-        <span class="p">),</span> <span class="s2">&quot;You have to perform a fit before using GoodnessOfFit&quot;</span>
+        <span class="p">),</span> <span class="s2">"You have to perform a fit before using GoodnessOfFit"</span>
 
         <span class="k">if</span> <span class="n">like_data_frame</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">like_data_frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jl_instance</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">get_statistic_frame</span><span class="p">()</span>
@@ -139,7 +139,7 @@
         <span class="c1"># Restore best fit and store the reference value for the likelihood</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_jl_instance</span><span class="o">.</span><span class="n">restore_best_fit</span><span class="p">()</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_reference_like</span> <span class="o">=</span> <span class="n">like_data_frame</span><span class="p">[</span><span class="s2">&quot;-log(likelihood)&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reference_like</span> <span class="o">=</span> <span class="n">like_data_frame</span><span class="p">[</span><span class="s2">"-log(likelihood)"</span><span class="p">]</span>
 
         <span class="c1"># Store best model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_best_fit_model</span> <span class="o">=</span> <span class="n">clone_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_jl_instance</span><span class="o">.</span><span class="n">likelihood_model</span><span class="p">)</span>
@@ -155,7 +155,7 @@
         <span class="n">new_datas</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_jl_instance</span><span class="o">.</span><span class="n">data_list</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
-            <span class="n">new_data</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">get_simulated_dataset</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">_sim&quot;</span> <span class="o">%</span> <span class="n">dataset</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">new_data</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">get_simulated_dataset</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2">_sim"</span> <span class="o">%</span> <span class="n">dataset</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 
             <span class="n">new_datas</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_data</span><span class="p">)</span>
 
@@ -167,7 +167,7 @@
 <div class="viewcode-block" id="GoodnessOfFit.get_model">
 <a class="viewcode-back" href="../../../api/threeML.classicMLE.html#threeML.classicMLE.goodness_of_fit.GoodnessOfFit.get_model">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
-        <span class="c1"># Make a copy of the best fit model, so that we don&#39;t touch the original model</span>
+        <span class="c1"># Make a copy of the best fit model, so that we don't touch the original model</span>
         <span class="c1"># during the fit, and we also always restart from the best fit (instead of the</span>
         <span class="c1"># last iteration)</span>
 
@@ -185,7 +185,7 @@
         <span class="n">preprocessor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">postprocessor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute goodness of fit by generating Monte Carlo datasets and</span>
+<span class="w">        </span><span class="sd">"""Compute goodness of fit by generating Monte Carlo datasets and</span>
 <span class="sd">        fitting the current model on them. The fraction of synthetic datasets</span>
 <span class="sd">        which have a value for the likelihood larger or equal to the observed</span>
 <span class="sd">        one is a measure of the goodness of fit.</span>
@@ -196,14 +196,14 @@
 <span class="sd">            fit fails (False by default)</span>
 <span class="sd">        :return: tuple (goodness of fit, frame with all results, frame</span>
 <span class="sd">            with all likelihood values)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># Create the joint likelihood set</span>
         <span class="n">jl_set</span> <span class="o">=</span> <span class="n">JointLikelihoodSet</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">get_simulated_data</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">get_model</span><span class="p">,</span>
             <span class="n">n_iterations</span><span class="p">,</span>
-            <span class="n">iteration_name</span><span class="o">=</span><span class="s2">&quot;simulation&quot;</span><span class="p">,</span>
+            <span class="n">iteration_name</span><span class="o">=</span><span class="s2">"simulation"</span><span class="p">,</span>
             <span class="n">preprocessor</span><span class="o">=</span><span class="n">preprocessor</span><span class="p">,</span>
             <span class="n">postprocessor</span><span class="o">=</span><span class="n">postprocessor</span><span class="p">,</span>
         <span class="p">)</span>
@@ -222,17 +222,17 @@
 
         <span class="c1"># Total</span>
         <span class="n">idx</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">like_data_frame</span><span class="p">[</span><span class="s2">&quot;-log(likelihood)&quot;</span><span class="p">][:,</span> <span class="s2">&quot;total&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
-            <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reference_like</span><span class="p">[</span><span class="s2">&quot;total&quot;</span><span class="p">]</span>
+            <span class="n">like_data_frame</span><span class="p">[</span><span class="s2">"-log(likelihood)"</span><span class="p">][:,</span> <span class="s2">"total"</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+            <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reference_like</span><span class="p">[</span><span class="s2">"total"</span><span class="p">]</span>
         <span class="p">)</span>  <span class="c1"># type: np.ndarray</span>
 
-        <span class="n">gof</span><span class="p">[</span><span class="s2">&quot;total&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">n_iterations</span><span class="p">)</span>
+        <span class="n">gof</span><span class="p">[</span><span class="s2">"total"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">n_iterations</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_jl_instance</span><span class="o">.</span><span class="n">data_list</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
-            <span class="n">sim_name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">_sim&quot;</span> <span class="o">%</span> <span class="n">dataset</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">sim_name</span> <span class="o">=</span> <span class="s2">"</span><span class="si">%s</span><span class="s2">_sim"</span> <span class="o">%</span> <span class="n">dataset</span><span class="o">.</span><span class="n">name</span>
 
             <span class="n">idx</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">like_data_frame</span><span class="p">[</span><span class="s2">&quot;-log(likelihood)&quot;</span><span class="p">][:,</span> <span class="n">sim_name</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+                <span class="n">like_data_frame</span><span class="p">[</span><span class="s2">"-log(likelihood)"</span><span class="p">][:,</span> <span class="n">sim_name</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
                 <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reference_like</span><span class="p">[</span><span class="n">dataset</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
             <span class="p">)</span>
 

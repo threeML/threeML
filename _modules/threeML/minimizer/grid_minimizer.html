@@ -139,7 +139,7 @@
 <div class="viewcode-block" id="GridMinimizer">
 <a class="viewcode-back" href="../../../api/threeML.minimizer.html#threeML.minimizer.grid_minimizer.GridMinimizer">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">GridMinimizer</span><span class="p">(</span><span class="n">GlobalMinimizer</span><span class="p">):</span>
-    <span class="n">valid_setup_keys</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;grid&quot;</span><span class="p">,</span> <span class="s2">&quot;second_minimization&quot;</span><span class="p">,</span> <span class="s2">&quot;callbacks&quot;</span><span class="p">)</span>
+    <span class="n">valid_setup_keys</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"grid"</span><span class="p">,</span> <span class="s2">"second_minimization"</span><span class="p">,</span> <span class="s2">"callbacks"</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">verbosity</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_grid</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
@@ -164,33 +164,33 @@
         <span class="c1"># is not None</span>
         <span class="k">assert</span> <span class="p">(</span>
             <span class="n">user_setup_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-        <span class="p">),</span> <span class="s2">&quot;You have to setup a grid for this minimizer&quot;</span>
+        <span class="p">),</span> <span class="s2">"You have to setup a grid for this minimizer"</span>
 
-        <span class="k">assert</span> <span class="s2">&quot;grid&quot;</span> <span class="ow">in</span> <span class="n">user_setup_dict</span><span class="p">,</span> <span class="s2">&quot;You have to setup a grid for this minimizer&quot;</span>
+        <span class="k">assert</span> <span class="s2">"grid"</span> <span class="ow">in</span> <span class="n">user_setup_dict</span><span class="p">,</span> <span class="s2">"You have to setup a grid for this minimizer"</span>
 
         <span class="k">assert</span> <span class="p">(</span>
-            <span class="s2">&quot;second_minimization&quot;</span> <span class="ow">in</span> <span class="n">user_setup_dict</span>
-        <span class="p">),</span> <span class="s2">&quot;You have to set up a second minimizer&quot;</span>
+            <span class="s2">"second_minimization"</span> <span class="ow">in</span> <span class="n">user_setup_dict</span>
+        <span class="p">),</span> <span class="s2">"You have to set up a second minimizer"</span>
 
         <span class="c1"># Setup grid</span>
 
-        <span class="k">for</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">grid</span> <span class="ow">in</span> <span class="n">user_setup_dict</span><span class="p">[</span><span class="s2">&quot;grid&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;added </span><span class="si">{</span><span class="n">parameter</span><span class="si">}</span><span class="s2"> to the grid&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">grid</span> <span class="ow">in</span> <span class="n">user_setup_dict</span><span class="p">[</span><span class="s2">"grid"</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"added </span><span class="si">{</span><span class="n">parameter</span><span class="si">}</span><span class="s2"> to the grid"</span><span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">add_parameter_to_grid</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="n">grid</span><span class="p">)</span>
 
         <span class="c1"># Setup inner minimization</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_2nd_minimization</span> <span class="o">=</span> <span class="n">user_setup_dict</span><span class="p">[</span><span class="s2">&quot;second_minimization&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_2nd_minimization</span> <span class="o">=</span> <span class="n">user_setup_dict</span><span class="p">[</span><span class="s2">"second_minimization"</span><span class="p">]</span>
 
         <span class="c1"># If there are callbacks, set them up</span>
-        <span class="k">if</span> <span class="s2">&quot;callbacks&quot;</span> <span class="ow">in</span> <span class="n">user_setup_dict</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">callback</span> <span class="ow">in</span> <span class="n">user_setup_dict</span><span class="p">[</span><span class="s2">&quot;callbacks&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="s2">"callbacks"</span> <span class="ow">in</span> <span class="n">user_setup_dict</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">callback</span> <span class="ow">in</span> <span class="n">user_setup_dict</span><span class="p">[</span><span class="s2">"callbacks"</span><span class="p">]:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">add_callback</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span>
 
 <div class="viewcode-block" id="GridMinimizer.add_callback">
 <a class="viewcode-back" href="../../../api/threeML.minimizer.html#threeML.minimizer.grid_minimizer.GridMinimizer.add_callback">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;This adds a callback function which is called after each point in</span>
+<span class="w">        </span><span class="sd">"""This adds a callback function which is called after each point in</span>
 <span class="sd">        the grid has been used.</span>
 
 <span class="sd">        :param function: a function receiving in input a tuple</span>
@@ -198,7 +198,7 @@
 <span class="sd">            function reached starting from that point. The function</span>
 <span class="sd">            should return nothing</span>
 <span class="sd">        :return: none</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">function</span><span class="p">)</span></div>
 
@@ -206,27 +206,27 @@
 <div class="viewcode-block" id="GridMinimizer.remove_callbacks">
 <a class="viewcode-back" href="../../../api/threeML.minimizer.html#threeML.minimizer.grid_minimizer.GridMinimizer.remove_callbacks">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">remove_callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove all callbacks added with add_callback.</span>
+<span class="w">        </span><span class="sd">"""Remove all callbacks added with add_callback.</span>
 
 <span class="sd">        :return: none</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_callbacks</span> <span class="o">=</span> <span class="p">[]</span></div>
 
 
 <div class="viewcode-block" id="GridMinimizer.add_parameter_to_grid">
 <a class="viewcode-back" href="../../../api/threeML.minimizer.html#threeML.minimizer.grid_minimizer.GridMinimizer.add_parameter_to_grid">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_parameter_to_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">grid</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a parameter to the grid.</span>
+<span class="w">        </span><span class="sd">"""Add a parameter to the grid.</span>
 
 <span class="sd">        :param parameter: an instance of a parameter or a parameter path</span>
 <span class="sd">        :param grid: a list (or a numpy.array) with the values the</span>
 <span class="sd">            parameter is supposed to take during the grid search</span>
 <span class="sd">        :return: None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="n">Parameter</span><span class="p">):</span>
             <span class="k">assert</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span> <span class="p">(</span>
-                <span class="s2">&quot;Parameter </span><span class="si">%s</span><span class="s2"> is not part of the current model&quot;</span> <span class="o">%</span> <span class="n">parameter</span><span class="o">.</span><span class="n">name</span>
+                <span class="s2">"Parameter </span><span class="si">%s</span><span class="s2"> is not part of the current model"</span> <span class="o">%</span> <span class="n">parameter</span><span class="o">.</span><span class="n">name</span>
             <span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
@@ -242,7 +242,7 @@
 
             <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                    <span class="s2">&quot;Could not find parameter </span><span class="si">%s</span><span class="s2"> in current model&quot;</span> <span class="o">%</span> <span class="n">parameter_path</span>
+                    <span class="s2">"Could not find parameter </span><span class="si">%s</span><span class="s2"> in current model"</span> <span class="o">%</span> <span class="n">parameter_path</span>
                 <span class="p">)</span>
 
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">()</span>
@@ -252,25 +252,25 @@
         <span class="n">grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
 
         <span class="k">assert</span> <span class="n">grid</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span>
-            <span class="s2">&quot;The grid for parameter </span><span class="si">%s</span><span class="s2"> must be 1-dimensional&quot;</span> <span class="o">%</span> <span class="n">parameter</span><span class="o">.</span><span class="n">name</span>
+            <span class="s2">"The grid for parameter </span><span class="si">%s</span><span class="s2"> must be 1-dimensional"</span> <span class="o">%</span> <span class="n">parameter</span><span class="o">.</span><span class="n">name</span>
         <span class="p">)</span>
 
         <span class="c1"># Check that the grid is legal</span>
         <span class="k">if</span> <span class="n">parameter</span><span class="o">.</span><span class="n">max_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">assert</span> <span class="n">grid</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">parameter</span><span class="o">.</span><span class="n">max_value</span><span class="p">,</span> <span class="p">(</span>
-                <span class="s2">&quot;The maximum value in the grid (</span><span class="si">%s</span><span class="s2">) is above the maximum &quot;</span>
-                <span class="s2">&quot;legal value (</span><span class="si">%s</span><span class="s2">) for parameter </span><span class="si">%s</span><span class="s2">&quot;</span>
+                <span class="s2">"The maximum value in the grid (</span><span class="si">%s</span><span class="s2">) is above the maximum "</span>
+                <span class="s2">"legal value (</span><span class="si">%s</span><span class="s2">) for parameter </span><span class="si">%s</span><span class="s2">"</span>
                 <span class="o">%</span> <span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">parameter</span><span class="o">.</span><span class="n">max_value</span><span class="p">,</span> <span class="n">parameter</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">parameter</span><span class="o">.</span><span class="n">min_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">assert</span> <span class="n">grid</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">parameter</span><span class="o">.</span><span class="n">min_value</span><span class="p">,</span> <span class="p">(</span>
-                <span class="s2">&quot;The minimum value in the grid (</span><span class="si">%s</span><span class="s2">) is above the minimum legal &quot;</span>
-                <span class="s2">&quot;value (</span><span class="si">%s</span><span class="s2">) for parameter </span><span class="si">%s</span><span class="s2">&quot;</span>
+                <span class="s2">"The minimum value in the grid (</span><span class="si">%s</span><span class="s2">) is above the minimum legal "</span>
+                <span class="s2">"value (</span><span class="si">%s</span><span class="s2">) for parameter </span><span class="si">%s</span><span class="s2">"</span>
                 <span class="o">%</span> <span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">parameter</span><span class="o">.</span><span class="n">min_value</span><span class="p">,</span> <span class="n">parameter</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
             <span class="p">)</span>
 
-            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;grid successfully added: </span><span class="si">{</span><span class="n">grid</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"grid successfully added: </span><span class="si">{</span><span class="n">grid</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_grid</span><span class="p">[</span><span class="n">parameter</span><span class="o">.</span><span class="n">path</span><span class="p">]</span> <span class="o">=</span> <span class="n">grid</span></div>
 
@@ -278,12 +278,12 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_minimize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">assert</span> <span class="p">(</span>
             <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_grid</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
-        <span class="p">),</span> <span class="s2">&quot;You need to set up a grid using add_parameter_to_grid&quot;</span>
+        <span class="p">),</span> <span class="s2">"You need to set up a grid using add_parameter_to_grid"</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_2nd_minimization</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                <span class="s2">&quot;You did not setup this global minimizer (GRID). You need to use the &quot;</span>
-                <span class="s2">&quot;.setup() method&quot;</span>
+                <span class="s2">"You did not setup this global minimizer (GRID). You need to use the "</span>
+                <span class="s2">".setup() method"</span>
             <span class="p">)</span>
 
         <span class="c1"># For each point in the grid, perform a fit</span>
@@ -296,7 +296,7 @@
         <span class="n">n_iterations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_grid</span><span class="o">.</span><span class="n">values</span><span class="p">())])</span>
 
         <span class="k">if</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">interface</span><span class="o">.</span><span class="n">progress_bars</span><span class="p">:</span>
-            <span class="n">p</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="n">n_iterations</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Grid Minimization&quot;</span><span class="p">)</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="n">n_iterations</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">"Grid Minimization"</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">values_tuple</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_grid</span><span class="o">.</span><span class="n">values</span><span class="p">())):</span>
             <span class="c1"># Reset everything to the original values, so that the fit will always start</span>
@@ -351,7 +351,7 @@
                 <span class="n">p</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">internal_best_fit_values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;All fit starting from values in the grid have failed!&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"All fit starting from values in the grid have failed!"</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">AllFitFailed</span><span class="p">()</span>
 
         <span class="k">return</span> <span class="n">internal_best_fit_values</span><span class="p">,</span> <span class="n">overall_minimum</span></div>

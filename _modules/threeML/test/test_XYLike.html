@@ -315,7 +315,7 @@
 
     <span class="c1"># Fit</span>
 
-    <span class="n">xy</span> <span class="o">=</span> <span class="n">XYLike</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">yerr</span><span class="p">)</span>
+    <span class="n">xy</span> <span class="o">=</span> <span class="n">XYLike</span><span class="p">(</span><span class="s2">"test"</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">yerr</span><span class="p">)</span>
 
     <span class="n">fitfun</span> <span class="o">=</span> <span class="n">Line</span><span class="p">()</span> <span class="o">+</span> <span class="n">Gaussian</span><span class="p">()</span>
     <span class="n">fitfun</span><span class="o">.</span><span class="n">F_2</span> <span class="o">=</span> <span class="mf">60.0</span>
@@ -325,15 +325,15 @@
 
     <span class="c1"># Verify that the fit converged where it should have</span>
     <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span>
-        <span class="c1"># res[0][&quot;value&quot;].values,</span>
-        <span class="n">res</span><span class="o">.</span><span class="n">get_data_frame</span><span class="p">()[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+        <span class="c1"># res[0]["value"].values,</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">get_data_frame</span><span class="p">()[</span><span class="s2">"value"</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
         <span class="p">[</span><span class="mf">40.20269202</span><span class="p">,</span> <span class="mf">0.82896119</span><span class="p">,</span> <span class="mf">62.80359114</span><span class="p">,</span> <span class="mf">5.04080011</span><span class="p">,</span> <span class="mf">0.27286713</span><span class="p">],</span>
         <span class="n">rtol</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="c1"># test not setting yerr</span>
 
-    <span class="n">xy</span> <span class="o">=</span> <span class="n">XYLike</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="n">xy</span> <span class="o">=</span> <span class="n">XYLike</span><span class="p">(</span><span class="s2">"test"</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 
     <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">xy</span><span class="o">.</span><span class="n">yerr</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
 
@@ -351,7 +351,7 @@
     <span class="c1"># Now Poisson case</span>
     <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">poiss_sig</span><span class="p">)</span>
 
-    <span class="n">xy</span> <span class="o">=</span> <span class="n">XYLike</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">poisson_data</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">xy</span> <span class="o">=</span> <span class="n">XYLike</span><span class="p">(</span><span class="s2">"test"</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">poisson_data</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="n">fitfun</span> <span class="o">=</span> <span class="n">Line</span><span class="p">()</span> <span class="o">+</span> <span class="n">Gaussian</span><span class="p">()</span>
 
@@ -365,10 +365,10 @@
 
     <span class="c1"># Verify that the fit converged where it should have</span>
 
-    <span class="c1"># print res[0][&#39;value&#39;]</span>
+    <span class="c1"># print res[0]['value']</span>
     <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span>
-        <span class="c1"># res[0][&quot;value&quot;],</span>
-        <span class="n">res</span><span class="o">.</span><span class="n">get_data_frame</span><span class="p">()[</span><span class="s2">&quot;value&quot;</span><span class="p">],</span>
+        <span class="c1"># res[0]["value"],</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">get_data_frame</span><span class="p">()[</span><span class="s2">"value"</span><span class="p">],</span>
         <span class="p">[</span><span class="mf">40.344599</span><span class="p">,</span> <span class="mf">0.783748</span><span class="p">,</span> <span class="mf">71.560055</span><span class="p">,</span> <span class="mf">4.989727</span><span class="p">,</span> <span class="mf">0.330570</span><span class="p">],</span>
         <span class="n">rtol</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
     <span class="p">)</span></div>
@@ -385,9 +385,9 @@
 
     <span class="c1"># Fit</span>
 
-    <span class="n">xy</span> <span class="o">=</span> <span class="n">XYLike</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">yerr</span><span class="p">)</span>
+    <span class="n">xy</span> <span class="o">=</span> <span class="n">XYLike</span><span class="p">(</span><span class="s2">"test"</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">yerr</span><span class="p">)</span>
 
-    <span class="n">xy</span><span class="o">.</span><span class="n">assign_to_source</span><span class="p">(</span><span class="s2">&quot;pts1&quot;</span><span class="p">)</span>
+    <span class="n">xy</span><span class="o">.</span><span class="n">assign_to_source</span><span class="p">(</span><span class="s2">"pts1"</span><span class="p">)</span>
 
     <span class="n">fitfun</span> <span class="o">=</span> <span class="n">Line</span><span class="p">()</span> <span class="o">+</span> <span class="n">Gaussian</span><span class="p">()</span>
     <span class="n">fitfun</span><span class="o">.</span><span class="n">F_2</span> <span class="o">=</span> <span class="mf">60.0</span>
@@ -397,8 +397,8 @@
     <span class="n">fitfun2</span><span class="o">.</span><span class="n">F_2</span> <span class="o">=</span> <span class="mf">60.0</span>
     <span class="n">fitfun2</span><span class="o">.</span><span class="n">mu_2</span> <span class="o">=</span> <span class="mf">4.5</span>
 
-    <span class="n">pts1</span> <span class="o">=</span> <span class="n">PointSource</span><span class="p">(</span><span class="s2">&quot;pts1&quot;</span><span class="p">,</span> <span class="n">ra</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">dec</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">spectral_shape</span><span class="o">=</span><span class="n">fitfun</span><span class="p">)</span>
-    <span class="n">pts2</span> <span class="o">=</span> <span class="n">PointSource</span><span class="p">(</span><span class="s2">&quot;pts2&quot;</span><span class="p">,</span> <span class="n">ra</span><span class="o">=</span><span class="mf">2.5</span><span class="p">,</span> <span class="n">dec</span><span class="o">=</span><span class="mf">3.2</span><span class="p">,</span> <span class="n">spectral_shape</span><span class="o">=</span><span class="n">fitfun2</span><span class="p">)</span>
+    <span class="n">pts1</span> <span class="o">=</span> <span class="n">PointSource</span><span class="p">(</span><span class="s2">"pts1"</span><span class="p">,</span> <span class="n">ra</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">dec</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">spectral_shape</span><span class="o">=</span><span class="n">fitfun</span><span class="p">)</span>
+    <span class="n">pts2</span> <span class="o">=</span> <span class="n">PointSource</span><span class="p">(</span><span class="s2">"pts2"</span><span class="p">,</span> <span class="n">ra</span><span class="o">=</span><span class="mf">2.5</span><span class="p">,</span> <span class="n">dec</span><span class="o">=</span><span class="mf">3.2</span><span class="p">,</span> <span class="n">spectral_shape</span><span class="o">=</span><span class="n">fitfun2</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">fitfun2</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
         <span class="n">parameter</span><span class="o">.</span><span class="n">fix</span> <span class="o">=</span> <span class="kc">True</span>
@@ -460,25 +460,25 @@
 
     <span class="c1"># chi2 version</span>
 
-    <span class="n">xy</span> <span class="o">=</span> <span class="n">XYLike</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">yerr</span><span class="p">)</span>
+    <span class="n">xy</span> <span class="o">=</span> <span class="n">XYLike</span><span class="p">(</span><span class="s2">"test"</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">yerr</span><span class="p">)</span>
 
     <span class="n">df</span> <span class="o">=</span> <span class="n">xy</span><span class="o">.</span><span class="n">to_dataframe</span><span class="p">()</span>
 
     <span class="c1"># read back in dataframe</span>
 
-    <span class="n">_</span> <span class="o">=</span> <span class="n">XYLike</span><span class="o">.</span><span class="n">from_dataframe</span><span class="p">(</span><span class="s2">&quot;df&quot;</span><span class="p">,</span> <span class="n">df</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">XYLike</span><span class="o">.</span><span class="n">from_dataframe</span><span class="p">(</span><span class="s2">"df"</span><span class="p">,</span> <span class="n">df</span><span class="p">)</span>
 
     <span class="k">assert</span> <span class="ow">not</span> <span class="n">xy</span><span class="o">.</span><span class="n">is_poisson</span>
 
     <span class="c1"># poisson version</span>
 
-    <span class="n">xy</span> <span class="o">=</span> <span class="n">XYLike</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">poisson_data</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">xy</span> <span class="o">=</span> <span class="n">XYLike</span><span class="p">(</span><span class="s2">"test"</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">poisson_data</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="n">df</span> <span class="o">=</span> <span class="n">xy</span><span class="o">.</span><span class="n">to_dataframe</span><span class="p">()</span>
 
     <span class="c1"># read back in dataframe</span>
 
-    <span class="n">_</span> <span class="o">=</span> <span class="n">XYLike</span><span class="o">.</span><span class="n">from_dataframe</span><span class="p">(</span><span class="s2">&quot;df&quot;</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">poisson</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">XYLike</span><span class="o">.</span><span class="n">from_dataframe</span><span class="p">(</span><span class="s2">"df"</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">poisson</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">assert</span> <span class="n">xy</span><span class="o">.</span><span class="n">is_poisson</span></div>
 
@@ -492,35 +492,35 @@
 
     <span class="c1"># chi2 version</span>
 
-    <span class="n">xy</span> <span class="o">=</span> <span class="n">XYLike</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">yerr</span><span class="p">)</span>
+    <span class="n">xy</span> <span class="o">=</span> <span class="n">XYLike</span><span class="p">(</span><span class="s2">"test"</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">yerr</span><span class="p">)</span>
 
-    <span class="n">fname</span> <span class="o">=</span> <span class="s2">&quot;test_txt.txt&quot;</span>
+    <span class="n">fname</span> <span class="o">=</span> <span class="s2">"test_txt.txt"</span>
 
     <span class="n">xy</span><span class="o">.</span><span class="n">to_txt</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
 
     <span class="c1"># read back in txt file</span>
 
-    <span class="n">new_xy</span> <span class="o">=</span> <span class="n">XYLike</span><span class="o">.</span><span class="n">from_text_file</span><span class="p">(</span><span class="s2">&quot;txt&quot;</span><span class="p">,</span> <span class="n">fname</span><span class="p">)</span>
+    <span class="n">new_xy</span> <span class="o">=</span> <span class="n">XYLike</span><span class="o">.</span><span class="n">from_text_file</span><span class="p">(</span><span class="s2">"txt"</span><span class="p">,</span> <span class="n">fname</span><span class="p">)</span>
 
     <span class="k">assert</span> <span class="ow">not</span> <span class="n">xy</span><span class="o">.</span><span class="n">is_poisson</span>
 
     <span class="c1"># poisson version</span>
 
-    <span class="n">xy</span> <span class="o">=</span> <span class="n">XYLike</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">poisson_data</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">xy</span> <span class="o">=</span> <span class="n">XYLike</span><span class="p">(</span><span class="s2">"test"</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">poisson_data</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-    <span class="n">fname</span> <span class="o">=</span> <span class="s2">&quot;test_txt_poisson.txt&quot;</span>
+    <span class="n">fname</span> <span class="o">=</span> <span class="s2">"test_txt_poisson.txt"</span>
 
     <span class="n">xy</span><span class="o">.</span><span class="n">to_txt</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
 
     <span class="c1"># read back in txt file</span>
 
-    <span class="n">new_xy</span> <span class="o">=</span> <span class="n">XYLike</span><span class="o">.</span><span class="n">from_text_file</span><span class="p">(</span><span class="s2">&quot;txt&quot;</span><span class="p">,</span> <span class="n">fname</span><span class="p">)</span>
+    <span class="n">new_xy</span> <span class="o">=</span> <span class="n">XYLike</span><span class="o">.</span><span class="n">from_text_file</span><span class="p">(</span><span class="s2">"txt"</span><span class="p">,</span> <span class="n">fname</span><span class="p">)</span>
 
     <span class="k">assert</span> <span class="n">new_xy</span><span class="o">.</span><span class="n">is_poisson</span>
 
     <span class="c1"># Remove files</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s2">&quot;test_txt.txt&quot;</span><span class="p">)</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s2">&quot;test_txt_poisson.txt&quot;</span><span class="p">)</span></div>
+    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s2">"test_txt.txt"</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s2">"test_txt_poisson.txt"</span><span class="p">)</span></div>
 
 
 
@@ -534,7 +534,7 @@
 
     <span class="c1"># Fit</span>
 
-    <span class="n">xy</span> <span class="o">=</span> <span class="n">XYLike</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">yerr</span><span class="p">)</span>
+    <span class="n">xy</span> <span class="o">=</span> <span class="n">XYLike</span><span class="p">(</span><span class="s2">"test"</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">yerr</span><span class="p">)</span>
 
     <span class="n">xy</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 

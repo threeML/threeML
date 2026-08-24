@@ -120,24 +120,24 @@
 <div class="viewcode-block" id="DataList">
 <a class="viewcode-back" href="../../api/threeML.html#threeML.data_list.DataList">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DataList</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A container for data sets.</span>
+<span class="w">    </span><span class="sd">"""A container for data sets.</span>
 
 <span class="sd">    Can be accessed as a dictionary, with the [key] operator.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">data_sets</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Container for data sets (i.e., plugin instances)</span>
+<span class="w">        </span><span class="sd">"""Container for data sets (i.e., plugin instances)</span>
 
 <span class="sd">        :param data_sets: as many data sets as needed</span>
 <span class="sd">        :return: (none)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_inner_dictionary</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data_sets</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">d</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inner_dictionary</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                    <span class="s2">&quot;You have to use unique names for data sets. </span><span class="si">%s</span><span class="s2"> already exists.&quot;</span>
+                    <span class="s2">"You have to use unique names for data sets. </span><span class="si">%s</span><span class="s2"> already exists."</span>
                     <span class="o">%</span> <span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
                 <span class="p">)</span>
 
@@ -150,7 +150,7 @@
         <span class="c1"># Enforce the unique name</span>
         <span class="k">if</span> <span class="n">dataset</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                <span class="s2">&quot;You have to use unique names for data sets. </span><span class="si">%s</span><span class="s2"> already exists.&quot;</span>
+                <span class="s2">"You have to use unique names for data sets. </span><span class="si">%s</span><span class="s2"> already exists."</span>
                 <span class="o">%</span> <span class="n">dataset</span><span class="o">.</span><span class="n">name</span>
             <span class="p">)</span>
 

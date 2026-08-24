@@ -144,7 +144,7 @@
         <span class="n">instrument</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        :param binned_spectrum_set:</span>
 <span class="sd">        :param first_channel:</span>
 <span class="sd">        :param rsp_file:</span>
@@ -153,7 +153,7 @@
 <span class="sd">        :param mission:</span>
 <span class="sd">        :param instrument:</span>
 <span class="sd">        :param verbose:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># pass up to TimeSeries</span>
 
@@ -175,13 +175,13 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">bins</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The time bins of the spectrum set :return: TimeIntervalSet.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""The time bins of the spectrum set :return: TimeIntervalSet."""</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_binned_spectrum_set</span><span class="o">.</span><span class="n">time_intervals</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">binned_spectrum_set</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the spectrum set :return: binned_spectrum_set.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Returns the spectrum set :return: binned_spectrum_set."""</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_binned_spectrum_set</span>
 
@@ -198,42 +198,42 @@
         <span class="n">with_dead_time</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
         <span class="c1"># type: (float, float, float, bool) -&gt; None</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        :param start:</span>
 <span class="sd">        :param stop:</span>
 <span class="sd">        :param dt:</span>
 <span class="sd">        :param use_binner:</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># validate echan mask input</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">use_echans_start</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;The use_echans_start variable must be a integer.&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot; Input is </span><span class="si">{</span><span class="n">use_echans_start</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">"The use_echans_start variable must be a integer."</span>
+                <span class="sa">f</span><span class="s2">" Input is </span><span class="si">{</span><span class="n">use_echans_start</span><span class="si">}</span><span class="s2">."</span>
             <span class="p">)</span>
             <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">use_echans_start</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_channels</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;The use_echans_start variable must be&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;between </span><span class="si">{</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_channels</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_channels</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">.&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot; Input is </span><span class="si">{</span><span class="n">use_echans_start</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">"The use_echans_start variable must be"</span>
+                <span class="sa">f</span><span class="s2">"between </span><span class="si">{</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_channels</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_channels</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">."</span>
+                <span class="sa">f</span><span class="s2">" Input is </span><span class="si">{</span><span class="n">use_echans_start</span><span class="si">}</span><span class="s2">."</span>
             <span class="p">)</span>
             <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">use_echans_stop</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;The use_echans_stop variable must be a integer.&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot; Input is </span><span class="si">{</span><span class="n">use_echans_stop</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">"The use_echans_stop variable must be a integer."</span>
+                <span class="sa">f</span><span class="s2">" Input is </span><span class="si">{</span><span class="n">use_echans_stop</span><span class="si">}</span><span class="s2">."</span>
             <span class="p">)</span>
             <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">use_echans_stop</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_channels</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;The use_echans_stop variable must be&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;between </span><span class="si">{</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_channels</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_channels</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">.&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot; Input is </span><span class="si">{</span><span class="n">use_echans_start</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">"The use_echans_stop variable must be"</span>
+                <span class="sa">f</span><span class="s2">"between </span><span class="si">{</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_channels</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_channels</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">."</span>
+                <span class="sa">f</span><span class="s2">" Input is </span><span class="si">{</span><span class="n">use_echans_start</span><span class="si">}</span><span class="s2">."</span>
             <span class="p">)</span>
             <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">()</span>
 
@@ -245,10 +245,10 @@
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">use_echans_stop</span> <span class="o">&gt;=</span> <span class="n">use_echans_start</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;The use_echans_stop variable must be larger&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot; or equal than the use_echans_start variable&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot; Input is use_echans_start: </span><span class="si">{</span><span class="n">use_echans_start</span><span class="si">}</span><span class="s2">&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot; &gt; use_echans_stop: </span><span class="si">{</span><span class="n">use_echans_stop</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"The use_echans_stop variable must be larger"</span>
+                <span class="sa">f</span><span class="s2">" or equal than the use_echans_start variable"</span>
+                <span class="sa">f</span><span class="s2">" Input is use_echans_start: </span><span class="si">{</span><span class="n">use_echans_start</span><span class="si">}</span><span class="s2">"</span>
+                <span class="sa">f</span><span class="s2">" &gt; use_echans_stop: </span><span class="si">{</span><span class="n">use_echans_stop</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
             <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">()</span>
 
@@ -260,7 +260,7 @@
         <span class="n">width</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">width_dead</span> <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;viewing light curve with dead time: </span><span class="si">{</span><span class="n">with_dead_time</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"viewing light curve with dead time: </span><span class="si">{</span><span class="n">with_dead_time</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">time_bin</span> <span class="ow">in</span> <span class="n">bins</span><span class="p">:</span>
             <span class="n">cnts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
@@ -277,7 +277,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">exposure_over_interval</span><span class="p">(</span><span class="n">time_bin</span><span class="o">.</span><span class="n">start_time</span><span class="p">,</span> <span class="n">time_bin</span><span class="o">.</span><span class="n">stop_time</span><span class="p">)</span>
             <span class="p">)</span>
 
-            <span class="c1"># just use the &quot;defined edges&quot;</span>
+            <span class="c1"># just use the "defined edges"</span>
 
             <span class="n">width</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">time_bin</span><span class="o">.</span><span class="n">duration</span><span class="p">)</span>
 
@@ -326,12 +326,12 @@
 <div class="viewcode-block" id="BinnedSpectrumSeries.counts_over_interval">
 <a class="viewcode-back" href="../../../../api/threeML.utils.time_series.html#threeML.utils.time_series.binned_spectrum_series.BinnedSpectrumSeries.counts_over_interval">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">counts_over_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the number of counts in the selected interval :param start:</span>
+<span class="w">        </span><span class="sd">"""Return the number of counts in the selected interval :param start:</span>
 
 <span class="sd">        start of interval</span>
 <span class="sd">        :param stop: stop of interval</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># this will be a boolean list and the sum will be the</span>
         <span class="c1"># number of events</span>
@@ -351,12 +351,12 @@
 <div class="viewcode-block" id="BinnedSpectrumSeries.count_per_channel_over_interval">
 <a class="viewcode-back" href="../../../../api/threeML.utils.time_series.html#threeML.utils.time_series.binned_spectrum_series.BinnedSpectrumSeries.count_per_channel_over_interval">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">count_per_channel_over_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the number of counts in the selected interval :param start:</span>
+<span class="w">        </span><span class="sd">"""Return the number of counts in the selected interval :param start:</span>
 
 <span class="sd">        start of interval</span>
 <span class="sd">        :param stop: stop of interval</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># this will be a boolean list and the sum will be the</span>
         <span class="c1"># number of events</span>
@@ -366,26 +366,26 @@
         <span class="n">total_counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_channels</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">bins</span><span class="p">)[</span><span class="mi">0</span><span class="p">]:</span>
-            <span class="c1"># don&#39;t sum over channels because we want the spectrum</span>
+            <span class="c1"># don't sum over channels because we want the spectrum</span>
             <span class="n">total_counts</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_binned_spectrum_set</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">counts</span>
 
         <span class="k">return</span> <span class="n">total_counts</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_select_bins</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return an index of the selected bins :param start: start time :param</span>
-<span class="sd">        stop: stop time :return: int indices.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return an index of the selected bins :param start: start time :param</span>
+<span class="sd">        stop: stop time :return: int indices."""</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_binned_spectrum_set</span><span class="o">.</span><span class="n">time_intervals</span><span class="o">.</span><span class="n">containing_interval</span><span class="p">(</span>
             <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">as_mask</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_adjust_to_true_intervals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_intervals</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Adjusts time selections to those of the Binned spectrum set.</span>
+<span class="w">        </span><span class="sd">"""Adjusts time selections to those of the Binned spectrum set.</span>
 
 <span class="sd">        :param time_intervals: a time interval set</span>
 <span class="sd">        :return: an adjusted time interval set</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># get all the starts and stops from these time intervals</span>
 
@@ -423,11 +423,11 @@
         <span class="k">return</span> <span class="n">TimeIntervalSet</span><span class="o">.</span><span class="n">from_starts_and_stops</span><span class="p">(</span><span class="n">new_starts</span><span class="p">,</span> <span class="n">new_stops</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_fit_polynomials</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bayes</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fits a polynomial to all channels over the input time intervals.</span>
+<span class="w">        </span><span class="sd">"""Fits a polynomial to all channels over the input time intervals.</span>
 
 <span class="sd">        :param fit_intervals: str input intervals</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># mark that we have fit a poly now</span>
 
@@ -481,13 +481,13 @@
             <span class="p">)</span>
 
             <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                <span class="s2">&quot;Auto-determined polynomial order: </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optimal_polynomial_grade</span>
+                <span class="s2">"Auto-determined polynomial order: </span><span class="si">%d</span><span class="s2">"</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optimal_polynomial_grade</span>
             <span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_optimal_polynomial_grade</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_user_poly_order</span>
 
-        <span class="k">if</span> <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;parallel&quot;</span><span class="p">][</span><span class="s2">&quot;use_parallel&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">threeML_config</span><span class="p">[</span><span class="s2">"parallel"</span><span class="p">][</span><span class="s2">"use_parallel"</span><span class="p">]:</span>
 
             <span class="k">def</span><span class="w"> </span><span class="nf">worker</span><span class="p">(</span><span class="n">counts</span><span class="p">):</span>
                 <span class="k">with</span> <span class="n">silence_console_log</span><span class="p">(</span><span class="n">log</span><span class="p">):</span>
@@ -504,7 +504,7 @@
             <span class="n">client</span> <span class="o">=</span> <span class="n">ParallelClient</span><span class="p">()</span>
 
             <span class="n">polynomials</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">execute_with_progress_bar</span><span class="p">(</span>
-                <span class="n">worker</span><span class="p">,</span> <span class="n">selected_counts</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Fitting </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_instrument</span><span class="si">}</span><span class="s2"> background&quot;</span>
+                <span class="n">worker</span><span class="p">,</span> <span class="n">selected_counts</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Fitting </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_instrument</span><span class="si">}</span><span class="s2"> background"</span>
             <span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
@@ -514,7 +514,7 @@
             <span class="c1"># and save the estimated polynomial</span>
 
             <span class="k">for</span> <span class="n">counts</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
-                <span class="n">selected_counts</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Fitting </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_instrument</span><span class="si">}</span><span class="s2"> background&quot;</span>
+                <span class="n">selected_counts</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Fitting </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_instrument</span><span class="si">}</span><span class="s2"> background"</span>
             <span class="p">):</span>
                 <span class="k">with</span> <span class="n">silence_console_log</span><span class="p">(</span><span class="n">log</span><span class="p">):</span>
                     <span class="n">polynomial</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">polyfit</span><span class="p">(</span>
@@ -532,13 +532,13 @@
 <div class="viewcode-block" id="BinnedSpectrumSeries.set_active_time_intervals">
 <a class="viewcode-back" href="../../../../api/threeML.utils.time_series.html#threeML.utils.time_series.binned_spectrum_series.BinnedSpectrumSeries.set_active_time_intervals">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_active_time_intervals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the time interval(s) to be used during the analysis. Specified</span>
-<span class="sd">        as &#39;tmin-tmax&#39;. Intervals are in seconds. Example:</span>
+<span class="w">        </span><span class="sd">"""Set the time interval(s) to be used during the analysis. Specified</span>
+<span class="sd">        as 'tmin-tmax'. Intervals are in seconds. Example:</span>
 
-<span class="sd">        set_active_time_intervals(&quot;0.0-10.0&quot;)</span>
+<span class="sd">        set_active_time_intervals("0.0-10.0")</span>
 
 <span class="sd">        which will set the time range 0-10. seconds.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># mark that we now have a time selection</span>
 
@@ -585,7 +585,7 @@
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poly_fit_exists</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poly_fit_exists</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;A polynomial fit to the channels does not exist!&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"A polynomial fit to the channels does not exist!"</span><span class="p">)</span>
 
             <span class="k">for</span> <span class="n">chan</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_channels</span><span class="p">):</span>
                 <span class="n">total_counts</span> <span class="o">=</span> <span class="mi">0</span>
@@ -616,7 +616,7 @@
 <div class="viewcode-block" id="BinnedSpectrumSeries.dead_time_over_interval">
 <a class="viewcode-back" href="../../../../api/threeML.utils.time_series.html#threeML.utils.time_series.binned_spectrum_series.BinnedSpectrumSeries.dead_time_over_interval">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">dead_time_over_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Computer the dead time over the interval.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Computer the dead time over the interval."""</span>
         <span class="n">mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_select_bins</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">)</span>
 
         <span class="n">start</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bins</span><span class="o">.</span><span class="n">starts</span><span class="p">)[</span><span class="n">mask</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
@@ -628,12 +628,12 @@
 <div class="viewcode-block" id="BinnedSpectrumSeries.exposure_over_interval">
 <a class="viewcode-back" href="../../../../api/threeML.utils.time_series.html#threeML.utils.time_series.binned_spectrum_series.BinnedSpectrumSeries.exposure_over_interval">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">exposure_over_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the exposure over the given interval.</span>
+<span class="w">        </span><span class="sd">"""Calculate the exposure over the given interval.</span>
 
 <span class="sd">        :param start: start time</span>
 <span class="sd">        :param stop: stop time</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_select_bins</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">)</span>
 

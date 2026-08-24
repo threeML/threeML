@@ -164,7 +164,7 @@
 
         <span class="k">if</span> <span class="n">scaled_value</span> <span class="o">==</span> <span class="n">scaled_min_value</span> <span class="ow">or</span> <span class="n">scaled_value</span> <span class="o">==</span> <span class="n">scaled_max_value</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">ParameterOnBoundary</span><span class="p">(</span>
-                <span class="s2">&quot;Value for parameter number </span><span class="si">%s</span><span class="s2"> is on the boundary&quot;</span> <span class="o">%</span> <span class="n">i</span>
+                <span class="s2">"Value for parameter number </span><span class="si">%s</span><span class="s2"> is on the boundary"</span> <span class="o">%</span> <span class="n">i</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">scaled_min_value</span><span class="p">):</span>
@@ -190,7 +190,7 @@
         <span class="c1"># Delta is the minimum between 0.03% of the value, and 1/2.5 times the minimum</span>
         <span class="c1"># distance to either boundary. 1/2 of that factor is due to the fact that</span>
         <span class="c1"># numdifftools uses twice the delta to compute the differential, and the 0.5 is</span>
-        <span class="c1"># due to the fact that we don&#39;t want to go exactly equal to the boundary</span>
+        <span class="c1"># due to the fact that we don't want to go exactly equal to the boundary</span>
 
         <span class="k">if</span> <span class="n">scaled_point</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
             <span class="n">scaled_deltas</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">([</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">distance_to_max</span> <span class="o">/</span> <span class="mf">2.5</span><span class="p">,</span> <span class="n">distance_to_min</span> <span class="o">/</span> <span class="mf">2.5</span><span class="p">])</span>
@@ -212,7 +212,7 @@
 
         <span class="k">except</span> <span class="n">SettingOutOfBounds</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">CannotComputeHessian</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Cannot compute Hessian, parameters out of bounds at </span><span class="si">{</span><span class="n">scaled_back_x</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"Cannot compute Hessian, parameters out of bounds at </span><span class="si">{</span><span class="n">scaled_back_x</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
@@ -229,7 +229,7 @@
     <span class="p">)</span>
 
     <span class="c1"># Compute the Jacobian matrix at best_fit_values</span>
-    <span class="n">jacobian_vector</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">Jacobian</span><span class="p">(</span><span class="n">wrapper</span><span class="p">,</span> <span class="n">scaled_deltas</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;central&quot;</span><span class="p">)(</span>
+    <span class="n">jacobian_vector</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">Jacobian</span><span class="p">(</span><span class="n">wrapper</span><span class="p">,</span> <span class="n">scaled_deltas</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">"central"</span><span class="p">)(</span>
         <span class="n">scaled_point</span>
     <span class="p">)</span>
 

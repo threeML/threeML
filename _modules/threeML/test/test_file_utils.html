@@ -125,11 +125,11 @@
 <div class="viewcode-block" id="test_sanatize">
 <a class="viewcode-back" href="../../../api/threeML.test.html#threeML.test.test_file_utils.test_sanatize">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">test_sanatize</span><span class="p">():</span>
-    <span class="n">file_name</span> <span class="o">=</span> <span class="n">sanitize_filename</span><span class="p">(</span><span class="s2">&quot;test.txt&quot;</span><span class="p">)</span>
+    <span class="n">file_name</span> <span class="o">=</span> <span class="n">sanitize_filename</span><span class="p">(</span><span class="s2">"test.txt"</span><span class="p">)</span>
 
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">Path</span><span class="p">)</span>
 
-    <span class="n">file_name</span> <span class="o">=</span> <span class="n">sanitize_filename</span><span class="p">(</span><span class="s2">&quot;test.txt&quot;</span><span class="p">,</span> <span class="n">abspath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">file_name</span> <span class="o">=</span> <span class="n">sanitize_filename</span><span class="p">(</span><span class="s2">"test.txt"</span><span class="p">,</span> <span class="n">abspath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">assert</span> <span class="n">file_name</span><span class="o">.</span><span class="n">is_absolute</span><span class="p">()</span></div>
 
@@ -140,7 +140,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">test_directory_check</span><span class="p">(</span><span class="n">test_directory</span><span class="p">,</span> <span class="n">test_file</span><span class="p">):</span>
     <span class="k">assert</span> <span class="n">path_exists_and_is_directory</span><span class="p">(</span><span class="n">test_directory</span><span class="p">)</span>
 
-    <span class="k">assert</span> <span class="ow">not</span> <span class="n">path_exists_and_is_directory</span><span class="p">(</span><span class="s2">&quot;this_does_not_exist&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">path_exists_and_is_directory</span><span class="p">(</span><span class="s2">"this_does_not_exist"</span><span class="p">)</span>
 
     <span class="k">assert</span> <span class="ow">not</span> <span class="n">path_exists_and_is_directory</span><span class="p">(</span><span class="n">test_file</span><span class="p">)</span>
 
@@ -153,7 +153,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">test_file_check</span><span class="p">(</span><span class="n">test_directory</span><span class="p">,</span> <span class="n">test_file</span><span class="p">):</span>
     <span class="k">assert</span> <span class="ow">not</span> <span class="n">file_existing_and_readable</span><span class="p">(</span><span class="n">test_directory</span><span class="p">)</span>
 
-    <span class="k">assert</span> <span class="ow">not</span> <span class="n">file_existing_and_readable</span><span class="p">(</span><span class="s2">&quot;this_does_not_exist&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">file_existing_and_readable</span><span class="p">(</span><span class="s2">"this_does_not_exist"</span><span class="p">)</span>
 
     <span class="k">assert</span> <span class="n">file_existing_and_readable</span><span class="p">(</span><span class="n">test_file</span><span class="p">)</span></div>
 

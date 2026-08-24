@@ -153,8 +153,8 @@
 
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span>
-                    <span class="s2">&quot;Invalid time interval! TSTART must be before TSTOP and &quot;</span>
-                    <span class="s2">&quot;TSTOP-TSTART &gt;0. Got tstart = </span><span class="si">%s</span><span class="s2"> and tstop = </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">)</span>
+                    <span class="s2">"Invalid time interval! TSTART must be before TSTOP and "</span>
+                    <span class="s2">"TSTOP-TSTART &gt;0. Got tstart = </span><span class="si">%s</span><span class="s2"> and tstop = </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">)</span>
                 <span class="p">)</span>
 
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
@@ -182,7 +182,7 @@
         <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_start</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s2">&quot; interval </span><span class="si">%s</span><span class="s2"> - </span><span class="si">%s</span><span class="s2"> (width: </span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span>
+        <span class="k">return</span> <span class="s2">" interval </span><span class="si">%s</span><span class="s2"> - </span><span class="si">%s</span><span class="s2"> (width: </span><span class="si">%s</span><span class="s2">)"</span> <span class="o">%</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_get_width</span><span class="p">(),</span>
@@ -192,17 +192,17 @@
 <a class="viewcode-back" href="../../../api/threeML.utils.html#threeML.utils.histogram.Interval.intersect">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">intersect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interval</span><span class="p">):</span>
         <span class="c1"># type: (Interval) -&gt; Interval</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a new time interval corresponding to the intersection</span>
+<span class="w">        </span><span class="sd">"""Returns a new time interval corresponding to the intersection</span>
 <span class="sd">        between this interval and the provided one.</span>
 
 <span class="sd">        :param interval: a TimeInterval instance</span>
 <span class="sd">        :type interval: Interval</span>
 <span class="sd">        :return: new interval covering the intersection</span>
 <span class="sd">        :raise IntervalsDoNotOverlap : if the intervals do not overlap</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">overlaps_with</span><span class="p">(</span><span class="n">interval</span><span class="p">):</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;Current interval does not overlap with provided interval&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">"Current interval does not overlap with provided interval"</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">IntervalsDoNotOverlap</span><span class="p">()</span>
 
         <span class="n">new_start</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_start</span><span class="p">,</span> <span class="n">interval</span><span class="o">.</span><span class="n">start</span><span class="p">)</span>
@@ -215,13 +215,13 @@
 <a class="viewcode-back" href="../../../api/threeML.utils.html#threeML.utils.histogram.Interval.merge">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">merge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interval</span><span class="p">):</span>
         <span class="c1"># type: (Interval) -&gt; Interval</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a new interval corresponding to the merge of the current and</span>
+<span class="w">        </span><span class="sd">"""Returns a new interval corresponding to the merge of the current and</span>
 <span class="sd">        the provided time interval. The intervals must overlap.</span>
 
 <span class="sd">        :param interval: a TimeInterval instance</span>
 <span class="sd">        :type interval : Interval</span>
 <span class="sd">        :return: a new TimeInterval instance</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">overlaps_with</span><span class="p">(</span><span class="n">interval</span><span class="p">):</span>
             <span class="n">new_start</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_start</span><span class="p">,</span> <span class="n">interval</span><span class="o">.</span><span class="n">start</span><span class="p">)</span>
@@ -230,20 +230,20 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">new_start</span><span class="p">,</span> <span class="n">new_stop</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">IntervalsDoNotOverlap</span><span class="p">(</span><span class="s2">&quot;Could not merge non-overlapping intervals!&quot;</span><span class="p">)</span></div>
+            <span class="k">raise</span> <span class="n">IntervalsDoNotOverlap</span><span class="p">(</span><span class="s2">"Could not merge non-overlapping intervals!"</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Interval.overlaps_with">
 <a class="viewcode-back" href="../../../api/threeML.utils.html#threeML.utils.histogram.Interval.overlaps_with">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">overlaps_with</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interval</span><span class="p">):</span>
         <span class="c1"># type: (Interval) -&gt; bool</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns whether the current time interval and the provided one</span>
+<span class="w">        </span><span class="sd">"""Returns whether the current time interval and the provided one</span>
 <span class="sd">        overlap or not.</span>
 
 <span class="sd">        :param interval: a TimeInterval instance</span>
 <span class="sd">        :type interval: Interval</span>
 <span class="sd">        :return: True or False</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="n">interval</span><span class="o">.</span><span class="n">start</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start</span> <span class="ow">or</span> <span class="n">interval</span><span class="o">.</span><span class="n">stop</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span>
@@ -264,13 +264,13 @@
 <div class="viewcode-block" id="Interval.to_string">
 <a class="viewcode-back" href="../../../api/threeML.utils.html#threeML.utils.histogram.Interval.to_string">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a string representation of the time interval that is like</span>
+<span class="w">        </span><span class="sd">"""Returns a string representation of the time interval that is like</span>
 <span class="sd">        the argument of many interval reading funcitons.</span>
 
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
-        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%f</span><span class="s2">-</span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="s2">"</span><span class="si">%f</span><span class="s2">-</span><span class="si">%f</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">)</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
@@ -289,7 +289,7 @@
 <div class="viewcode-block" id="IntervalSet">
 <a class="viewcode-back" href="../../../api/threeML.utils.html#threeML.utils.histogram.IntervalSet">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">IntervalSet</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A set of intervals.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""A set of intervals."""</span>
 
     <span class="n">INTERVAL_TYPE</span> <span class="o">=</span> <span class="n">Interval</span>
 
@@ -300,11 +300,11 @@
 <a class="viewcode-back" href="../../../api/threeML.utils.html#threeML.utils.histogram.IntervalSet.new">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">new</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new interval set of this type :param args:</span>
+<span class="w">        </span><span class="sd">"""Create a new interval set of this type :param args:</span>
 
 <span class="sd">        :param kwargs:</span>
 <span class="sd">        :return: interval set</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
@@ -313,11 +313,11 @@
 <a class="viewcode-back" href="../../../api/threeML.utils.html#threeML.utils.histogram.IntervalSet.new_interval">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">new_interval</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new interval of INTERVAL_TYPE :param args:</span>
+<span class="w">        </span><span class="sd">"""Create a new interval of INTERVAL_TYPE :param args:</span>
 
 <span class="sd">        :param kwargs:</span>
 <span class="sd">        :return: interval</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">INTERVAL_TYPE</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
@@ -326,11 +326,11 @@
 <a class="viewcode-back" href="../../../api/threeML.utils.html#threeML.utils.histogram.IntervalSet.from_strings">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_strings</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">intervals</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;These are intervals specified as &quot;-10 -- 5&quot;, &quot;0-10&quot;, and so on.</span>
+<span class="w">        </span><span class="sd">"""These are intervals specified as "-10 -- 5", "0-10", and so on.</span>
 
 <span class="sd">        :param intervals:</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">list_of_intervals</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -345,10 +345,10 @@
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_parse_interval</span><span class="p">(</span><span class="n">time_interval</span><span class="p">):</span>
         <span class="c1"># The following regular expression matches any two numbers, positive or</span>
-        <span class="c1"># negative, like &quot;-10 --5&quot;,&quot;-10 - -5&quot;, &quot;-10-5&quot;, &quot;5-10&quot; and so on</span>
+        <span class="c1"># negative, like "-10 --5","-10 - -5", "-10-5", "5-10" and so on</span>
 
         <span class="n">tokens</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span>
-            <span class="sa">r</span><span class="s2">&quot;(\-?\+?[0-9]+\.?[0-9]*)\s*-\s*(\-?\+?[0-9]+\.?[0-9]*)&quot;</span><span class="p">,</span> <span class="n">time_interval</span>
+            <span class="sa">r</span><span class="s2">"(\-?\+?[0-9]+\.?[0-9]*)\s*-\s*(\-?\+?[0-9]+\.?[0-9]*)"</span><span class="p">,</span> <span class="n">time_interval</span>
         <span class="p">)</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
 
         <span class="k">return</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">tokens</span><span class="p">]</span>
@@ -357,7 +357,7 @@
 <a class="viewcode-back" href="../../../api/threeML.utils.html#threeML.utils.histogram.IntervalSet.from_starts_and_stops">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_starts_and_stops</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">starts</span><span class="p">,</span> <span class="n">stops</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Builds a TimeIntervalSet from a list of start and stop times:</span>
 
 <span class="sd">        start = [-1,0]  -&gt;   [-1,0], [0,1]</span>
@@ -366,11 +366,11 @@
 <span class="sd">        :param starts:</span>
 <span class="sd">        :param stops:</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">starts</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
             <span class="n">stops</span>
-        <span class="p">),</span> <span class="s2">&quot;starts length: </span><span class="si">%d</span><span class="s2"> and stops length: </span><span class="si">%d</span><span class="s2"> must have same length&quot;</span> <span class="o">%</span> <span class="p">(</span>
+        <span class="p">),</span> <span class="s2">"starts length: </span><span class="si">%d</span><span class="s2"> and stops length: </span><span class="si">%d</span><span class="s2"> must have same length"</span> <span class="o">%</span> <span class="p">(</span>
             <span class="nb">len</span><span class="p">(</span><span class="n">starts</span><span class="p">),</span>
             <span class="nb">len</span><span class="p">(</span><span class="n">stops</span><span class="p">),</span>
         <span class="p">)</span>
@@ -387,7 +387,7 @@
 <a class="viewcode-back" href="../../../api/threeML.utils.html#threeML.utils.histogram.IntervalSet.from_list_of_edges">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_list_of_edges</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">edges</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Builds a IntervalSet from a list of time edges:</span>
 
 <span class="sd">        edges = [-1,0,1] -&gt; [-1,0], [0,1]</span>
@@ -395,7 +395,7 @@
 
 <span class="sd">        :param edges:</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># sort the time edges</span>
 
         <span class="n">edges</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
@@ -411,10 +411,10 @@
 <div class="viewcode-block" id="IntervalSet.merge_intersecting_intervals">
 <a class="viewcode-back" href="../../../api/threeML.utils.html#threeML.utils.histogram.IntervalSet.merge_intersecting_intervals">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">merge_intersecting_intervals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_place</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Merges intersecting intervals into a contiguous intervals.</span>
+<span class="w">        </span><span class="sd">"""Merges intersecting intervals into a contiguous intervals.</span>
 
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># get a copy of the sorted intervals</span>
 
@@ -454,7 +454,7 @@
         <span class="k">if</span> <span class="n">sorted_intervals</span><span class="p">:</span>
             <span class="k">assert</span> <span class="p">(</span>
                 <span class="nb">len</span><span class="p">(</span><span class="n">sorted_intervals</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
-            <span class="p">),</span> <span class="s2">&quot;there should only be one interval left over, this is a bug&quot;</span>
+            <span class="p">),</span> <span class="s2">"there should only be one interval left over, this is a bug"</span>
             <span class="c1"># pragma: no cover</span>
 
             <span class="c1"># we want to make sure that the last new interval did not</span>
@@ -508,11 +508,11 @@
 <div class="viewcode-block" id="IntervalSet.sort">
 <a class="viewcode-back" href="../../../api/threeML.utils.html#threeML.utils.histogram.IntervalSet.sort">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">sort</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a sorted copy of the set (sorted according to the tstart of</span>
+<span class="w">        </span><span class="sd">"""Returns a sorted copy of the set (sorted according to the tstart of</span>
 <span class="sd">        the time intervals)</span>
 
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_sorted</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
@@ -524,10 +524,10 @@
 <div class="viewcode-block" id="IntervalSet.argsort">
 <a class="viewcode-back" href="../../../api/threeML.utils.html#threeML.utils.histogram.IntervalSet.argsort">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">argsort</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the indices which order the set.</span>
+<span class="w">        </span><span class="sd">"""Returns the indices which order the set.</span>
 
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># Gather all tstarts</span>
         <span class="n">tstarts</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">start</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">]</span>
@@ -538,32 +538,32 @@
 <div class="viewcode-block" id="IntervalSet.is_contiguous">
 <a class="viewcode-back" href="../../../api/threeML.utils.html#threeML.utils.histogram.IntervalSet.is_contiguous">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_contiguous</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">relative_tolerance</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check whether the time intervals are all contiguous, i.e., the stop</span>
+<span class="w">        </span><span class="sd">"""Check whether the time intervals are all contiguous, i.e., the stop</span>
 <span class="sd">        time of one interval is the start time of the next.</span>
 
 <span class="sd">        :return: True or False</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
-        <span class="n">starts</span> <span class="o">=</span> <span class="p">[</span><span class="n">attrgetter</span><span class="p">(</span><span class="s2">&quot;start&quot;</span><span class="p">)(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">]</span>
-        <span class="n">stops</span> <span class="o">=</span> <span class="p">[</span><span class="n">attrgetter</span><span class="p">(</span><span class="s2">&quot;stop&quot;</span><span class="p">)(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">]</span>
+        <span class="n">starts</span> <span class="o">=</span> <span class="p">[</span><span class="n">attrgetter</span><span class="p">(</span><span class="s2">"start"</span><span class="p">)(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">]</span>
+        <span class="n">stops</span> <span class="o">=</span> <span class="p">[</span><span class="n">attrgetter</span><span class="p">(</span><span class="s2">"stop"</span><span class="p">)(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">]</span>
 
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">starts</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">stops</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">rtol</span><span class="o">=</span><span class="n">relative_tolerance</span><span class="p">)</span></div>
 
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_sorted</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check whether the time intervals are sorted :return: True or</span>
-<span class="sd">        False.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Check whether the time intervals are sorted :return: True or</span>
+<span class="sd">        False."""</span>
 
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">argsort</span><span class="p">()</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)))</span>
 
 <div class="viewcode-block" id="IntervalSet.containing_bin">
 <a class="viewcode-back" href="../../../api/threeML.utils.html#threeML.utils.histogram.IntervalSet.containing_bin">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">containing_bin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Finds the index of the interval containing :param value:</span>
+<span class="w">        </span><span class="sd">"""Finds the index of the interval containing :param value:</span>
 
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># Get the index of the first ebounds upper bound larger than energy</span>
         <span class="c1"># (but never go below zero or above the last channel)</span>
@@ -575,7 +575,7 @@
 <div class="viewcode-block" id="IntervalSet.containing_interval">
 <a class="viewcode-back" href="../../../api/threeML.utils.html#threeML.utils.histogram.IntervalSet.containing_interval">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">containing_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">inner</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">as_mask</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns either a mask of the intervals contained in the selection or</span>
+<span class="w">        </span><span class="sd">"""Returns either a mask of the intervals contained in the selection or</span>
 <span class="sd">        a new set of intervals within the selection. NOTE: no sort is</span>
 <span class="sd">        performed.</span>
 
@@ -585,7 +585,7 @@
 <span class="sd">            within bounds, if False, returns outer bounds as well</span>
 <span class="sd">        :param as_mask: if you want a mask or the intervals</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># loop only once because every call unpacks the array</span>
         <span class="c1"># we need to round for the comparison because we may have read from</span>
@@ -618,19 +618,19 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">starts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the starts fo the set.</span>
+<span class="w">        </span><span class="sd">"""Return the starts fo the set.</span>
 
 <span class="sd">        :return: list of start times</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="p">[</span><span class="n">interval</span><span class="o">.</span><span class="n">start</span> <span class="k">for</span> <span class="n">interval</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">]</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">stops</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the stops of the set.</span>
+<span class="w">        </span><span class="sd">"""Return the stops of the set.</span>
 
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="p">[</span><span class="n">interval</span><span class="o">.</span><span class="n">stop</span> <span class="k">for</span> <span class="n">interval</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">]</span>
 
@@ -644,19 +644,19 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">absolute_start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The minimum of the start times :return:&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""The minimum of the start times :return:"""</span>
 
         <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">starts</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">absolute_stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The maximum of the stop times :return:&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""The maximum of the stop times :return:"""</span>
 
         <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stops</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">edges</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return an array of time edges if contiguous :return:&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return an array of time edges if contiguous :return:"""</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_contiguous</span><span class="p">()</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_sorted</span><span class="p">:</span>
             <span class="n">edges</span> <span class="o">=</span> <span class="p">[</span>
@@ -672,7 +672,7 @@
 
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">IntervalsNotContiguous</span><span class="p">(</span>
-                <span class="s2">&quot;Cannot return edges for non-contiguous intervals&quot;</span>
+                <span class="s2">"Cannot return edges for non-contiguous intervals"</span>
             <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">edges</span>
@@ -680,18 +680,18 @@
 <div class="viewcode-block" id="IntervalSet.to_string">
 <a class="viewcode-back" href="../../../api/threeML.utils.html#threeML.utils.histogram.IntervalSet.to_string">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a set of string representaitons of the intervals :return:&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Returns a set of string representaitons of the intervals :return:"""</span>
 
-        <span class="k">return</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">interval</span><span class="o">.</span><span class="n">to_string</span><span class="p">()</span> <span class="k">for</span> <span class="n">interval</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">])</span></div>
+        <span class="k">return</span> <span class="s2">","</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">interval</span><span class="o">.</span><span class="n">to_string</span><span class="p">()</span> <span class="k">for</span> <span class="n">interval</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">])</span></div>
 
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">bin_stack</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a stacked view of the bins [[start_1,stop_1 ], [start_2,stop_2</span>
+<span class="w">        </span><span class="sd">"""Get a stacked view of the bins [[start_1,stop_1 ], [start_2,stop_2</span>
 <span class="sd">        ]]</span>
 
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">starts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stops</span><span class="p">))</span><span class="o">.</span><span class="n">T</span></div>
 

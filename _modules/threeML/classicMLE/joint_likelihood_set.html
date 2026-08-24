@@ -140,7 +140,7 @@
         <span class="n">data_getter</span><span class="p">,</span>
         <span class="n">model_getter</span><span class="p">,</span>
         <span class="n">n_iterations</span><span class="p">,</span>
-        <span class="n">iteration_name</span><span class="o">=</span><span class="s2">&quot;interval&quot;</span><span class="p">,</span>
+        <span class="n">iteration_name</span><span class="o">=</span><span class="s2">"interval"</span><span class="p">,</span>
         <span class="n">preprocessor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">postprocessor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
@@ -159,12 +159,12 @@
             <span class="n">n_models</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">model_or_models</span><span class="p">)</span>
 
         <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
-            <span class="c1"># Only one instance, let&#39;s check that it is actually a model</span>
+            <span class="c1"># Only one instance, let's check that it is actually a model</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model_or_models</span><span class="p">,</span> <span class="n">Model</span><span class="p">):</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                    <span class="s2">&quot;The model getter function should return a model or a list of &quot;</span>
-                    <span class="s2">&quot;models&quot;</span>
+                    <span class="s2">"The model getter function should return a model or a list of "</span>
+                    <span class="s2">"models"</span>
                 <span class="p">)</span>
 
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
@@ -184,8 +184,8 @@
             <span class="k">for</span> <span class="n">this_model</span> <span class="ow">in</span> <span class="n">model_or_models</span><span class="p">:</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">this_model</span><span class="p">,</span> <span class="n">Model</span><span class="p">):</span>
                     <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                        <span class="s2">&quot;The model getter function should return a model or a list of &quot;</span>
-                        <span class="s2">&quot;models&quot;</span>
+                        <span class="s2">"The model getter function should return a model or a list of "</span>
+                        <span class="s2">"models"</span>
                     <span class="p">)</span>
 
                     <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
@@ -207,7 +207,7 @@
 
         <span class="c1"># Default minimizer is minuit</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_minimization</span> <span class="o">=</span> <span class="n">LocalMinimization</span><span class="p">(</span><span class="s2">&quot;minuit&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_minimization</span> <span class="o">=</span> <span class="n">LocalMinimization</span><span class="p">(</span><span class="s2">"minuit"</span><span class="p">)</span>
 
         <span class="c1"># By default, crash if a fit fails</span>
 
@@ -232,9 +232,9 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">minimizer</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="ow">in</span> <span class="n">_minimizers</span><span class="p">:</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                    <span class="s2">&quot;Minimizer </span><span class="si">%s</span><span class="s2"> is not available on this system. &quot;</span>
-                    <span class="s2">&quot;Available minimizers: </span><span class="si">%s</span><span class="s2">&quot;</span>
-                    <span class="o">%</span> <span class="p">(</span><span class="n">minimizer</span><span class="p">,</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">_minimizers</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span>
+                    <span class="s2">"Minimizer </span><span class="si">%s</span><span class="s2"> is not available on this system. "</span>
+                    <span class="s2">"Available minimizers: </span><span class="si">%s</span><span class="s2">"</span>
+                    <span class="o">%</span> <span class="p">(</span><span class="n">minimizer</span><span class="p">,</span> <span class="s2">","</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">_minimizers</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span>
                 <span class="p">)</span>
 
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
@@ -274,7 +274,7 @@
             <span class="c1"># Prepare a joint likelihood and fit it</span>
 
             <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
-                <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="ne">RuntimeWarning</span><span class="p">)</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">"ignore"</span><span class="p">,</span> <span class="ne">RuntimeWarning</span><span class="p">)</span>
 
                 <span class="n">jl</span> <span class="o">=</span> <span class="n">JointLikelihood</span><span class="p">(</span><span class="n">this_model</span><span class="p">,</span> <span class="n">this_data</span><span class="p">)</span>
 
@@ -296,7 +296,7 @@
             <span class="c1"># Prepare the keys so that the first model will be indexed with model_0, the</span>
             <span class="c1"># second model_1 and so on</span>
 
-            <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;model_</span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_models</span><span class="p">)]</span>
+            <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"model_</span><span class="si">%i</span><span class="s2">"</span> <span class="o">%</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_models</span><span class="p">)]</span>
 
             <span class="c1"># Concatenate all results in one frame for parameters and one for likelihood</span>
 
@@ -320,7 +320,7 @@
             <span class="p">)</span>
 
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;**** FIT FAILED! ***&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">"**** FIT FAILED! ***"</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_continue_on_failure</span><span class="p">:</span>
                 <span class="c1"># Return empty data frame</span>
@@ -347,9 +347,9 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_compute_covariance</span> <span class="o">=</span> <span class="n">compute_covariance</span>
 
-        <span class="c1"># let&#39;s iterate, perform the fit and fill the data frame</span>
+        <span class="c1"># let's iterate, perform the fit and fill the data frame</span>
 
-        <span class="k">if</span> <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;parallel&quot;</span><span class="p">][</span><span class="s2">&quot;use_parallel&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">threeML_config</span><span class="p">[</span><span class="s2">"parallel"</span><span class="p">][</span><span class="s2">"use_parallel"</span><span class="p">]:</span>
             <span class="c1"># Parallel computation</span>
 
             <span class="k">with</span> <span class="n">silence_console_log</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="n">and_progress_bars</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -365,12 +365,12 @@
             <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
 
             <span class="k">with</span> <span class="n">silence_console_log</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="n">and_progress_bars</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">trange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_iterations</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Goodness of fit computation&quot;</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">trange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_iterations</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">"Goodness of fit computation"</span><span class="p">):</span>
                     <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">worker</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
 
         <span class="k">assert</span> <span class="p">(</span>
             <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_iterations</span>
-        <span class="p">),</span> <span class="s2">&quot;Something went wrong, I have </span><span class="si">%s</span><span class="s2"> results &quot;</span> <span class="s2">&quot;for </span><span class="si">%s</span><span class="s2"> intervals&quot;</span> <span class="o">%</span> <span class="p">(</span>
+        <span class="p">),</span> <span class="s2">"Something went wrong, I have </span><span class="si">%s</span><span class="s2"> results "</span> <span class="s2">"for </span><span class="si">%s</span><span class="s2"> intervals"</span> <span class="o">%</span> <span class="p">(</span>
             <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_n_iterations</span><span class="p">,</span>
         <span class="p">)</span>
@@ -398,12 +398,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">results</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a results set for each model. If there is more than one</span>
+<span class="w">        </span><span class="sd">"""Returns a results set for each model. If there is more than one</span>
 <span class="sd">        model, it will return a list of AnalysisResultsSet instances, otherwise</span>
 <span class="sd">        it will return one AnalysisResultsSet instance.</span>
 
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_all_results</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -414,7 +414,7 @@
 <div class="viewcode-block" id="JointLikelihoodSet.write_to">
 <a class="viewcode-back" href="../../../api/threeML.classicMLE.html#threeML.classicMLE.joint_likelihood_set.JointLikelihoodSet.write_to">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">write_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filenames</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write the results to one file per model. If you need more control,</span>
+<span class="w">        </span><span class="sd">"""Write the results to one file per model. If you need more control,</span>
 <span class="sd">        get the results using the .results property then write each results set</span>
 <span class="sd">        by itself.</span>
 
@@ -422,7 +422,7 @@
 <span class="sd">            (if there is only one model per interval)</span>
 <span class="sd">        :param overwrite: overwrite existing files</span>
 <span class="sd">        :return: None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># Trick to make filenames always a list</span>
         <span class="n">filenames</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">filenames</span><span class="p">,</span> <span class="n">ndmin</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
@@ -442,8 +442,8 @@
 <div class="viewcode-block" id="JointLikelihoodSetAnalyzer">
 <a class="viewcode-back" href="../../../api/threeML.classicMLE.html#threeML.classicMLE.joint_likelihood_set.JointLikelihoodSetAnalyzer">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">JointLikelihoodSetAnalyzer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A class to help in offline re-analysis of the results obtained with the</span>
-<span class="sd">    JointLikelihoodSet class.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""A class to help in offline re-analysis of the results obtained with the</span>
+<span class="sd">    JointLikelihoodSet class."""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">get_data</span><span class="p">,</span> <span class="n">get_model</span><span class="p">,</span> <span class="n">data_frame</span><span class="p">,</span> <span class="n">like_data_frame</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_get_data</span> <span class="o">=</span> <span class="n">get_data</span>
@@ -471,7 +471,7 @@
 
         <span class="c1"># Restore best fit parameters</span>
         <span class="k">for</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="n">this_model</span><span class="o">.</span><span class="n">free_parameters</span><span class="p">:</span>
-            <span class="n">this_model</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">sub_frame</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">][</span><span class="n">parameter</span><span class="p">]</span>
+            <span class="n">this_model</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">sub_frame</span><span class="p">[</span><span class="s2">"value"</span><span class="p">][</span><span class="n">parameter</span><span class="p">]</span>
 
         <span class="k">return</span> <span class="n">this_model</span><span class="p">,</span> <span class="n">this_data</span></div>
 </div>

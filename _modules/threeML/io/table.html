@@ -124,10 +124,10 @@
 <a class="viewcode-back" href="../../../api/threeML.io.html#threeML.io.table.Table">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Table</span><span class="p">(</span><span class="n">astropy</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">Table</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_base_repr_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">html</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">show_name</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Override the method in the astropy.Table class to avoid displaying</span>
-<span class="sd">        the description, and the format of the columns.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Override the method in the astropy.Table class to avoid displaying</span>
+<span class="sd">        the description, and the format of the columns."""</span>
 
-        <span class="n">tableid</span> <span class="o">=</span> <span class="s2">&quot;table</span><span class="si">{id}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+        <span class="n">tableid</span> <span class="o">=</span> <span class="s2">"table</span><span class="si">{id}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
 
         <span class="n">data_lines</span><span class="p">,</span> <span class="n">outs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">formatter</span><span class="o">.</span><span class="n">_pformat_table</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
@@ -139,9 +139,9 @@
             <span class="n">show_dtype</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="n">out</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_lines</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_lines</span><span class="p">)</span>
         <span class="c1"># if astropy.table.six.PY2 and isinstance(out, astropy.table.six.text_type):</span>
-        <span class="c1">#     out = out.encode(&#39;utf-8&#39;)</span>
+        <span class="c1">#     out = out.encode('utf-8')</span>
 
         <span class="k">return</span> <span class="n">out</span></div>
 

@@ -135,15 +135,15 @@
 <a class="viewcode-back" href="../../../../../api/threeML.utils.data_builders.fermi.html#threeML.utils.data_builders.fermi.gbm_data.GBMTTEFile">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">GBMTTEFile</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ttefile</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A simple class for opening and easily accessing Fermi GBM TTE Files.</span>
+<span class="w">        </span><span class="sd">"""A simple class for opening and easily accessing Fermi GBM TTE Files.</span>
 
 <span class="sd">        :param ttefile: The filename of the TTE file to be stored</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">tte</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">ttefile</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_events</span> <span class="o">=</span> <span class="n">tte</span><span class="p">[</span><span class="s2">&quot;EVENTS&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;TIME&quot;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_pha</span> <span class="o">=</span> <span class="n">tte</span><span class="p">[</span><span class="s2">&quot;EVENTS&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;PHA&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_events</span> <span class="o">=</span> <span class="n">tte</span><span class="p">[</span><span class="s2">"EVENTS"</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">"TIME"</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pha</span> <span class="o">=</span> <span class="n">tte</span><span class="p">[</span><span class="s2">"EVENTS"</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">"PHA"</span><span class="p">]</span>
 
         <span class="c1"># the GBM TTE data are not always sorted in TIME.</span>
         <span class="c1"># we will now do this for you. We should at some</span>
@@ -154,8 +154,8 @@
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_events</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_events</span><span class="p">)):</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;The TTE file </span><span class="si">{</span><span class="n">ttefile</span><span class="si">}</span><span class="s2"> contains duplicate time tags and is thus &quot;</span>
-                <span class="s2">&quot;invalid. Contact the FSSC&quot;</span>
+                <span class="sa">f</span><span class="s2">"The TTE file </span><span class="si">{</span><span class="n">ttefile</span><span class="si">}</span><span class="s2"> contains duplicate time tags and is thus "</span>
+                <span class="s2">"invalid. Contact the FSSC"</span>
             <span class="p">)</span>
 
         <span class="c1"># sorting in time</span>
@@ -164,40 +164,40 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_events</span><span class="p">[</span><span class="n">sort_idx</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_events</span><span class="p">):</span>
             <span class="c1"># now sort both time and energy</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;The TTE file </span><span class="si">{</span><span class="n">ttefile</span><span class="si">}</span><span class="s2"> was not sorted in time but contains no &quot;</span>
-                <span class="s2">&quot;duplicate events. We will sort the times, but use caution with this &quot;</span>
-                <span class="s2">&quot;file. Contact the FSSC.&quot;</span>
+                <span class="sa">f</span><span class="s2">"The TTE file </span><span class="si">{</span><span class="n">ttefile</span><span class="si">}</span><span class="s2"> was not sorted in time but contains no "</span>
+                <span class="s2">"duplicate events. We will sort the times, but use caution with this "</span>
+                <span class="s2">"file. Contact the FSSC."</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_events</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_events</span><span class="p">[</span><span class="n">sort_idx</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_pha</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pha</span><span class="p">[</span><span class="n">sort_idx</span><span class="p">]</span>
 
         <span class="k">try</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_trigger_time</span> <span class="o">=</span> <span class="n">tte</span><span class="p">[</span><span class="s2">&quot;PRIMARY&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;TRIGTIME&quot;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_trigger_time</span> <span class="o">=</span> <span class="n">tte</span><span class="p">[</span><span class="s2">"PRIMARY"</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">"TRIGTIME"</span><span class="p">]</span>
 
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="c1"># For continuous data</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;There is no trigger time in the TTE file. Must be set manually or &quot;</span>
-                <span class="s2">&quot;using MET relative times.&quot;</span>
+                <span class="s2">"There is no trigger time in the TTE file. Must be set manually or "</span>
+                <span class="s2">"using MET relative times."</span>
             <span class="p">)</span>
 
-            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;set trigger time to zero&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"set trigger time to zero"</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_trigger_time</span> <span class="o">=</span> <span class="mi">0</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_start_events</span> <span class="o">=</span> <span class="n">tte</span><span class="p">[</span><span class="s2">&quot;PRIMARY&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;TSTART&quot;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_stop_events</span> <span class="o">=</span> <span class="n">tte</span><span class="p">[</span><span class="s2">&quot;PRIMARY&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;TSTOP&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_start_events</span> <span class="o">=</span> <span class="n">tte</span><span class="p">[</span><span class="s2">"PRIMARY"</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">"TSTART"</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stop_events</span> <span class="o">=</span> <span class="n">tte</span><span class="p">[</span><span class="s2">"PRIMARY"</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">"TSTOP"</span><span class="p">]</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_utc_start</span> <span class="o">=</span> <span class="n">tte</span><span class="p">[</span><span class="s2">&quot;PRIMARY&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;DATE-OBS&quot;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_utc_stop</span> <span class="o">=</span> <span class="n">tte</span><span class="p">[</span><span class="s2">&quot;PRIMARY&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;DATE-END&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_utc_start</span> <span class="o">=</span> <span class="n">tte</span><span class="p">[</span><span class="s2">"PRIMARY"</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">"DATE-OBS"</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_utc_stop</span> <span class="o">=</span> <span class="n">tte</span><span class="p">[</span><span class="s2">"PRIMARY"</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">"DATE-END"</span><span class="p">]</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_n_channels</span> <span class="o">=</span> <span class="n">tte</span><span class="p">[</span><span class="s2">&quot;EBOUNDS&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;NAXIS2&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_n_channels</span> <span class="o">=</span> <span class="n">tte</span><span class="p">[</span><span class="s2">"EBOUNDS"</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">"NAXIS2"</span><span class="p">]</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_det_name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">_</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
-            <span class="n">tte</span><span class="p">[</span><span class="s2">&quot;PRIMARY&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;INSTRUME&quot;</span><span class="p">],</span>
-            <span class="n">tte</span><span class="p">[</span><span class="s2">&quot;PRIMARY&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;DETNAM&quot;</span><span class="p">],</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_det_name</span> <span class="o">=</span> <span class="s2">"</span><span class="si">%s</span><span class="s2">_</span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="n">tte</span><span class="p">[</span><span class="s2">"PRIMARY"</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">"INSTRUME"</span><span class="p">],</span>
+            <span class="n">tte</span><span class="p">[</span><span class="s2">"PRIMARY"</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">"DETNAM"</span><span class="p">],</span>
         <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_telescope</span> <span class="o">=</span> <span class="n">tte</span><span class="p">[</span><span class="s2">&quot;PRIMARY&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;TELESCOP&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_telescope</span> <span class="o">=</span> <span class="n">tte</span><span class="p">[</span><span class="s2">"PRIMARY"</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">"TELESCOP"</span><span class="p">]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_deadtime</span><span class="p">()</span>
 
@@ -209,7 +209,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">trigger_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">assert</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_start_events</span> <span class="o">&lt;=</span> <span class="n">val</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop_events</span>
-        <span class="p">),</span> <span class="s2">&quot;Trigger time must be within the interval (</span><span class="si">%f</span><span class="s2">,</span><span class="si">%f</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span>
+        <span class="p">),</span> <span class="s2">"Trigger time must be within the interval (</span><span class="si">%f</span><span class="s2">,</span><span class="si">%f</span><span class="s2">)"</span> <span class="o">%</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_start_events</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_stop_events</span><span class="p">,</span>
         <span class="p">)</span>
@@ -238,15 +238,15 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">mission</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the name of the mission :return:&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return the name of the mission :return:"""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_telescope</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">det_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the name of the instrument and detector.</span>
+<span class="w">        </span><span class="sd">"""Return the name of the instrument and detector.</span>
 
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_det_name</span>
 
@@ -255,11 +255,11 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_deadtime</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_calculate_deadtime</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Computes an array of deadtimes following the perscription of Meegan</span>
+<span class="w">        </span><span class="sd">"""Computes an array of deadtimes following the perscription of Meegan</span>
 <span class="sd">        et al. (2009).</span>
 
 <span class="sd">        The array can be summed over to obtain the total dead time</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_deadtime</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_events</span><span class="p">)</span>
         <span class="n">overflow_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pha</span> <span class="o">==</span> <span class="mi">127</span>  <span class="c1"># specific to gbm! should work for CTTE</span>
 
@@ -278,22 +278,22 @@
 
         <span class="c1"># Complements to Volodymyr Savchenko</span>
 
-        <span class="n">xtime_url</span> <span class="o">=</span> <span class="s2">&quot;https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/xTime/xTime.pl&quot;</span>
+        <span class="n">xtime_url</span> <span class="o">=</span> <span class="s2">"https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/xTime/xTime.pl"</span>
 
-        <span class="n">pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;&quot;&quot;</span>
+        <span class="n">pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">"""</span>
 <span class="s2">            &lt;tr&gt;.*?</span>
 <span class="s2">            &lt;th scope=row&gt;</span>
-<span class="s2">            &lt;label for=&quot;(.*?)&quot;&gt;(.*?)&lt;/label&gt;</span>
+<span class="s2">            &lt;label for="(.*?)"&gt;(.*?)&lt;/label&gt;</span>
 <span class="s2">            &lt;/th&gt;.*?</span>
 <span class="s2">            &lt;td align=center&gt;.*?&lt;/td&gt;.*?&lt;td&gt;(.*?)&lt;/td&gt;.*?</span>
 <span class="s2">            &lt;/tr&gt;</span>
-<span class="s2">            &quot;&quot;&quot;</span>
+<span class="s2">            """</span>
 
         <span class="n">args</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
             <span class="n">time_in_sf</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_trigger_time</span><span class="p">,</span>
-            <span class="n">timesys_in</span><span class="o">=</span><span class="s2">&quot;u&quot;</span><span class="p">,</span>
-            <span class="n">timesys_out</span><span class="o">=</span><span class="s2">&quot;u&quot;</span><span class="p">,</span>
-            <span class="n">apply_clock_offset</span><span class="o">=</span><span class="s2">&quot;yes&quot;</span><span class="p">,</span>
+            <span class="n">timesys_in</span><span class="o">=</span><span class="s2">"u"</span><span class="p">,</span>
+            <span class="n">timesys_out</span><span class="o">=</span><span class="s2">"u"</span><span class="p">,</span>
+            <span class="n">apply_clock_offset</span><span class="o">=</span><span class="s2">"yes"</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
@@ -301,7 +301,7 @@
 
             <span class="n">mission_info</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">S</span><span class="p">)</span>
 
-            <span class="n">mission_dict</span><span class="p">[</span><span class="s2">&quot;UTC&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mission_info</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">mission_dict</span><span class="p">[</span><span class="s2">"UTC"</span><span class="p">]</span> <span class="o">=</span> <span class="n">mission_info</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
             <span class="n">mission_dict</span><span class="p">[</span><span class="n">mission_info</span><span class="p">[</span><span class="mi">7</span><span class="p">][</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">mission_info</span><span class="p">[</span><span class="mi">7</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>  <span class="c1"># LIGO</span>
             <span class="n">mission_dict</span><span class="p">[</span><span class="n">mission_info</span><span class="p">[</span><span class="mi">8</span><span class="p">][</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">mission_info</span><span class="p">[</span><span class="mi">8</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>  <span class="c1"># NUSTAR</span>
             <span class="n">mission_dict</span><span class="p">[</span><span class="n">mission_info</span><span class="p">[</span><span class="mi">12</span><span class="p">][</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">mission_info</span><span class="p">[</span><span class="mi">12</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>  <span class="c1"># RXTE</span>
@@ -311,8 +311,8 @@
 
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;You do not have the requests library, cannot get time system from &quot;</span>
-                <span class="s2">&quot;Heasarc at this point.&quot;</span>
+                <span class="s2">"You do not have the requests library, cannot get time system from "</span>
+                <span class="s2">"Heasarc at this point."</span>
             <span class="p">)</span>
 
             <span class="k">return</span> <span class="kc">None</span>
@@ -323,21 +323,21 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="p">()</span><span class="o">.</span><span class="n">to_string</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Examine the currently selected interval If connected to the</span>
+<span class="w">        </span><span class="sd">"""Examine the currently selected interval If connected to the</span>
 <span class="sd">        internet, will also look up info for other instruments to compare with</span>
 <span class="sd">        Fermi.</span>
 
 <span class="sd">        :return: none</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">mission_dict</span> <span class="o">=</span> <span class="n">compute_fermi_relative_mission_times</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_trigger_time</span><span class="p">)</span>
 
         <span class="n">fermi_dict</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
 
-        <span class="n">fermi_dict</span><span class="p">[</span><span class="s2">&quot;Fermi Trigger Time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%.3f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trigger_time</span>
-        <span class="n">fermi_dict</span><span class="p">[</span><span class="s2">&quot;Fermi MET OBS Start&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%.3f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_events</span>
-        <span class="n">fermi_dict</span><span class="p">[</span><span class="s2">&quot;Fermi MET OBS Stop&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%.3f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop_events</span>
-        <span class="n">fermi_dict</span><span class="p">[</span><span class="s2">&quot;Fermi UTC OBS Start&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_utc_start</span>
-        <span class="n">fermi_dict</span><span class="p">[</span><span class="s2">&quot;Fermi UTC OBS Stop&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_utc_stop</span>
+        <span class="n">fermi_dict</span><span class="p">[</span><span class="s2">"Fermi Trigger Time"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"</span><span class="si">%.3f</span><span class="s2">"</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trigger_time</span>
+        <span class="n">fermi_dict</span><span class="p">[</span><span class="s2">"Fermi MET OBS Start"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"</span><span class="si">%.3f</span><span class="s2">"</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_events</span>
+        <span class="n">fermi_dict</span><span class="p">[</span><span class="s2">"Fermi MET OBS Stop"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"</span><span class="si">%.3f</span><span class="s2">"</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop_events</span>
+        <span class="n">fermi_dict</span><span class="p">[</span><span class="s2">"Fermi UTC OBS Start"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_utc_start</span>
+        <span class="n">fermi_dict</span><span class="p">[</span><span class="s2">"Fermi UTC OBS Stop"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_utc_stop</span>
 
         <span class="n">fermi_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">fermi_dict</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">fermi_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 
@@ -359,31 +359,31 @@
         <span class="n">cdata</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">cdata_file</span><span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_trigger_time</span> <span class="o">=</span> <span class="n">cdata</span><span class="p">[</span><span class="s2">&quot;PRIMARY&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;TRIGTIME&quot;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_trigger_time</span> <span class="o">=</span> <span class="n">cdata</span><span class="p">[</span><span class="s2">"PRIMARY"</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">"TRIGTIME"</span><span class="p">]</span>
 
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="c1"># For continuous data</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;There is no trigger time in the TTE file. Must be set manually or &quot;</span>
-                <span class="s2">&quot;using MET relative times.&quot;</span>
+                <span class="s2">"There is no trigger time in the TTE file. Must be set manually or "</span>
+                <span class="s2">"using MET relative times."</span>
             <span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_trigger_time</span> <span class="o">=</span> <span class="mi">0</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_start_events</span> <span class="o">=</span> <span class="n">cdata</span><span class="p">[</span><span class="s2">&quot;PRIMARY&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;TSTART&quot;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_stop_events</span> <span class="o">=</span> <span class="n">cdata</span><span class="p">[</span><span class="s2">&quot;PRIMARY&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;TSTOP&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_start_events</span> <span class="o">=</span> <span class="n">cdata</span><span class="p">[</span><span class="s2">"PRIMARY"</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">"TSTART"</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stop_events</span> <span class="o">=</span> <span class="n">cdata</span><span class="p">[</span><span class="s2">"PRIMARY"</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">"TSTOP"</span><span class="p">]</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_utc_start</span> <span class="o">=</span> <span class="n">cdata</span><span class="p">[</span><span class="s2">&quot;PRIMARY&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;DATE-OBS&quot;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_utc_stop</span> <span class="o">=</span> <span class="n">cdata</span><span class="p">[</span><span class="s2">&quot;PRIMARY&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;DATE-END&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_utc_start</span> <span class="o">=</span> <span class="n">cdata</span><span class="p">[</span><span class="s2">"PRIMARY"</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">"DATE-OBS"</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_utc_stop</span> <span class="o">=</span> <span class="n">cdata</span><span class="p">[</span><span class="s2">"PRIMARY"</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">"DATE-END"</span><span class="p">]</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_n_channels</span> <span class="o">=</span> <span class="n">cdata</span><span class="p">[</span><span class="s2">&quot;EBOUNDS&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;NAXIS2&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_n_channels</span> <span class="o">=</span> <span class="n">cdata</span><span class="p">[</span><span class="s2">"EBOUNDS"</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">"NAXIS2"</span><span class="p">]</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_det_name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">_</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
-            <span class="n">cdata</span><span class="p">[</span><span class="s2">&quot;PRIMARY&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;INSTRUME&quot;</span><span class="p">],</span>
-            <span class="n">cdata</span><span class="p">[</span><span class="s2">&quot;PRIMARY&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;DETNAM&quot;</span><span class="p">],</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_det_name</span> <span class="o">=</span> <span class="s2">"</span><span class="si">%s</span><span class="s2">_</span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="n">cdata</span><span class="p">[</span><span class="s2">"PRIMARY"</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">"INSTRUME"</span><span class="p">],</span>
+            <span class="n">cdata</span><span class="p">[</span><span class="s2">"PRIMARY"</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">"DETNAM"</span><span class="p">],</span>
         <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_telescope</span> <span class="o">=</span> <span class="n">cdata</span><span class="p">[</span><span class="s2">&quot;PRIMARY&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;TELESCOP&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_telescope</span> <span class="o">=</span> <span class="n">cdata</span><span class="p">[</span><span class="s2">"PRIMARY"</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">"TELESCOP"</span><span class="p">]</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">trigger_time</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -393,7 +393,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">trigger_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">assert</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_start_events</span> <span class="o">&lt;=</span> <span class="n">val</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop_events</span>
-        <span class="p">),</span> <span class="s2">&quot;Trigger time must be within the interval (</span><span class="si">%f</span><span class="s2">,</span><span class="si">%f</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span>
+        <span class="p">),</span> <span class="s2">"Trigger time must be within the interval (</span><span class="si">%f</span><span class="s2">,</span><span class="si">%f</span><span class="s2">)"</span> <span class="o">%</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_start_events</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_stop_events</span><span class="p">,</span>
         <span class="p">)</span>
@@ -418,15 +418,15 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">mission</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the name of the mission :return:&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return the name of the mission :return:"""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_telescope</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">det_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the name of the instrument and detector.</span>
+<span class="w">        </span><span class="sd">"""Return the name of the instrument and detector.</span>
 
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_det_name</span>
 
@@ -438,22 +438,22 @@
 
         <span class="c1"># Complements to Volodymyr Savchenko</span>
 
-        <span class="n">xtime_url</span> <span class="o">=</span> <span class="s2">&quot;https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/xTime/xTime.pl&quot;</span>
+        <span class="n">xtime_url</span> <span class="o">=</span> <span class="s2">"https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/xTime/xTime.pl"</span>
 
-        <span class="n">pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;&quot;&quot;</span>
+        <span class="n">pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">"""</span>
 <span class="s2">            &lt;tr&gt;.*?</span>
 <span class="s2">            &lt;th scope=row&gt;</span>
-<span class="s2">            &lt;label for=&quot;(.*?)&quot;&gt;(.*?)&lt;/label&gt;</span>
+<span class="s2">            &lt;label for="(.*?)"&gt;(.*?)&lt;/label&gt;</span>
 <span class="s2">            &lt;/th&gt;.*?</span>
 <span class="s2">            &lt;td align=center&gt;.*?&lt;/td&gt;.*?&lt;td&gt;(.*?)&lt;/td&gt;.*?</span>
 <span class="s2">            &lt;/tr&gt;</span>
-<span class="s2">            &quot;&quot;&quot;</span>
+<span class="s2">            """</span>
 
         <span class="n">args</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
             <span class="n">time_in_sf</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_trigger_time</span><span class="p">,</span>
-            <span class="n">timesys_in</span><span class="o">=</span><span class="s2">&quot;u&quot;</span><span class="p">,</span>
-            <span class="n">timesys_out</span><span class="o">=</span><span class="s2">&quot;u&quot;</span><span class="p">,</span>
-            <span class="n">apply_clock_offset</span><span class="o">=</span><span class="s2">&quot;yes&quot;</span><span class="p">,</span>
+            <span class="n">timesys_in</span><span class="o">=</span><span class="s2">"u"</span><span class="p">,</span>
+            <span class="n">timesys_out</span><span class="o">=</span><span class="s2">"u"</span><span class="p">,</span>
+            <span class="n">apply_clock_offset</span><span class="o">=</span><span class="s2">"yes"</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
@@ -461,7 +461,7 @@
 
             <span class="n">mission_info</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">S</span><span class="p">)</span>
 
-            <span class="n">mission_dict</span><span class="p">[</span><span class="s2">&quot;UTC&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mission_info</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">mission_dict</span><span class="p">[</span><span class="s2">"UTC"</span><span class="p">]</span> <span class="o">=</span> <span class="n">mission_info</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
             <span class="n">mission_dict</span><span class="p">[</span><span class="n">mission_info</span><span class="p">[</span><span class="mi">7</span><span class="p">][</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">mission_info</span><span class="p">[</span><span class="mi">7</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>  <span class="c1"># LIGO</span>
             <span class="n">mission_dict</span><span class="p">[</span><span class="n">mission_info</span><span class="p">[</span><span class="mi">8</span><span class="p">][</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">mission_info</span><span class="p">[</span><span class="mi">8</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>  <span class="c1"># NUSTAR</span>
             <span class="n">mission_dict</span><span class="p">[</span><span class="n">mission_info</span><span class="p">[</span><span class="mi">12</span><span class="p">][</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">mission_info</span><span class="p">[</span><span class="mi">12</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>  <span class="c1"># RXTE</span>
@@ -471,8 +471,8 @@
 
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;You do not have the requests library, cannot get time system from &quot;</span>
-                <span class="s2">&quot;Heasarc at this point.&quot;</span>
+                <span class="s2">"You do not have the requests library, cannot get time system from "</span>
+                <span class="s2">"Heasarc at this point."</span>
             <span class="p">)</span>
 
             <span class="k">return</span> <span class="kc">None</span>
@@ -483,21 +483,21 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="p">()</span><span class="o">.</span><span class="n">to_string</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Examine the currently selected interval If connected to the</span>
+<span class="w">        </span><span class="sd">"""Examine the currently selected interval If connected to the</span>
 <span class="sd">        internet, will also look up info for other instruments to compare with</span>
 <span class="sd">        Fermi.</span>
 
 <span class="sd">        :return: none</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">mission_dict</span> <span class="o">=</span> <span class="n">compute_fermi_relative_mission_times</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_trigger_time</span><span class="p">)</span>
 
         <span class="n">fermi_dict</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
 
-        <span class="n">fermi_dict</span><span class="p">[</span><span class="s2">&quot;Fermi Trigger Time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%.3f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trigger_time</span>
-        <span class="n">fermi_dict</span><span class="p">[</span><span class="s2">&quot;Fermi MET OBS Start&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%.3f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_events</span>
-        <span class="n">fermi_dict</span><span class="p">[</span><span class="s2">&quot;Fermi MET OBS Stop&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%.3f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop_events</span>
-        <span class="n">fermi_dict</span><span class="p">[</span><span class="s2">&quot;Fermi UTC OBS Start&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_utc_start</span>
-        <span class="n">fermi_dict</span><span class="p">[</span><span class="s2">&quot;Fermi UTC OBS Stop&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_utc_stop</span>
+        <span class="n">fermi_dict</span><span class="p">[</span><span class="s2">"Fermi Trigger Time"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"</span><span class="si">%.3f</span><span class="s2">"</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trigger_time</span>
+        <span class="n">fermi_dict</span><span class="p">[</span><span class="s2">"Fermi MET OBS Start"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"</span><span class="si">%.3f</span><span class="s2">"</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_events</span>
+        <span class="n">fermi_dict</span><span class="p">[</span><span class="s2">"Fermi MET OBS Stop"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"</span><span class="si">%.3f</span><span class="s2">"</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop_events</span>
+        <span class="n">fermi_dict</span><span class="p">[</span><span class="s2">"Fermi UTC OBS Start"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_utc_start</span>
+        <span class="n">fermi_dict</span><span class="p">[</span><span class="s2">"Fermi UTC OBS Stop"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_utc_stop</span>
 
         <span class="n">fermi_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">fermi_dict</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">fermi_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 

@@ -127,13 +127,13 @@
 <span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
-<span class="n">_SUPPORTED_ALGORITHMS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;L-BFGS-B&quot;</span><span class="p">,</span> <span class="s2">&quot;TNC&quot;</span><span class="p">,</span> <span class="s2">&quot;SLSQP&quot;</span><span class="p">]</span>
+<span class="n">_SUPPORTED_ALGORITHMS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"L-BFGS-B"</span><span class="p">,</span> <span class="s2">"TNC"</span><span class="p">,</span> <span class="s2">"SLSQP"</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="ScipyMinimizer">
 <a class="viewcode-back" href="../../../api/threeML.minimizer.html#threeML.minimizer.scipy_minimizer.ScipyMinimizer">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ScipyMinimizer</span><span class="p">(</span><span class="n">LocalMinimizer</span><span class="p">):</span>
-    <span class="n">valid_setup_keys</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;tol&quot;</span><span class="p">,</span> <span class="s2">&quot;algorithm&quot;</span><span class="p">)</span>
+    <span class="n">valid_setup_keys</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"tol"</span><span class="p">,</span> <span class="s2">"algorithm"</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">verbosity</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">setup_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">ScipyMinimizer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
@@ -142,22 +142,22 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_setup_dict</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">user_setup_dict</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">default_setup</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;algorithm&quot;</span><span class="p">:</span> <span class="s2">&quot;L-BFGS-B&quot;</span><span class="p">,</span> <span class="s2">&quot;tol&quot;</span><span class="p">:</span> <span class="mf">0.0001</span><span class="p">}</span>
+            <span class="n">default_setup</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"algorithm"</span><span class="p">:</span> <span class="s2">"L-BFGS-B"</span><span class="p">,</span> <span class="s2">"tol"</span><span class="p">:</span> <span class="mf">0.0001</span><span class="p">}</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_setup_dict</span> <span class="o">=</span> <span class="n">default_setup</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="s2">&quot;algorithm&quot;</span> <span class="ow">in</span> <span class="n">user_setup_dict</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">user_setup_dict</span><span class="p">[</span><span class="s2">&quot;algorithm&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">_SUPPORTED_ALGORITHMS</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">"algorithm"</span> <span class="ow">in</span> <span class="n">user_setup_dict</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">user_setup_dict</span><span class="p">[</span><span class="s2">"algorithm"</span><span class="p">]</span> <span class="ow">in</span> <span class="n">_SUPPORTED_ALGORITHMS</span><span class="p">:</span>
                     <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                        <span class="s2">&quot;Supported algorithms are </span><span class="si">%s</span><span class="s2">&quot;</span>
-                        <span class="o">%</span> <span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_SUPPORTED_ALGORITHMS</span><span class="p">))</span>
+                        <span class="s2">"Supported algorithms are </span><span class="si">%s</span><span class="s2">"</span>
+                        <span class="o">%</span> <span class="p">(</span><span class="s2">","</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_SUPPORTED_ALGORITHMS</span><span class="p">))</span>
                     <span class="p">)</span>
 
                     <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">()</span>
 
                 <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;scipy minimizer algorithm set to:</span><span class="si">{</span><span class="n">user_setup_dict</span><span class="p">[</span><span class="s1">&#39;algorithm&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">"scipy minimizer algorithm set to:</span><span class="si">{</span><span class="n">user_setup_dict</span><span class="p">[</span><span class="s1">'algorithm'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span>
                 <span class="p">)</span>
 
             <span class="c1"># We can assume that the setup has been already checked against the</span>
@@ -168,19 +168,19 @@
 <div class="viewcode-block" id="ScipyMinimizer.set_algorithm">
 <a class="viewcode-back" href="../../../api/threeML.minimizer.html#threeML.minimizer.scipy_minimizer.ScipyMinimizer.set_algorithm">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_algorithm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">algorithm</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the algorithm for the scipy minimizer. Valid entries are</span>
-<span class="sd">        &quot;L-BFGS-B&quot;, &quot;TNC&quot;, &quot;SLSQP&quot;.</span>
+<span class="w">        </span><span class="sd">"""Set the algorithm for the scipy minimizer. Valid entries are</span>
+<span class="sd">        "L-BFGS-B", "TNC", "SLSQP".</span>
 
 <span class="sd">        :param algorithm:</span>
 <span class="sd">        :type algorithm: str</span>
 <span class="sd">        :returns:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">algorithm</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_SUPPORTED_ALGORITHMS</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Supported algorithms are </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_SUPPORTED_ALGORITHMS</span><span class="p">)))</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"Supported algorithms are </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="s2">","</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_SUPPORTED_ALGORITHMS</span><span class="p">)))</span>
 
             <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">()</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_setup_dict</span><span class="p">[</span><span class="s2">&quot;algorithm&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">algorithm</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_setup_dict</span><span class="p">[</span><span class="s2">"algorithm"</span><span class="p">]</span> <span class="o">=</span> <span class="n">algorithm</span></div>
 
 
     <span class="c1"># This cannot be part of a class, unfortunately, because of how PyGMO serialize</span>
@@ -213,9 +213,9 @@
         <span class="p">):</span>
             <span class="n">x0</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cur_value</span><span class="p">)</span>
 
-            <span class="c1"># scipy&#39;s algorithms will always try to evaluate the function exactly at the</span>
+            <span class="c1"># scipy's algorithms will always try to evaluate the function exactly at the</span>
             <span class="c1"># boundaries, which will fail because the Jacobian is not defined there...</span>
-            <span class="c1"># let&#39;s fix this by using a slightly larger or smaller</span>
+            <span class="c1"># let's fix this by using a slightly larger or smaller</span>
             <span class="c1"># minimum and maximum within the scipy algorithm than the real boundaries</span>
             <span class="c1"># (saved in minima and maxima)</span>
 
@@ -250,17 +250,17 @@
         <span class="n">res</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span>
             <span class="n">wrapper</span><span class="p">,</span>
             <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x0</span><span class="p">),</span>
-            <span class="n">method</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_setup_dict</span><span class="p">[</span><span class="s2">&quot;algorithm&quot;</span><span class="p">],</span>
+            <span class="n">method</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_setup_dict</span><span class="p">[</span><span class="s2">"algorithm"</span><span class="p">],</span>
             <span class="n">bounds</span><span class="o">=</span><span class="n">bounds</span><span class="p">,</span>
             <span class="n">jac</span><span class="o">=</span><span class="n">jacobian</span><span class="p">,</span>
-            <span class="n">tol</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_setup_dict</span><span class="p">[</span><span class="s2">&quot;tol&quot;</span><span class="p">],</span>
+            <span class="n">tol</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_setup_dict</span><span class="p">[</span><span class="s2">"tol"</span><span class="p">],</span>
         <span class="p">)</span>
 
         <span class="c1"># Make sure the optimization worked</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">res</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">FitFailed</span><span class="p">(</span>
-                <span class="s2">&quot;Could not converge. Message from solver: </span><span class="si">%s</span><span class="s2"> (status: </span><span class="si">%i</span><span class="s2">)&quot;</span>
+                <span class="s2">"Could not converge. Message from solver: </span><span class="si">%s</span><span class="s2"> (status: </span><span class="si">%i</span><span class="s2">)"</span>
                 <span class="o">%</span> <span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="n">res</span><span class="o">.</span><span class="n">status</span><span class="p">)</span>
             <span class="p">)</span>
 

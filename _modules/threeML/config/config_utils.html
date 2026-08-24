@@ -132,16 +132,16 @@
     <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">DictConfig</span><span class="p">):</span>
             <span class="n">branch</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
-                <span class="n">k</span><span class="p">,</span> <span class="n">guide_style</span><span class="o">=</span><span class="s2">&quot;bold medium_orchid&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;bold medium_orchid&quot;</span>
+                <span class="n">k</span><span class="p">,</span> <span class="n">guide_style</span><span class="o">=</span><span class="s2">"bold medium_orchid"</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">"bold medium_orchid"</span>
             <span class="p">)</span>
 
             <span class="n">recurse_dict</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">branch</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="n">tree</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">: [blink cornflower_blue]</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="n">guide_style</span><span class="o">=</span><span class="s2">&quot;medium_spring_green&quot;</span><span class="p">,</span>
-                <span class="n">style</span><span class="o">=</span><span class="s2">&quot;medium_spring_green&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">: [blink cornflower_blue]</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+                <span class="n">guide_style</span><span class="o">=</span><span class="s2">"medium_spring_green"</span><span class="p">,</span>
+                <span class="n">style</span><span class="o">=</span><span class="s2">"medium_spring_green"</span><span class="p">,</span>
             <span class="p">)</span>
 
     <span class="k">return</span></div>
@@ -151,11 +151,11 @@
 <div class="viewcode-block" id="show_configuration">
 <a class="viewcode-back" href="../../../api/threeML.config.html#threeML.config.config_utils.show_configuration">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">show_configuration</span><span class="p">(</span><span class="n">sub_menu</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Display the current configuration or a sub menu if provided.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Display the current configuration or a sub menu if provided."""</span>
 
     <span class="k">if</span> <span class="n">sub_menu</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">tree</span> <span class="o">=</span> <span class="n">Tree</span><span class="p">(</span>
-            <span class="s2">&quot;config&quot;</span><span class="p">,</span> <span class="n">guide_style</span><span class="o">=</span><span class="s2">&quot;bold medium_orchid&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;bold medium_orchid&quot;</span>
+            <span class="s2">"config"</span><span class="p">,</span> <span class="n">guide_style</span><span class="o">=</span><span class="s2">"bold medium_orchid"</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">"bold medium_orchid"</span>
         <span class="p">)</span>
 
         <span class="n">recurse_dict</span><span class="p">(</span><span class="n">threeML_config</span><span class="p">,</span> <span class="n">tree</span><span class="p">)</span>
@@ -163,13 +163,13 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">sub_menu</span> <span class="ow">in</span> <span class="n">threeML_config</span><span class="p">:</span>
             <span class="n">tree</span> <span class="o">=</span> <span class="n">Tree</span><span class="p">(</span>
-                <span class="s2">&quot;config&quot;</span><span class="p">,</span> <span class="n">guide_style</span><span class="o">=</span><span class="s2">&quot;bold medium_orchid&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;bold medium_orchid&quot;</span>
+                <span class="s2">"config"</span><span class="p">,</span> <span class="n">guide_style</span><span class="o">=</span><span class="s2">"bold medium_orchid"</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">"bold medium_orchid"</span>
             <span class="p">)</span>
 
             <span class="n">recurse_dict</span><span class="p">(</span><span class="n">threeML_config</span><span class="p">[</span><span class="n">sub_menu</span><span class="p">],</span> <span class="n">tree</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">sub_menu</span><span class="si">}</span><span class="s2"> is not in the threeml configuration&quot;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">sub_menu</span><span class="si">}</span><span class="s2"> is not in the threeml configuration"</span>
 
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
@@ -182,17 +182,17 @@
 <div class="viewcode-block" id="get_current_configuration_copy">
 <a class="viewcode-back" href="../../../api/threeML.config.html#threeML.config.config_utils.get_current_configuration_copy">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_current_configuration_copy</span><span class="p">(</span>
-    <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;threeML_config.yml&quot;</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"threeML_config.yml"</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Write a copy of the CURRENT configuration to the config directory.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Write a copy of the CURRENT configuration to the config directory."""</span>
 
     <span class="n">outfile</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">get_path_of_user_config</span><span class="p">()</span> <span class="o">/</span> <span class="n">file_name</span>
 
     <span class="k">if</span> <span class="n">outfile</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">overwrite</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">outfile</span><span class="si">}</span><span class="s2"> exists! Set overwrite to True&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">outfile</span><span class="si">}</span><span class="s2"> exists! Set overwrite to True"</span><span class="p">)</span>
 
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">_read_only_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;LAT&quot;</span><span class="p">,</span> <span class="s2">&quot;GBM&quot;</span><span class="p">,</span> <span class="s2">&quot;catalogs&quot;</span><span class="p">]</span>
+        <span class="n">_read_only_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"LAT"</span><span class="p">,</span> <span class="s2">"GBM"</span><span class="p">,</span> <span class="s2">"catalogs"</span><span class="p">]</span>
 
         <span class="n">_valid_keys</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -202,7 +202,7 @@
 
         <span class="n">config_copy</span> <span class="o">=</span> <span class="n">OmegaConf</span><span class="o">.</span><span class="n">masked_copy</span><span class="p">(</span><span class="n">threeML_config</span><span class="p">,</span> <span class="n">_valid_keys</span><span class="p">)</span>
 
-        <span class="k">with</span> <span class="n">outfile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">outfile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">OmegaConf</span><span class="o">.</span><span class="n">to_yaml</span><span class="p">(</span><span class="n">config_copy</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">resolve</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span></div>
 
 
@@ -210,7 +210,7 @@
 <div class="viewcode-block" id="get_value">
 <a class="viewcode-back" href="../../../api/threeML.config.html#threeML.config.config_utils.get_value">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_value</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">user_value</span><span class="p">,</span> <span class="n">par_type</span><span class="p">,</span> <span class="n">config_value</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the value for a parameter.</span>
+<span class="w">    </span><span class="sd">"""Get the value for a parameter.</span>
 
 <span class="sd">    If value is None returns the config value.</span>
 <span class="sd">    :param name: Name of parameter</span>
@@ -218,18 +218,18 @@
 <span class="sd">    :param par_type: Type of the paramter</span>
 <span class="sd">    :param config_value: value in config</span>
 <span class="sd">    :returns: parameter value</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">if</span> <span class="n">user_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">value</span> <span class="o">=</span> <span class="n">user_value</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">value</span> <span class="o">=</span> <span class="n">config_value</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Using default value </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> for parameter </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Using default value </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> for parameter </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">par_type</span><span class="p">):</span>
         <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Parameter </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> has wrong type. Must be </span><span class="si">{</span><span class="n">par_type</span><span class="si">}</span><span class="s2"> &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;but </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> is </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="sa">f</span><span class="s2">"Parameter </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> has wrong type. Must be </span><span class="si">{</span><span class="n">par_type</span><span class="si">}</span><span class="s2"> "</span>
+            <span class="sa">f</span><span class="s2">"but </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> is </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">."</span>
         <span class="p">)</span>
         <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">value</span></div>
@@ -239,7 +239,7 @@
 <div class="viewcode-block" id="get_value_kwargs">
 <a class="viewcode-back" href="../../../api/threeML.config.html#threeML.config.config_utils.get_value_kwargs">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_value_kwargs</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">par_type</span><span class="p">,</span> <span class="n">config_value</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read the value of a parameter from the kwargs or the config if it does</span>
+<span class="w">    </span><span class="sd">"""Read the value of a parameter from the kwargs or the config if it does</span>
 <span class="sd">    not exist in the kwargs.</span>
 
 <span class="sd">    :param name: Name of parameter in kwargs</span>
@@ -247,7 +247,7 @@
 <span class="sd">    :param config_value: Value in the config</span>
 <span class="sd">    :param kwargs:</span>
 <span class="sd">    :returns: value of parameter, rest of kwargs</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
         <span class="n">user_value</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>

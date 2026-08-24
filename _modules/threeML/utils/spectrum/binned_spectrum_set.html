@@ -121,12 +121,12 @@
 <a class="viewcode-back" href="../../../../api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">BinnedSpectrumSet</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binned_spectrum_list</span><span class="p">,</span> <span class="n">reference_time</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">time_intervals</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A set of binned spectra with optional time intervals.</span>
+<span class="w">        </span><span class="sd">"""A set of binned spectra with optional time intervals.</span>
 
 <span class="sd">        :param binned_spectrum_list: lit of binned spectal</span>
 <span class="sd">        :param reference_time: reference time for time intervals</span>
 <span class="sd">        :param time_intervals: optional timeinterval set</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_binned_spectrum_list</span> <span class="o">=</span> <span class="n">binned_spectrum_list</span>  <span class="c1"># type: list(BinnedSpectrum)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_reference_time</span> <span class="o">=</span> <span class="n">reference_time</span>
@@ -138,7 +138,7 @@
 
             <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_intervals</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
                 <span class="n">binned_spectrum_list</span>
-            <span class="p">),</span> <span class="s2">&quot;time intervals mus be the same length as binned spectra&quot;</span>
+            <span class="p">),</span> <span class="s2">"time intervals mus be the same length as binned spectra"</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_time_intervals</span> <span class="o">=</span> <span class="kc">None</span>
@@ -156,15 +156,15 @@
 <div class="viewcode-block" id="BinnedSpectrumSet.time_to_index">
 <a class="viewcode-back" href="../../../../api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet.time_to_index">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">time_to_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the index of the input time.</span>
+<span class="w">        </span><span class="sd">"""Get the index of the input time.</span>
 
 <span class="sd">        :param time: time to search for</span>
 <span class="sd">        :return: integer</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">assert</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_time_intervals</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-        <span class="p">),</span> <span class="s2">&quot;This spectrum set has no time intervals&quot;</span>
+        <span class="p">),</span> <span class="s2">"This spectrum set has no time intervals"</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_intervals</span><span class="o">.</span><span class="n">containing_bin</span><span class="p">(</span><span class="n">time</span><span class="p">)</span></div>
 
@@ -172,11 +172,11 @@
 <div class="viewcode-block" id="BinnedSpectrumSet.sort">
 <a class="viewcode-back" href="../../../../api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet.sort">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">sort</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sort the bin spectra in place according to time :return:&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Sort the bin spectra in place according to time :return:"""</span>
 
         <span class="k">assert</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_time_intervals</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-        <span class="p">),</span> <span class="s2">&quot;must have time intervals to do sorting&quot;</span>
+        <span class="p">),</span> <span class="s2">"must have time intervals to do sorting"</span>
 
         <span class="c1"># get the sorting index</span>
 

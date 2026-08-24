@@ -146,7 +146,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.statistics.stats_tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">aic</span><span class="p">,</span> <span class="n">bic</span>
 
 <span class="k">if</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">use_threeml_style</span><span class="p">:</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">get_path_of_data_file</span><span class="p">(</span><span class="s2">&quot;threeml.mplstyle&quot;</span><span class="p">)))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">get_path_of_data_file</span><span class="p">(</span><span class="s2">"threeml.mplstyle"</span><span class="p">)))</span>
 
 
 <span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -174,14 +174,14 @@
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">_WeakMinusLogLikeProxy</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Callable proxy that avoids strong references to JointLikelihood.</span>
 
 <span class="sd">    Some minimizers (notably iminuit) can keep the objective callable alive</span>
 <span class="sd">    longer than expected. If the callable is a bound method, that can retain</span>
 <span class="sd">    the entire JointLikelihood/DataList/plugin graph. Using a weakref-backed</span>
 <span class="sd">    proxy breaks that retention chain.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jl</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_jl_ref</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">jl</span><span class="p">)</span>
@@ -205,7 +205,7 @@
         <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">record</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Implement a joint likelihood analysis.</span>
+<span class="w">        </span><span class="sd">"""Implement a joint likelihood analysis.</span>
 
 <span class="sd">        :param likelihood_model: the model for the likelihood analysis</span>
 <span class="sd">        :param data_list: the list of data sets (plugin instances) to be</span>
@@ -217,11 +217,11 @@
 <span class="sd">            retrieved as a pandas DataFrame using the .fit_trace</span>
 <span class="sd">            property</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
-        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;creating new MLE analysis&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"creating new MLE analysis"</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_analysis_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;mle&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_analysis_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"mle"</span>
 
         <span class="c1"># Process optional keyword parameters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">verbose</span>
@@ -240,12 +240,12 @@
 
         <span class="c1"># Pre-defined minimizer</span>
         <span class="n">default_minimizer</span> <span class="o">=</span> <span class="n">minimization</span><span class="o">.</span><span class="n">LocalMinimization</span><span class="p">(</span>
-            <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;mle&quot;</span><span class="p">][</span><span class="s2">&quot;default_minimizer&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+            <span class="n">threeML_config</span><span class="p">[</span><span class="s2">"mle"</span><span class="p">][</span><span class="s2">"default_minimizer"</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
         <span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;mle&quot;</span><span class="p">][</span><span class="s2">&quot;default_minimizer_algorithm&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">threeML_config</span><span class="p">[</span><span class="s2">"mle"</span><span class="p">][</span><span class="s2">"default_minimizer_algorithm"</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">default_minimizer</span><span class="o">.</span><span class="n">set_algorithm</span><span class="p">(</span>
-                <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;mle&quot;</span><span class="p">][</span><span class="s2">&quot;default_minimizer_algorithm&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+                <span class="n">threeML_config</span><span class="p">[</span><span class="s2">"mle"</span><span class="p">][</span><span class="s2">"default_minimizer_algorithm"</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
             <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">set_minimizer</span><span class="p">(</span><span class="n">default_minimizer</span><span class="p">)</span>
@@ -269,7 +269,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_minus_log_like_proxy</span> <span class="o">=</span> <span class="n">_WeakMinusLogLikeProxy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_assign_model_to_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;REGISTERING MODEL&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"REGISTERING MODEL"</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_list</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
             <span class="n">dataset</span><span class="o">.</span><span class="n">set_model</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
@@ -282,76 +282,76 @@
             <span class="k">for</span> <span class="n">parameter_name</span><span class="p">,</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="n">dataset</span><span class="o">.</span><span class="n">nuisance_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="c1"># Enforce that the nuisance parameter contains the instance name,</span>
                 <span class="c1"># because otherwise multiple instance of the same plugin will overwrite</span>
-                <span class="c1"># each other&#39;s nuisance parameters</span>
+                <span class="c1"># each other's nuisance parameters</span>
 
                 <span class="k">if</span> <span class="n">dataset</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">parameter_name</span><span class="p">:</span>
                     <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;This is a bug of the plugin for </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span><span class="si">}</span><span class="s2">: &quot;</span>
-                        <span class="s2">&quot;nuisance parameters must contain the instance name&quot;</span>
+                        <span class="sa">f</span><span class="s2">"This is a bug of the plugin for </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span><span class="si">}</span><span class="s2">: "</span>
+                        <span class="s2">"nuisance parameters must contain the instance name"</span>
                     <span class="p">)</span>
                     <span class="k">raise</span> <span class="ne">NameError</span><span class="p">()</span>
 
                 <span class="bp">self</span><span class="o">.</span><span class="n">_likelihood_model</span><span class="o">.</span><span class="n">add_external_parameter</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
 
-        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;MODEL REGISTERED!&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"MODEL REGISTERED!"</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">likelihood_model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Model</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        :return: likelihood model for this analysis</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_likelihood_model</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">data_list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataList</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        :return: data list for this analysis</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_list</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">current_minimum</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        :return: current minimum of the joint likelihood (available only after the fit()</span>
 <span class="sd">        method)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_minimum</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">minimizer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        :return: an instance of the minimizer used in the fit (available only after the</span>
 <span class="sd">        fit() method)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_minimizer</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">covariance_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        :return: covariance matrix from the last fit</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_minimizer</span><span class="o">.</span><span class="n">covariance_matrix</span>
 
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                <span class="s2">&quot;You need to run a fit before accessing the covariance matrix&quot;</span>
+                <span class="s2">"You need to run a fit before accessing the covariance matrix"</span>
             <span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">correlation_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        :return: correlation matrix from the last fit</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_minimizer</span><span class="o">.</span><span class="n">correlation_matrix</span>
 
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                <span class="s2">&quot;You need to run a fit before accessing the correlation matrix&quot;</span>
+                <span class="s2">"You need to run a fit before accessing the correlation matrix"</span>
             <span class="p">)</span>
 
     <span class="nd">@property</span>
@@ -359,7 +359,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_analysis_type</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_update_free_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the dictionary of free parameters.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Update the dictionary of free parameters."""</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_likelihood_model</span><span class="o">.</span><span class="n">free_parameters</span>
 
@@ -371,7 +371,7 @@
         <span class="n">compute_covariance</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">n_samples</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5000</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform a fit of the current likelihood model on the datasets.</span>
+<span class="w">        </span><span class="sd">"""Perform a fit of the current likelihood model on the datasets.</span>
 
 <span class="sd">        :param quiet: If True, print the results (default), otherwise do</span>
 <span class="sd">            not print anything</span>
@@ -381,12 +381,12 @@
 <span class="sd">        :return: a dictionary with the results on the parameters, and</span>
 <span class="sd">            the values of the likelihood at the minimum for each dataset</span>
 <span class="sd">            and the total one.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># Update the list of free parameters, to be safe against changes the user might</span>
         <span class="c1"># do between the creation of this class and the calling of this method</span>
 
-        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;beginning the fit!&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"beginning the fit!"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_free_parameters</span><span class="p">()</span>
 
         <span class="c1"># Empty the call recorder</span>
@@ -396,11 +396,11 @@
         <span class="c1"># Check if we have free parameters, otherwise simply return the value of the log</span>
         <span class="c1"># like</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;There is no free parameter in the current model&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"There is no free parameter in the current model"</span><span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_minimizer</span> <span class="o">=</span> <span class="kc">None</span>
 
-            <span class="c1"># Store the &quot;minimum&quot;, which is just the current value</span>
+            <span class="c1"># Store the "minimum", which is just the current value</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_current_minimum</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">minus_log_like_profile</span><span class="p">())</span>
 
         <span class="k">else</span><span class="p">:</span>
@@ -409,7 +409,7 @@
             <span class="c1"># If we have a global minimizer, use that first (with no covariance)</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_minimizer_type</span><span class="p">,</span> <span class="n">minimization</span><span class="o">.</span><span class="n">GlobalMinimization</span><span class="p">):</span>
                 <span class="c1"># Do global minimization first</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Starting global optimization&quot;</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Starting global optimization"</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">quiet</span><span class="p">:</span>
                     <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span>
@@ -443,14 +443,14 @@
 
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
                     <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                        <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">Results after global minimizer (before secondary &quot;</span>
-                        <span class="s2">&quot;optimization):&quot;</span>
+                        <span class="s2">"</span><span class="se">\n\n</span><span class="s2">Results after global minimizer (before secondary "</span>
+                        <span class="s2">"optimization):"</span>
                     <span class="p">)</span>
 
                     <span class="n">global_results</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
 
                     <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                        <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Total log-likelihood minimum: </span><span class="si">%.3f</span><span class="se">\n</span><span class="s2">&quot;</span>
+                        <span class="s2">"</span><span class="se">\n</span><span class="s2">Total log-likelihood minimum: </span><span class="si">%.3f</span><span class="se">\n</span><span class="s2">"</span>
                         <span class="o">%</span> <span class="n">global_log_likelihood_minimum</span>
                     <span class="p">)</span>
 
@@ -462,7 +462,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># Only local minimization to be performed</span>
 
-                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;starting local optimization&quot;</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"starting local optimization"</span><span class="p">)</span>
 
                 <span class="bp">self</span><span class="o">.</span><span class="n">_minimizer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_minimizer</span><span class="p">(</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_minus_log_like_proxy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span>
@@ -477,7 +477,7 @@
             <span class="p">)</span>
 
             <span class="k">if</span> <span class="n">log_likelihood_minimum</span> <span class="o">==</span> <span class="n">minimization</span><span class="o">.</span><span class="n">FIT_FAILED</span><span class="p">:</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;The fit failed to converge.&quot;</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"The fit failed to converge."</span><span class="p">)</span>
                 <span class="k">raise</span> <span class="n">FitFailed</span><span class="p">()</span>
 
             <span class="c1"># Store the current minimum for the -log likelihood</span>
@@ -514,8 +514,8 @@
 
         <span class="k">if</span> <span class="n">total</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_minimum</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Current minimum stored after fit (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_minimum</span><span class="si">}</span><span class="s2">) and &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;current (</span><span class="si">{</span><span class="n">total</span><span class="si">}</span><span class="s2">) do not correspond!&quot;</span>
+                <span class="sa">f</span><span class="s2">"Current minimum stored after fit (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_minimum</span><span class="si">}</span><span class="s2">) and "</span>
+                <span class="sa">f</span><span class="s2">"current (</span><span class="si">{</span><span class="n">total</span><span class="si">}</span><span class="s2">) do not correspond!"</span>
             <span class="p">)</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">()</span>
 
@@ -526,17 +526,17 @@
         <span class="c1"># for MLE we can only compute the AIC and BIC as they</span>
         <span class="c1"># are point estimates</span>
 
-        <span class="n">statistical_measures</span><span class="p">[</span><span class="s2">&quot;AIC&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">aic</span><span class="p">(</span>
+        <span class="n">statistical_measures</span><span class="p">[</span><span class="s2">"AIC"</span><span class="p">]</span> <span class="o">=</span> <span class="n">aic</span><span class="p">(</span>
             <span class="o">-</span><span class="n">total</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span><span class="p">),</span> <span class="n">total_number_of_data_points</span>
         <span class="p">)</span>
-        <span class="n">statistical_measures</span><span class="p">[</span><span class="s2">&quot;BIC&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bic</span><span class="p">(</span>
+        <span class="n">statistical_measures</span><span class="p">[</span><span class="s2">"BIC"</span><span class="p">]</span> <span class="o">=</span> <span class="n">bic</span><span class="p">(</span>
             <span class="o">-</span><span class="n">total</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span><span class="p">),</span> <span class="n">total_number_of_data_points</span>
         <span class="p">)</span>
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-            <span class="s2">&quot;likelihood: %.f , Free Parameters: </span><span class="si">%d</span><span class="s2">, Total number of datapoints: </span><span class="si">%d</span><span class="s2">&quot;</span>
+            <span class="s2">"likelihood: %.f , Free Parameters: </span><span class="si">%d</span><span class="s2">, Total number of datapoints: </span><span class="si">%d</span><span class="s2">"</span>
             <span class="o">%</span> <span class="p">(</span><span class="o">-</span><span class="n">total</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span><span class="p">),</span> <span class="n">total_number_of_data_points</span><span class="p">)</span>
         <span class="p">)</span>
-        <span class="c1"># Workaround for the case of a &quot;fit&quot; with no free parameters</span>
+        <span class="c1"># Workaround for the case of a "fit" with no free parameters</span>
         <span class="c1"># This happens e.g. if you calculate the TS of the only source</span>
         <span class="c1"># in a one-source model.</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_minimizer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -571,17 +571,17 @@
 <div class="viewcode-block" id="JointLikelihood.get_errors">
 <a class="viewcode-back" href="../../../api/threeML.classicMLE.html#threeML.classicMLE.joint_likelihood.JointLikelihood.get_errors">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the errors on the parameters using the profile likelihood</span>
+<span class="w">        </span><span class="sd">"""Compute the errors on the parameters using the profile likelihood</span>
 <span class="sd">        method.</span>
 
 <span class="sd">        :return: a dictionary containing the asymmetric errors for each</span>
 <span class="sd">            parameter.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># Check that the user performed a fit first</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_minimum</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;You have to run the .fit method before calling errors.&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"You have to run the .fit method before calling errors."</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">NoFitYet</span><span class="p">()</span>
 
         <span class="n">errors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_minimizer</span><span class="o">.</span><span class="n">get_errors</span><span class="p">()</span>
@@ -622,7 +622,7 @@
         <span class="n">progress</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="o">**</span><span class="n">options</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate confidence contours for the given parameters by stepping</span>
+<span class="w">        </span><span class="sd">"""Generate confidence contours for the given parameters by stepping</span>
 <span class="sd">        for the given number of steps between the given boundaries. Call it</span>
 <span class="sd">        specifying only source_1, param_1, param_1_minimum and param_1_maximum</span>
 <span class="sd">        to generate the profile of the likelihood for parameter 1. Specify all</span>
@@ -645,43 +645,43 @@
 <span class="sd">        :param progress: (True or False) whether to display progress or not</span>
 <span class="sd">        :param log: by default the steps are taken linearly. With this optional</span>
 <span class="sd">        parameter you can provide a tuple of booleans which specify whether the steps</span>
-<span class="sd">        are to be taken logarithmically. For example, &#39;log=(True,False)&#39; specify that</span>
+<span class="sd">        are to be taken logarithmically. For example, 'log=(True,False)' specify that</span>
 <span class="sd">        the steps for the first parameter are to be taken logarithmically, while they</span>
 <span class="sd">        are linear for the second parameter. If you are generating the profile for only</span>
-<span class="sd">        one parameter, you can specify &#39;log=(True,)&#39; or &#39;log=(False,)&#39; (optional)</span>
+<span class="sd">        one parameter, you can specify 'log=(True,)' or 'log=(False,)' (optional)</span>
 <span class="sd">        :return: a tuple containing an array corresponding to the steps for the first</span>
 <span class="sd">        parameter, an array corresponding to the steps for the second parameter (or None</span>
 <span class="sd">        if stepping only in one direction), a matrix of size param_1_steps x</span>
 <span class="sd">        param_2_steps containing the value of the function at the corresponding points</span>
 <span class="sd">        in the grid. If param_2_steps is None (only one parameter), then this reduces to</span>
 <span class="sd">        an array of size param_1_steps.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">param_1</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">param_1</span><span class="p">,</span> <span class="s2">"value"</span><span class="p">):</span>
             <span class="c1"># Substitute with the name</span>
             <span class="n">param_1</span> <span class="o">=</span> <span class="n">param_1</span><span class="o">.</span><span class="n">path</span>
 
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">param_2</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">param_2</span><span class="p">,</span> <span class="s2">"value"</span><span class="p">):</span>
             <span class="n">param_2</span> <span class="o">=</span> <span class="n">param_2</span><span class="o">.</span><span class="n">path</span>
 
         <span class="c1"># Check that the parameters exist</span>
         <span class="k">if</span> <span class="n">param_1</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_likelihood_model</span><span class="o">.</span><span class="n">free_parameters</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Parameter </span><span class="si">{</span><span class="n">param_1</span><span class="si">}</span><span class="s2"> is not a free parameters of the current model&quot;</span>
+                <span class="sa">f</span><span class="s2">"Parameter </span><span class="si">{</span><span class="n">param_1</span><span class="si">}</span><span class="s2"> is not a free parameters of the current model"</span>
             <span class="p">)</span>
             <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">param_2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">param_2</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_likelihood_model</span><span class="o">.</span><span class="n">free_parameters</span><span class="p">:</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Parameter </span><span class="si">{</span><span class="n">param_2</span><span class="si">}</span><span class="s2"> is not a free parameters of the current model&quot;</span>
+                    <span class="sa">f</span><span class="s2">"Parameter </span><span class="si">{</span><span class="n">param_2</span><span class="si">}</span><span class="s2"> is not a free parameters of the current model"</span>
                 <span class="p">)</span>
                 <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">()</span>
 
         <span class="c1"># Check that we have a valid fit</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_minimum</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;You have to run the .fit method before calling get_contours.&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"You have to run the .fit method before calling get_contours."</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">NoFitYet</span><span class="p">()</span>
 
         <span class="c1"># Then restore the best fit</span>
@@ -690,11 +690,11 @@
         <span class="c1"># Check minimal assumptions about the procedure</span>
 
         <span class="k">if</span> <span class="n">param_1</span> <span class="o">==</span> <span class="n">param_2</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;You have to specify two different parameters&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"You have to specify two different parameters"</span><span class="p">)</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">param_1_minimum</span> <span class="o">&lt;</span> <span class="n">param_1_maximum</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Minimum larger than maximum for parameter 1&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"Minimum larger than maximum for parameter 1"</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">MinLargerMax</span><span class="p">()</span>
 
         <span class="n">min1</span><span class="p">,</span> <span class="n">max1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">likelihood_model</span><span class="p">[</span><span class="n">param_1</span><span class="p">]</span><span class="o">.</span><span class="n">bounds</span>
@@ -702,18 +702,18 @@
         <span class="k">if</span> <span class="n">min1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">param_1_minimum</span> <span class="o">&lt;</span> <span class="n">min1</span><span class="p">:</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Requested low range for parameter </span><span class="si">{</span><span class="n">param_1</span><span class="si">}</span><span class="s2"> &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">param_1_minimum</span><span class="si">}</span><span class="s2">) is below parameter &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;minimum (</span><span class="si">{</span><span class="n">min1</span><span class="si">}</span><span class="s2">)&quot;</span>
+                    <span class="sa">f</span><span class="s2">"Requested low range for parameter </span><span class="si">{</span><span class="n">param_1</span><span class="si">}</span><span class="s2"> "</span>
+                    <span class="sa">f</span><span class="s2">"(</span><span class="si">{</span><span class="n">param_1_minimum</span><span class="si">}</span><span class="s2">) is below parameter "</span>
+                    <span class="sa">f</span><span class="s2">"minimum (</span><span class="si">{</span><span class="n">min1</span><span class="si">}</span><span class="s2">)"</span>
                 <span class="p">)</span>
                 <span class="k">raise</span> <span class="n">ForbiddenRegionOfParameterSpace</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">max1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">param_1_maximum</span> <span class="o">&gt;</span> <span class="n">max1</span><span class="p">:</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Requested hi range for parameter </span><span class="si">{</span><span class="n">param_1</span><span class="si">}</span><span class="s2"> &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">param_1_maximum</span><span class="si">}</span><span class="s2">) &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;is above parameter maximum (</span><span class="si">{</span><span class="n">max1</span><span class="si">}</span><span class="s2">)&quot;</span>
+                    <span class="sa">f</span><span class="s2">"Requested hi range for parameter </span><span class="si">{</span><span class="n">param_1</span><span class="si">}</span><span class="s2"> "</span>
+                    <span class="sa">f</span><span class="s2">"(</span><span class="si">{</span><span class="n">param_1_maximum</span><span class="si">}</span><span class="s2">) "</span>
+                    <span class="sa">f</span><span class="s2">"is above parameter maximum (</span><span class="si">{</span><span class="n">max1</span><span class="si">}</span><span class="s2">)"</span>
                 <span class="p">)</span>
                 <span class="k">raise</span> <span class="n">ForbiddenRegionOfParameterSpace</span><span class="p">()</span>
 
@@ -723,24 +723,24 @@
             <span class="k">if</span> <span class="n">min2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">param_2_minimum</span> <span class="o">&lt;</span> <span class="n">min2</span><span class="p">:</span>
                     <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;Requested low range for parameter </span><span class="si">{</span><span class="n">param_2</span><span class="si">}</span><span class="s2"> &quot;</span>
-                        <span class="sa">f</span><span class="s2">&quot;(param_2_minim) &quot;</span>
-                        <span class="sa">f</span><span class="s2">&quot;is below parameter minimum (min2)&quot;</span>
+                        <span class="sa">f</span><span class="s2">"Requested low range for parameter </span><span class="si">{</span><span class="n">param_2</span><span class="si">}</span><span class="s2"> "</span>
+                        <span class="sa">f</span><span class="s2">"(param_2_minim) "</span>
+                        <span class="sa">f</span><span class="s2">"is below parameter minimum (min2)"</span>
                     <span class="p">)</span>
                     <span class="k">raise</span> <span class="n">ForbiddenRegionOfParameterSpace</span><span class="p">()</span>
 
             <span class="k">if</span> <span class="n">max2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">param_2_maximum</span> <span class="o">&gt;</span> <span class="n">max2</span><span class="p">:</span>
                     <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;Requested hi range for parameter </span><span class="si">{</span><span class="n">param_2</span><span class="si">}</span><span class="s2"> &quot;</span>
-                        <span class="sa">f</span><span class="s2">&quot;(param_2_maximum) &quot;</span>
-                        <span class="sa">f</span><span class="s2">&quot;is above parameter maximum (</span><span class="si">{</span><span class="n">max2</span><span class="si">}</span><span class="s2">)&quot;</span>
+                        <span class="sa">f</span><span class="s2">"Requested hi range for parameter </span><span class="si">{</span><span class="n">param_2</span><span class="si">}</span><span class="s2"> "</span>
+                        <span class="sa">f</span><span class="s2">"(param_2_maximum) "</span>
+                        <span class="sa">f</span><span class="s2">"is above parameter maximum (</span><span class="si">{</span><span class="n">max2</span><span class="si">}</span><span class="s2">)"</span>
                     <span class="p">)</span>
                     <span class="k">raise</span> <span class="n">ForbiddenRegionOfParameterSpace</span><span class="p">()</span>
 
         <span class="c1"># Check whether we are parallelizing or not</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;parallel&quot;</span><span class="p">][</span><span class="s2">&quot;use_parallel&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">threeML_config</span><span class="p">[</span><span class="s2">"parallel"</span><span class="p">][</span><span class="s2">"use_parallel"</span><span class="p">]:</span>
             <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">cc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">minimizer</span><span class="o">.</span><span class="n">contours</span><span class="p">(</span>
                 <span class="n">param_1</span><span class="p">,</span>
                 <span class="n">param_1_minimum</span><span class="p">,</span>
@@ -763,7 +763,7 @@
             <span class="c1"># With parallel computation</span>
 
             <span class="c1"># In order to distribute fairly the computation, the strategy is to</span>
-            <span class="c1"># parallelize the computation by assigning to the engines one &quot;line&quot; of the</span>
+            <span class="c1"># parallelize the computation by assigning to the engines one "line" of the</span>
             <span class="c1"># grid at the time</span>
 
             <span class="c1"># Connect to the engines</span>
@@ -781,8 +781,8 @@
                 <span class="n">n_engines</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">param_1_n_steps</span><span class="p">)</span>
 
                 <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                    <span class="s2">&quot;The number of engines is larger than the number of steps. Using &quot;</span>
-                    <span class="s2">&quot;only </span><span class="si">%s</span><span class="s2"> engines.&quot;</span> <span class="o">%</span> <span class="n">n_engines</span><span class="p">,</span>
+                    <span class="s2">"The number of engines is larger than the number of steps. Using "</span>
+                    <span class="s2">"only </span><span class="si">%s</span><span class="s2"> engines."</span> <span class="o">%</span> <span class="n">n_engines</span><span class="p">,</span>
                 <span class="p">)</span>
 
             <span class="c1"># Check if the number of steps is divisible by the number</span>
@@ -795,8 +795,8 @@
                 <span class="n">param_1_n_steps</span> <span class="o">=</span> <span class="p">(</span><span class="n">param_1_n_steps</span> <span class="o">//</span> <span class="n">n_engines</span><span class="p">)</span> <span class="o">*</span> <span class="n">n_engines</span>
 
                 <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                    <span class="s2">&quot;Number of steps is not a multiple of the number of threads. &quot;</span>
-                    <span class="s2">&quot;Reducing steps to </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">param_1_n_steps</span><span class="p">,</span>
+                    <span class="s2">"Number of steps is not a multiple of the number of threads. "</span>
+                    <span class="s2">"Reducing steps to </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">param_1_n_steps</span><span class="p">,</span>
                 <span class="p">)</span>
 
             <span class="c1"># Compute the number of splits, i.e., how many lines in the grid for each</span>
@@ -843,7 +843,7 @@
                 <span class="n">this_p1min</span> <span class="o">=</span> <span class="n">pa</span><span class="p">[</span><span class="n">start_index</span> <span class="o">*</span> <span class="n">p1_split_steps</span><span class="p">]</span>
                 <span class="n">this_p1max</span> <span class="o">=</span> <span class="n">pa</span><span class="p">[(</span><span class="n">start_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">p1_split_steps</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
 
-                <span class="c1"># print(&quot;From %s to %s&quot; % (this_p1min, this_p1max))</span>
+                <span class="c1"># print("From %s to %s" % (this_p1min, this_p1max))</span>
 
                 <span class="n">aa</span><span class="p">,</span> <span class="n">bb</span><span class="p">,</span> <span class="n">ccc</span> <span class="o">=</span> <span class="n">this_minimizer</span><span class="o">.</span><span class="n">contours</span><span class="p">(</span>
                     <span class="n">param_1</span><span class="p">,</span>
@@ -893,20 +893,20 @@
             <span class="n">a</span> <span class="o">=</span> <span class="n">pa</span>
             <span class="n">b</span> <span class="o">=</span> <span class="n">pb</span>
 
-        <span class="c1"># Here we have done the computation, in parallel computation or not. Let&#39;s make</span>
+        <span class="c1"># Here we have done the computation, in parallel computation or not. Let's make</span>
         <span class="c1"># the plot with the contour</span>
 
         <span class="k">if</span> <span class="n">param_2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># 2d contour</span>
 
-            <span class="n">fig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plot_contours</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">param_1</span><span class="p">),</span> <span class="n">a</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">param_2</span><span class="p">,),</span> <span class="n">b</span><span class="p">,</span> <span class="n">cc</span><span class="p">)</span>
+            <span class="n">fig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plot_contours</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">param_1</span><span class="p">),</span> <span class="n">a</span><span class="p">,</span> <span class="s2">"</span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">param_2</span><span class="p">,),</span> <span class="n">b</span><span class="p">,</span> <span class="n">cc</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># 1d contour (i.e., a profile)</span>
 
-            <span class="n">fig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plot_profile</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">param_1</span><span class="p">),</span> <span class="n">a</span><span class="p">,</span> <span class="n">cc</span><span class="p">)</span>
+            <span class="n">fig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plot_profile</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">param_1</span><span class="p">),</span> <span class="n">a</span><span class="p">,</span> <span class="n">cc</span><span class="p">)</span>
 
-        <span class="c1"># Check if we found a better minimum. This shouldn&#39;t happen, but in case of very</span>
+        <span class="c1"># Check if we found a better minimum. This shouldn't happen, but in case of very</span>
         <span class="c1"># difficult fit it might.</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_minimum</span> <span class="o">-</span> <span class="n">cc</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">0.1</span><span class="p">:</span>
@@ -916,8 +916,8 @@
                 <span class="n">aidx</span><span class="p">,</span> <span class="n">bidx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unravel_index</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">cc</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 
                 <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                    <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Found a better minimum: </span><span class="si">%s</span><span class="s2"> with </span><span class="si">%s</span><span class="s2"> = </span><span class="si">%s</span><span class="s2"> and </span><span class="si">%s</span><span class="s2"> = </span><span class="si">%s</span><span class="s2">. Run again &quot;</span>
-                    <span class="s2">&quot;your fit starting from here.&quot;</span>
+                    <span class="s2">"</span><span class="se">\n</span><span class="s2">Found a better minimum: </span><span class="si">%s</span><span class="s2"> with </span><span class="si">%s</span><span class="s2"> = </span><span class="si">%s</span><span class="s2"> and </span><span class="si">%s</span><span class="s2"> = </span><span class="si">%s</span><span class="s2">. Run again "</span>
+                    <span class="s2">"your fit starting from here."</span>
                     <span class="o">%</span> <span class="p">(</span><span class="n">cc</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">param_1</span><span class="p">,</span> <span class="n">a</span><span class="p">[</span><span class="n">aidx</span><span class="p">],</span> <span class="n">param_2</span><span class="p">,</span> <span class="n">b</span><span class="p">[</span><span class="n">bidx</span><span class="p">])</span>
                 <span class="p">)</span>
 
@@ -925,8 +925,8 @@
                 <span class="n">idx</span> <span class="o">=</span> <span class="n">cc</span><span class="o">.</span><span class="n">argmin</span><span class="p">()</span>
 
                 <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                    <span class="s2">&quot;Found a better minimum: </span><span class="si">%s</span><span class="s2"> with </span><span class="si">%s</span><span class="s2"> = </span><span class="si">%s</span><span class="s2">. Run again your fit &quot;</span>
-                    <span class="s2">&quot;starting from here.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cc</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">param_1</span><span class="p">,</span> <span class="n">a</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+                    <span class="s2">"Found a better minimum: </span><span class="si">%s</span><span class="s2"> with </span><span class="si">%s</span><span class="s2"> = </span><span class="si">%s</span><span class="s2">. Run again your fit "</span>
+                    <span class="s2">"starting from here."</span> <span class="o">%</span> <span class="p">(</span><span class="n">cc</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">param_1</span><span class="p">,</span> <span class="n">a</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
                 <span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
@@ -946,10 +946,10 @@
 
         <span class="k">if</span> <span class="n">nsteps_1d</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_likelihood_model</span><span class="o">.</span><span class="n">free_parameters</span><span class="p">:</span>
-                <span class="n">center</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">][</span><span class="n">param</span><span class="p">]</span>
+                <span class="n">center</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s2">"value"</span><span class="p">][</span><span class="n">param</span><span class="p">]</span>
                 <span class="n">do_log</span> <span class="o">=</span> <span class="p">(</span><span class="kc">False</span><span class="p">,)</span>
-                <span class="n">lower</span> <span class="o">=</span> <span class="n">center</span> <span class="o">+</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;negative_error&quot;</span><span class="p">][</span><span class="n">param</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_sigma</span>
-                <span class="n">upper</span> <span class="o">=</span> <span class="n">center</span> <span class="o">+</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;positive_error&quot;</span><span class="p">][</span><span class="n">param</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_sigma</span>
+                <span class="n">lower</span> <span class="o">=</span> <span class="n">center</span> <span class="o">+</span> <span class="n">res</span><span class="p">[</span><span class="s2">"negative_error"</span><span class="p">][</span><span class="n">param</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_sigma</span>
+                <span class="n">upper</span> <span class="o">=</span> <span class="n">center</span> <span class="o">+</span> <span class="n">res</span><span class="p">[</span><span class="s2">"positive_error"</span><span class="p">][</span><span class="n">param</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_sigma</span>
 
                 <span class="k">if</span> <span class="p">(</span>
                     <span class="n">log_norm</span>
@@ -958,11 +958,11 @@
                     <span class="n">do_log</span> <span class="o">=</span> <span class="p">(</span><span class="kc">True</span><span class="p">,)</span>
                     <span class="n">lower</span> <span class="o">=</span> <span class="p">(</span>
                         <span class="n">center</span>
-                        <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;negative_error&quot;</span><span class="p">][</span><span class="n">param</span><span class="p">]</span> <span class="o">/</span> <span class="n">center</span><span class="p">)</span> <span class="o">**</span> <span class="n">n_sigma</span>
+                        <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">res</span><span class="p">[</span><span class="s2">"negative_error"</span><span class="p">][</span><span class="n">param</span><span class="p">]</span> <span class="o">/</span> <span class="n">center</span><span class="p">)</span> <span class="o">**</span> <span class="n">n_sigma</span>
                     <span class="p">)</span>
                     <span class="n">upper</span> <span class="o">=</span> <span class="p">(</span>
                         <span class="n">center</span>
-                        <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;positive_error&quot;</span><span class="p">][</span><span class="n">param</span><span class="p">]</span> <span class="o">/</span> <span class="n">center</span><span class="p">)</span> <span class="o">**</span> <span class="n">n_sigma</span>
+                        <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">res</span><span class="p">[</span><span class="s2">"positive_error"</span><span class="p">][</span><span class="n">param</span><span class="p">]</span> <span class="o">/</span> <span class="n">center</span><span class="p">)</span> <span class="o">**</span> <span class="n">n_sigma</span>
                     <span class="p">)</span>
 
                 <span class="n">lower</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">likelihood_model</span><span class="p">[</span><span class="n">param</span><span class="p">]</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">lower</span><span class="p">)</span>
@@ -982,9 +982,9 @@
         <span class="k">if</span> <span class="n">nsteps_2d</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">param_1</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_likelihood_model</span><span class="o">.</span><span class="n">free_parameters</span><span class="p">:</span>
                 <span class="n">do_log</span> <span class="o">=</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-                <span class="n">center_1</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">][</span><span class="n">param_1</span><span class="p">]</span>
-                <span class="n">lower_1</span> <span class="o">=</span> <span class="n">center_1</span> <span class="o">+</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;negative_error&quot;</span><span class="p">][</span><span class="n">param_1</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_sigma</span>
-                <span class="n">upper_1</span> <span class="o">=</span> <span class="n">center_1</span> <span class="o">+</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;positive_error&quot;</span><span class="p">][</span><span class="n">param_1</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_sigma</span>
+                <span class="n">center_1</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s2">"value"</span><span class="p">][</span><span class="n">param_1</span><span class="p">]</span>
+                <span class="n">lower_1</span> <span class="o">=</span> <span class="n">center_1</span> <span class="o">+</span> <span class="n">res</span><span class="p">[</span><span class="s2">"negative_error"</span><span class="p">][</span><span class="n">param_1</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_sigma</span>
+                <span class="n">upper_1</span> <span class="o">=</span> <span class="n">center_1</span> <span class="o">+</span> <span class="n">res</span><span class="p">[</span><span class="s2">"positive_error"</span><span class="p">][</span><span class="n">param_1</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_sigma</span>
 
                 <span class="k">if</span> <span class="p">(</span>
                     <span class="n">log_norm</span>
@@ -993,11 +993,11 @@
                     <span class="n">do_log</span> <span class="o">=</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
                     <span class="n">lower_1</span> <span class="o">=</span> <span class="p">(</span>
                         <span class="n">center_1</span>
-                        <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;negative_error&quot;</span><span class="p">][</span><span class="n">param_1</span><span class="p">]</span> <span class="o">/</span> <span class="n">center_1</span><span class="p">)</span> <span class="o">**</span> <span class="n">n_sigma</span>
+                        <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">res</span><span class="p">[</span><span class="s2">"negative_error"</span><span class="p">][</span><span class="n">param_1</span><span class="p">]</span> <span class="o">/</span> <span class="n">center_1</span><span class="p">)</span> <span class="o">**</span> <span class="n">n_sigma</span>
                     <span class="p">)</span>
                     <span class="n">upper_1</span> <span class="o">=</span> <span class="p">(</span>
                         <span class="n">center_1</span>
-                        <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;positive_error&quot;</span><span class="p">][</span><span class="n">param_1</span><span class="p">]</span> <span class="o">/</span> <span class="n">center_1</span><span class="p">)</span> <span class="o">**</span> <span class="n">n_sigma</span>
+                        <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">res</span><span class="p">[</span><span class="s2">"positive_error"</span><span class="p">][</span><span class="n">param_1</span><span class="p">]</span> <span class="o">/</span> <span class="n">center_1</span><span class="p">)</span> <span class="o">**</span> <span class="n">n_sigma</span>
                     <span class="p">)</span>
 
                 <span class="n">lower_1</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">likelihood_model</span><span class="p">[</span><span class="n">param_1</span><span class="p">]</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">lower_1</span><span class="p">)</span>
@@ -1007,9 +1007,9 @@
                     <span class="k">if</span> <span class="n">param_2</span> <span class="o">&lt;=</span> <span class="n">param_1</span><span class="p">:</span>
                         <span class="k">continue</span>
 
-                    <span class="n">center_2</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">][</span><span class="n">param_2</span><span class="p">]</span>
-                    <span class="n">lower_2</span> <span class="o">=</span> <span class="n">center_2</span> <span class="o">+</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;negative_error&quot;</span><span class="p">][</span><span class="n">param_2</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_sigma</span>
-                    <span class="n">upper_2</span> <span class="o">=</span> <span class="n">center_2</span> <span class="o">+</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;positive_error&quot;</span><span class="p">][</span><span class="n">param_2</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_sigma</span>
+                    <span class="n">center_2</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s2">"value"</span><span class="p">][</span><span class="n">param_2</span><span class="p">]</span>
+                    <span class="n">lower_2</span> <span class="o">=</span> <span class="n">center_2</span> <span class="o">+</span> <span class="n">res</span><span class="p">[</span><span class="s2">"negative_error"</span><span class="p">][</span><span class="n">param_2</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_sigma</span>
+                    <span class="n">upper_2</span> <span class="o">=</span> <span class="n">center_2</span> <span class="o">+</span> <span class="n">res</span><span class="p">[</span><span class="s2">"positive_error"</span><span class="p">][</span><span class="n">param_2</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_sigma</span>
 
                     <span class="k">if</span> <span class="p">(</span>
                         <span class="n">log_norm</span>
@@ -1020,12 +1020,12 @@
                         <span class="n">do_log</span> <span class="o">=</span> <span class="p">(</span><span class="n">do_log</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="kc">True</span><span class="p">)</span>
                         <span class="n">lower_2</span> <span class="o">=</span> <span class="p">(</span>
                             <span class="n">center_2</span>
-                            <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;negative_error&quot;</span><span class="p">][</span><span class="n">param_2</span><span class="p">]</span> <span class="o">/</span> <span class="n">center_2</span><span class="p">)</span>
+                            <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">res</span><span class="p">[</span><span class="s2">"negative_error"</span><span class="p">][</span><span class="n">param_2</span><span class="p">]</span> <span class="o">/</span> <span class="n">center_2</span><span class="p">)</span>
                             <span class="o">**</span> <span class="n">n_sigma</span>
                         <span class="p">)</span>
                         <span class="n">upper_2</span> <span class="o">=</span> <span class="p">(</span>
                             <span class="n">center_2</span>
-                            <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;positive_error&quot;</span><span class="p">][</span><span class="n">param_2</span><span class="p">]</span> <span class="o">/</span> <span class="n">center_2</span><span class="p">)</span>
+                            <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">res</span><span class="p">[</span><span class="s2">"positive_error"</span><span class="p">][</span><span class="n">param_2</span><span class="p">]</span> <span class="o">/</span> <span class="n">center_2</span><span class="p">)</span>
                             <span class="o">**</span> <span class="n">n_sigma</span>
                         <span class="p">)</span>
 
@@ -1045,7 +1045,7 @@
                             <span class="n">log</span><span class="o">=</span><span class="n">do_log</span><span class="p">,</span>
                         <span class="p">)</span>
                         <span class="n">figs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
-                        <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">-</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">param_1</span><span class="p">,</span> <span class="n">param_2</span><span class="p">))</span>
+                        <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2">-</span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">param_1</span><span class="p">,</span> <span class="n">param_2</span><span class="p">))</span>
                     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                         <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">figs</span><span class="p">,</span> <span class="n">names</span></div>
@@ -1054,12 +1054,12 @@
 <div class="viewcode-block" id="JointLikelihood.minus_log_like_profile">
 <a class="viewcode-back" href="../../../api/threeML.classicMLE.html#threeML.classicMLE.joint_likelihood.JointLikelihood.minus_log_like_profile">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">minus_log_like_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">trial_values</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the minus log likelihood for a given set of trial values.</span>
+<span class="w">        </span><span class="sd">"""Return the minus log likelihood for a given set of trial values.</span>
 
 <span class="sd">        :param trial_values: the trial values. Must be in the same</span>
 <span class="sd">            number as the free parameters in the model</span>
 <span class="sd">        :return: minus log likelihood</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># Keep track of the number of calls</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ncalls</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -1071,7 +1071,7 @@
         <span class="c1"># Check that there are no nans within the trial values</span>
 
         <span class="c1"># This is the fastest way to check for any nan</span>
-        <span class="c1"># (try other methods if you don&#39;t believe me)</span>
+        <span class="c1"># (try other methods if you don't believe me)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">trial_values</span><span class="p">,</span> <span class="n">trial_values</span><span class="o">.</span><span class="n">T</span><span class="p">)):</span>
             <span class="c1"># There are nans, something weird is going on. Return FIT_FAILED so the</span>
@@ -1100,7 +1100,7 @@
                 <span class="c1"># a big number for the likelihood so that the fit engine will avoid it</span>
 
                 <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                    <span class="s2">&quot;Fitting engine in forbidden space: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">trial_values</span><span class="p">,),</span>
+                    <span class="s2">"Fitting engine in forbidden space: </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">trial_values</span><span class="p">,),</span>
                 <span class="p">)</span>
 
                 <span class="k">return</span> <span class="n">minimization</span><span class="o">.</span><span class="n">FIT_FAILED</span>
@@ -1116,17 +1116,17 @@
         <span class="c1"># I use this weird check because it is not guaranteed that the plugins return</span>
         <span class="c1"># np.nan, especially if they are written in something other than python</span>
 
-        <span class="k">if</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">summed_log_likelihood</span> <span class="o">==</span> <span class="s2">&quot;nan&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">"</span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">summed_log_likelihood</span> <span class="o">==</span> <span class="s2">"nan"</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;These parameters returned a logLike = Nan: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">trial_values</span><span class="p">,),</span>
+                <span class="s2">"These parameters returned a logLike = Nan: </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">trial_values</span><span class="p">,),</span>
             <span class="p">)</span>
 
             <span class="k">return</span> <span class="n">minimization</span><span class="o">.</span><span class="n">FIT_FAILED</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                <span class="s2">&quot;trial values: </span><span class="si">%s</span><span class="s2"> -&gt; logL = </span><span class="si">%.3f</span><span class="s2">&quot;</span>
-                <span class="o">%</span> <span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;</span><span class="si">%.5g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">trial_values</span><span class="p">]),</span> <span class="n">summed_log_likelihood</span><span class="p">)</span>
+                <span class="s2">"trial values: </span><span class="si">%s</span><span class="s2"> -&gt; logL = </span><span class="si">%.3f</span><span class="s2">"</span>
+                <span class="o">%</span> <span class="p">(</span><span class="s2">","</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">"</span><span class="si">%.5g</span><span class="s2">"</span> <span class="o">%</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">trial_values</span><span class="p">]),</span> <span class="n">summed_log_likelihood</span><span class="p">)</span>
             <span class="p">)</span>
 
         <span class="c1"># Record this call</span>
@@ -1145,7 +1145,7 @@
 <div class="viewcode-block" id="JointLikelihood.set_minimizer">
 <a class="viewcode-back" href="../../../api/threeML.classicMLE.html#threeML.classicMLE.joint_likelihood.JointLikelihood.set_minimizer">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_minimizer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minimizer</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the minimizer to be used, among those available.</span>
+<span class="w">        </span><span class="sd">"""Set the minimizer to be used, among those available.</span>
 
 <span class="sd">        :param minimizer: the name of the new minimizer or an instance</span>
 <span class="sd">            of a LocalMinimization or a GlobalMinimization class. Using</span>
@@ -1153,19 +1153,19 @@
 <span class="sd">            control of the details of the minimization, like the choice</span>
 <span class="sd">            of algorithms (if supported by the used minimizer)</span>
 <span class="sd">        :return: (none)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">minimizer</span><span class="p">,</span> <span class="n">minimization</span><span class="o">.</span><span class="n">_Minimization</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_minimizer_type</span> <span class="o">=</span> <span class="n">minimizer</span>
 
-            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;set the minimizer to </span><span class="si">{</span><span class="n">minimizer</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"set the minimizer to </span><span class="si">{</span><span class="n">minimizer</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">minimizer</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">minimization</span><span class="o">.</span><span class="n">_minimizers</span><span class="p">:</span>
-                <span class="n">minimizer_list</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">minimization</span><span class="o">.</span><span class="n">_minimizers</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+                <span class="n">minimizer_list</span> <span class="o">=</span> <span class="s2">","</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">minimization</span><span class="o">.</span><span class="n">_minimizers</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Minimizer </span><span class="si">{</span><span class="n">minimizer</span><span class="si">}</span><span class="s2"> is not available on this system. &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;Available minimizers: </span><span class="si">{</span><span class="n">minimizer_list</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">"Minimizer </span><span class="si">{</span><span class="n">minimizer</span><span class="si">}</span><span class="s2"> is not available on this system. "</span>
+                    <span class="sa">f</span><span class="s2">"Available minimizers: </span><span class="si">{</span><span class="n">minimizer_list</span><span class="si">}</span><span class="s2">"</span>
                 <span class="p">)</span>
                 <span class="k">raise</span> <span class="n">MinimizerNotAvailable</span><span class="p">()</span>
 
@@ -1175,7 +1175,7 @@
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_minimizer_type</span> <span class="o">=</span> <span class="n">minimization</span><span class="o">.</span><span class="n">LocalMinimization</span><span class="p">(</span><span class="n">minimizer</span><span class="p">)</span>
 
-            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;set the minimizer to </span><span class="si">{</span><span class="n">minimizer</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"set the minimizer to </span><span class="si">{</span><span class="n">minimizer</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_minimizer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -1197,16 +1197,16 @@
 <div class="viewcode-block" id="JointLikelihood.restore_best_fit">
 <a class="viewcode-back" href="../../../api/threeML.classicMLE.html#threeML.classicMLE.joint_likelihood.JointLikelihood.restore_best_fit">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">restore_best_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Restore the model to its best fit.</span>
+<span class="w">        </span><span class="sd">"""Restore the model to its best fit.</span>
 
 <span class="sd">        :return: (none)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_minimizer</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_minimizer</span><span class="o">.</span><span class="n">restore_best_fit</span><span class="p">()</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Cannot restore best fit, since fit has not been executed.&quot;</span><span class="p">)</span></div>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Cannot restore best fit, since fit has not been executed."</span><span class="p">)</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_table_of_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
@@ -1214,29 +1214,29 @@
         <span class="n">max_length_of_name</span> <span class="o">=</span> <span class="mi">0</span>
 
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">current_name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">_of_</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">current_name</span> <span class="o">=</span> <span class="s2">"</span><span class="si">%s</span><span class="s2">_of_</span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
-            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">current_name</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">v</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="n">unit</span><span class="p">])</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">current_name</span><span class="p">,</span> <span class="s2">"</span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">v</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="n">unit</span><span class="p">])</span>
 
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">max_length_of_name</span><span class="p">:</span>
                 <span class="n">max_length_of_name</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">current_name</span><span class="p">)</span>
 
         <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span>
             <span class="n">rows</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
-            <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Name&quot;</span><span class="p">,</span> <span class="s2">&quot;Value&quot;</span><span class="p">,</span> <span class="s2">&quot;Unit&quot;</span><span class="p">],</span>
-            <span class="n">dtype</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;S</span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">max_length_of_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;S15&quot;</span><span class="p">),</span>
+            <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s2">"Name"</span><span class="p">,</span> <span class="s2">"Value"</span><span class="p">,</span> <span class="s2">"Unit"</span><span class="p">],</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="p">(</span><span class="s2">"S</span><span class="si">%i</span><span class="s2">"</span> <span class="o">%</span> <span class="n">max_length_of_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="s2">"S15"</span><span class="p">),</span>
         <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">table</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_plot_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name1</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">cc</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot the likelihood profile.</span>
+<span class="w">        </span><span class="sd">"""Plot the likelihood profile.</span>
 
 <span class="sd">        :param name1: Name of parameter</span>
 <span class="sd">        :param a: grid for the parameter</span>
 <span class="sd">        :param cc: log. likelihood values for the parameter</span>
 <span class="sd">        :return: a figure containing the likelihood profile</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># plot 1,2 and 3 sigma horizontal lines</span>
 
@@ -1270,25 +1270,25 @@
         <span class="c1"># (fit failed)</span>
         <span class="n">idx</span> <span class="o">=</span> <span class="n">cc</span> <span class="o">==</span> <span class="n">minimization</span><span class="o">.</span><span class="n">FIT_FAILED</span>
 
-        <span class="n">sub</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="o">~</span><span class="n">idx</span><span class="p">],</span> <span class="n">cc</span><span class="p">[</span><span class="o">~</span><span class="n">idx</span><span class="p">],</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;mle&quot;</span><span class="p">][</span><span class="s2">&quot;profile_color&quot;</span><span class="p">])</span>
+        <span class="n">sub</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="o">~</span><span class="n">idx</span><span class="p">],</span> <span class="n">cc</span><span class="p">[</span><span class="o">~</span><span class="n">idx</span><span class="p">],</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">threeML_config</span><span class="p">[</span><span class="s2">"mle"</span><span class="p">][</span><span class="s2">"profile_color"</span><span class="p">])</span>
 
-        <span class="c1"># Now plot the failed fits as &quot;x&quot;</span>
+        <span class="c1"># Now plot the failed fits as "x"</span>
 
-        <span class="n">sub</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="p">[</span><span class="n">cc</span><span class="o">.</span><span class="n">min</span><span class="p">()]</span> <span class="o">*</span> <span class="n">a</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">sub</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="p">[</span><span class="n">cc</span><span class="o">.</span><span class="n">min</span><span class="p">()]</span> <span class="o">*</span> <span class="n">a</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">"x"</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 
         <span class="c1"># Decide colors</span>
         <span class="n">colors</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;mle&quot;</span><span class="p">][</span><span class="s2">&quot;profile_level_1&quot;</span><span class="p">],</span>
-            <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;mle&quot;</span><span class="p">][</span><span class="s2">&quot;profile_level_2&quot;</span><span class="p">],</span>
-            <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;mle&quot;</span><span class="p">][</span><span class="s2">&quot;profile_level_3&quot;</span><span class="p">],</span>
+            <span class="n">threeML_config</span><span class="p">[</span><span class="s2">"mle"</span><span class="p">][</span><span class="s2">"profile_level_1"</span><span class="p">],</span>
+            <span class="n">threeML_config</span><span class="p">[</span><span class="s2">"mle"</span><span class="p">][</span><span class="s2">"profile_level_2"</span><span class="p">],</span>
+            <span class="n">threeML_config</span><span class="p">[</span><span class="s2">"mle"</span><span class="p">][</span><span class="s2">"profile_level_3"</span><span class="p">],</span>
         <span class="p">]</span>
 
         <span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">sigmas</span><span class="p">,</span> <span class="n">delta_chi2</span><span class="p">,</span> <span class="n">colors</span><span class="p">):</span>
             <span class="n">sub</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_current_minimum</span> <span class="o">+</span> <span class="n">d</span><span class="p">,</span>
-                <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span>
+                <span class="n">linestyle</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span>
                 <span class="n">color</span><span class="o">=</span><span class="n">c</span><span class="p">,</span>
-                <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> $\sigma$&quot;</span> <span class="o">%</span> <span class="n">s</span><span class="p">,</span>
+                <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">"</span><span class="si">%s</span><span class="s2"> $\sigma$"</span> <span class="o">%</span> <span class="n">s</span><span class="p">,</span>
                 <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
             <span class="p">)</span>
 
@@ -1303,14 +1303,14 @@
         <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">frameon</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="n">sub</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">name1</span><span class="p">)</span>
-        <span class="n">sub</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;-log( likelihood )&quot;</span><span class="p">)</span>
+        <span class="n">sub</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"-log( likelihood )"</span><span class="p">)</span>
 
         <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 
         <span class="k">return</span> <span class="n">fig</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_plot_contours</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name1</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">name2</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">cc</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Make a contour plot.</span>
+<span class="w">        </span><span class="sd">"""Make a contour plot.</span>
 
 <span class="sd">        :param name1: Name of the first parameter</span>
 <span class="sd">        :param a: Grid for the first parameter (dimension N)</span>
@@ -1319,7 +1319,7 @@
 <span class="sd">        :param cc: N x M matrix containing the value of the</span>
 <span class="sd">            log.likelihood for each point in the grid</span>
 <span class="sd">        :return: figure containing the contour</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># Check that we have something to plot</span>
 
@@ -1327,12 +1327,12 @@
 
         <span class="k">if</span> <span class="n">delta</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span>
-                <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">The maximum difference in statistic is </span><span class="si">%s</span><span class="s2"> among all the points in &quot;</span>
-                <span class="s2">&quot;the grid.&quot;</span> <span class="o">%</span> <span class="n">delta</span>
+                <span class="s2">"</span><span class="se">\n\n</span><span class="s2">The maximum difference in statistic is </span><span class="si">%s</span><span class="s2"> among all the points in "</span>
+                <span class="s2">"the grid."</span> <span class="o">%</span> <span class="n">delta</span>
             <span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span>
-                <span class="s2">&quot; This is too small. Enlarge the search region to display a contour &quot;</span>
-                <span class="s2">&quot;plot&quot;</span>
+                <span class="s2">" This is too small. Enlarge the search region to display a contour "</span>
+                <span class="s2">"plot"</span>
             <span class="p">)</span>
 
             <span class="k">return</span> <span class="kc">None</span>
@@ -1363,10 +1363,10 @@
         <span class="n">bounds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cc</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
 
         <span class="c1"># Define the color palette</span>
-        <span class="n">palette</span> <span class="o">=</span> <span class="n">colormaps</span><span class="p">[</span><span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;mle&quot;</span><span class="p">][</span><span class="s2">&quot;contour_cmap&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">]</span>  <span class="c1"># cm.Pastel1</span>
-        <span class="n">palette</span><span class="o">.</span><span class="n">set_over</span><span class="p">(</span><span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;mle&quot;</span><span class="p">][</span><span class="s2">&quot;contour_background&quot;</span><span class="p">])</span>
-        <span class="n">palette</span><span class="o">.</span><span class="n">set_under</span><span class="p">(</span><span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;mle&quot;</span><span class="p">][</span><span class="s2">&quot;contour_background&quot;</span><span class="p">])</span>
-        <span class="n">palette</span><span class="o">.</span><span class="n">set_bad</span><span class="p">(</span><span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;mle&quot;</span><span class="p">][</span><span class="s2">&quot;contour_background&quot;</span><span class="p">])</span>
+        <span class="n">palette</span> <span class="o">=</span> <span class="n">colormaps</span><span class="p">[</span><span class="n">threeML_config</span><span class="p">[</span><span class="s2">"mle"</span><span class="p">][</span><span class="s2">"contour_cmap"</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">]</span>  <span class="c1"># cm.Pastel1</span>
+        <span class="n">palette</span><span class="o">.</span><span class="n">set_over</span><span class="p">(</span><span class="n">threeML_config</span><span class="p">[</span><span class="s2">"mle"</span><span class="p">][</span><span class="s2">"contour_background"</span><span class="p">])</span>
+        <span class="n">palette</span><span class="o">.</span><span class="n">set_under</span><span class="p">(</span><span class="n">threeML_config</span><span class="p">[</span><span class="s2">"mle"</span><span class="p">][</span><span class="s2">"contour_background"</span><span class="p">])</span>
+        <span class="n">palette</span><span class="o">.</span><span class="n">set_bad</span><span class="p">(</span><span class="n">threeML_config</span><span class="p">[</span><span class="s2">"mle"</span><span class="p">][</span><span class="s2">"contour_background"</span><span class="p">])</span>
 
         <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
         <span class="n">sub</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
@@ -1378,9 +1378,9 @@
             <span class="n">cc</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_current_minimum</span> <span class="o">+</span> <span class="n">delta_chi2</span><span class="p">,</span>
             <span class="n">colors</span><span class="o">=</span><span class="p">(</span>
-                <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;mle&quot;</span><span class="p">][</span><span class="s2">&quot;contour_level_1&quot;</span><span class="p">],</span>
-                <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;mle&quot;</span><span class="p">][</span><span class="s2">&quot;contour_level_2&quot;</span><span class="p">],</span>
-                <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;mle&quot;</span><span class="p">][</span><span class="s2">&quot;contour_level_3&quot;</span><span class="p">],</span>
+                <span class="n">threeML_config</span><span class="p">[</span><span class="s2">"mle"</span><span class="p">][</span><span class="s2">"contour_level_1"</span><span class="p">],</span>
+                <span class="n">threeML_config</span><span class="p">[</span><span class="s2">"mle"</span><span class="p">][</span><span class="s2">"contour_level_2"</span><span class="p">],</span>
+                <span class="n">threeML_config</span><span class="p">[</span><span class="s2">"mle"</span><span class="p">][</span><span class="s2">"contour_level_3"</span><span class="p">],</span>
             <span class="p">),</span>
         <span class="p">)</span>
 
@@ -1396,7 +1396,7 @@
 <div class="viewcode-block" id="JointLikelihood.compute_TS">
 <a class="viewcode-back" href="../../../api/threeML.classicMLE.html#threeML.classicMLE.joint_likelihood.JointLikelihood.compute_TS">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compute_TS</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_name</span><span class="p">,</span> <span class="n">alt_hyp_mlike_df</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Computes the Likelihood Ratio Test statistic (TS) for the provided</span>
+<span class="w">        </span><span class="sd">"""Computes the Likelihood Ratio Test statistic (TS) for the provided</span>
 <span class="sd">        source.</span>
 
 <span class="sd">        :param source_name: name for the source</span>
@@ -1405,9 +1405,9 @@
 <span class="sd">        :return: a DataFrame containing the null hypothesis and the</span>
 <span class="sd">            alternative hypothesis -log(likelihood) values and the value</span>
 <span class="sd">            for TS for the source for each loaded dataset</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">source_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_likelihood_model</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Source </span><span class="si">{</span><span class="n">source_name</span><span class="si">}</span><span class="s2"> is not in the current model&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Source </span><span class="si">{</span><span class="n">source_name</span><span class="si">}</span><span class="s2"> is not in the current model"</span><span class="p">)</span>
 
         <span class="c1"># Clone model</span>
         <span class="n">model_clone</span> <span class="o">=</span> <span class="n">clone_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_likelihood_model</span><span class="p">)</span>
@@ -1436,8 +1436,8 @@
         <span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_list</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
             <span class="n">this_name</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">name</span>
 
-            <span class="n">null_hyp_mlike</span> <span class="o">=</span> <span class="n">null_hyp_mlike_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">this_name</span><span class="p">,</span> <span class="s2">&quot;-log(likelihood)&quot;</span><span class="p">]</span>
-            <span class="n">alt_hyp_mlike</span> <span class="o">=</span> <span class="n">alt_hyp_mlike_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">this_name</span><span class="p">,</span> <span class="s2">&quot;-log(likelihood)&quot;</span><span class="p">]</span>
+            <span class="n">null_hyp_mlike</span> <span class="o">=</span> <span class="n">null_hyp_mlike_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">this_name</span><span class="p">,</span> <span class="s2">"-log(likelihood)"</span><span class="p">]</span>
+            <span class="n">alt_hyp_mlike</span> <span class="o">=</span> <span class="n">alt_hyp_mlike_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">this_name</span><span class="p">,</span> <span class="s2">"-log(likelihood)"</span><span class="p">]</span>
 
             <span class="n">this_TS</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">null_hyp_mlike</span> <span class="o">-</span> <span class="n">alt_hyp_mlike</span><span class="p">)</span>
 
@@ -1447,9 +1447,9 @@
 
         <span class="n">TS_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_list</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
 
-        <span class="n">TS_df</span><span class="p">[</span><span class="s2">&quot;Null hyp.&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">null_hyp_mlikes</span>
-        <span class="n">TS_df</span><span class="p">[</span><span class="s2">&quot;Alt. hyp.&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">alt_hyp_mlikes</span>
-        <span class="n">TS_df</span><span class="p">[</span><span class="s2">&quot;TS&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">TSs</span>
+        <span class="n">TS_df</span><span class="p">[</span><span class="s2">"Null hyp."</span><span class="p">]</span> <span class="o">=</span> <span class="n">null_hyp_mlikes</span>
+        <span class="n">TS_df</span><span class="p">[</span><span class="s2">"Alt. hyp."</span><span class="p">]</span> <span class="o">=</span> <span class="n">alt_hyp_mlikes</span>
+        <span class="n">TS_df</span><span class="p">[</span><span class="s2">"TS"</span><span class="p">]</span> <span class="o">=</span> <span class="n">TSs</span>
 
         <span class="c1"># Reassign the original likelihood model to the datasets</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign_model_to_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_likelihood_model</span><span class="p">)</span>

@@ -155,9 +155,9 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">NautilusSampler</span><span class="p">(</span><span class="n">UnitCubeSampler</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">likelihood_model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">has_nautilus</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;You must install nautilus to use this sampler&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"You must install nautilus to use this sampler"</span><span class="p">)</span>
 
-            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s2">&quot;You must install nautilus to use this sampler&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s2">"You must install nautilus to use this sampler"</span><span class="p">)</span>
 
         <span class="nb">super</span><span class="p">(</span><span class="n">NautilusSampler</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">likelihood_model</span><span class="p">,</span> <span class="n">data_list</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -169,7 +169,7 @@
         <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Setup the nautilus sampler.</span>
+<span class="w">        </span><span class="sd">"""Setup the nautilus sampler.</span>
 <span class="sd">        See: https://nautilus-sampler.readthedocs.io/en/stable/index.html</span>
 <span class="sd">        and https://doi.org/10.1093/mnras/stad2441</span>
 
@@ -181,7 +181,7 @@
 <span class="sd">            Please refer to the official documentation. Defaults to the Nautilus</span>
 <span class="sd">            defaults.</span>
 <span class="sd">        :type kwargs: dict</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># get the allowed keys from the function definitions</span>
         <span class="n">allowed_setup_keys</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getfullargspec</span><span class="p">(</span><span class="n">nautilus</span><span class="o">.</span><span class="n">Sampler</span><span class="o">.</span><span class="fm">__init__</span><span class="p">)</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">5</span><span class="p">:]</span>
@@ -197,12 +197,12 @@
                 <span class="n">run_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;You provided </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> with a value of </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2"> wich is not available&quot;</span>
-                    <span class="o">+</span> <span class="s2">&quot; for neither the Nautilus initalization nor the run function. &quot;</span>
-                    <span class="o">+</span> <span class="s2">&quot;We will skip it.&quot;</span>
+                    <span class="sa">f</span><span class="s2">"You provided </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> with a value of </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2"> wich is not available"</span>
+                    <span class="o">+</span> <span class="s2">" for neither the Nautilus initalization nor the run function. "</span>
+                    <span class="o">+</span> <span class="s2">"We will skip it."</span>
                 <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;n_live&quot;</span><span class="p">:</span> <span class="n">n_live</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"n_live"</span><span class="p">:</span> <span class="n">n_live</span><span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">sampler_dict</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_run_dict</span> <span class="o">=</span> <span class="p">{}</span>
@@ -213,7 +213,7 @@
 <div class="viewcode-block" id="NautilusSampler.sample">
 <a class="viewcode-back" href="../../../api/threeML.bayesian.html#threeML.bayesian.nautilus_sampler.NautilusSampler.sample">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sample using the Nautilus sampler</span>
+<span class="w">        </span><span class="sd">"""Sample using the Nautilus sampler</span>
 
 <span class="sd">        :param quiet: Flag for anti-verbosity, defaults to false</span>
 <span class="sd">        :type quiet: bool</span>
@@ -222,9 +222,9 @@
 
 <span class="sd">        :rtype: np.array</span>
 <span class="sd">        :returns: samples</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_setup</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;You forgot to setup the sampler!&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"You forgot to setup the sampler!"</span><span class="p">)</span>
 
             <span class="k">return</span>
 
@@ -232,7 +232,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_free_parameters</span><span class="p">()</span>
 
-        <span class="c1"># chain_name = self._kwargs.pop(&quot;log_dir&quot;)</span>
+        <span class="c1"># chain_name = self._kwargs.pop("log_dir")</span>
 
         <span class="n">loglike</span><span class="p">,</span> <span class="n">nautilus_prior</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_construct_unitcube_posterior</span><span class="p">(</span><span class="n">return_copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
@@ -243,19 +243,19 @@
             <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_sampler_dict</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;parallel&quot;</span><span class="p">][</span><span class="s2">&quot;use_parallel&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">threeML_config</span><span class="p">[</span><span class="s2">"parallel"</span><span class="p">][</span><span class="s2">"use_parallel"</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                <span class="s2">&quot;If you want to run nautilus in parallel you need to use an ad-hoc &quot;</span>
-                <span class="s2">&quot;method or pass the &#39;pool=size_of_pool&#39; keyword to the setup method&quot;</span>
+                <span class="s2">"If you want to run nautilus in parallel you need to use an ad-hoc "</span>
+                <span class="s2">"method or pass the 'pool=size_of_pool' keyword to the setup method"</span>
             <span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="k">with</span> <span class="n">use_astromodels_memoization</span><span class="p">(</span><span class="kc">False</span><span class="p">):</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Start nautilus run&quot;</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Start nautilus run"</span><span class="p">)</span>
 
                 <span class="n">sampler</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_run_dict</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">loud</span><span class="p">)</span>
 
-                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;nautilus run done&quot;</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"nautilus run done"</span><span class="p">)</span>
 
         <span class="n">process_fit</span> <span class="o">=</span> <span class="kc">False</span>
 

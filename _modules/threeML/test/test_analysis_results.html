@@ -209,8 +209,8 @@
     <span class="n">frame2</span> <span class="o">=</span> <span class="n">res2</span><span class="o">.</span><span class="n">get_data_frame</span><span class="p">()</span>
 
     <span class="c1"># Remove the units (which cannot be checked with np.allclose)</span>
-    <span class="n">unit1</span> <span class="o">=</span> <span class="n">frame1</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;unit&quot;</span><span class="p">)</span>
-    <span class="n">unit2</span> <span class="o">=</span> <span class="n">frame2</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;unit&quot;</span><span class="p">)</span>
+    <span class="n">unit1</span> <span class="o">=</span> <span class="n">frame1</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"unit"</span><span class="p">)</span>
+    <span class="n">unit2</span> <span class="o">=</span> <span class="n">frame2</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"unit"</span><span class="p">)</span>
 
     <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">frame1</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">frame2</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.15</span><span class="p">)</span>
     <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">unit1</span> <span class="o">==</span> <span class="n">unit2</span><span class="p">)</span>
@@ -232,7 +232,7 @@
 
     <span class="n">ar</span> <span class="o">=</span> <span class="n">jl</span><span class="o">.</span><span class="n">results</span>  <span class="c1"># type: MLEResults</span>
 
-    <span class="n">temp_file</span> <span class="o">=</span> <span class="s2">&quot;__test_mle.fits&quot;</span>
+    <span class="n">temp_file</span> <span class="o">=</span> <span class="s2">"__test_mle.fits"</span>
 
     <span class="n">ar</span><span class="o">.</span><span class="n">write_to</span><span class="p">(</span><span class="n">temp_file</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
@@ -253,7 +253,7 @@
 
     <span class="n">ar</span> <span class="o">=</span> <span class="n">jl</span><span class="o">.</span><span class="n">results</span>  <span class="c1"># type: MLEResults</span>
 
-    <span class="n">temp_file</span> <span class="o">=</span> <span class="s2">&quot;__test_mle.h5&quot;</span>
+    <span class="n">temp_file</span> <span class="o">=</span> <span class="s2">"__test_mle.h5"</span>
 
     <span class="n">ar</span><span class="o">.</span><span class="n">write_to</span><span class="p">(</span><span class="n">temp_file</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">as_hdf</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
@@ -281,9 +281,9 @@
 
     <span class="n">analysis_set</span> <span class="o">=</span> <span class="n">AnalysisResultsSet</span><span class="p">([</span><span class="n">ar</span><span class="p">,</span> <span class="n">ar2</span><span class="p">])</span>
 
-    <span class="n">analysis_set</span><span class="o">.</span><span class="n">set_bins</span><span class="p">(</span><span class="s2">&quot;testing&quot;</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;s&quot;</span><span class="p">)</span>
+    <span class="n">analysis_set</span><span class="o">.</span><span class="n">set_bins</span><span class="p">(</span><span class="s2">"testing"</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="s2">"s"</span><span class="p">)</span>
 
-    <span class="n">temp_file</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;_analysis_set_test&quot;</span>
+    <span class="n">temp_file</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span> <span class="o">/</span> <span class="s2">"_analysis_set_test"</span>
 
     <span class="n">analysis_set</span><span class="o">.</span><span class="n">write_to</span><span class="p">(</span><span class="n">temp_file</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
@@ -311,10 +311,10 @@
 
     <span class="n">analysis_set</span> <span class="o">=</span> <span class="n">AnalysisResultsSet</span><span class="p">([</span><span class="n">ar</span><span class="p">,</span> <span class="n">ar2</span><span class="p">])</span>
 
-    <span class="n">analysis_set</span><span class="o">.</span><span class="n">set_bins</span><span class="p">(</span><span class="s2">&quot;testing&quot;</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;s&quot;</span><span class="p">)</span>
+    <span class="n">analysis_set</span><span class="o">.</span><span class="n">set_bins</span><span class="p">(</span><span class="s2">"testing"</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="s2">"s"</span><span class="p">)</span>
 
-    <span class="n">temp_file</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;_analysis_set_test.fits&quot;</span>
-    <span class="n">temp_file_hdf5</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;_analysis_set_test.h5&quot;</span>
+    <span class="n">temp_file</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span> <span class="o">/</span> <span class="s2">"_analysis_set_test.fits"</span>
+    <span class="n">temp_file_hdf5</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span> <span class="o">/</span> <span class="s2">"_analysis_set_test.h5"</span>
 
     <span class="n">analysis_set</span><span class="o">.</span><span class="n">write_to</span><span class="p">(</span><span class="n">temp_file</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
@@ -348,9 +348,9 @@
 
     <span class="n">analysis_set</span> <span class="o">=</span> <span class="n">AnalysisResultsSet</span><span class="p">([</span><span class="n">ar</span><span class="p">,</span> <span class="n">ar2</span><span class="p">])</span>
 
-    <span class="n">analysis_set</span><span class="o">.</span><span class="n">set_bins</span><span class="p">(</span><span class="s2">&quot;testing&quot;</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;s&quot;</span><span class="p">)</span>
+    <span class="n">analysis_set</span><span class="o">.</span><span class="n">set_bins</span><span class="p">(</span><span class="s2">"testing"</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="s2">"s"</span><span class="p">)</span>
 
-    <span class="n">temp_file</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;_analysis_set_test_hdf&quot;</span>
+    <span class="n">temp_file</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span> <span class="o">/</span> <span class="s2">"_analysis_set_test_hdf"</span>
 
     <span class="n">analysis_set</span><span class="o">.</span><span class="n">write_to</span><span class="p">(</span><span class="n">temp_file</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">as_hdf</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
@@ -376,8 +376,8 @@
 
     <span class="c1"># You can use the results for propagating errors non-linearly for analytical</span>
     <span class="c1"># functions</span>
-    <span class="n">p1</span> <span class="o">=</span> <span class="n">ar</span><span class="o">.</span><span class="n">get_variates</span><span class="p">(</span><span class="s2">&quot;fake.spectrum.main.composite.b_1&quot;</span><span class="p">)</span>
-    <span class="n">p2</span> <span class="o">=</span> <span class="n">ar</span><span class="o">.</span><span class="n">get_variates</span><span class="p">(</span><span class="s2">&quot;fake.spectrum.main.composite.a_1&quot;</span><span class="p">)</span>
+    <span class="n">p1</span> <span class="o">=</span> <span class="n">ar</span><span class="o">.</span><span class="n">get_variates</span><span class="p">(</span><span class="s2">"fake.spectrum.main.composite.b_1"</span><span class="p">)</span>
+    <span class="n">p2</span> <span class="o">=</span> <span class="n">ar</span><span class="o">.</span><span class="n">get_variates</span><span class="p">(</span><span class="s2">"fake.spectrum.main.composite.a_1"</span><span class="p">)</span>
 
     <span class="c1"># Test the printing</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">p1</span><span class="p">)</span>
@@ -438,7 +438,7 @@
 
     <span class="n">rb1</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">results</span>
 
-    <span class="n">temp_file</span> <span class="o">=</span> <span class="s2">&quot;_test_bayes.fits&quot;</span>
+    <span class="n">temp_file</span> <span class="o">=</span> <span class="s2">"_test_bayes.fits"</span>
 
     <span class="n">rb1</span><span class="o">.</span><span class="n">write_to</span><span class="p">(</span><span class="n">temp_file</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
@@ -461,7 +461,7 @@
 
     <span class="n">ar</span><span class="o">.</span><span class="n">corner_plot</span><span class="p">(</span><span class="n">components</span><span class="o">=</span><span class="p">[</span><span class="o">*</span><span class="n">ar</span><span class="o">.</span><span class="n">_free_parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">()][</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">])</span>
 
-    <span class="k">if</span> <span class="n">find_spec</span><span class="p">(</span><span class="s2">&quot;chainconsumer&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">find_spec</span><span class="p">(</span><span class="s2">"chainconsumer"</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">_</span> <span class="o">=</span> <span class="n">ar</span><span class="o">.</span><span class="n">corner_plot_cc</span><span class="p">()</span></div>
 
 
@@ -471,10 +471,10 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">test_one_free_parameter_input_output</span><span class="p">():</span>
     <span class="n">fluxUnit</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">TeV</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
 
-    <span class="n">temp_file</span> <span class="o">=</span> <span class="s2">&quot;__test_mle.fits&quot;</span>
+    <span class="n">temp_file</span> <span class="o">=</span> <span class="s2">"__test_mle.fits"</span>
 
     <span class="n">spectrum</span> <span class="o">=</span> <span class="n">Powerlaw</span><span class="p">()</span>
-    <span class="n">source</span> <span class="o">=</span> <span class="n">PointSource</span><span class="p">(</span><span class="s2">&quot;tst&quot;</span><span class="p">,</span> <span class="n">ra</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">dec</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">spectral_shape</span><span class="o">=</span><span class="n">spectrum</span><span class="p">)</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="n">PointSource</span><span class="p">(</span><span class="s2">"tst"</span><span class="p">,</span> <span class="n">ra</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">dec</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">spectral_shape</span><span class="o">=</span><span class="n">spectrum</span><span class="p">)</span>
     <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
 
     <span class="n">spectrum</span><span class="o">.</span><span class="n">piv</span> <span class="o">=</span> <span class="mi">7</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">TeV</span>
@@ -487,7 +487,7 @@
     <span class="n">spectrum</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">fix</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">spectrum</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">fix</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">cov_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mf">0.001</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
-    <span class="n">ar</span> <span class="o">=</span> <span class="n">MLEResults</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">cov_matrix</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;1&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
+    <span class="n">ar</span> <span class="o">=</span> <span class="n">MLEResults</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">cov_matrix</span><span class="p">,</span> <span class="p">{</span><span class="s2">"1"</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
 
     <span class="n">ar</span><span class="o">.</span><span class="n">write_to</span><span class="p">(</span><span class="n">temp_file</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">ar_reloaded</span> <span class="o">=</span> <span class="n">load_analysis_results</span><span class="p">(</span><span class="n">temp_file</span><span class="p">)</span>
@@ -498,7 +498,7 @@
     <span class="n">spectrum</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">fix</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">spectrum</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">fix</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">cov_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mf">0.001</span><span class="p">]</span> <span class="o">*</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">ar</span> <span class="o">=</span> <span class="n">MLEResults</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">cov_matrix</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;1&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
+    <span class="n">ar</span> <span class="o">=</span> <span class="n">MLEResults</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">cov_matrix</span><span class="p">,</span> <span class="p">{</span><span class="s2">"1"</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
 
     <span class="n">ar</span><span class="o">.</span><span class="n">write_to</span><span class="p">(</span><span class="n">temp_file</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">ar_reloaded</span> <span class="o">=</span> <span class="n">load_analysis_results</span><span class="p">(</span><span class="n">temp_file</span><span class="p">)</span>
@@ -509,7 +509,7 @@
     <span class="n">spectrum</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">fix</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">spectrum</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">fix</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">cov_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mf">0.001</span><span class="p">]</span> <span class="o">*</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">ar</span> <span class="o">=</span> <span class="n">MLEResults</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">cov_matrix</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;1&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
+    <span class="n">ar</span> <span class="o">=</span> <span class="n">MLEResults</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">cov_matrix</span><span class="p">,</span> <span class="p">{</span><span class="s2">"1"</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
 
     <span class="n">ar</span><span class="o">.</span><span class="n">write_to</span><span class="p">(</span><span class="n">temp_file</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">ar_reloaded</span> <span class="o">=</span> <span class="n">load_analysis_results</span><span class="p">(</span><span class="n">temp_file</span><span class="p">)</span>

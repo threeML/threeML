@@ -127,13 +127,13 @@
 <a class="viewcode-back" href="../../../../api/threeML.utils.spectrum.html#threeML.utils.spectrum.share_spectrum.ShareSpectrum">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ShareSpectrum</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datalist</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Object to check which plugins in datalist can share their spectrum</span>
+<span class="w">        </span><span class="sd">"""Object to check which plugins in datalist can share their spectrum</span>
 <span class="sd">        calculation, because they have the same input energy bins and</span>
 <span class="sd">        integration method.</span>
 
 <span class="sd">        Can save a lot of time if the calculation of the spectrum is</span>
 <span class="sd">        slow.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># List with different Ebin edges of the plugins</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data_ein_edges</span> <span class="o">=</span> <span class="p">[]</span>
@@ -153,8 +153,8 @@
                 <span class="n">share_spec_possible</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Plugin </span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2"> can not share spectrum calculation (Not SpectrumLike&quot;</span>
-                    <span class="s2">&quot; or DispersionSpectrumLike)&quot;</span>
+                    <span class="sa">f</span><span class="s2">"Plugin </span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2"> can not share spectrum calculation (Not SpectrumLike"</span>
+                    <span class="s2">" or DispersionSpectrumLike)"</span>
                 <span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_data_ein_edges</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_base_plugin_key</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
@@ -163,15 +163,15 @@
 
             <span class="k">if</span> <span class="n">share_spec_possible</span><span class="p">:</span>
                 <span class="n">found</span> <span class="o">=</span> <span class="kc">False</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Plugin </span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2"> can share spectrum calculation&quot;</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Plugin </span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2"> can share spectrum calculation"</span><span class="p">)</span>
                 <span class="c1"># Check if these Ein_bins are already used by an earlier plugin</span>
                 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_ein_edges</span><span class="p">)):</span>
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_ein_edges</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_ein_edges</span><span class="p">[</span><span class="n">i</span><span class="p">]):</span>
                             <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">equal</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_ein_edges</span><span class="p">[</span><span class="n">i</span><span class="p">])):</span>
                                 <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                                    <span class="sa">f</span><span class="s2">&quot;Plugin </span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2"> shares the spectrum calculation with&quot;</span>
-                                    <span class="sa">f</span><span class="s2">&quot; plugin </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span>
+                                    <span class="sa">f</span><span class="s2">"Plugin </span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2"> shares the spectrum calculation with"</span>
+                                    <span class="sa">f</span><span class="s2">" plugin </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">"</span>
                                 <span class="p">)</span>
                                 <span class="bp">self</span><span class="o">.</span><span class="n">_data_ebin_connect</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
                                 <span class="n">found</span> <span class="o">=</span> <span class="kc">True</span>

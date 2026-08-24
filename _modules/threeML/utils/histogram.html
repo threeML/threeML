@@ -141,16 +141,16 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">list_of_intervals</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
                 <span class="n">contents</span>
-            <span class="p">),</span> <span class="s2">&quot;contents and intervals are not the same dimension &quot;</span>
+            <span class="p">),</span> <span class="s2">"contents and intervals are not the same dimension "</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_contents</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">contents</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">errors</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
                 <span class="n">contents</span>
-            <span class="p">),</span> <span class="s2">&quot;contents and errors are not the same dimension &quot;</span>
+            <span class="p">),</span> <span class="s2">"contents and errors are not the same dimension "</span>
 
-            <span class="k">assert</span> <span class="n">is_poisson</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;cannot have errors and is_poisson True&quot;</span>
+            <span class="k">assert</span> <span class="n">is_poisson</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">"cannot have errors and is_poisson True"</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_errors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span>
 
@@ -160,7 +160,7 @@
         <span class="k">if</span> <span class="n">sys_errors</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys_errors</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
                 <span class="n">contents</span>
-            <span class="p">),</span> <span class="s2">&quot;contents and errors are not the same dimension &quot;</span>
+            <span class="p">),</span> <span class="s2">"contents and errors are not the same dimension "</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_sys_errors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sys_errors</span><span class="p">)</span>
 
@@ -173,18 +173,18 @@
 
         <span class="c1"># make some assertions so that we make sure the histogram makes sense</span>
 
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_contiguous</span><span class="p">(),</span> <span class="s2">&quot;Histograms must have contiguous bins&quot;</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_contiguous</span><span class="p">(),</span> <span class="s2">"Histograms must have contiguous bins"</span>
 
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_sorted</span><span class="p">,</span> <span class="s2">&quot;Histogram bins must be ordered&quot;</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_sorted</span><span class="p">,</span> <span class="s2">"Histogram bins must be ordered"</span>
 
 <div class="viewcode-block" id="Histogram.bin_entries">
 <a class="viewcode-back" href="../../../api/threeML.utils.html#threeML.utils.histogram.Histogram.bin_entries">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">bin_entries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entires</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add the entries into the proper bin.</span>
+<span class="w">        </span><span class="sd">"""Add the entries into the proper bin.</span>
 
 <span class="sd">        :param entires: list of events</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">which_bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="n">entires</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
 
@@ -198,24 +198,24 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">other</span><span class="p">,</span> <span class="s2">&quot;The bins are not equal&quot;</span>
+        <span class="k">assert</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">other</span><span class="p">,</span> <span class="s2">"The bins are not equal"</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_poisson</span><span class="p">:</span>
             <span class="k">assert</span> <span class="p">(</span>
                 <span class="n">other</span><span class="o">.</span><span class="n">is_poisson</span>
-            <span class="p">),</span> <span class="s2">&quot;Trying to add a Poisson and non-poisson histogram together&quot;</span>
+            <span class="p">),</span> <span class="s2">"Trying to add a Poisson and non-poisson histogram together"</span>
 
             <span class="n">new_errors</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="k">assert</span> <span class="p">(</span>
                 <span class="ow">not</span> <span class="n">other</span><span class="o">.</span><span class="n">is_poisson</span>
-            <span class="p">),</span> <span class="s2">&quot;Trying to add a Poisson and non-poisson histogram together&quot;</span>
+            <span class="p">),</span> <span class="s2">"Trying to add a Poisson and non-poisson histogram together"</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_errors</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">assert</span> <span class="p">(</span>
                     <span class="n">other</span><span class="o">.</span><span class="n">errors</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-                <span class="p">),</span> <span class="s2">&quot;This histogram has errors, but the other does not&quot;</span>
+                <span class="p">),</span> <span class="s2">"This histogram has errors, but the other does not"</span>
 
                 <span class="n">new_errors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
                     <span class="p">[</span>
@@ -289,7 +289,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">from_numpy_histogram</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span> <span class="n">hist</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sys_errors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">is_poisson</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        create a Histogram from a numpy histogram.</span>
 <span class="sd">        Example:</span>
 
@@ -304,7 +304,7 @@
 <span class="sd">        :param is_poisson: if the data is Poisson distributed or not</span>
 <span class="sd">        :param kwargs: any kwargs to pass along</span>
 <span class="sd">        :return: a Histogram object</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># extract the contents and the bin edges</span>
 
@@ -331,12 +331,12 @@
 <a class="viewcode-back" href="../../../api/threeML.utils.html#threeML.utils.histogram.Histogram.from_entries">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_entries</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">list_of_intervals</span><span class="p">,</span> <span class="n">entries</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a histogram from a list of intervals and entries to bin.</span>
+<span class="w">        </span><span class="sd">"""Create a histogram from a list of intervals and entries to bin.</span>
 
 <span class="sd">        :param list_of_intervals:</span>
 <span class="sd">        :param entries:</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">new_hist</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">list_of_intervals</span><span class="o">=</span><span class="n">list_of_intervals</span><span class="p">,</span> <span class="n">is_poisson</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
@@ -347,7 +347,7 @@
 
 <div class="viewcode-block" id="Histogram.display">
 <a class="viewcode-back" href="../../../api/threeML.utils.html#threeML.utils.histogram.Histogram.display">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">display</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fill_min</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">x_label</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">y_label</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">display</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fill_min</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">x_label</span><span class="o">=</span><span class="s2">"x"</span><span class="p">,</span> <span class="n">y_label</span><span class="o">=</span><span class="s2">"y"</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
 
         <span class="n">step_plot</span><span class="p">(</span>

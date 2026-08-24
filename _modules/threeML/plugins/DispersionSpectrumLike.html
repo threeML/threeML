@@ -133,7 +133,7 @@
 
 <span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
-<span class="n">__instrument_name</span> <span class="o">=</span> <span class="s2">&quot;General binned spectral data with energy dispersion&quot;</span>
+<span class="n">__instrument_name</span> <span class="o">=</span> <span class="s2">"General binned spectral data with energy dispersion"</span>
 
 
 <div class="viewcode-block" id="DispersionSpectrumLike">
@@ -149,7 +149,7 @@
         <span class="n">tstart</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">tstop</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A plugin for generic spectral data with energy dispersion, accepts</span>
+<span class="w">        </span><span class="sd">"""A plugin for generic spectral data with energy dispersion, accepts</span>
 <span class="sd">        an observed binned spectrum, and a background binned spectrum or plugin</span>
 <span class="sd">        with the background data.</span>
 
@@ -175,17 +175,17 @@
 <span class="sd">            exposure of the modeled background data comes from and</span>
 <span class="sd">            XYLike plugin</span>
 <span class="sd">        :param verbose: turn on/off verbose logging</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">observation</span><span class="p">,</span> <span class="n">BinnedSpectrumWithDispersion</span><span class="p">):</span>
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="s2">&quot;observed spectrum is not an instance of BinnedSpectrumWithDispersion&quot;</span>
+                <span class="s2">"observed spectrum is not an instance of BinnedSpectrumWithDispersion"</span>
             <span class="p">)</span>
 
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">observation</span><span class="o">.</span><span class="n">response</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;the observed spectrum does not have a response&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"the observed spectrum does not have a response"</span><span class="p">)</span>
 
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
 
@@ -208,9 +208,9 @@
 <div class="viewcode-block" id="DispersionSpectrumLike.set_model">
 <a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.DispersionSpectrumLike.DispersionSpectrumLike.set_model">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">likelihoodModel</span><span class="p">:</span> <span class="n">Model</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the model to be used in the joint minimization.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Set the model to be used in the joint minimization."""</span>
 
-        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;model set for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"model set for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
         <span class="c1"># Store likelihood model</span>
 
@@ -221,16 +221,16 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_like_model</span><span class="o">.</span><span class="n">sources</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                    <span class="s2">&quot;Source </span><span class="si">%s</span><span class="s2"> is not contained in &quot;</span>
-                    <span class="s2">&quot;the likelihood model&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_name</span>
+                    <span class="s2">"Source </span><span class="si">%s</span><span class="s2"> is not contained in "</span>
+                    <span class="s2">"the likelihood model"</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_name</span>
                 <span class="p">)</span>
 
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_like_model</span><span class="o">.</span><span class="n">extended_sources</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                    <span class="s2">&quot;SpectrumLike plugins do not support extended sources.&quot;</span>
-                    <span class="s2">&quot;You specified an extended source via the assign_to_source &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;function - source name is </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_source_name</span><span class="si">}</span><span class="s2">.&quot;</span>
+                    <span class="s2">"SpectrumLike plugins do not support extended sources."</span>
+                    <span class="s2">"You specified an extended source via the assign_to_source "</span>
+                    <span class="sa">f</span><span class="s2">"function - source name is </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_source_name</span><span class="si">}</span><span class="s2">."</span>
                 <span class="p">)</span>
 
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
@@ -238,9 +238,9 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_like_model</span><span class="o">.</span><span class="n">get_number_of_extended_sources</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                    <span class="s2">&quot;SpectrumLike plugins do not support extended sources.&quot;</span>
-                    <span class="s2">&quot;In case those are not relevant for that plugin use &quot;</span>
-                    <span class="s2">&quot;assign_to_source to assign a PointSource.&quot;</span>
+                    <span class="s2">"SpectrumLike plugins do not support extended sources."</span>
+                    <span class="s2">"In case those are not relevant for that plugin use "</span>
+                    <span class="s2">"assign_to_source to assign a PointSource."</span>
                 <span class="p">)</span>
 
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
@@ -252,7 +252,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_like_model</span><span class="p">,</span> <span class="n">integrate_method</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_integrate_method</span>
         <span class="p">)</span>
 
-        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2"> passing integral flux function to RSP&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2"> passing integral flux function to RSP"</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_integral_flux</span> <span class="o">=</span> <span class="n">integral</span>
 
@@ -262,24 +262,24 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_evaluate_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">precalc_fluxes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluates the full model over all channels :return:&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Evaluates the full model over all channels :return:"""</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_response</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="n">precalc_fluxes</span><span class="o">=</span><span class="n">precalc_fluxes</span><span class="p">)</span>
 
 <div class="viewcode-block" id="DispersionSpectrumLike.set_model_integrate_method">
 <a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.DispersionSpectrumLike.DispersionSpectrumLike.set_model_integrate_method">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_model_integrate_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Change the integrate method for the model integration :param method:</span>
+<span class="w">        </span><span class="sd">"""Change the integrate method for the model integration :param method:</span>
 
 <span class="sd">        (str) which method should be used (simpson or trapz)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">method</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;simpson&quot;</span><span class="p">,</span> <span class="s2">&quot;trapz&quot;</span><span class="p">,</span> <span class="s2">&quot;riemann&quot;</span><span class="p">]:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Only simpson and trapz are valid intergate methods.&quot;</span><span class="p">)</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"simpson"</span><span class="p">,</span> <span class="s2">"trapz"</span><span class="p">,</span> <span class="s2">"riemann"</span><span class="p">]:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"Only simpson and trapz are valid intergate methods."</span><span class="p">)</span>
 
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_model_integrate_method</span> <span class="o">=</span> <span class="n">method</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2"> changing model integration method to </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2"> changing model integration method to </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
         <span class="c1"># if like_model already set, upadte the integral function</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_like_model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -295,12 +295,12 @@
 <div class="viewcode-block" id="DispersionSpectrumLike.get_simulated_dataset">
 <a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.DispersionSpectrumLike.DispersionSpectrumLike.get_simulated_dataset">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_simulated_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns another DispersionSpectrumLike instance where data have been</span>
+<span class="w">        </span><span class="sd">"""Returns another DispersionSpectrumLike instance where data have been</span>
 <span class="sd">        obtained by randomizing the current expectation from the model, as well</span>
 <span class="sd">        as from the background (depending on the respective noise models)</span>
 
 <span class="sd">        :return: a DispersionSpectrumLike simulated instance</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># pass the response thru to the constructor</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">DispersionSpectrumLike</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">get_simulated_dataset</span><span class="p">(</span>
@@ -314,14 +314,14 @@
         <span class="n">info</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="c1"># we want to pass copies so that</span>
-        <span class="c1"># the user doesn&#39;t grab the instance</span>
+        <span class="c1"># the user doesn't grab the instance</span>
         <span class="c1"># and try to modify things. protection</span>
-        <span class="n">info</span><span class="p">[</span><span class="s2">&quot;pha&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="p">)</span>
+        <span class="n">info</span><span class="p">[</span><span class="s2">"pha"</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_spectrum</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">info</span><span class="p">[</span><span class="s2">&quot;bak&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_background_spectrum</span><span class="p">)</span>
+            <span class="n">info</span><span class="p">[</span><span class="s2">"bak"</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_background_spectrum</span><span class="p">)</span>
 
-        <span class="n">info</span><span class="p">[</span><span class="s2">&quot;rsp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_response</span><span class="p">)</span>
+        <span class="n">info</span><span class="p">[</span><span class="s2">"rsp"</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_response</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">info</span></div>
 
@@ -329,8 +329,8 @@
 <div class="viewcode-block" id="DispersionSpectrumLike.display_rsp">
 <a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.DispersionSpectrumLike.DispersionSpectrumLike.display_rsp">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">display_rsp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Display the currently loaded full response matrix, i.e., RMF and ARF</span>
-<span class="sd">        convolved :return:&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Display the currently loaded full response matrix, i.e., RMF and ARF</span>
+<span class="sd">        convolved :return:"""</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_response</span><span class="o">.</span><span class="n">plot_matrix</span><span class="p">()</span></div>
 
@@ -344,7 +344,7 @@
 
         <span class="n">super_out</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">DispersionSpectrumLike</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">_output</span><span class="p">()</span>  <span class="c1"># type: pd.Series</span>
 
-        <span class="n">the_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">({</span><span class="s2">&quot;response&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_response</span><span class="o">.</span><span class="n">rsp_filename</span><span class="p">})</span>
+        <span class="n">the_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">({</span><span class="s2">"response"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_response</span><span class="o">.</span><span class="n">rsp_filename</span><span class="p">})</span>
 
         <span class="c1"># return super_out.append(the_df)</span>
         <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">super_out</span><span class="p">,</span> <span class="n">the_df</span><span class="p">])</span>
@@ -357,7 +357,7 @@
         <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">force_rsp_write</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Writes the observation, background and (optional) rsp to PHAII fits</span>
+<span class="w">        </span><span class="sd">"""Writes the observation, background and (optional) rsp to PHAII fits</span>
 <span class="sd">        files.</span>
 
 <span class="sd">        :param filename: base file name to write out</span>
@@ -365,7 +365,7 @@
 <span class="sd">            files</span>
 <span class="sd">        :param force_rsp_write: force the writing of an rsp even if not</span>
 <span class="sd">            required</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># we need to pass up the variables to an OGIPLike</span>
         <span class="c1"># so that we have the proper variable name</span>
@@ -393,7 +393,7 @@
         <span class="n">scale_factor</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;This is the fake observation builder for SpectrumLike which builds</span>
+<span class="w">        </span><span class="sd">"""This is the fake observation builder for SpectrumLike which builds</span>
 <span class="sd">        data for a binned spectrum without dispersion. It must be overridden in</span>
 <span class="sd">        child classes.</span>
 
@@ -403,14 +403,14 @@
 <span class="sd">        :param source_sys_errors:</span>
 <span class="sd">        :param is_poisson:</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="s2">&quot;response&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">):</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;A response was not provided. Cannot build synthetic observation&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="s2">"response"</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"A response was not provided. Cannot build synthetic observation"</span><span class="p">)</span>
 
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
 
-        <span class="n">response</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;response&quot;</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"response"</span><span class="p">)</span>
 
         <span class="n">observation</span> <span class="o">=</span> <span class="n">BinnedSpectrumWithDispersion</span><span class="p">(</span>
             <span class="n">fake_data</span><span class="p">,</span>
@@ -421,8 +421,8 @@
             <span class="n">quality</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">scale_factor</span><span class="o">=</span><span class="n">scale_factor</span><span class="p">,</span>
             <span class="n">is_poisson</span><span class="o">=</span><span class="n">is_poisson</span><span class="p">,</span>
-            <span class="n">mission</span><span class="o">=</span><span class="s2">&quot;fake_mission&quot;</span><span class="p">,</span>
-            <span class="n">instrument</span><span class="o">=</span><span class="s2">&quot;fake_instrument&quot;</span><span class="p">,</span>
+            <span class="n">mission</span><span class="o">=</span><span class="s2">"fake_mission"</span><span class="p">,</span>
+            <span class="n">instrument</span><span class="o">=</span><span class="s2">"fake_instrument"</span><span class="p">,</span>
             <span class="n">tstart</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
             <span class="n">tstop</span><span class="o">=</span><span class="n">exposure</span><span class="p">,</span>
         <span class="p">)</span>
@@ -446,7 +446,7 @@
         <span class="n">scale_factor</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="c1"># type: () -&gt; DispersionSpectrumLike</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct a simulated spectrum from a given source function and</span>
+<span class="w">        </span><span class="sd">"""Construct a simulated spectrum from a given source function and</span>
 <span class="sd">        (optional) background function. If source and/or background errors are</span>
 <span class="sd">        not supplied, the likelihood is assumed to be Poisson.</span>
 
@@ -464,7 +464,7 @@
 <span class="sd">        :param scale_factor: the scale factor between source exposure /</span>
 <span class="sd">            bkg exposure</span>
 <span class="sd">        :return: simulated DispersionSpectrumLike plugin</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">channel_set</span> <span class="o">=</span> <span class="n">ChannelSet</span><span class="o">.</span><span class="n">from_instrument_response</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
 

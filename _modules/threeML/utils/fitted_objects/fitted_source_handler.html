@@ -114,7 +114,7 @@
   <h1>Source code for threeML.utils.fitted_objects.fitted_source_handler</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 
-<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;grburgess&quot;</span>
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">"grburgess"</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
@@ -144,7 +144,7 @@
         <span class="n">equal_tailed</span><span class="p">,</span>
         <span class="o">*</span><span class="n">independent_variable_range</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A generic 3ML fitted source  post-processor. This should be sub-</span>
+<span class="w">        </span><span class="sd">"""A generic 3ML fitted source  post-processor. This should be sub-</span>
 <span class="sd">        classed in general.</span>
 
 <span class="sd">        :param analysis_result: a 3ML analysis result</span>
@@ -154,7 +154,7 @@
 <span class="sd">        :param confidence_level: the confidence level to compute error</span>
 <span class="sd">        :param independent_variable_range: the range(s) of independent</span>
 <span class="sd">            values to compute the new function over</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># bind the class properties</span>
 
@@ -185,14 +185,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_evaluate</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The basics of adding are handled in the VariatesContainer</span>
+<span class="w">        </span><span class="sd">"""The basics of adding are handled in the VariatesContainer</span>
 
 <span class="sd">        :param other: another fitted source handler</span>
-<span class="sd">        :return: a VariatesContainer with the summed values.&quot;&quot;&quot;</span>
+<span class="sd">        :return: a VariatesContainer with the summed values."""</span>
 
         <span class="c1"># assure that the shapes will be the same</span>
         <span class="k">if</span> <span class="n">other</span><span class="o">.</span><span class="n">_out_shape</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_out_shape</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;cannot sum together arrays with different shapes!&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"cannot sum together arrays with different shapes!"</span><span class="p">)</span>
 
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
 
@@ -208,11 +208,11 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">values</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Dummy transform to be overridden in a subclass</span>
+<span class="w">        </span><span class="sd">"""Dummy transform to be overridden in a subclass</span>
 
 <span class="sd">        :param value: the value to transform</span>
 <span class="sd">        :return: transformed value</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="n">value</span>
 
@@ -223,10 +223,10 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_build_propagated_function</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Builds a propagated function using RandomVariates propagation.</span>
+<span class="w">        </span><span class="sd">"""Builds a propagated function using RandomVariates propagation.</span>
 
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">arguments</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -240,11 +240,11 @@
 
         <span class="k">else</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Got parameters </span><span class="si">{</span><span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span><span class="si">}</span><span class="s2"> but none&quot;</span>
-                <span class="s2">&quot; of them is free&quot;</span>
+                <span class="sa">f</span><span class="s2">"Got parameters </span><span class="si">{</span><span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span><span class="si">}</span><span class="s2"> but none"</span>
+                <span class="s2">" of them is free"</span>
             <span class="p">)</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                <span class="s2">&quot;There are no free parameters in this source or component!&quot;</span>
+                <span class="s2">"There are no free parameters in this source or component!"</span>
             <span class="p">)</span>
 
         <span class="n">test_variate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_analysis_results</span><span class="o">.</span><span class="n">get_variates</span><span class="p">(</span><span class="n">test_par</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
@@ -281,10 +281,10 @@
         <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the best or mean fit of the new function or quantity.</span>
+<span class="w">        </span><span class="sd">"""Calculate the best or mean fit of the new function or quantity.</span>
 
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># if there are independent variables</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_independent_variable_range</span><span class="p">:</span>
             <span class="n">variates</span> <span class="o">=</span> <span class="p">[]</span>
@@ -309,11 +309,11 @@
 
                         <span class="n">variates</span> <span class="o">=</span> <span class="n">Parallel</span><span class="p">()(</span>
                             <span class="n">delayed</span><span class="p">(</span><span class="n">execute</span><span class="p">)(</span><span class="n">v</span><span class="p">)</span>
-                            <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">variables</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Propagating error&quot;</span><span class="p">)</span>
+                            <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">variables</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">"Propagating error"</span><span class="p">)</span>
                         <span class="p">)</span>
 
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">variables</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Propagating errors&quot;</span><span class="p">):</span>
+                        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">variables</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">"Propagating errors"</span><span class="p">):</span>
                             <span class="n">variates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_propagated_function</span><span class="p">(</span><span class="o">*</span><span class="n">v</span><span class="p">))</span>
 
                 <span class="k">else</span><span class="p">:</span>
@@ -336,49 +336,49 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        :return: The VariatesContainer</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_propagated_variates</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">samples</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        :return: the raw samples of the variates</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_propagated_variates</span><span class="o">.</span><span class="n">samples</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">median</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        :return: the median of the variates</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_propagated_variates</span><span class="o">.</span><span class="n">median</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">average</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        :return: the average of the variates</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_propagated_variates</span><span class="o">.</span><span class="n">average</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">upper_error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        :return: the upper error of the variates</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_propagated_variates</span><span class="o">.</span><span class="n">upper_error</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">lower_error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        :return: the lower error of the variates</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_propagated_variates</span><span class="o">.</span><span class="n">lower_error</span></div>
 
@@ -387,12 +387,12 @@
 <div class="viewcode-block" id="transform">
 <a class="viewcode-back" href="../../../../api/threeML.utils.fitted_objects.html#threeML.utils.fitted_objects.fitted_source_handler.transform">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">transform</span><span class="p">(</span><span class="n">method</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A wrapper to call the _transform method for outputs of Variates</span>
+<span class="w">    </span><span class="sd">"""A wrapper to call the _transform method for outputs of Variates</span>
 <span class="sd">    container class</span>
 
 <span class="sd">    :param method: the method to wrap</span>
 <span class="sd">    :return: the wrapped method</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">wrapped</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -406,7 +406,7 @@
 <a class="viewcode-back" href="../../../../api/threeML.utils.fitted_objects.html#threeML.utils.fitted_objects.fitted_source_handler.VariatesContainer">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">VariatesContainer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">out_shape</span><span class="p">,</span> <span class="n">cl</span><span class="p">,</span> <span class="n">transform</span><span class="p">,</span> <span class="n">equal_tailed</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A container to store an *List* of RandomVariates and transform their</span>
+<span class="w">        </span><span class="sd">"""A container to store an *List* of RandomVariates and transform their</span>
 <span class="sd">        outputs to the appropriate shape. This cannot be done with normal numpy</span>
 <span class="sd">        array operations because an array of RandomVariates becomes a normal</span>
 <span class="sd">        ndarray. Therefore, we calculate the averages, errors, etc, and</span>
@@ -425,7 +425,7 @@
 <span class="sd">        :param transform: a method to transform the outputs</span>
 <span class="sd">        :param equal_tailed: whether to use equal-tailed error intervals</span>
 <span class="sd">            or not</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_values</span> <span class="o">=</span> <span class="n">values</span>  <span class="c1"># type: list</span>
 
@@ -488,72 +488,72 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        :return: the list of of RandomVariates</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_values</span>
 
     <span class="nd">@property</span>
     <span class="nd">@transform</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">samples</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 
 <span class="sd">        :return: the transformed raw samples</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_samples</span>
 
     <span class="nd">@property</span>
     <span class="nd">@transform</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">average</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 
 <span class="sd">        :return: the transformed average</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_average</span>
 
     <span class="nd">@property</span>
     <span class="nd">@transform</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">median</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 
 <span class="sd">        :return: the transformed median</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_median</span>
 
     <span class="nd">@property</span>
     <span class="nd">@transform</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">upper_error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 
 <span class="sd">        :return: the transformed upper error</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_upper_error</span>
 
     <span class="nd">@property</span>
     <span class="nd">@transform</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">lower_error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 
 <span class="sd">        :return: the transformed lower error</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lower_error</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 
 
 <span class="sd">        :param other:</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">assert</span> <span class="p">(</span>
             <span class="n">other</span><span class="o">.</span><span class="n">_out_shape</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_out_shape</span>
-        <span class="p">),</span> <span class="s2">&quot;cannot sum together arrays with different shapes!&quot;</span>
+        <span class="p">),</span> <span class="s2">"cannot sum together arrays with different shapes!"</span>
 
         <span class="c1"># this will get the value container for the other values</span>
 

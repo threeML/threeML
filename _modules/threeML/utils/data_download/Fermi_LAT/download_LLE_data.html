@@ -127,24 +127,24 @@
     <span class="n">_validate_fermi_trigger_name</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="n">_trigger_name_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(bn|grb?)? ?(\d</span><span class="si">{9}</span><span class="s2">)$&quot;</span><span class="p">)</span>
-<span class="n">_file_type_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;gll_(\D{2,5})_bn\d</span><span class="si">{9}</span><span class="s2">_v\d</span><span class="si">{2}</span><span class="s2">\.\D</span><span class="si">{3}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">_trigger_name_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"^(bn|grb?)? ?(\d</span><span class="si">{9}</span><span class="s2">)$"</span><span class="p">)</span>
+<span class="n">_file_type_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"gll_(\D{2,5})_bn\d</span><span class="si">{9}</span><span class="s2">_v\d</span><span class="si">{2}</span><span class="s2">\.\D</span><span class="si">{3}</span><span class="s2">"</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="download_LLE_trigger_data">
 <a class="viewcode-back" href="../../../../../api/threeML.utils.data_download.Fermi_LAT.html#threeML.utils.data_download.Fermi_LAT.download_LLE_data.download_LLE_trigger_data">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">download_LLE_trigger_data</span><span class="p">(</span><span class="n">trigger_name</span><span class="p">,</span> <span class="n">destination_directory</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Download the latest Fermi LAT LLE and RSP files from the HEASARC server.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">download_LLE_trigger_data</span><span class="p">(</span><span class="n">trigger_name</span><span class="p">,</span> <span class="n">destination_directory</span><span class="o">=</span><span class="s2">"."</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Download the latest Fermi LAT LLE and RSP files from the HEASARC server.</span>
 <span class="sd">    Will get the latest file versions. If the files already exist in your</span>
 <span class="sd">    destination directory, they will be skipped in the download process. The</span>
 <span class="sd">    output dictionary can be used as input to the FermiLATLLELike class.</span>
 
-<span class="sd">    example usage: download_LLE_trigger_data(&#39;080916009&#39;, destination_directory=&#39;.&#39;)</span>
+<span class="sd">    example usage: download_LLE_trigger_data('080916009', destination_directory='.')</span>
 
-<span class="sd">    :param trigger_name: trigger number (str) with no leading letter e.g. &#39;080916009&#39;</span>
+<span class="sd">    :param trigger_name: trigger number (str) with no leading letter e.g. '080916009'</span>
 <span class="sd">    :param destination_directory: download directory</span>
 <span class="sd">    :return: a dictionary with information about the download</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">sanitized_trigger_name_</span> <span class="o">=</span> <span class="n">_validate_fermi_trigger_name</span><span class="p">(</span><span class="n">trigger_name</span><span class="p">)</span>
 
@@ -153,25 +153,25 @@
     <span class="n">if_directory_not_existing_then_make</span><span class="p">(</span><span class="n">destination_directory</span><span class="p">)</span>
 
     <span class="c1"># Figure out the directory on the server</span>
-    <span class="n">url</span> <span class="o">=</span> <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;LAT&quot;</span><span class="p">][</span><span class="s2">&quot;public_http_location&quot;</span><span class="p">]</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="n">threeML_config</span><span class="p">[</span><span class="s2">"LAT"</span><span class="p">][</span><span class="s2">"public_http_location"</span><span class="p">]</span>
 
-    <span class="n">year</span> <span class="o">=</span> <span class="s2">&quot;20</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">sanitized_trigger_name_</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
-    <span class="n">directory</span> <span class="o">=</span> <span class="s2">&quot;triggers/</span><span class="si">%s</span><span class="s2">/bn</span><span class="si">%s</span><span class="s2">/current/&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">sanitized_trigger_name_</span><span class="p">)</span>
+    <span class="n">year</span> <span class="o">=</span> <span class="s2">"20</span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">sanitized_trigger_name_</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">directory</span> <span class="o">=</span> <span class="s2">"triggers/</span><span class="si">%s</span><span class="s2">/bn</span><span class="si">%s</span><span class="s2">/current/"</span> <span class="o">%</span> <span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">sanitized_trigger_name_</span><span class="p">)</span>
 
-    <span class="n">heasarc_web_page_url</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">directory</span><span class="p">)</span>
+    <span class="n">heasarc_web_page_url</span> <span class="o">=</span> <span class="s2">"</span><span class="si">%s</span><span class="s2">/</span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">directory</span><span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="n">downloader</span> <span class="o">=</span> <span class="n">ApacheDirectory</span><span class="p">(</span><span class="n">heasarc_web_page_url</span><span class="p">)</span>
 
     <span class="k">except</span> <span class="n">RemoteDirectoryNotFound</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">TriggerDoesNotExist</span><span class="p">(</span>
-            <span class="s2">&quot;Trigger </span><span class="si">%s</span><span class="s2"> does not exist at </span><span class="si">%s</span><span class="s2">&quot;</span>
+            <span class="s2">"Trigger </span><span class="si">%s</span><span class="s2"> does not exist at </span><span class="si">%s</span><span class="s2">"</span>
             <span class="o">%</span> <span class="p">(</span><span class="n">sanitized_trigger_name_</span><span class="p">,</span> <span class="n">heasarc_web_page_url</span><span class="p">)</span>
         <span class="p">)</span>
 
     <span class="c1"># Download only the lle, pt, cspec and rsp file (i.e., do not get all the png, pdf</span>
     <span class="c1"># and so on)</span>
-    <span class="n">pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;gll_(lle|pt|cspec)_bn.+\.(fit|rsp|pha)&quot;</span>
+    <span class="n">pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">"gll_(lle|pt|cspec)_bn.+\.(fit|rsp|pha)"</span>
 
     <span class="n">destination_directory_sanitized</span> <span class="o">=</span> <span class="n">sanitize_filename</span><span class="p">(</span><span class="n">destination_directory</span><span class="p">)</span>
 
@@ -186,25 +186,25 @@
     <span class="k">for</span> <span class="n">download</span> <span class="ow">in</span> <span class="n">downloaded_files</span><span class="p">:</span>
         <span class="n">file_type</span> <span class="o">=</span> <span class="n">_file_type_match</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">download</span><span class="p">))</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">file_type</span> <span class="o">==</span> <span class="s2">&quot;cspec&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">file_type</span> <span class="o">==</span> <span class="s2">"cspec"</span><span class="p">:</span>
             <span class="c1"># a cspec file can be 2 things: a CSPEC spectral set (with .pha) extension,</span>
             <span class="c1"># or a response matrix (with a .rsp extension)</span>
 
             <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">download</span><span class="p">))[</span><span class="mi">1</span><span class="p">]</span>
 
-            <span class="k">if</span> <span class="n">ext</span> <span class="o">==</span> <span class="s2">&quot;.rsp&quot;</span><span class="p">:</span>
-                <span class="n">file_type</span> <span class="o">=</span> <span class="s2">&quot;rsp&quot;</span>
+            <span class="k">if</span> <span class="n">ext</span> <span class="o">==</span> <span class="s2">".rsp"</span><span class="p">:</span>
+                <span class="n">file_type</span> <span class="o">=</span> <span class="s2">"rsp"</span>
 
-            <span class="k">elif</span> <span class="n">ext</span> <span class="o">==</span> <span class="s2">&quot;.pha&quot;</span><span class="p">:</span>
-                <span class="n">file_type</span> <span class="o">=</span> <span class="s2">&quot;cspec&quot;</span>
+            <span class="k">elif</span> <span class="n">ext</span> <span class="o">==</span> <span class="s2">".pha"</span><span class="p">:</span>
+                <span class="n">file_type</span> <span class="o">=</span> <span class="s2">"cspec"</span>
 
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Should never get here&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"Should never get here"</span><span class="p">)</span>
 
         <span class="c1"># The pt file is really an ft2 file</span>
 
-        <span class="k">if</span> <span class="n">file_type</span> <span class="o">==</span> <span class="s2">&quot;pt&quot;</span><span class="p">:</span>
-            <span class="n">file_type</span> <span class="o">=</span> <span class="s2">&quot;ft2&quot;</span>
+        <span class="k">if</span> <span class="n">file_type</span> <span class="o">==</span> <span class="s2">"pt"</span><span class="p">:</span>
+            <span class="n">file_type</span> <span class="o">=</span> <span class="s2">"ft2"</span>
 
         <span class="n">download_info</span><span class="p">[</span><span class="n">file_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">download</span>
 
@@ -213,11 +213,11 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_get_latest_version</span><span class="p">(</span><span class="n">filenames</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the list with only the highest version numbers selected.</span>
+<span class="w">    </span><span class="sd">"""Returns the list with only the highest version numbers selected.</span>
 
 <span class="sd">    :param filenames: list of LLE data files</span>
 <span class="sd">    :return:</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="c1"># this holds the version number</span>
     <span class="n">vn_as_num</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
@@ -230,10 +230,10 @@
 
     <span class="k">for</span> <span class="n">fn</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">:</span>
         <span class="c1"># get the first part of the file</span>
-        <span class="n">fn_stub</span><span class="p">,</span> <span class="n">vn_stub</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_v&quot;</span><span class="p">)</span>
+        <span class="n">fn_stub</span><span class="p">,</span> <span class="n">vn_stub</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"_v"</span><span class="p">)</span>
 
         <span class="c1"># split the vn string and extension</span>
-        <span class="n">vn_string</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">vn_stub</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+        <span class="n">vn_string</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">vn_stub</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"."</span><span class="p">)</span>
 
         <span class="c1"># convert the vn to a number</span>
         <span class="n">vn</span> <span class="o">=</span> <span class="mi">0</span>
@@ -261,7 +261,7 @@
         <span class="n">max_vn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">vn</span><span class="p">)</span>
 
         <span class="c1"># create the file name</span>
-        <span class="n">latest_version</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">_v</span><span class="si">%s</span><span class="s2">.</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">vn_string</span><span class="p">[</span><span class="n">max_vn</span><span class="p">],</span> <span class="n">ext</span><span class="p">[</span><span class="n">max_vn</span><span class="p">])</span>
+        <span class="n">latest_version</span> <span class="o">=</span> <span class="s2">"</span><span class="si">%s</span><span class="s2">_v</span><span class="si">%s</span><span class="s2">.</span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">vn_string</span><span class="p">[</span><span class="n">max_vn</span><span class="p">],</span> <span class="n">ext</span><span class="p">[</span><span class="n">max_vn</span><span class="p">])</span>
 
         <span class="n">final_file_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">latest_version</span><span class="p">)</span>
 
@@ -271,18 +271,18 @@
 <div class="viewcode-block" id="cleanup_downloaded_LLE_data">
 <a class="viewcode-back" href="../../../../../api/threeML.utils.data_download.Fermi_LAT.html#threeML.utils.data_download.Fermi_LAT.download_LLE_data.cleanup_downloaded_LLE_data">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">cleanup_downloaded_LLE_data</span><span class="p">(</span><span class="n">detector_information_dict</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Deletes data downloaded with download_LLE_trigger_data.</span>
+<span class="w">    </span><span class="sd">"""Deletes data downloaded with download_LLE_trigger_data.</span>
 
 <span class="sd">    :param detector_information_dict: the return dictionary from</span>
 <span class="sd">        download_LLE_trigger_data</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">for</span> <span class="n">data_file</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">detector_information_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Removing: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">data_file</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Removing: </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">data_file</span><span class="p">)</span>
 
         <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">data_file</span><span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span></div>
 
 </pre></div>
 

@@ -153,22 +153,22 @@
 <div class="viewcode-block" id="ApacheDirectory">
 <a class="viewcode-back" href="../../../api/threeML.io.html#threeML.io.download_from_http.ApacheDirectory">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ApacheDirectory</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Allows to interact with a directory listing like the one returned by an</span>
-<span class="sd">    Apache server.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Allows to interact with a directory listing like the one returned by an</span>
+<span class="sd">    Apache server."""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_request_result</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
 
         <span class="c1"># Make sure the request was ok</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request_result</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request_result</span><span class="o">.</span><span class="n">reason</span> <span class="o">==</span> <span class="s2">&quot;Not Found&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request_result</span><span class="o">.</span><span class="n">reason</span> <span class="o">==</span> <span class="s2">"Not Found"</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">RemoteDirectoryNotFound</span><span class="p">(</span>
-                    <span class="s2">&quot;Remote directory </span><span class="si">%s</span><span class="s2"> does not exist&quot;</span> <span class="o">%</span> <span class="n">url</span>
+                    <span class="s2">"Remote directory </span><span class="si">%s</span><span class="s2"> does not exist"</span> <span class="o">%</span> <span class="n">url</span>
                 <span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">HTTPError</span><span class="p">(</span>
-                    <span class="s2">&quot;HTTP request failed with reason: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request_result</span><span class="o">.</span><span class="n">reason</span>
+                    <span class="s2">"HTTP request failed with reason: </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request_result</span><span class="o">.</span><span class="n">reason</span>
                 <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request_result</span><span class="o">.</span><span class="n">text</span>
@@ -181,28 +181,28 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_directories</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_entries</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">entry</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;FILE&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">entry</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"FILE"</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_directories</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_directory_entries</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;List files and directories listed in the listing.</span>
+<span class="w">        </span><span class="sd">"""List files and directories listed in the listing.</span>
 
 <span class="sd">        :return: a list of tuples (entry name, type (DIR or FILE))</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># Get the files listed in the directory</span>
         <span class="c1"># A line in an Apache listing is like this:</span>
-        <span class="c1"># &lt;img src=&quot;/icons/unknown.gif&quot; alt=&quot;[   ]&quot;&gt;</span>
-        <span class="c1"># &lt;a href=&quot;glg_cspec_b0_bn100101988_v02.rsp&quot;&gt;glg_cspec_b0_bn100101988_v02.rsp</span>
+        <span class="c1"># &lt;img src="/icons/unknown.gif" alt="[   ]"&gt;</span>
+        <span class="c1"># &lt;a href="glg_cspec_b0_bn100101988_v02.rsp"&gt;glg_cspec_b0_bn100101988_v02.rsp</span>
         <span class="c1"># &lt;/a&gt;</span>
         <span class="c1">#                16-Nov-2012 15:14   96K</span>
-        <span class="n">regexp</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;&lt;img src=.+ alt=(.+)&gt;\s?&lt;a href=.+&gt;(.+)&lt;/a&gt;.+&quot;</span><span class="p">)</span>
+        <span class="n">regexp</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"&lt;img src=.+ alt=(.+)&gt;\s?&lt;a href=.+&gt;(.+)&lt;/a&gt;.+"</span><span class="p">)</span>
 
         <span class="c1"># Apache puts files in a &lt;pre&gt;&lt;/pre&gt; tag, so lines are ended simply with \n</span>
-        <span class="n">lines</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
 
         <span class="c1"># Now loop over the lines and extract the file name</span>
         <span class="n">entries</span> <span class="o">=</span> <span class="p">[]</span>
@@ -216,14 +216,14 @@
                 <span class="n">type_token</span><span class="p">,</span> <span class="n">filename_token</span> <span class="o">=</span> <span class="n">token</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
 
                 <span class="c1"># Figure out if this is a directory or a file. A directory has a</span>
-                <span class="c1"># alt=&quot;[DIR]&quot; attribute in the</span>
-                <span class="c1"># &lt;img&gt; tag, a file has a alt=&quot;[   ]&quot; or other things (if a known type)</span>
+                <span class="c1"># alt="[DIR]" attribute in the</span>
+                <span class="c1"># &lt;img&gt; tag, a file has a alt="[   ]" or other things (if a known type)</span>
 
-                <span class="k">if</span> <span class="n">type_token</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;DIR&quot;</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">entry_type</span> <span class="o">=</span> <span class="s2">&quot;DIR&quot;</span>
+                <span class="k">if</span> <span class="n">type_token</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">"DIR"</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">entry_type</span> <span class="o">=</span> <span class="s2">"DIR"</span>
 
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">entry_type</span> <span class="o">=</span> <span class="s2">&quot;FILE&quot;</span>
+                    <span class="n">entry_type</span> <span class="o">=</span> <span class="s2">"FILE"</span>
 
                 <span class="c1"># Append entry</span>
 
@@ -252,7 +252,7 @@
     <span class="p">):</span>
         <span class="k">assert</span> <span class="p">(</span>
             <span class="n">remote_filename</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">files</span>
-        <span class="p">),</span> <span class="s2">&quot;File </span><span class="si">%s</span><span class="s2"> is not contained in this directory (</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span>
+        <span class="p">),</span> <span class="s2">"File </span><span class="si">%s</span><span class="s2"> is not contained in this directory (</span><span class="si">%s</span><span class="s2">)"</span> <span class="o">%</span> <span class="p">(</span>
             <span class="n">remote_filename</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_request_result</span><span class="o">.</span><span class="n">url</span><span class="p">,</span>
         <span class="p">)</span>
@@ -260,15 +260,15 @@
         <span class="n">destination_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">sanitize_filename</span><span class="p">(</span><span class="n">destination_path</span><span class="p">,</span> <span class="n">abspath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="k">assert</span> <span class="n">path_exists_and_is_directory</span><span class="p">(</span><span class="n">destination_path</span><span class="p">),</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Provided destination </span><span class="si">{</span><span class="n">destination_path</span><span class="si">}</span><span class="s2"> does not exist or &quot;</span>
-            <span class="s2">&quot;is not a directory&quot;</span>
+            <span class="sa">f</span><span class="s2">"Provided destination </span><span class="si">{</span><span class="n">destination_path</span><span class="si">}</span><span class="s2"> does not exist or "</span>
+            <span class="s2">"is not a directory"</span>
         <span class="p">)</span>
 
         <span class="c1"># If no filename is specified, use the same name that the file has on the remote</span>
         <span class="c1"># server</span>
 
         <span class="k">if</span> <span class="n">new_filename</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">new_filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">remote_filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">new_filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">remote_filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"/"</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
         <span class="c1"># Get the fully qualified path for the remote and the local file</span>
 
@@ -285,25 +285,25 @@
         <span class="k">with</span> <span class="n">Session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>  <span class="c1"># use a Session context manager to allow retries</span>
             <span class="c1"># using requests</span>
             <span class="n">retries</span> <span class="o">=</span> <span class="n">Retry</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">backoff_factor</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
-            <span class="n">session</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="s2">&quot;https://&quot;</span><span class="p">,</span> <span class="n">HTTPAdapter</span><span class="p">(</span><span class="n">max_retries</span><span class="o">=</span><span class="n">retries</span><span class="p">))</span>
-            <span class="n">session</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="s2">&quot;http://&quot;</span><span class="p">,</span> <span class="n">HTTPAdapter</span><span class="p">(</span><span class="n">max_retries</span><span class="o">=</span><span class="n">retries</span><span class="p">))</span>
+            <span class="n">session</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="s2">"https://"</span><span class="p">,</span> <span class="n">HTTPAdapter</span><span class="p">(</span><span class="n">max_retries</span><span class="o">=</span><span class="n">retries</span><span class="p">))</span>
+            <span class="n">session</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="s2">"http://"</span><span class="p">,</span> <span class="n">HTTPAdapter</span><span class="p">(</span><span class="n">max_retries</span><span class="o">=</span><span class="n">retries</span><span class="p">))</span>
 
             <span class="n">this_request</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">remote_path</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
 
             <span class="c1"># Figure out the size of the file</span>
 
-            <span class="n">file_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">this_request</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Content-Length&quot;</span><span class="p">])</span>
+            <span class="n">file_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">this_request</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">"Content-Length"</span><span class="p">])</span>
 
-            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;downloading </span><span class="si">{</span><span class="n">remote_filename</span><span class="si">}</span><span class="s2"> of size </span><span class="si">{</span><span class="n">file_size</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"downloading </span><span class="si">{</span><span class="n">remote_filename</span><span class="si">}</span><span class="s2"> of size </span><span class="si">{</span><span class="n">file_size</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
             <span class="c1"># Now check if we really need to download this file</span>
 
             <span class="k">if</span> <span class="n">compress</span><span class="p">:</span>
                 <span class="c1"># Add a .gz at the end of the file path</span>
 
-                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;file </span><span class="si">{</span><span class="n">remote_filename</span><span class="si">}</span><span class="s2"> will be downloaded and compressed&quot;</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"file </span><span class="si">{</span><span class="n">remote_filename</span><span class="si">}</span><span class="s2"> will be downloaded and compressed"</span><span class="p">)</span>
 
-                <span class="n">local_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">local_path</span><span class="si">}</span><span class="s2">.gz&quot;</span><span class="p">)</span>
+                <span class="n">local_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">local_path</span><span class="si">}</span><span class="s2">.gz"</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">file_existing_and_readable</span><span class="p">(</span><span class="n">local_path</span><span class="p">):</span>
                 <span class="n">local_size</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">local_path</span><span class="p">)</span>
@@ -314,7 +314,7 @@
 
                     <span class="c1"># No need to download it again</span>
 
-                    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;file </span><span class="si">{</span><span class="n">remote_filename</span><span class="si">}</span><span class="s2"> is already downloaded!&quot;</span><span class="p">)</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"file </span><span class="si">{</span><span class="n">remote_filename</span><span class="si">}</span><span class="s2"> is already downloaded!"</span><span class="p">)</span>
 
                     <span class="k">return</span> <span class="n">local_path</span>
 
@@ -324,7 +324,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">first_byte</span> <span class="o">=</span> <span class="mi">0</span>
 
-            <span class="c1"># Chunk size shouldn&#39;t bee too small otherwise we are causing a bottleneck</span>
+            <span class="c1"># Chunk size shouldn't bee too small otherwise we are causing a bottleneck</span>
             <span class="c1"># in the download speed</span>
             <span class="n">chunk_size</span> <span class="o">=</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">10</span>
 
@@ -338,20 +338,20 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">opener</span> <span class="o">=</span> <span class="nb">open</span>
 
-            <span class="k">if</span> <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;interface&quot;</span><span class="p">][</span><span class="s2">&quot;progress_bars&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">threeML_config</span><span class="p">[</span><span class="s2">"interface"</span><span class="p">][</span><span class="s2">"progress_bars"</span><span class="p">]:</span>
                 <span class="c1"># Set a title for the progress bar</span>
-                <span class="n">bar_title</span> <span class="o">=</span> <span class="s2">&quot;Downloading </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">new_filename</span>
+                <span class="n">bar_title</span> <span class="o">=</span> <span class="s2">"Downloading </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">new_filename</span>
 
                 <span class="n">bar</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span>
                     <span class="n">initial</span><span class="o">=</span><span class="n">first_byte</span><span class="p">,</span>
                     <span class="n">unit_scale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                     <span class="n">unit_divisor</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span>
-                    <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;B&quot;</span><span class="p">,</span>
-                    <span class="n">total</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">this_request</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Content-Length&quot;</span><span class="p">]),</span>
+                    <span class="n">unit</span><span class="o">=</span><span class="s2">"B"</span><span class="p">,</span>
+                    <span class="n">total</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">this_request</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">"Content-Length"</span><span class="p">]),</span>
                     <span class="n">desc</span><span class="o">=</span><span class="n">bar_title</span><span class="p">,</span>
                 <span class="p">)</span>
 
-                <span class="k">with</span> <span class="n">opener</span><span class="p">(</span><span class="n">local_path</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">opener</span><span class="p">(</span><span class="n">local_path</span><span class="p">,</span> <span class="s2">"wb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                     <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">this_request</span><span class="o">.</span><span class="n">iter_content</span><span class="p">(</span><span class="n">chunk_size</span><span class="o">=</span><span class="n">chunk_size</span><span class="p">):</span>
                         <span class="k">if</span> <span class="n">chunk</span><span class="p">:</span>  <span class="c1"># filter out keep-alive new chunks</span>
                             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
@@ -360,7 +360,7 @@
                 <span class="n">bar</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">with</span> <span class="n">opener</span><span class="p">(</span><span class="n">local_path</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">opener</span><span class="p">(</span><span class="n">local_path</span><span class="p">,</span> <span class="s2">"wb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                     <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">this_request</span><span class="o">.</span><span class="n">iter_content</span><span class="p">(</span><span class="n">chunk_size</span><span class="o">=</span><span class="n">chunk_size</span><span class="p">):</span>
                         <span class="k">if</span> <span class="n">chunk</span><span class="p">:</span>  <span class="c1"># filter out keep-alive new chunks</span>
                             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
@@ -371,7 +371,7 @@
 <div class="viewcode-block" id="ApacheDirectory.download_all_files">
 <a class="viewcode-back" href="../../../api/threeML.io.html#threeML.io.download_from_http.ApacheDirectory.download_all_files">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">download_all_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">destination_path</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Download all files in the current directory.</span>
+<span class="w">        </span><span class="sd">"""Download all files in the current directory.</span>
 
 <span class="sd">        :param destination_path: the path for the destination directory</span>
 <span class="sd">            in the local file system</span>
@@ -381,7 +381,7 @@
 <span class="sd">            this pattern (a regular expression) will be downloaded</span>
 <span class="sd">        :return: list of the downloaded files as absolute paths in the</span>
 <span class="sd">            local file system</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">local_files</span> <span class="o">=</span> <span class="p">[]</span>
 

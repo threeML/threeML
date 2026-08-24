@@ -133,7 +133,7 @@
         <span class="c1"># Make sure there is no NaN or infinity</span>
         <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span>
             <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">likelihood_values</span><span class="p">)</span>
-        <span class="p">),</span> <span class="s2">&quot;Infinity or NaN in likelihood values&quot;</span>
+        <span class="p">),</span> <span class="s2">"Infinity or NaN in likelihood values"</span>
 
         <span class="n">likelihood_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">likelihood_values</span><span class="p">)</span>
         <span class="n">parameter_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">parameter_values</span><span class="p">)</span>
@@ -146,12 +146,12 @@
         <span class="c1"># n_integration_points = max(int(n_integration_points), 11)</span>
 
         <span class="k">if</span> <span class="n">n_integration_points</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="c1"># n_points is even, it shouldn&#39;t be otherwise things like Simpson rule will</span>
+            <span class="c1"># n_points is even, it shouldn't be otherwise things like Simpson rule will</span>
             <span class="c1"># have problems</span>
             <span class="n">n_integration_points</span> <span class="o">+=</span> <span class="mi">1</span>
 
             <span class="n">custom_warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="s2">&quot;The number of integration points should not be even. Adding +1&quot;</span>
+                <span class="s2">"The number of integration points should not be even. Adding +1"</span>
             <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_n_integration_points</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_integration_points</span><span class="p">)</span>
@@ -169,8 +169,8 @@
         <span class="n">res</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">minimize_scalar</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_minus_likelihood_interp</span><span class="p">,</span>
             <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_min_par_value</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_par_value</span><span class="p">)),</span>
-            <span class="n">method</span><span class="o">=</span><span class="s2">&quot;bounded&quot;</span><span class="p">,</span>
-            <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;maxiter&quot;</span><span class="p">:</span> <span class="mi">10000</span><span class="p">,</span> <span class="s2">&quot;disp&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;xatol&quot;</span><span class="p">:</span> <span class="mf">1e-3</span><span class="p">},</span>
+            <span class="n">method</span><span class="o">=</span><span class="s2">"bounded"</span><span class="p">,</span>
+            <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">"maxiter"</span><span class="p">:</span> <span class="mi">10000</span><span class="p">,</span> <span class="s2">"disp"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">"xatol"</span><span class="p">:</span> <span class="mf">1e-3</span><span class="p">},</span>
         <span class="p">)</span>
 
         <span class="c1"># res = scipy.optimize.minimize(</span>
@@ -178,12 +178,12 @@
         <span class="c1">#     x0=[np.log10(parameter_values[idx])],</span>
         <span class="c1">#     jac=lambda x: self._minus_likelihood_interp.derivative(1)(x),</span>
         <span class="c1">#     bounds=(self._min_par_value, self._max_par_value),</span>
-        <span class="c1">#     method=&quot;bounded&quot;,</span>
+        <span class="c1">#     method="bounded",</span>
         <span class="c1">#     tol=1e-3,</span>
-        <span class="c1">#     options={&quot;maxiter&quot;: 10000, &quot;disp&quot;: True},</span>
+        <span class="c1">#     options={"maxiter": 10000, "disp": True},</span>
         <span class="c1"># )</span>
 
-        <span class="k">assert</span> <span class="n">res</span><span class="o">.</span><span class="n">success</span><span class="p">,</span> <span class="s2">&quot;Could not find minimum&quot;</span>
+        <span class="k">assert</span> <span class="n">res</span><span class="o">.</span><span class="n">success</span><span class="p">,</span> <span class="s2">"Could not find minimum"</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_minimum</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">fun</span><span class="p">))</span>
 
@@ -229,7 +229,7 @@
                 <span class="n">bounding_f</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_min_par_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_minimum</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">full_output</span><span class="o">=</span><span class="kc">True</span>
             <span class="p">)</span>
 
-            <span class="k">assert</span> <span class="n">res</span><span class="o">.</span><span class="n">converged</span><span class="p">,</span> <span class="s2">&quot;Could not find lower bound&quot;</span>
+            <span class="k">assert</span> <span class="n">res</span><span class="o">.</span><span class="n">converged</span><span class="p">,</span> <span class="s2">"Could not find lower bound"</span>
 
         <span class="k">if</span> <span class="n">bounding_f</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_par_value</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
             <span class="c1"># This is a lower limit measurement, i.e., there is no upper bound on the</span>
@@ -250,7 +250,7 @@
                 <span class="n">bounding_f</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_minimum</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_par_value</span><span class="p">,</span> <span class="n">full_output</span><span class="o">=</span><span class="kc">True</span>
             <span class="p">)</span>
 
-            <span class="k">assert</span> <span class="n">res</span><span class="o">.</span><span class="n">converged</span><span class="p">,</span> <span class="s2">&quot;Could not find upper bound&quot;</span>
+            <span class="k">assert</span> <span class="n">res</span><span class="o">.</span><span class="n">converged</span><span class="p">,</span> <span class="s2">"Could not find upper bound"</span>
 
         <span class="k">return</span> <span class="n">low_bound_cl</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_minimum</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">hi_bound_cl</span></div>
 </div>
@@ -299,7 +299,7 @@
 
         <span class="k">assert</span> <span class="p">(</span>
             <span class="n">all_xx</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">total_n</span>
-        <span class="p">),</span> <span class="s2">&quot;One or more containers are overlapping. This is not supported.&quot;</span>
+        <span class="p">),</span> <span class="s2">"One or more containers are overlapping. This is not supported."</span>
 
         <span class="k">return</span> <span class="n">all_xx</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">all_xx</span><span class="p">,</span> <span class="n">splits</span><span class="p">),</span> <span class="n">splits</span>
 
@@ -333,10 +333,10 @@
 <div class="viewcode-block" id="CastroLike.set_model">
 <a class="viewcode-back" href="../../../../api/threeML.plugins.experimental.html#threeML.plugins.experimental.CastroLike.CastroLike.set_model">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">likelihood_model_instance</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the model to be used in the joint minimization.</span>
+<span class="w">        </span><span class="sd">"""Set the model to be used in the joint minimization.</span>
 
 <span class="sd">        Must be a LikelihoodModel instance.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_likelihood_model</span> <span class="o">=</span> <span class="n">likelihood_model_instance</span></div>
 
@@ -344,8 +344,8 @@
 <div class="viewcode-block" id="CastroLike.get_log_like">
 <a class="viewcode-back" href="../../../../api/threeML.plugins.experimental.html#threeML.plugins.experimental.CastroLike.CastroLike.get_log_like">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_log_like</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the value of the log-likelihood with the current values for</span>
-<span class="sd">        the parameters.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return the value of the log-likelihood with the current values for</span>
+<span class="sd">        the parameters."""</span>
 
         <span class="n">log_l</span> <span class="o">=</span> <span class="mf">0.0</span>
 
@@ -380,14 +380,14 @@
 <div class="viewcode-block" id="CastroLike.inner_fit">
 <a class="viewcode-back" href="../../../../api/threeML.plugins.experimental.html#threeML.plugins.experimental.CastroLike.CastroLike.inner_fit">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">inner_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;This is used for the profile likelihood.</span>
+<span class="w">        </span><span class="sd">"""This is used for the profile likelihood.</span>
 
 <span class="sd">        Keeping fixed all parameters in the LikelihoodModel, this method</span>
 <span class="sd">        minimize the logLike over the remaining nuisance parameters,</span>
 <span class="sd">        i.e., the parameters belonging only to the model for this</span>
 <span class="sd">        particular detector. If there are no nuisance parameters, simply</span>
 <span class="sd">        return the logLike value.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_log_like</span><span class="p">()</span></div>
 
@@ -433,7 +433,7 @@
 
                 <span class="n">uls_yerrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dy</span><span class="p">)</span>
 
-        <span class="n">sub</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">xerr</span><span class="o">=</span><span class="n">xerrs</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="n">yerrs</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="n">ecolor</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">mfc</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
+        <span class="n">sub</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">xerr</span><span class="o">=</span><span class="n">xerrs</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="n">yerrs</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">","</span><span class="p">,</span> <span class="n">ecolor</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">mfc</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
 
         <span class="n">sub</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span>
             <span class="n">uls_xs</span><span class="p">,</span>
@@ -441,7 +441,7 @@
             <span class="n">xerr</span><span class="o">=</span><span class="n">uls_xerrs</span><span class="p">,</span>
             <span class="n">yerr</span><span class="o">=</span><span class="n">uls_yerrs</span><span class="p">,</span>
             <span class="n">uplims</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span>
+            <span class="n">fmt</span><span class="o">=</span><span class="s2">","</span><span class="p">,</span>
             <span class="n">ecolor</span><span class="o">=</span><span class="n">color</span><span class="p">,</span>
             <span class="n">mfc</span><span class="o">=</span><span class="n">color</span><span class="p">,</span>
         <span class="p">)</span>
@@ -467,7 +467,7 @@
 
                 <span class="n">sub</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-        <span class="n">xs</span><span class="p">,</span> <span class="n">xerrs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_active_containers</span><span class="p">,</span> <span class="n">sub</span><span class="p">,</span> <span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+        <span class="n">xs</span><span class="p">,</span> <span class="n">xerrs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_active_containers</span><span class="p">,</span> <span class="n">sub</span><span class="p">,</span> <span class="s2">"blue"</span><span class="p">)</span>
 
         <span class="c1"># Find out which containers are not active</span>
         <span class="n">inactive_containers</span> <span class="o">=</span> <span class="p">[]</span>
@@ -477,10 +477,10 @@
                 <span class="n">inactive_containers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">container</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">inactive_containers</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_plot</span><span class="p">(</span><span class="n">inactive_containers</span><span class="p">,</span> <span class="n">sub</span><span class="p">,</span> <span class="s2">&quot;gray&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_plot</span><span class="p">(</span><span class="n">inactive_containers</span><span class="p">,</span> <span class="n">sub</span><span class="p">,</span> <span class="s2">"gray"</span><span class="p">)</span>
 
-        <span class="n">sub</span><span class="o">.</span><span class="n">set_xscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
-        <span class="n">sub</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+        <span class="n">sub</span><span class="o">.</span><span class="n">set_xscale</span><span class="p">(</span><span class="s2">"log"</span><span class="p">)</span>
+        <span class="n">sub</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s2">"log"</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">plot_model</span><span class="p">:</span>
             <span class="n">xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span>
@@ -497,7 +497,7 @@
 
             <span class="n">yy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_likelihood_model</span><span class="o">.</span><span class="n">get_total_flux</span><span class="p">(</span><span class="n">xx</span><span class="p">)</span>
 
-            <span class="n">_</span> <span class="o">=</span> <span class="n">sub</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xx</span><span class="p">,</span> <span class="n">yy</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="n">sub</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xx</span><span class="p">,</span> <span class="n">yy</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"red"</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">fig</span></div>
 </div>

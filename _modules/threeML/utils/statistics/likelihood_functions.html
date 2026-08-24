@@ -125,11 +125,11 @@
 <div class="viewcode-block" id="regularized_log">
 <a class="viewcode-back" href="../../../../api/threeML.utils.statistics.html#threeML.utils.statistics.likelihood_functions.regularized_log">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">regularized_log</span><span class="p">(</span><span class="n">vector</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A function which is log(vector) where vector &gt; 0, and zero otherwise.</span>
+<span class="w">    </span><span class="sd">"""A function which is log(vector) where vector &gt; 0, and zero otherwise.</span>
 
 <span class="sd">    :param vector:</span>
 <span class="sd">    :return:</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">vector</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">vector</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span></div>
 
@@ -139,13 +139,13 @@
 <a class="viewcode-back" href="../../../../api/threeML.utils.statistics.html#threeML.utils.statistics.likelihood_functions.xlogy">[docs]</a>
 <span class="nd">@njit</span><span class="p">(</span><span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">xlogy</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A function which is 0 if x is 0, and x * log(y) otherwise. This is to</span>
+<span class="w">    </span><span class="sd">"""A function which is 0 if x is 0, and x * log(y) otherwise. This is to</span>
 <span class="sd">    fix the fact that for a machine 0 * log(inf) is nan, instead of 0.</span>
 
 <span class="sd">    :param x:</span>
 <span class="sd">    :param y:</span>
 <span class="sd">    :return:</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
@@ -162,13 +162,13 @@
 <a class="viewcode-back" href="../../../../api/threeML.utils.statistics.html#threeML.utils.statistics.likelihood_functions.xlogy_one">[docs]</a>
 <span class="nd">@njit</span><span class="p">(</span><span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">xlogy_one</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A function which is 0 if x is 0, and x * log(y) otherwise. This is to</span>
+<span class="w">    </span><span class="sd">"""A function which is 0 if x is 0, and x * log(y) otherwise. This is to</span>
 <span class="sd">    fix the fact that for a machine 0 * log(inf) is nan, instead of 0.</span>
 
 <span class="sd">    :param x:</span>
 <span class="sd">    :param y:</span>
 <span class="sd">    :return:</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="n">log</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -182,7 +182,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">poisson_log_likelihood_ideal_bkg</span><span class="p">(</span>
     <span class="n">observed_counts</span><span class="p">,</span> <span class="n">expected_bkg_counts</span><span class="p">,</span> <span class="n">expected_model_counts</span>
 <span class="p">):</span>  <span class="c1"># pragma: no cover</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">    Poisson log-likelihood for the case where the background has no uncertainties:</span>
 
 <span class="sd">    $L = \sum_{i=0}^{N}~o_i~\log{(m_i + b_i)} - (m_i + b_i) - \log{o_i!}$</span>
@@ -191,7 +191,7 @@
 <span class="sd">    :param expected_bkg_counts:</span>
 <span class="sd">    :param expected_model_counts:</span>
 <span class="sd">    :return: (log_like vector, background vector)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="c1"># Model predicted counts</span>
     <span class="c1"># In this likelihood the background becomes part of the model, which means that</span>
@@ -217,18 +217,18 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">poisson_observed_poisson_background_xs</span><span class="p">(</span>
     <span class="n">observed_counts</span><span class="p">,</span> <span class="n">background_counts</span><span class="p">,</span> <span class="n">exposure_ratio</span><span class="p">,</span> <span class="n">expected_model_counts</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Profile log-likelihood for the case when the observed counts are Poisson</span>
+<span class="w">    </span><span class="sd">"""Profile log-likelihood for the case when the observed counts are Poisson</span>
 <span class="sd">    distributed, and the background counts are Poisson distributed as well</span>
 <span class="sd">    (typical for X-ray analysis with aperture photometry).</span>
 
 <span class="sd">    This has been derived by Keith Arnaud (see the Xspec manual, Wstat</span>
 <span class="sd">    statistic)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="c1"># We follow Arnaud et al. (Xspec manual) in the computation, which means that at the</span>
     <span class="c1"># end we need to multiply by (-1) as he computes the -log(L), while we need log(L).</span>
     <span class="c1"># Also, he multiplies -log(L) by 2 at the end to make it converge to chisq^2. We</span>
-    <span class="c1"># don&#39;t do that to keep it a proper (profile) likelihood.</span>
+    <span class="c1"># don't do that to keep it a proper (profile) likelihood.</span>
 
     <span class="c1"># Compute the nuisance background parameter</span>
 
@@ -365,7 +365,7 @@
         <span class="c1"># Also it is evident from the expression above that when bkgCounts = 0 and</span>
         <span class="c1"># bkgErr=0 also b=0</span>
 
-        <span class="c1"># Let&#39;s do the branch with background &gt; 0 first</span>
+        <span class="c1"># Let's do the branch with background &gt; 0 first</span>
 
         <span class="k">if</span> <span class="n">background_counts</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">observed_counts</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -387,7 +387,7 @@
                     <span class="o">-</span> <span class="n">log</span><span class="p">(</span><span class="n">background_error</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
                 <span class="p">)</span>
 
-        <span class="c1"># Let&#39;s do the other branch</span>
+        <span class="c1"># Let's do the other branch</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># the 1e-100 in the log is to avoid zero divisions</span>
@@ -397,13 +397,13 @@
                 <span class="o">-</span> <span class="n">expected_model_counts</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
                 <span class="o">-</span> <span class="n">logfactorial</span><span class="p">(</span><span class="n">observed_counts</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
             <span class="p">)</span>
-        <span class="c1"># print (&#39;N=&#39;,observed_counts[idx],</span>
-        <span class="c1">#        &#39;M=&#39;,expected_model_counts[idx],</span>
-        <span class="c1">#        &#39;B=&#39;,background_counts[idx],</span>
-        <span class="c1">#        &#39;BE=&#39;, background_error[idx],</span>
-        <span class="c1">#        &#39;b=&#39;,b[idx],</span>
-        <span class="c1">#        &#39;b+M=&#39;, b[idx] + expected_model_counts[idx],</span>
-        <span class="c1">#        &#39;LL=&#39;,log_likes[idx])</span>
+        <span class="c1"># print ('N=',observed_counts[idx],</span>
+        <span class="c1">#        'M=',expected_model_counts[idx],</span>
+        <span class="c1">#        'B=',background_counts[idx],</span>
+        <span class="c1">#        'BE=', background_error[idx],</span>
+        <span class="c1">#        'b=',b[idx],</span>
+        <span class="c1">#        'b+M=', b[idx] + expected_model_counts[idx],</span>
+        <span class="c1">#        'LL=',log_likes[idx])</span>
 
     <span class="k">return</span> <span class="n">log_likes</span><span class="p">,</span> <span class="n">b</span></div>
 

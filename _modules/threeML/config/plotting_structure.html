@@ -119,7 +119,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
 <span class="c1"># type checking matplotlib colormaps</span>
-<span class="n">MPLCmap</span> <span class="o">=</span> <span class="n">Enum</span><span class="p">(</span><span class="s2">&quot;MPLCmap&quot;</span><span class="p">,</span> <span class="nb">zip</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">colormaps</span><span class="p">(),</span> <span class="n">plt</span><span class="o">.</span><span class="n">colormaps</span><span class="p">()))</span>
+<span class="n">MPLCmap</span> <span class="o">=</span> <span class="n">Enum</span><span class="p">(</span><span class="s2">"MPLCmap"</span><span class="p">,</span> <span class="nb">zip</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">colormaps</span><span class="p">(),</span> <span class="n">plt</span><span class="o">.</span><span class="n">colormaps</span><span class="p">()))</span>
 
 
 <div class="viewcode-block" id="BinnedSpectrumPlot">
@@ -147,12 +147,12 @@
 <a class="viewcode-back" href="../../../api/threeML.config.html#threeML.config.fitting_structure.FermiSpectrumPlot">[docs]</a>
 <span class="nd">@dataclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">FermiSpectrumPlot</span><span class="p">:</span>
-    <span class="n">total_model_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;k&quot;</span>
+    <span class="n">total_model_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"k"</span>
     <span class="n">show_background_sources</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">shade_fixed_sources</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">shade_secondary_sources</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="n">fixed_sources_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;grey&quot;</span>
-    <span class="n">secondary_sources_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;k&quot;</span>
+    <span class="n">fixed_sources_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"grey"</span>
+    <span class="n">secondary_sources_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"k"</span>
     <span class="n">data_cmap</span><span class="p">:</span> <span class="n">MPLCmap</span> <span class="o">=</span> <span class="n">MPLCmap</span><span class="o">.</span><span class="n">Set1</span>
     <span class="n">model_cmap</span><span class="p">:</span> <span class="n">MPLCmap</span> <span class="o">=</span> <span class="n">MPLCmap</span><span class="o">.</span><span class="n">Set1</span>
     <span class="n">background_cmap</span><span class="p">:</span> <span class="n">MPLCmap</span> <span class="o">=</span> <span class="n">MPLCmap</span><span class="o">.</span><span class="n">Set1</span>
@@ -172,11 +172,11 @@
 <a class="viewcode-back" href="../../../api/threeML.config.html#threeML.config.fitting_structure.DataHistPlot">[docs]</a>
 <span class="nd">@dataclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">DataHistPlot</span><span class="p">:</span>
-    <span class="n">counts_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;#500472&quot;</span>
-    <span class="n">background_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;#79cbb8&quot;</span>
-    <span class="n">warn_channels_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;#C79BFE&quot;</span>
-    <span class="n">bad_channels_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;#FE3131&quot;</span>
-    <span class="n">masked_channels_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;#566573&quot;</span></div>
+    <span class="n">counts_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"#500472"</span>
+    <span class="n">background_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"#79cbb8"</span>
+    <span class="n">warn_channels_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"#C79BFE"</span>
+    <span class="n">bad_channels_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"#FE3131"</span>
+    <span class="n">masked_channels_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"#566573"</span></div>
 
 
 
@@ -184,7 +184,7 @@
 <a class="viewcode-back" href="../../../api/threeML.config.html#threeML.config.fitting_structure.PlotStyle">[docs]</a>
 <span class="nd">@dataclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">PlotStyle</span><span class="p">:</span>
-    <span class="n">linestyle</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span>
+    <span class="n">linestyle</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"-"</span>
     <span class="n">linewidth</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.7</span></div>
 
 
@@ -203,32 +203,32 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">CornerStyle</span><span class="p">:</span>
     <span class="n">show_titles</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">smooth</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.9</span>
-    <span class="n">title_fmt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.2g&quot;</span>
+    <span class="n">title_fmt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">".2g"</span>
     <span class="n">bins</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">25</span>
     <span class="n">quantiles</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.16</span><span class="p">,</span> <span class="mf">0.50</span><span class="p">,</span> <span class="mf">0.84</span><span class="p">])</span>
     <span class="n">fill_contours</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">cmap</span><span class="p">:</span> <span class="n">MPLCmap</span> <span class="o">=</span> <span class="n">MPLCmap</span><span class="o">.</span><span class="n">viridis</span>
-    <span class="n">extremes</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;white&quot;</span>
+    <span class="n">extremes</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"white"</span>
     <span class="n">contourf_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
-        <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;colors&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;extend&quot;</span><span class="p">:</span> <span class="s2">&quot;both&quot;</span><span class="p">}</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">{</span><span class="s2">"colors"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">"extend"</span><span class="p">:</span> <span class="s2">"both"</span><span class="p">}</span>
     <span class="p">)</span>
     <span class="n">levels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.99</span><span class="p">,</span> <span class="mf">0.865</span><span class="p">,</span> <span class="mf">0.393</span><span class="p">])</span></div>
 
 
 
 <span class="c1"># class LegendLoc(Enum):</span>
-<span class="c1">#     best = &#39;best&#39;</span>
-<span class="c1">#     lower_left = &#39;lower left&#39;</span>
-<span class="c1">#     lower_right = &#39;lower right&#39;</span>
-<span class="c1">#     upper_left = &#39;upper left&#39;</span>
-<span class="c1">#     upper_right = &#39;upper right&#39;</span>
+<span class="c1">#     best = 'best'</span>
+<span class="c1">#     lower_left = 'lower left'</span>
+<span class="c1">#     lower_right = 'lower right'</span>
+<span class="c1">#     upper_left = 'upper left'</span>
+<span class="c1">#     upper_right = 'upper right'</span>
 
 
 <div class="viewcode-block" id="LegendStyle">
 <a class="viewcode-back" href="../../../api/threeML.config.html#threeML.config.fitting_structure.LegendStyle">[docs]</a>
 <span class="nd">@dataclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">LegendStyle</span><span class="p">:</span>
-    <span class="n">loc</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;best&quot;</span>
+    <span class="n">loc</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"best"</span>
     <span class="n">fancybox</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">shadow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span></div>
 
@@ -245,11 +245,11 @@
     <span class="n">contour_style</span><span class="p">:</span> <span class="n">ContourStyle</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">ContourStyle</span><span class="p">())</span>
     <span class="n">show_legend</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">legend_style</span><span class="p">:</span> <span class="n">LegendStyle</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">LegendStyle</span><span class="p">())</span>
-    <span class="n">flux_unit</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;1/(keV s cm2)&quot;</span>
+    <span class="n">flux_unit</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"1/(keV s cm2)"</span>
     <span class="n">emin</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10.0</span>
     <span class="n">emax</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e4</span>
     <span class="n">num_ene</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span>
-    <span class="n">ene_unit</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;keV&quot;</span></div>
+    <span class="n">ene_unit</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"keV"</span></div>
 
 
 
@@ -258,7 +258,7 @@
 <span class="nd">@dataclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">ResidualPlot</span><span class="p">:</span>
     <span class="n">linewidth</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="n">marker</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span>
+    <span class="n">marker</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"."</span>
     <span class="n">size</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">3</span>
     <span class="n">legend_font_size</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">6.94</span></div>
 
@@ -269,7 +269,7 @@
 <span class="nd">@dataclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">GenericPlotting</span><span class="p">:</span>
     <span class="n">use_threeml_style</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="n">mplstyle</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;threeml.mplstyle&quot;</span>
+    <span class="n">mplstyle</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"threeml.mplstyle"</span>
     <span class="n">residual_plot</span><span class="p">:</span> <span class="n">ResidualPlot</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">ResidualPlot</span><span class="p">())</span></div>
 
 

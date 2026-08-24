@@ -124,25 +124,25 @@
 <div class="viewcode-block" id="Sampler">
 <a class="viewcode-back" href="../../../api/threeML.config.html#threeML.config.fitting_structure.Sampler">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Sampler</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-    <span class="n">emcee</span> <span class="o">=</span> <span class="s2">&quot;emcee&quot;</span>
-    <span class="n">multinest</span> <span class="o">=</span> <span class="s2">&quot;multinest&quot;</span>
-    <span class="n">zeus</span> <span class="o">=</span> <span class="s2">&quot;zeus&quot;</span>
-    <span class="n">dynesty_nested</span> <span class="o">=</span> <span class="s2">&quot;dynesty_nested&quot;</span>
-    <span class="n">dynesty_dynamic</span> <span class="o">=</span> <span class="s2">&quot;dynesty_dynamic&quot;</span>
-    <span class="n">ultranest</span> <span class="o">=</span> <span class="s2">&quot;ultranest&quot;</span>
-    <span class="n">autoemcee</span> <span class="o">=</span> <span class="s2">&quot;autoemcee&quot;</span></div>
+    <span class="n">emcee</span> <span class="o">=</span> <span class="s2">"emcee"</span>
+    <span class="n">multinest</span> <span class="o">=</span> <span class="s2">"multinest"</span>
+    <span class="n">zeus</span> <span class="o">=</span> <span class="s2">"zeus"</span>
+    <span class="n">dynesty_nested</span> <span class="o">=</span> <span class="s2">"dynesty_nested"</span>
+    <span class="n">dynesty_dynamic</span> <span class="o">=</span> <span class="s2">"dynesty_dynamic"</span>
+    <span class="n">ultranest</span> <span class="o">=</span> <span class="s2">"ultranest"</span>
+    <span class="n">autoemcee</span> <span class="o">=</span> <span class="s2">"autoemcee"</span></div>
 
 
 
-<span class="n">_sampler_default</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;emcee&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;n_burnin&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}}</span>
+<span class="n">_sampler_default</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"emcee"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"n_burnin"</span><span class="p">:</span> <span class="mi">1</span><span class="p">}}</span>
 
 
 <div class="viewcode-block" id="Optimizer">
 <a class="viewcode-back" href="../../../api/threeML.config.html#threeML.config.fitting_structure.Optimizer">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Optimizer</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-    <span class="n">minuit</span> <span class="o">=</span> <span class="s2">&quot;minuit&quot;</span>
-    <span class="n">scipy</span> <span class="o">=</span> <span class="s2">&quot;scipy&quot;</span>
-    <span class="n">ROOT</span> <span class="o">=</span> <span class="s2">&quot;ROOT&quot;</span></div>
+    <span class="n">minuit</span> <span class="o">=</span> <span class="s2">"minuit"</span>
+    <span class="n">scipy</span> <span class="o">=</span> <span class="s2">"scipy"</span>
+    <span class="n">ROOT</span> <span class="o">=</span> <span class="s2">"ROOT"</span></div>
 
 
 
@@ -156,141 +156,141 @@
 
     <span class="n">emcee_setup</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
         <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;n_burnin&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;n_iterations&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
-            <span class="s2">&quot;n_walkers&quot;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
-            <span class="s2">&quot;seed&quot;</span><span class="p">:</span> <span class="mi">5123</span><span class="p">,</span>
+            <span class="s2">"n_burnin"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"n_iterations"</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
+            <span class="s2">"n_walkers"</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
+            <span class="s2">"seed"</span><span class="p">:</span> <span class="mi">5123</span><span class="p">,</span>
         <span class="p">}</span>
     <span class="p">)</span>
 
     <span class="n">multinest_setup</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
         <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;n_live_points&quot;</span><span class="p">:</span> <span class="mi">400</span><span class="p">,</span>
-            <span class="s2">&quot;chain_name&quot;</span><span class="p">:</span> <span class="s2">&quot;chains/fit-&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;resume&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s2">&quot;importance_nested_sampling&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s2">&quot;auto_clean&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"n_live_points"</span><span class="p">:</span> <span class="mi">400</span><span class="p">,</span>
+            <span class="s2">"chain_name"</span><span class="p">:</span> <span class="s2">"chains/fit-"</span><span class="p">,</span>
+            <span class="s2">"resume"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"importance_nested_sampling"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"auto_clean"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
         <span class="p">}</span>
     <span class="p">)</span>
 
     <span class="n">ultranest_setup</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
         <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;min_num_live_points&quot;</span><span class="p">:</span> <span class="mi">400</span><span class="p">,</span>
-            <span class="s2">&quot;dlogz&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
-            <span class="s2">&quot;dKL&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
-            <span class="s2">&quot;frac_remain&quot;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span>
-            <span class="s2">&quot;Lepsilon&quot;</span><span class="p">:</span> <span class="mf">0.001</span><span class="p">,</span>
-            <span class="s2">&quot;min_ess&quot;</span><span class="p">:</span> <span class="mi">400</span><span class="p">,</span>
-            <span class="s2">&quot;update_interval_volume_fraction&quot;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span>
-            <span class="s2">&quot;cluster_num_live_points&quot;</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span>
-            <span class="s2">&quot;use_mlfriends&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-            <span class="s2">&quot;resume&quot;</span><span class="p">:</span> <span class="s2">&quot;overwrite&quot;</span><span class="p">,</span>
+            <span class="s2">"min_num_live_points"</span><span class="p">:</span> <span class="mi">400</span><span class="p">,</span>
+            <span class="s2">"dlogz"</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+            <span class="s2">"dKL"</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+            <span class="s2">"frac_remain"</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span>
+            <span class="s2">"Lepsilon"</span><span class="p">:</span> <span class="mf">0.001</span><span class="p">,</span>
+            <span class="s2">"min_ess"</span><span class="p">:</span> <span class="mi">400</span><span class="p">,</span>
+            <span class="s2">"update_interval_volume_fraction"</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span>
+            <span class="s2">"cluster_num_live_points"</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span>
+            <span class="s2">"use_mlfriends"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s2">"resume"</span><span class="p">:</span> <span class="s2">"overwrite"</span><span class="p">,</span>
         <span class="p">}</span>
     <span class="p">)</span>
 
     <span class="n">zeus_setup</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
         <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;n_burnin&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;n_iterations&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
-            <span class="s2">&quot;n_walkers&quot;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
-            <span class="s2">&quot;seed&quot;</span><span class="p">:</span> <span class="mi">5123</span><span class="p">,</span>
+            <span class="s2">"n_burnin"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"n_iterations"</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
+            <span class="s2">"n_walkers"</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
+            <span class="s2">"seed"</span><span class="p">:</span> <span class="mi">5123</span><span class="p">,</span>
         <span class="p">}</span>
     <span class="p">)</span>
 
     <span class="n">dynesty_nested_setup</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
         <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;n_live_points&quot;</span><span class="p">:</span> <span class="mi">400</span><span class="p">,</span>
-            <span class="s2">&quot;maxiter&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;maxcall&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;dlogz&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;logl_max&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
-            <span class="s2">&quot;n_effective&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;add_live&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-            <span class="s2">&quot;print_func&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;save_bounds&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-            <span class="s2">&quot;bound&quot;</span><span class="p">:</span> <span class="s2">&quot;multi&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;wrapped_params&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;sample&quot;</span><span class="p">:</span> <span class="s2">&quot;auto&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;periodic&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;reflective&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;update_interval&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;first_update&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;npdim&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;rstate&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;use_pool&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;live_points&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;logl_args&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;logl_kwargs&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;ptform_args&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;ptform_kwargs&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;gradient&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;grad_args&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;grad_kwargs&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;compute_jac&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s2">&quot;enlarge&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;bootstrap&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-            <span class="s2">&quot;vol_dec&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
-            <span class="s2">&quot;vol_check&quot;</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">,</span>
-            <span class="s2">&quot;walks&quot;</span><span class="p">:</span> <span class="mi">25</span><span class="p">,</span>
-            <span class="s2">&quot;facc&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
-            <span class="s2">&quot;slices&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
-            <span class="s2">&quot;fmove&quot;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span>
-            <span class="s2">&quot;max_move&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
-            <span class="s2">&quot;update_func&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"n_live_points"</span><span class="p">:</span> <span class="mi">400</span><span class="p">,</span>
+            <span class="s2">"maxiter"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"maxcall"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"dlogz"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"logl_max"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+            <span class="s2">"n_effective"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"add_live"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s2">"print_func"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"save_bounds"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s2">"bound"</span><span class="p">:</span> <span class="s2">"multi"</span><span class="p">,</span>
+            <span class="s2">"wrapped_params"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"sample"</span><span class="p">:</span> <span class="s2">"auto"</span><span class="p">,</span>
+            <span class="s2">"periodic"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"reflective"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"update_interval"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"first_update"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"npdim"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"rstate"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"use_pool"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"live_points"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"logl_args"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"logl_kwargs"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"ptform_args"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"ptform_kwargs"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"gradient"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"grad_args"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"grad_kwargs"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"compute_jac"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"enlarge"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"bootstrap"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">"vol_dec"</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+            <span class="s2">"vol_check"</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">,</span>
+            <span class="s2">"walks"</span><span class="p">:</span> <span class="mi">25</span><span class="p">,</span>
+            <span class="s2">"facc"</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+            <span class="s2">"slices"</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+            <span class="s2">"fmove"</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span>
+            <span class="s2">"max_move"</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+            <span class="s2">"update_func"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
         <span class="p">}</span>
     <span class="p">)</span>
 
     <span class="n">dynesty_dynmaic_setup</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
         <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;nlive_init&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
-            <span class="s2">&quot;maxiter_init&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;maxcall_init&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;dlogz_init&quot;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span>
-            <span class="s2">&quot;logl_max_init&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
-            <span class="s2">&quot;n_effective_init&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
-            <span class="s2">&quot;nlive_batch&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
-            <span class="s2">&quot;wt_function&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;wt_kwargs&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;maxiter_batch&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;maxcall_batch&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;maxiter&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;maxcall&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;maxbatch&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;n_effective&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
-            <span class="s2">&quot;stop_function&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;stop_kwargs&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;use_stop&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-            <span class="s2">&quot;save_bounds&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-            <span class="s2">&quot;print_func&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;live_points&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;bound&quot;</span><span class="p">:</span> <span class="s2">&quot;multi&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;wrapped_params&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;sample&quot;</span><span class="p">:</span> <span class="s2">&quot;auto&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;periodic&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;reflective&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;update_interval&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;first_update&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;npdim&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;rstate&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;use_pool&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;logl_args&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;logl_kwargs&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;ptform_args&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;ptform_kwargs&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;gradient&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;grad_args&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;grad_kwargs&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;compute_jac&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s2">&quot;enlarge&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;bootstrap&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-            <span class="s2">&quot;vol_dec&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
-            <span class="s2">&quot;vol_check&quot;</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">,</span>
-            <span class="s2">&quot;walks&quot;</span><span class="p">:</span> <span class="mi">25</span><span class="p">,</span>
-            <span class="s2">&quot;facc&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
-            <span class="s2">&quot;slices&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
-            <span class="s2">&quot;fmove&quot;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span>
-            <span class="s2">&quot;max_move&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
-            <span class="s2">&quot;update_func&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"nlive_init"</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
+            <span class="s2">"maxiter_init"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"maxcall_init"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"dlogz_init"</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span>
+            <span class="s2">"logl_max_init"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+            <span class="s2">"n_effective_init"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+            <span class="s2">"nlive_batch"</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
+            <span class="s2">"wt_function"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"wt_kwargs"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"maxiter_batch"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"maxcall_batch"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"maxiter"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"maxcall"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"maxbatch"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"n_effective"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+            <span class="s2">"stop_function"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"stop_kwargs"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"use_stop"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s2">"save_bounds"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s2">"print_func"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"live_points"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"bound"</span><span class="p">:</span> <span class="s2">"multi"</span><span class="p">,</span>
+            <span class="s2">"wrapped_params"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"sample"</span><span class="p">:</span> <span class="s2">"auto"</span><span class="p">,</span>
+            <span class="s2">"periodic"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"reflective"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"update_interval"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"first_update"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"npdim"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"rstate"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"use_pool"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"logl_args"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"logl_kwargs"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"ptform_args"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"ptform_kwargs"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"gradient"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"grad_args"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"grad_kwargs"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"compute_jac"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"enlarge"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"bootstrap"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">"vol_dec"</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+            <span class="s2">"vol_check"</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">,</span>
+            <span class="s2">"walks"</span><span class="p">:</span> <span class="mi">25</span><span class="p">,</span>
+            <span class="s2">"facc"</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+            <span class="s2">"slices"</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+            <span class="s2">"fmove"</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span>
+            <span class="s2">"max_move"</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+            <span class="s2">"update_func"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
         <span class="p">}</span>
     <span class="p">)</span>
 
@@ -306,15 +306,15 @@
     <span class="n">default_minimizer_algorithm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">default_minimizer_callback</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">contour_cmap</span><span class="p">:</span> <span class="n">MPLCmap</span> <span class="o">=</span> <span class="n">MPLCmap</span><span class="o">.</span><span class="n">Pastel1</span>
-    <span class="n">contour_background</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;white&quot;</span>
-    <span class="n">contour_level_1</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;#ffa372&quot;</span>
-    <span class="n">contour_level_2</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;#ed6663&quot;</span>
-    <span class="n">contour_level_3</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;#0f4c81&quot;</span>
-    <span class="n">profile_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;k&quot;</span>
+    <span class="n">contour_background</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"white"</span>
+    <span class="n">contour_level_1</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"#ffa372"</span>
+    <span class="n">contour_level_2</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"#ed6663"</span>
+    <span class="n">contour_level_3</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"#0f4c81"</span>
+    <span class="n">profile_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"k"</span>
 
-    <span class="n">profile_level_1</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;#ffa372&quot;</span>
-    <span class="n">profile_level_2</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;#ed6663&quot;</span>
-    <span class="n">profile_level_3</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;#0f4c81&quot;</span></div>
+    <span class="n">profile_level_1</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"#ffa372"</span>
+    <span class="n">profile_level_2</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"#ed6663"</span>
+    <span class="n">profile_level_3</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"#0f4c81"</span></div>
 
 </pre></div>
 

@@ -146,11 +146,11 @@
 <a class="viewcode-back" href="../../../../api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.ChannelSet.from_instrument_response">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_instrument_response</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">instrument_response</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build EBOUNDS interval from an instrument response.</span>
+<span class="w">        </span><span class="sd">"""Build EBOUNDS interval from an instrument response.</span>
 
 <span class="sd">        :param instrument_response:</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">new_ebounds</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_list_of_edges</span><span class="p">(</span><span class="n">instrument_response</span><span class="o">.</span><span class="n">ebounds</span><span class="p">)</span>
 
@@ -167,8 +167,8 @@
 <a class="viewcode-back" href="../../../../api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.Quality">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Quality</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">quality</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Simple class to formalize the quality flags used in spectra :param</span>
-<span class="sd">        quality: a quality array.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Simple class to formalize the quality flags used in spectra :param</span>
+<span class="sd">        quality: a quality array."""</span>
 
         <span class="c1"># total_length = len(quality)</span>
 
@@ -178,12 +178,12 @@
         <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">quality</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
             <span class="n">n_elements</span> <span class="o">*=</span> <span class="n">dim</span>
 
-        <span class="n">good</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">quality</span> <span class="o">==</span> <span class="s2">&quot;good&quot;</span>
-        <span class="n">warn</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">quality</span> <span class="o">==</span> <span class="s2">&quot;warn&quot;</span>
-        <span class="n">bad</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">quality</span> <span class="o">==</span> <span class="s2">&quot;bad&quot;</span>
+        <span class="n">good</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">quality</span> <span class="o">==</span> <span class="s2">"good"</span>
+        <span class="n">warn</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">quality</span> <span class="o">==</span> <span class="s2">"warn"</span>
+        <span class="n">bad</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">quality</span> <span class="o">==</span> <span class="s2">"bad"</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">n_elements</span> <span class="o">==</span> <span class="p">(</span><span class="n">good</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">+</span> <span class="n">warn</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">+</span> <span class="n">bad</span><span class="o">.</span><span class="n">sum</span><span class="p">()):</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;quality can only contain &quot;good&quot;, &quot;warn&quot;, and &quot;bad&quot;&#39;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">'quality can only contain "good", "warn", and "bad"'</span><span class="p">)</span>
 
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
 
@@ -222,26 +222,26 @@
 <a class="viewcode-back" href="../../../../api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.Quality.from_ogip">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_ogip</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ogip_quality</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read in quality from an OGIP file.</span>
+<span class="w">        </span><span class="sd">"""Read in quality from an OGIP file.</span>
 
 <span class="sd">        :param cls:</span>
 <span class="sd">        :type cls:</span>
 <span class="sd">        :param ogip_quality:</span>
 <span class="sd">        :type ogip_quality:</span>
 <span class="sd">        :returns:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">ogip_quality</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">ogip_quality</span><span class="p">)</span>
         <span class="n">good</span> <span class="o">=</span> <span class="n">ogip_quality</span> <span class="o">==</span> <span class="mi">0</span>
         <span class="n">warn</span> <span class="o">=</span> <span class="n">ogip_quality</span> <span class="o">==</span> <span class="mi">2</span>
         <span class="n">bad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="o">~</span><span class="n">good</span><span class="p">,</span> <span class="o">~</span><span class="n">warn</span><span class="p">)</span>
 
-        <span class="n">quality</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="n">ogip_quality</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;|S4&quot;</span><span class="p">)</span>
-        <span class="n">quality</span><span class="p">[:]</span> <span class="o">=</span> <span class="s2">&quot;good&quot;</span>
+        <span class="n">quality</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="n">ogip_quality</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"|S4"</span><span class="p">)</span>
+        <span class="n">quality</span><span class="p">[:]</span> <span class="o">=</span> <span class="s2">"good"</span>
 
-        <span class="c1"># quality[good] = &#39;good&#39;</span>
-        <span class="n">quality</span><span class="p">[</span><span class="n">warn</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span>
-        <span class="n">quality</span><span class="p">[</span><span class="n">bad</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;bad&quot;</span>
+        <span class="c1"># quality[good] = 'good'</span>
+        <span class="n">quality</span><span class="p">[</span><span class="n">warn</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"warn"</span>
+        <span class="n">quality</span><span class="p">[</span><span class="n">bad</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"bad"</span>
 
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">quality</span><span class="p">)</span></div>
 
@@ -249,14 +249,14 @@
 <div class="viewcode-block" id="Quality.to_ogip">
 <a class="viewcode-back" href="../../../../api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.Quality.to_ogip">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_ogip</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        makes a quality array following the OGIP standards:</span>
 <span class="sd">        0 = good</span>
 <span class="sd">        2 = warn</span>
 <span class="sd">        5 = bad</span>
 
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">ogip_quality</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_quality</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
 
@@ -270,12 +270,12 @@
 <a class="viewcode-back" href="../../../../api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.Quality.create_all_good">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">create_all_good</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">n_channels</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct a quality object with all good channels :param n_channels:</span>
+<span class="w">        </span><span class="sd">"""Construct a quality object with all good channels :param n_channels:</span>
 
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
-        <span class="n">quality</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s2">&quot;good&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">n_channels</span><span class="p">))])</span>
+        <span class="n">quality</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s2">"good"</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">n_channels</span><span class="p">))])</span>
 
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">quality</span><span class="p">)</span></div>
 </div>
@@ -302,7 +302,7 @@
         <span class="n">tstart</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">tstop</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A general binned histogram of either Poisson or non-Poisson rates.</span>
+<span class="w">        </span><span class="sd">"""A general binned histogram of either Poisson or non-Poisson rates.</span>
 <span class="sd">        While the input is in counts, 3ML spectra work in rates, so this class</span>
 <span class="sd">        uses the exposure to construct the rates from the counts.</span>
 
@@ -319,7 +319,7 @@
 <span class="sd">        :param is_poisson: if the histogram is Poisson</span>
 <span class="sd">        :param mission: the mission name</span>
 <span class="sd">        :param instrument: the instrument name</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># attach the parameters ot the object</span>
 
@@ -340,7 +340,7 @@
 
         <span class="k">if</span> <span class="n">count_errors</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_poisson</span><span class="p">:</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Read count errors but spectrum marked Poisson&quot;</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"Read count errors but spectrum marked Poisson"</span><span class="p">)</span>
 
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
 
@@ -364,7 +364,7 @@
             <span class="c1"># check that we are using the 3ML quality type</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">quality</span><span class="p">,</span> <span class="n">Quality</span><span class="p">):</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;quality is not of type Quality&quot;</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"quality is not of type Quality"</span><span class="p">)</span>
 
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
 
@@ -376,13 +376,13 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_quality</span> <span class="o">=</span> <span class="n">Quality</span><span class="o">.</span><span class="n">create_all_good</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rates</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="n">mission</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_mission</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;UNKNOWN&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_mission</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"UNKNOWN"</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_mission</span> <span class="o">=</span> <span class="n">mission</span>
 
         <span class="k">if</span> <span class="n">instrument</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_instrument</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;UNKNOWN&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_instrument</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"UNKNOWN"</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_instrument</span> <span class="o">=</span> <span class="n">instrument</span>
@@ -407,27 +407,27 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">rates</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        :return: rates per channel</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contents</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">total_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        :return: total rate</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contents</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">total_rate_error</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        :return: total rate error</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_poisson</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Cannot request errors on rates for a Poisson spectrum&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"Cannot request errors on rates for a Poisson spectrum"</span><span class="p">)</span>
 
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
 
@@ -435,17 +435,17 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">counts</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        :return: counts per channel</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contents</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">exposure</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">count_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        :return: count error per channel</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># VS: impact of this change is unclear to me, it seems to make sense and the</span>
         <span class="c1"># tests pass</span>
@@ -457,17 +457,17 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">total_count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        :return: total counts</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">counts</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">total_count_error</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        :return: total count error</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># VS: impact of this change is unclear to me, it seems to make sense and the</span>
         <span class="c1"># tests pass</span>
@@ -491,9 +491,9 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">rate_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;If the spectrum has no Poisson error (POISSER is False in the</span>
+<span class="w">        </span><span class="sd">"""If the spectrum has no Poisson error (POISSER is False in the</span>
 <span class="sd">        header), this will return the STAT_ERR column :return: errors on the</span>
-<span class="sd">        rates.&quot;&quot;&quot;</span>
+<span class="sd">        rates."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_poisson</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
@@ -505,19 +505,19 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">sys_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Systematic errors per channel. This is nonzero only if the SYS_ERR</span>
+<span class="w">        </span><span class="sd">"""Systematic errors per channel. This is nonzero only if the SYS_ERR</span>
 <span class="sd">        column is present in the input file.</span>
 
 <span class="sd">        :return: the systematic errors stored in the input spectrum</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sys_errors</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">exposure</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Exposure in seconds.</span>
+<span class="w">        </span><span class="sd">"""Exposure in seconds.</span>
 
 <span class="sd">        :return: exposure</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exposure</span>
 
     <span class="nd">@property</span>
@@ -545,13 +545,13 @@
         <span class="n">new_exposure</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">new_scale_factor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Make a new spectrum with new counts and errors and all other</span>
+<span class="w">        </span><span class="sd">"""Make a new spectrum with new counts and errors and all other</span>
 <span class="sd">        parameters the same.</span>
 
 <span class="sd">        :param new_counts: new counts for the spectrum</span>
 <span class="sd">        :param new_count_errors: new errors from the spectrum</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="n">new_counts</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">new_counts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">counts</span>
@@ -589,19 +589,19 @@
         <span class="n">mission</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">instrument</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build a spectrum from data contained within a pandas data frame.</span>
+<span class="w">        </span><span class="sd">"""Build a spectrum from data contained within a pandas data frame.</span>
 
 <span class="sd">        The required columns are:</span>
 
-<span class="sd">        &#39;emin&#39;: low energy bin edge</span>
-<span class="sd">        &#39;emax&#39;: high energy bin edge</span>
-<span class="sd">        &#39;counts&#39;: the counts in each bin</span>
+<span class="sd">        'emin': low energy bin edge</span>
+<span class="sd">        'emax': high energy bin edge</span>
+<span class="sd">        'counts': the counts in each bin</span>
 
 <span class="sd">        Optional column names are:</span>
 
-<span class="sd">        &#39;count_errors&#39;: errors on the counts for non-Poisson data</span>
-<span class="sd">        &#39;sys_errors&#39;: systematic error per channel</span>
-<span class="sd">        &#39;quality&#39; list of 3ML quality flags &#39;good&#39;, &#39;warn&#39;, &#39;bad&#39;</span>
+<span class="sd">        'count_errors': errors on the counts for non-Poisson data</span>
+<span class="sd">        'sys_errors': systematic error per channel</span>
+<span class="sd">        'quality' list of 3ML quality flags 'good', 'warn', 'bad'</span>
 
 
 <span class="sd">        :param pandas_dataframe: data frame containing information to be read into</span>
@@ -612,13 +612,13 @@
 <span class="sd">        :param mission: (optional) the mission name</span>
 <span class="sd">        :param instrument: (optional) the instrument name</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># get the required columns</span>
 
-        <span class="n">emin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pandas_dataframe</span><span class="p">[</span><span class="s2">&quot;emin&quot;</span><span class="p">])</span>
-        <span class="n">emax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pandas_dataframe</span><span class="p">[</span><span class="s2">&quot;emax&quot;</span><span class="p">])</span>
-        <span class="n">counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pandas_dataframe</span><span class="p">[</span><span class="s2">&quot;counts&quot;</span><span class="p">])</span>
+        <span class="n">emin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pandas_dataframe</span><span class="p">[</span><span class="s2">"emin"</span><span class="p">])</span>
+        <span class="n">emax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pandas_dataframe</span><span class="p">[</span><span class="s2">"emax"</span><span class="p">])</span>
+        <span class="n">counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pandas_dataframe</span><span class="p">[</span><span class="s2">"counts"</span><span class="p">])</span>
         <span class="n">ebounds</span> <span class="o">=</span> <span class="n">emin</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
         <span class="n">ebounds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">emax</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
 
@@ -629,14 +629,14 @@
         <span class="n">sys_errors</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">quality</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="k">if</span> <span class="s2">&quot;count_errors&quot;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">pandas_dataframe</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
-            <span class="n">count_errors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pandas_dataframe</span><span class="p">[</span><span class="s2">&quot;count_errors&quot;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="s2">"count_errors"</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">pandas_dataframe</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="n">count_errors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pandas_dataframe</span><span class="p">[</span><span class="s2">"count_errors"</span><span class="p">])</span>
 
-        <span class="k">if</span> <span class="s2">&quot;sys_errors&quot;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">pandas_dataframe</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
-            <span class="n">sys_errors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pandas_dataframe</span><span class="p">[</span><span class="s2">&quot;sys_errors&quot;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="s2">"sys_errors"</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">pandas_dataframe</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="n">sys_errors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pandas_dataframe</span><span class="p">[</span><span class="s2">"sys_errors"</span><span class="p">])</span>
 
-        <span class="k">if</span> <span class="s2">&quot;quality&quot;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">pandas_dataframe</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
-            <span class="n">quality</span> <span class="o">=</span> <span class="n">Quality</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pandas_dataframe</span><span class="p">[</span><span class="s2">&quot;quality&quot;</span><span class="p">]))</span>
+        <span class="k">if</span> <span class="s2">"quality"</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">pandas_dataframe</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="n">quality</span> <span class="o">=</span> <span class="n">Quality</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pandas_dataframe</span><span class="p">[</span><span class="s2">"quality"</span><span class="p">]))</span>
 
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
             <span class="n">counts</span><span class="o">=</span><span class="n">counts</span><span class="p">,</span>
@@ -655,36 +655,36 @@
 <div class="viewcode-block" id="BinnedSpectrum.to_pandas">
 <a class="viewcode-back" href="../../../../api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.to_pandas">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_pandas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_rate</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Make a pandas table from the spectrum.</span>
+<span class="w">        </span><span class="sd">"""Make a pandas table from the spectrum.</span>
 
 <span class="sd">        :param use_rate: if the table should use rates or counts</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="n">use_rate</span><span class="p">:</span>
-            <span class="n">out_name</span> <span class="o">=</span> <span class="s2">&quot;rates&quot;</span>
+            <span class="n">out_name</span> <span class="o">=</span> <span class="s2">"rates"</span>
             <span class="n">out_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">out_name</span> <span class="o">=</span> <span class="s2">&quot;counts&quot;</span>
+            <span class="n">out_name</span> <span class="o">=</span> <span class="s2">"counts"</span>
             <span class="n">out_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">exposure</span>
 
         <span class="n">out_dict</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;emin&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">starts</span><span class="p">,</span>
-            <span class="s2">&quot;emax&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">stops</span><span class="p">,</span>
+            <span class="s2">"emin"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">starts</span><span class="p">,</span>
+            <span class="s2">"emax"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">stops</span><span class="p">,</span>
             <span class="n">out_name</span><span class="p">:</span> <span class="n">out_values</span><span class="p">,</span>
-            <span class="s2">&quot;quality&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">quality</span><span class="p">,</span>
+            <span class="s2">"quality"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">quality</span><span class="p">,</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate_errors</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">use_rate</span><span class="p">:</span>
-                <span class="n">out_dict</span><span class="p">[</span><span class="s2">&quot;rate_errors&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate_errors</span>
+                <span class="n">out_dict</span><span class="p">[</span><span class="s2">"rate_errors"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate_errors</span>
 
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">out_dict</span><span class="p">[</span><span class="s2">&quot;count_errors&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate_errors</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">exposure</span>
+                <span class="n">out_dict</span><span class="p">[</span><span class="s2">"count_errors"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate_errors</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">exposure</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sys_errors</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">out_dict</span><span class="p">[</span><span class="s2">&quot;sys_errors&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">out_dict</span><span class="p">[</span><span class="s2">"sys_errors"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">out_dict</span><span class="p">)</span></div>
 
@@ -693,12 +693,12 @@
 <a class="viewcode-back" href="../../../../api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.from_time_series">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_time_series</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">time_series</span><span class="p">,</span> <span class="n">use_poly</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">from_model</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 
 <span class="sd">        :param time_series:</span>
 <span class="sd">        :param use_poly:</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">pha_information</span> <span class="o">=</span> <span class="n">time_series</span><span class="o">.</span><span class="n">get_information_dict</span><span class="p">(</span><span class="n">use_poly</span><span class="p">)</span>
 
@@ -712,7 +712,7 @@
             <span class="n">mission</span><span class="o">=</span><span class="n">pha_information</span><span class="o">.</span><span class="n">telescope</span><span class="p">,</span>
             <span class="n">tstart</span><span class="o">=</span><span class="n">pha_information</span><span class="o">.</span><span class="n">tstart</span><span class="p">,</span>
             <span class="n">tstop</span><span class="o">=</span><span class="n">pha_information</span><span class="o">.</span><span class="n">start</span> <span class="o">+</span> <span class="n">pha_information</span><span class="o">.</span><span class="n">telapse</span><span class="p">,</span>
-            <span class="c1"># telapse=pha_information[&quot;telapse,</span>
+            <span class="c1"># telapse=pha_information["telapse,</span>
             <span class="c1"># channel=pha_information.channel,</span>
             <span class="n">counts</span><span class="o">=</span><span class="n">pha_information</span><span class="o">.</span><span class="n">counts</span><span class="p">,</span>
             <span class="n">count_errors</span><span class="o">=</span><span class="n">pha_information</span><span class="o">.</span><span class="n">counts_error</span><span class="p">,</span>
@@ -725,7 +725,7 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">other</span><span class="p">,</span> <span class="s2">&quot;The bins are not equal&quot;</span>
+        <span class="k">assert</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">other</span><span class="p">,</span> <span class="s2">"The bins are not equal"</span>
 
         <span class="n">new_sys_errors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sys_errors</span>
         <span class="k">if</span> <span class="n">new_sys_errors</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -740,7 +740,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">assert</span> <span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">count_errors</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">other</span><span class="o">.</span><span class="n">count_errors</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-            <span class="p">),</span> <span class="s2">&quot;only one of the two spectra have errors, can not add!&quot;</span>
+            <span class="p">),</span> <span class="s2">"only one of the two spectra have errors, can not add!"</span>
             <span class="n">new_count_errors</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">count_errors</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">count_errors</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
 
         <span class="n">new_counts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">counts</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">counts</span>
@@ -780,10 +780,10 @@
 <div class="viewcode-block" id="BinnedSpectrum.add_inverse_variance_weighted">
 <a class="viewcode-back" href="../../../../api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.add_inverse_variance_weighted">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_inverse_variance_weighted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">other</span><span class="p">,</span> <span class="s2">&quot;The bins are not equal&quot;</span>
+        <span class="k">assert</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">other</span><span class="p">,</span> <span class="s2">"The bins are not equal"</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_poisson</span> <span class="ow">or</span> <span class="n">other</span><span class="o">.</span><span class="n">is_poisson</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Inverse_variance_weighting not implemented for poisson&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">"Inverse_variance_weighting not implemented for poisson"</span><span class="p">)</span>
 
         <span class="n">new_sys_errors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sys_errors</span>
         <span class="k">if</span> <span class="n">new_sys_errors</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -870,7 +870,7 @@
         <span class="n">tstart</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">tstop</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A binned spectrum that must be deconvolved via a dispersion or</span>
+<span class="w">        </span><span class="sd">"""A binned spectrum that must be deconvolved via a dispersion or</span>
 <span class="sd">        response matrix.</span>
 
 <span class="sd">        :param counts:</span>
@@ -883,10 +883,10 @@
 <span class="sd">        :param is_poisson:</span>
 <span class="sd">        :param mission:</span>
 <span class="sd">        :param instrument:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">InstrumentResponse</span><span class="p">):</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;The response is not a valid instance of InstrumentResponse&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"The response is not a valid instance of InstrumentResponse"</span><span class="p">)</span>
 
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
 
@@ -919,16 +919,16 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">from_time_series</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span> <span class="n">time_series</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_poly</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">extract</span><span class="o">=</span><span class="kc">False</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 
 <span class="sd">        :param time_series:</span>
 <span class="sd">        :param use_poly:</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">assert</span> <span class="ow">not</span> <span class="p">(</span>
             <span class="n">use_poly</span> <span class="ow">and</span> <span class="n">extract</span>
-        <span class="p">),</span> <span class="s2">&quot;cannot extract background counts and use the poly&quot;</span>
+        <span class="p">),</span> <span class="s2">"cannot extract background counts and use the poly"</span>
 
         <span class="n">pha_information</span> <span class="o">=</span> <span class="n">time_series</span><span class="o">.</span><span class="n">get_information_dict</span><span class="p">(</span><span class="n">use_poly</span><span class="p">,</span> <span class="n">extract</span><span class="p">)</span>
 
@@ -942,7 +942,7 @@
             <span class="n">mission</span><span class="o">=</span><span class="n">pha_information</span><span class="o">.</span><span class="n">telescope</span><span class="p">,</span>
             <span class="n">tstart</span><span class="o">=</span><span class="n">pha_information</span><span class="o">.</span><span class="n">tstart</span><span class="p">,</span>
             <span class="n">tstop</span><span class="o">=</span><span class="n">pha_information</span><span class="o">.</span><span class="n">tstart</span> <span class="o">+</span> <span class="n">pha_information</span><span class="o">.</span><span class="n">telapse</span><span class="p">,</span>
-            <span class="c1"># channel=pha_information[&#39;channel&#39;],</span>
+            <span class="c1"># channel=pha_information['channel'],</span>
             <span class="n">counts</span><span class="o">=</span><span class="n">pha_information</span><span class="o">.</span><span class="n">counts</span><span class="p">,</span>
             <span class="n">count_errors</span><span class="o">=</span><span class="n">pha_information</span><span class="o">.</span><span class="n">counts_error</span><span class="p">,</span>
             <span class="n">quality</span><span class="o">=</span><span class="n">pha_information</span><span class="o">.</span><span class="n">quality</span><span class="p">,</span>
@@ -964,7 +964,7 @@
         <span class="n">new_exposure</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">new_scale_factor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Make a new spectrum with new counts and errors and all other</span>
+<span class="w">        </span><span class="sd">"""Make a new spectrum with new counts and errors and all other</span>
 <span class="sd">        parameters the same.</span>
 
 <span class="sd">        :param new_sys_errors:</span>
@@ -973,7 +973,7 @@
 <span class="sd">        :param new_counts: new counts for the spectrum</span>
 <span class="sd">        :param new_count_errors: new errors from the spectrum</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="n">new_counts</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">new_counts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">counts</span>

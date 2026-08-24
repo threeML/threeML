@@ -120,12 +120,12 @@
 <div class="viewcode-block" id="RandomVariates">
 <a class="viewcode-back" href="../../api/threeML.html#threeML.random_variates.RandomVariates">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RandomVariates</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A subclass of np.array which is meant to contain samples for one</span>
+<span class="w">    </span><span class="sd">"""A subclass of np.array which is meant to contain samples for one</span>
 <span class="sd">    parameter.</span>
 
 <span class="sd">    This class contains methods to easily compute properties for the</span>
 <span class="sd">    parameter (errors and so on)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">input_array</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="c1"># Input array is an already formed ndarray instance</span>
@@ -145,7 +145,7 @@
             <span class="k">return</span>
 
         <span class="c1"># Add the value</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_orig_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s2">&quot;_orig_value&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_orig_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s2">"_orig_value"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">__array_wrap__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out_arr</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_scalar</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="c1"># This gets called at the end of any operation, where out_arr is the result of</span>
@@ -170,7 +170,7 @@
     <span class="c1">#         else:</span>
     <span class="c1">#             args.append(input_)</span>
 
-    <span class="c1">#     outputs = kwargs.pop(&#39;out&#39;, None)</span>
+    <span class="c1">#     outputs = kwargs.pop('out', None)</span>
     <span class="c1">#     out_no = []</span>
 
     <span class="c1">#     if outputs:</span>
@@ -181,7 +181,7 @@
     <span class="c1">#                 out_args.append(output.view(np.ndarray))</span>
     <span class="c1">#             else:</span>
     <span class="c1">#                 out_args.append(output)</span>
-    <span class="c1">#         kwargs[&#39;out&#39;] = tuple(out_args)</span>
+    <span class="c1">#         kwargs['out'] = tuple(out_args)</span>
     <span class="c1">#     else:</span>
     <span class="c1">#         outputs = (None,) * ufunc.nout</span>
 
@@ -190,7 +190,7 @@
     <span class="c1">#     if results is NotImplemented:</span>
     <span class="c1">#         return NotImplemented</span>
 
-    <span class="c1">#     if method == &#39;at&#39;:</span>
+    <span class="c1">#     if method == 'at':</span>
     <span class="c1">#         return</span>
 
     <span class="c1">#     if ufunc.nout == 1:</span>
@@ -204,7 +204,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">median</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns median value.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Returns median value."""</span>
 
         <span class="c1"># the np.asarray casting avoids the calls to __new__ and __array_finalize_ of</span>
         <span class="c1"># this class</span>
@@ -213,25 +213,25 @@
 
     <span class="c1"># @property</span>
     <span class="c1"># def mean(self):</span>
-    <span class="c1">#     &quot;&quot;&quot;Returns average value&quot;&quot;&quot;</span>
+    <span class="c1">#     """Returns average value"""</span>
 
     <span class="c1">#     return float(np.asarray(self).mean())</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">std</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns sample std value.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Returns sample std value."""</span>
 
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">std</span><span class="p">())</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">var</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns sample variance value.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Returns sample variance value."""</span>
 
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">var</span><span class="p">())</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">average</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns average value.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Returns average value."""</span>
 
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
 
@@ -246,7 +246,7 @@
 <div class="viewcode-block" id="RandomVariates.highest_posterior_density_interval">
 <a class="viewcode-back" href="../../api/threeML.html#threeML.random_variates.RandomVariates.highest_posterior_density_interval">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">highest_posterior_density_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cl</span><span class="o">=</span><span class="mf">0.68</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the Highest Posterior Density interval (HPD) for the</span>
+<span class="w">        </span><span class="sd">"""Returns the Highest Posterior Density interval (HPD) for the</span>
 <span class="sd">        parameter, for the given credibility level.</span>
 
 <span class="sd">        NOTE: the returned interval is the HPD only if the posterior is not multimodal.</span>
@@ -255,9 +255,9 @@
 
 <span class="sd">        :param cl: credibility level (0 &lt; cl &lt; 1)</span>
 <span class="sd">        :return: (low_bound, hi_bound)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
-        <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">cl</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;The credibility level should be 0 &lt; cl &lt; 1&quot;</span>
+        <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">cl</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"The credibility level should be 0 &lt; cl &lt; 1"</span>
 
         <span class="c1"># NOTE: we cannot sort the array, because we would destroy the covariance with</span>
         <span class="c1"># other physical quantities, so we get a copy instead. This copy will live only</span>
@@ -293,7 +293,7 @@
 
         <span class="c1"># This might happen if there are too few values</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">interval_width</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Too few elements for interval calculation&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"Too few elements for interval calculation"</span><span class="p">)</span>
 
         <span class="c1"># Find the index of the shortest interval</span>
 
@@ -310,7 +310,7 @@
 <div class="viewcode-block" id="RandomVariates.equal_tail_interval">
 <a class="viewcode-back" href="../../api/threeML.html#threeML.random_variates.RandomVariates.equal_tail_interval">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">equal_tail_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cl</span><span class="o">=</span><span class="mf">0.68</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the equal tail interval, i.e., an interval centered on the</span>
+<span class="w">        </span><span class="sd">"""Returns the equal tail interval, i.e., an interval centered on the</span>
 <span class="sd">        median of the distribution with the same probability on the right and</span>
 <span class="sd">        on the left of the mean.</span>
 
@@ -319,9 +319,9 @@
 
 <span class="sd">        :param cl: confidence level (0 &lt; cl &lt; 1)</span>
 <span class="sd">        :return: (low_bound, hi_bound)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
-        <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">cl</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Confidence level must be 0 &lt; cl &lt; 1&quot;</span>
+        <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">cl</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Confidence level must be 0 &lt; cl &lt; 1"</span>
 
         <span class="n">half_cl</span> <span class="o">=</span> <span class="n">cl</span> <span class="o">/</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="mf">100.0</span>
 
@@ -349,7 +349,7 @@
 
         <span class="c1"># Put them together</span>
 
-        <span class="n">representation</span> <span class="o">=</span> <span class="s2">&quot;equal-tail: </span><span class="si">%s</span><span class="s2">, hpd: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">eqt_string</span><span class="p">,</span> <span class="n">hpd_string</span><span class="p">)</span>
+        <span class="n">representation</span> <span class="o">=</span> <span class="s2">"equal-tail: </span><span class="si">%s</span><span class="s2">, hpd: </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">eqt_string</span><span class="p">,</span> <span class="n">hpd_string</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">representation</span>
 

@@ -138,12 +138,12 @@
 <a class="viewcode-back" href="../../../../api/threeML.utils.polarization.html#threeML.utils.polarization.binned_polarization.ScatteringChannelSet.from_instrument_response">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_instrument_response</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">instrument_response</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build EBOUNDS interval from an instrument response.</span>
+<span class="w">        </span><span class="sd">"""Build EBOUNDS interval from an instrument response.</span>
 
 <span class="sd">        :param instrument_response:</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Under Construction&quot;</span><span class="p">)</span>
+<span class="sd">        """</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"Under Construction"</span><span class="p">)</span>
 
         <span class="n">new_ebounds</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_list_of_edges</span><span class="p">(</span><span class="n">instrument_response</span><span class="o">.</span><span class="n">ebounds</span><span class="p">)</span>
 
@@ -176,7 +176,7 @@
         <span class="n">tstart</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">tstop</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A binned modulation curve.</span>
+<span class="w">        </span><span class="sd">"""A binned modulation curve.</span>
 
 <span class="sd">        :param counts: an array of counts</span>
 <span class="sd">        :param exposure: the exposure for the counts</span>
@@ -191,11 +191,11 @@
 <span class="sd">        :param is_poisson: if the histogram is Poisson</span>
 <span class="sd">        :param mission: the mission name</span>
 <span class="sd">        :param instrument: the instrument name</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">assert</span> <span class="p">(</span>
             <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">abounds</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">abounds</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mf">360.0</span>
-        <span class="p">),</span> <span class="s2">&quot;The scattering angles have invalid bounds&quot;</span>
+        <span class="p">),</span> <span class="s2">"The scattering angles have invalid bounds"</span>
 
         <span class="nb">super</span><span class="p">(</span><span class="n">BinnedModulationCurve</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">counts</span><span class="p">,</span>
@@ -222,14 +222,14 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">from_time_series</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span> <span class="n">time_series</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_poly</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">extract</span><span class="o">=</span><span class="kc">False</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 
 <span class="sd">        :param time_series:</span>
 <span class="sd">        :param use_poly:</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
-        <span class="k">assert</span> <span class="ow">not</span> <span class="p">(</span><span class="n">use_poly</span> <span class="ow">and</span> <span class="n">extract</span><span class="p">),</span> <span class="s2">&quot;You cannot use both at the same time&quot;</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="p">(</span><span class="n">use_poly</span> <span class="ow">and</span> <span class="n">extract</span><span class="p">),</span> <span class="s2">"You cannot use both at the same time"</span>
 
         <span class="n">pha_information</span> <span class="o">=</span> <span class="n">time_series</span><span class="o">.</span><span class="n">get_information_dict</span><span class="p">(</span><span class="n">use_poly</span><span class="p">,</span> <span class="n">extract</span><span class="p">)</span>
 
@@ -262,13 +262,13 @@
         <span class="n">new_exposure</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">new_scale_factor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Make a new spectrum with new counts and errors and all other</span>
+<span class="w">        </span><span class="sd">"""Make a new spectrum with new counts and errors and all other</span>
 <span class="sd">        parameters the same.</span>
 
 <span class="sd">        :param new_counts: new counts for the spectrum</span>
 <span class="sd">        :param new_count_errors: new errors from the spectrum</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="n">new_counts</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">new_counts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">counts</span>

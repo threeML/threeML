@@ -121,61 +121,61 @@
 <div class="viewcode-block" id="Vector">
 <a class="viewcode-back" href="../../../api/threeML.utils.html#threeML.utils.numba_utils.Vector">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">Vector</span><span class="p">(</span><span class="n">numba_type</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generates an instance of a dynamically resized vector numba jitclass.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Generates an instance of a dynamically resized vector numba jitclass."""</span>
 
     <span class="k">if</span> <span class="n">numba_type</span> <span class="ow">in</span> <span class="n">Vector</span><span class="o">.</span><span class="n">_saved_type</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">Vector</span><span class="o">.</span><span class="n">_saved_type</span><span class="p">[</span><span class="n">numba_type</span><span class="p">]</span>
 
     <span class="k">class</span><span class="w"> </span><span class="nc">_Vector</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Dynamically sized arrays in nopython mode.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Dynamically sized arrays in nopython mode."""</span>
 
         <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;Initialize with space enough to hold n garbage values.&quot;&quot;&quot;</span>
+<span class="w">            </span><span class="sd">"""Initialize with space enough to hold n garbage values."""</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">n</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">m</span> <span class="o">=</span> <span class="n">n</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">full_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numba_type</span><span class="p">)</span>
 
         <span class="nd">@property</span>
         <span class="k">def</span><span class="w"> </span><span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;The number of valid values.&quot;&quot;&quot;</span>
+<span class="w">            </span><span class="sd">"""The number of valid values."""</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span>
 
         <span class="nd">@property</span>
         <span class="k">def</span><span class="w"> </span><span class="nf">arr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;Return the subarray.&quot;&quot;&quot;</span>
+<span class="w">            </span><span class="sd">"""Return the subarray."""</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">full_arr</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">]</span>
 
         <span class="nd">@property</span>
         <span class="k">def</span><span class="w"> </span><span class="nf">last</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;The last element in the array.&quot;&quot;&quot;</span>
+<span class="w">            </span><span class="sd">"""The last element in the array."""</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">full_arr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s2">&quot;This numbavec has no elements: cannot return &#39;last&#39;.&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s2">"This numbavec has no elements: cannot return 'last'."</span><span class="p">)</span>
 
         <span class="nd">@property</span>
         <span class="k">def</span><span class="w"> </span><span class="nf">first</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;The first element in the array.&quot;&quot;&quot;</span>
+<span class="w">            </span><span class="sd">"""The first element in the array."""</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">full_arr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span>
-                    <span class="s2">&quot;This numbavec has no elements: cannot return &#39;first&#39;.&quot;</span>
+                    <span class="s2">"This numbavec has no elements: cannot return 'first'."</span>
                 <span class="p">)</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;Remove all elements from the array.&quot;&quot;&quot;</span>
+<span class="w">            </span><span class="sd">"""Remove all elements from the array."""</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="k">return</span> <span class="bp">self</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">extend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;Add the contents of a numpy array to the end of this Vector.</span>
+<span class="w">            </span><span class="sd">"""Add the contents of a numpy array to the end of this Vector.</span>
 
 <span class="sd">            Arguments</span>
 <span class="sd">            ---------</span>
 <span class="sd">            other : 1d array</span>
 <span class="sd">                The values to add to the end.</span>
-<span class="sd">            &quot;&quot;&quot;</span>
+<span class="sd">            """</span>
             <span class="n">n_required</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">size</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">reserve</span><span class="p">(</span><span class="n">n_required</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">full_arr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="p">:</span> <span class="n">n_required</span><span class="p">]</span> <span class="o">=</span> <span class="n">other</span>
@@ -183,8 +183,8 @@
             <span class="k">return</span> <span class="bp">self</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;Add a value to the end of the Vector, expanding it if</span>
-<span class="sd">            necessary.&quot;&quot;&quot;</span>
+<span class="w">            </span><span class="sd">"""Add a value to the end of the Vector, expanding it if</span>
+<span class="sd">            necessary."""</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_expand</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">full_arr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
@@ -192,7 +192,7 @@
             <span class="k">return</span> <span class="bp">self</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">reserve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;Reserve a n elements in the underlying array.</span>
+<span class="w">            </span><span class="sd">"""Reserve a n elements in the underlying array.</span>
 
 <span class="sd">            Arguments</span>
 <span class="sd">            ---------</span>
@@ -201,7 +201,7 @@
 
 <span class="sd">            Reserving n elements ensures no resize overhead when appending up</span>
 <span class="sd">            to size n-1 .</span>
-<span class="sd">            &quot;&quot;&quot;</span>
+<span class="sd">            """</span>
             <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="p">:</span>  <span class="c1"># Only change size if we are</span>
                 <span class="n">temp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numba_type</span><span class="p">)</span>
                 <span class="n">temp</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">arr</span>
@@ -210,25 +210,25 @@
             <span class="k">return</span> <span class="bp">self</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">consolidate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;Remove unused memory from the array.&quot;&quot;&quot;</span>
+<span class="w">            </span><span class="sd">"""Remove unused memory from the array."""</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">full_arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">arr</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span>
             <span class="k">return</span> <span class="bp">self</span>
 
         <span class="c1"># def __array__(self):</span>
-        <span class="c1">#    &quot;&quot;&quot;Array inteface for Numpy compatibility.&quot;&quot;&quot;</span>
+        <span class="c1">#    """Array inteface for Numpy compatibility."""</span>
         <span class="c1">#    return self.full_arr[: self.n]</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">_expand</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;Internal function that handles the resizing of the array.&quot;&quot;&quot;</span>
+<span class="w">            </span><span class="sd">"""Internal function that handles the resizing of the array."""</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">m</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">m</span> <span class="o">*</span> <span class="n">_EXPANSION_CONSTANT_</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
             <span class="n">temp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numba_type</span><span class="p">)</span>
             <span class="n">temp</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">full_arr</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">full_arr</span> <span class="o">=</span> <span class="n">temp</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">set_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arr</span><span class="p">):</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;Make this vector point to another array of values.</span>
+<span class="w">            </span><span class="sd">"""Make this vector point to another array of values.</span>
 
 <span class="sd">            Arguments</span>
 <span class="sd">            ---------</span>
@@ -237,12 +237,12 @@
 <span class="sd">                will be equal to arr. The dtype of this array must be the</span>
 <span class="sd">                same dtype as used to create the vector. Cannot be a readonly</span>
 <span class="sd">                vector.</span>
-<span class="sd">            &quot;&quot;&quot;</span>
+<span class="sd">            """</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">full_arr</span> <span class="o">=</span> <span class="n">arr</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">m</span> <span class="o">=</span> <span class="n">arr</span><span class="o">.</span><span class="n">size</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">set_to_copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arr</span><span class="p">):</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;Set this vector to an array, copying the underlying input.</span>
+<span class="w">            </span><span class="sd">"""Set this vector to an array, copying the underlying input.</span>
 
 <span class="sd">            Arguments</span>
 <span class="sd">            ---------</span>
@@ -250,12 +250,12 @@
 <span class="sd">                Array to set this vector to. After this operation, self.arr</span>
 <span class="sd">                will be equal to arr. The dtype of this array must be the</span>
 <span class="sd">                same dtype as used to create the vector.</span>
-<span class="sd">            &quot;&quot;&quot;</span>
+<span class="sd">            """</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">full_arr</span> <span class="o">=</span> <span class="n">arr</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">m</span> <span class="o">=</span> <span class="n">arr</span><span class="o">.</span><span class="n">size</span>
 
     <span class="k">if</span> <span class="n">numba_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">Vector</span><span class="o">.</span><span class="n">_saved_type</span><span class="p">:</span>
-        <span class="n">spec</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="n">nb</span><span class="o">.</span><span class="n">uint64</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;m&quot;</span><span class="p">,</span> <span class="n">nb</span><span class="o">.</span><span class="n">uint64</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;full_arr&quot;</span><span class="p">,</span> <span class="n">numba_type</span><span class="p">[:])]</span>
+        <span class="n">spec</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">"n"</span><span class="p">,</span> <span class="n">nb</span><span class="o">.</span><span class="n">uint64</span><span class="p">),</span> <span class="p">(</span><span class="s2">"m"</span><span class="p">,</span> <span class="n">nb</span><span class="o">.</span><span class="n">uint64</span><span class="p">),</span> <span class="p">(</span><span class="s2">"full_arr"</span><span class="p">,</span> <span class="n">numba_type</span><span class="p">[:])]</span>
         <span class="n">Vector</span><span class="o">.</span><span class="n">_saved_type</span><span class="p">[</span><span class="n">numba_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">experimental</span><span class="o">.</span><span class="n">jitclass</span><span class="p">(</span><span class="n">spec</span><span class="p">)(</span><span class="n">_Vector</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">Vector</span><span class="o">.</span><span class="n">_saved_type</span><span class="p">[</span><span class="n">numba_type</span><span class="p">]</span></div>

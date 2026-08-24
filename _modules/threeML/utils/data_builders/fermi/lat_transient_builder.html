@@ -129,7 +129,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.file_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">file_existing_and_readable</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_startup_warning</span>
 
-<span class="n">pd</span><span class="o">.</span><span class="n">reset_option</span><span class="p">(</span><span class="s2">&quot;display.float_format&quot;</span><span class="p">)</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">reset_option</span><span class="p">(</span><span class="s2">"display.float_format"</span><span class="p">)</span>
 
 <span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -143,19 +143,19 @@
     <span class="n">irfs</span> <span class="o">=</span> <span class="n">IRFS</span><span class="o">.</span><span class="n">IRFS</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
     <span class="n">spectra</span> <span class="o">=</span> <span class="n">Spectra</span><span class="p">()</span>
 
-    <span class="c1"># irfs.append(&#39;auto&#39;)</span>
+    <span class="c1"># irfs.append('auto')</span>
 
     <span class="n">configuration</span> <span class="o">=</span> <span class="n">Configuration</span><span class="p">()</span>
 
     <span class="n">has_fermitools</span> <span class="o">=</span> <span class="kc">True</span>
 
 <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Importing fermitools failed with </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Importing fermitools failed with </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="n">has_fermitools</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">irfs</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">spectra</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="n">add_startup_warning</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="s2">&quot;No fermitools installed&quot;</span><span class="p">)</span>
+    <span class="n">add_startup_warning</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="s2">"No fermitools installed"</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="LATLikelihoodParameter">
@@ -170,7 +170,7 @@
         <span class="n">is_number</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">is_bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A container for the parameters that are needed by GtBurst.</span>
+<span class="w">        </span><span class="sd">"""A container for the parameters that are needed by GtBurst.</span>
 
 <span class="sd">        :param name: the parameter name</span>
 <span class="sd">        :param help_string: the help string</span>
@@ -180,7 +180,7 @@
 <span class="sd">        :param is_bool: if this is a bool</span>
 <span class="sd">        :returns:</span>
 <span class="sd">        :rtype:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_allowed_values</span> <span class="o">=</span> <span class="n">allowed_values</span>
@@ -200,28 +200,28 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_allowed_values</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_value</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_allowed_values</span>
-            <span class="p">),</span> <span class="s2">&quot;The value of </span><span class="si">%s</span><span class="s2"> is not in </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_allowed_values</span><span class="p">)</span>
+            <span class="p">),</span> <span class="s2">"The value of </span><span class="si">%s</span><span class="s2"> is not in </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_allowed_values</span><span class="p">)</span>
 
         <span class="c1"># construct the class</span>
 
-        <span class="n">out_string</span> <span class="o">=</span> <span class="s2">&quot;--</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
+        <span class="n">out_string</span> <span class="o">=</span> <span class="s2">"--</span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_number</span><span class="p">:</span>
-            <span class="n">out_string</span> <span class="o">+=</span> <span class="s2">&quot; </span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_value</span>
+            <span class="n">out_string</span> <span class="o">+=</span> <span class="s2">" </span><span class="si">%f</span><span class="s2">"</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_value</span>
 
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_bool</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_value</span><span class="p">:</span>
                 <span class="c1"># we remove the string</span>
-                <span class="n">out_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="n">out_string</span> <span class="o">=</span> <span class="s2">""</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">out_string</span> <span class="o">+=</span> <span class="s2">&quot; &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_value</span>
+            <span class="n">out_string</span> <span class="o">+=</span> <span class="s2">" '</span><span class="si">%s</span><span class="s2">'"</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_value</span>
 
         <span class="k">return</span> <span class="n">out_string</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">__set_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_allowed_values</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_allowed_values</span><span class="p">,</span> <span class="s2">&quot;The value </span><span class="si">%s</span><span class="s2"> of </span><span class="si">%s</span><span class="s2"> is not in </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="k">assert</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_allowed_values</span><span class="p">,</span> <span class="s2">"The value </span><span class="si">%s</span><span class="s2"> of </span><span class="si">%s</span><span class="s2"> is not in </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span>
                 <span class="n">value</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_allowed_values</span><span class="p">,</span>
@@ -260,39 +260,39 @@
 
 
 <span class="n">_required_parameters</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;outfile&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;roi&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;tstarts&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;tstops&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;irf&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;galactic_model&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;particle_model&quot;</span><span class="p">,</span>
+    <span class="s2">"outfile"</span><span class="p">,</span>
+    <span class="s2">"roi"</span><span class="p">,</span>
+    <span class="s2">"tstarts"</span><span class="p">,</span>
+    <span class="s2">"tstops"</span><span class="p">,</span>
+    <span class="s2">"irf"</span><span class="p">,</span>
+    <span class="s2">"galactic_model"</span><span class="p">,</span>
+    <span class="s2">"particle_model"</span><span class="p">,</span>
 <span class="p">]</span>
 
 <span class="n">_optional_parameters</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;ra&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;dec&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;bin_file&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;tsmin&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;strategy&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;thetamax&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;spectralfiles&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;liketype&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;optimizeposition&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;datarepository&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;ltcube&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;expomap&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;ulphindex&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;flemin&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;flemax&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;fgl_mode&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;tsmap_spec&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;filter_GTI&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;likelihood_profile&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;remove_fits_files&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;log_bins&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;bin_file&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;source_model&quot;</span><span class="p">,</span>
+    <span class="s2">"ra"</span><span class="p">,</span>
+    <span class="s2">"dec"</span><span class="p">,</span>
+    <span class="s2">"bin_file"</span><span class="p">,</span>
+    <span class="s2">"tsmin"</span><span class="p">,</span>
+    <span class="s2">"strategy"</span><span class="p">,</span>
+    <span class="s2">"thetamax"</span><span class="p">,</span>
+    <span class="s2">"spectralfiles"</span><span class="p">,</span>
+    <span class="s2">"liketype"</span><span class="p">,</span>
+    <span class="s2">"optimizeposition"</span><span class="p">,</span>
+    <span class="s2">"datarepository"</span><span class="p">,</span>
+    <span class="s2">"ltcube"</span><span class="p">,</span>
+    <span class="s2">"expomap"</span><span class="p">,</span>
+    <span class="s2">"ulphindex"</span><span class="p">,</span>
+    <span class="s2">"flemin"</span><span class="p">,</span>
+    <span class="s2">"flemax"</span><span class="p">,</span>
+    <span class="s2">"fgl_mode"</span><span class="p">,</span>
+    <span class="s2">"tsmap_spec"</span><span class="p">,</span>
+    <span class="s2">"filter_GTI"</span><span class="p">,</span>
+    <span class="s2">"likelihood_profile"</span><span class="p">,</span>
+    <span class="s2">"remove_fits_files"</span><span class="p">,</span>
+    <span class="s2">"log_bins"</span><span class="p">,</span>
+    <span class="s2">"bin_file"</span><span class="p">,</span>
+    <span class="s2">"source_model"</span><span class="p">,</span>
 <span class="p">]</span>
 
 
@@ -300,16 +300,16 @@
 <a class="viewcode-back" href="../../../../../api/threeML.utils.data_builders.fermi.html#threeML.utils.data_builders.TransientLATDataBuilder">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">TransientLATDataBuilder</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">triggername</span><span class="p">,</span> <span class="o">**</span><span class="n">init_values</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build the command for GtBurst&#39;s likelihood analysis and produce the</span>
+<span class="w">        </span><span class="sd">"""Build the command for GtBurst's likelihood analysis and produce the</span>
 <span class="sd">        required files for the FermiLATLike plugin.</span>
 
 <span class="sd">        :param triggername: the trigger name in YYMMDDXXX fermi format</span>
 <span class="sd">        :returns:</span>
 <span class="sd">        :rtype:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">assert</span> <span class="p">(</span>
             <span class="n">has_fermitools</span>
-        <span class="p">),</span> <span class="s2">&quot;You do not have the fermitools installed and cannot run GtBurst&quot;</span>
+        <span class="p">),</span> <span class="s2">"You do not have the fermitools installed and cannot run GtBurst"</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_triggername</span> <span class="o">=</span> <span class="n">triggername</span>
 
@@ -322,14 +322,14 @@
 
         <span class="c1"># set the name for this parameter</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;outfile&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">"outfile"</span>
 
         <span class="c1"># add it to the hash as a parameter object</span>
         <span class="c1"># no value is set UNLESS there is a default</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">LATLikelihoodParameter</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
-            <span class="n">help_string</span><span class="o">=</span><span class="s2">&quot;File for the results (will be overwritten)&quot;</span><span class="p">,</span>
+            <span class="n">help_string</span><span class="o">=</span><span class="s2">"File for the results (will be overwritten)"</span><span class="p">,</span>
             <span class="n">is_number</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
 
@@ -339,31 +339,31 @@
 
         <span class="c1"># and repeat</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;ra&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">"ra"</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">LATLikelihoodParameter</span><span class="p">(</span>
-            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">help_string</span><span class="o">=</span><span class="s2">&quot;R.A. of the object (J2000)&quot;</span><span class="p">,</span> <span class="n">is_number</span><span class="o">=</span><span class="kc">True</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">help_string</span><span class="o">=</span><span class="s2">"R.A. of the object (J2000)"</span><span class="p">,</span> <span class="n">is_number</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
 
         <span class="nb">super</span><span class="p">(</span><span class="n">TransientLATDataBuilder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
 
         <span class="c1">##################################</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;dec&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">"dec"</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">LATLikelihoodParameter</span><span class="p">(</span>
-            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">help_string</span><span class="o">=</span><span class="s2">&quot;Dec. of the object (J2000)&quot;</span><span class="p">,</span> <span class="n">is_number</span><span class="o">=</span><span class="kc">True</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">help_string</span><span class="o">=</span><span class="s2">"Dec. of the object (J2000)"</span><span class="p">,</span> <span class="n">is_number</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
 
         <span class="nb">super</span><span class="p">(</span><span class="n">TransientLATDataBuilder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
 
         <span class="c1">##################################</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;roi&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">"roi"</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">LATLikelihoodParameter</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
-            <span class="n">help_string</span><span class="o">=</span><span class="s2">&quot;Radius of the Region Of Interest (ROI)&quot;</span><span class="p">,</span>
+            <span class="n">help_string</span><span class="o">=</span><span class="s2">"Radius of the Region Of Interest (ROI)"</span><span class="p">,</span>
             <span class="n">is_number</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
 
@@ -371,12 +371,12 @@
 
         <span class="c1">##################################</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;tstarts&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">"tstarts"</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">LATLikelihoodParameter</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
             <span class="n">default_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="n">help_string</span><span class="o">=</span><span class="s2">&quot;Comma-separated list of start times (with respect to trigger)&quot;</span><span class="p">,</span>
+            <span class="n">help_string</span><span class="o">=</span><span class="s2">"Comma-separated list of start times (with respect to trigger)"</span><span class="p">,</span>
             <span class="n">is_number</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
 
@@ -384,12 +384,12 @@
 
         <span class="c1">##################################</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;tstops&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">"tstops"</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">LATLikelihoodParameter</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
             <span class="n">default_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="n">help_string</span><span class="o">=</span><span class="s2">&quot;Comma-separated list of stop times (with respect to trigger)&quot;</span><span class="p">,</span>
+            <span class="n">help_string</span><span class="o">=</span><span class="s2">"Comma-separated list of stop times (with respect to trigger)"</span><span class="p">,</span>
             <span class="n">is_number</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
 
@@ -397,22 +397,22 @@
 
         <span class="c1">##################################</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;zmax&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">"zmax"</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">LATLikelihoodParameter</span><span class="p">(</span>
-            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">default_value</span><span class="o">=</span><span class="mf">100.0</span><span class="p">,</span> <span class="n">help_string</span><span class="o">=</span><span class="s2">&quot;Zenith cut&quot;</span><span class="p">,</span> <span class="n">is_number</span><span class="o">=</span><span class="kc">True</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">default_value</span><span class="o">=</span><span class="mf">100.0</span><span class="p">,</span> <span class="n">help_string</span><span class="o">=</span><span class="s2">"Zenith cut"</span><span class="p">,</span> <span class="n">is_number</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
 
         <span class="nb">super</span><span class="p">(</span><span class="n">TransientLATDataBuilder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
 
         <span class="c1">##################################</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;emin&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">"emin"</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">LATLikelihoodParameter</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
             <span class="n">default_value</span><span class="o">=</span><span class="mf">100.0</span><span class="p">,</span>
-            <span class="n">help_string</span><span class="o">=</span><span class="s2">&quot;Minimum energy for the analysis&quot;</span><span class="p">,</span>
+            <span class="n">help_string</span><span class="o">=</span><span class="s2">"Minimum energy for the analysis"</span><span class="p">,</span>
             <span class="n">is_number</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
 
@@ -420,12 +420,12 @@
 
         <span class="c1">##################################</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;emax&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">"emax"</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">LATLikelihoodParameter</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
             <span class="n">default_value</span><span class="o">=</span><span class="mf">100000.0</span><span class="p">,</span>
-            <span class="n">help_string</span><span class="o">=</span><span class="s2">&quot;Maximum energy for the analysis&quot;</span><span class="p">,</span>
+            <span class="n">help_string</span><span class="o">=</span><span class="s2">"Maximum energy for the analysis"</span><span class="p">,</span>
             <span class="n">is_number</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
 
@@ -433,12 +433,12 @@
 
         <span class="c1">##################################</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;irf&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">"irf"</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">LATLikelihoodParameter</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
-            <span class="n">default_value</span><span class="o">=</span><span class="s2">&quot;p8_source&quot;</span><span class="p">,</span>
-            <span class="n">help_string</span><span class="o">=</span><span class="s2">&quot;Instrument Function to be used (IRF)&quot;</span><span class="p">,</span>
+            <span class="n">default_value</span><span class="o">=</span><span class="s2">"p8_source"</span><span class="p">,</span>
+            <span class="n">help_string</span><span class="o">=</span><span class="s2">"Instrument Function to be used (IRF)"</span><span class="p">,</span>
             <span class="n">is_number</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="n">allowed_values</span><span class="o">=</span><span class="n">irfs</span><span class="p">,</span>
         <span class="p">)</span>
@@ -447,31 +447,31 @@
 
         <span class="c1">##################################</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;galactic_model&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">"galactic_model"</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">LATLikelihoodParameter</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
-            <span class="n">help_string</span><span class="o">=</span><span class="s2">&quot;Galactic model for the likelihood&quot;</span><span class="p">,</span>
+            <span class="n">help_string</span><span class="o">=</span><span class="s2">"Galactic model for the likelihood"</span><span class="p">,</span>
             <span class="n">is_number</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">allowed_values</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;template (fixed norm.)&quot;</span><span class="p">,</span> <span class="s2">&quot;template&quot;</span><span class="p">,</span> <span class="s2">&quot;none&quot;</span><span class="p">],</span>
+            <span class="n">allowed_values</span><span class="o">=</span><span class="p">[</span><span class="s2">"template (fixed norm.)"</span><span class="p">,</span> <span class="s2">"template"</span><span class="p">,</span> <span class="s2">"none"</span><span class="p">],</span>
         <span class="p">)</span>
 
         <span class="nb">super</span><span class="p">(</span><span class="n">TransientLATDataBuilder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
 
         <span class="c1">##################################</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;particle_model&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">"particle_model"</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">LATLikelihoodParameter</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
-            <span class="n">help_string</span><span class="o">=</span><span class="s2">&quot;Particle model&quot;</span><span class="p">,</span>
+            <span class="n">help_string</span><span class="o">=</span><span class="s2">"Particle model"</span><span class="p">,</span>
             <span class="n">is_number</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="n">allowed_values</span><span class="o">=</span><span class="p">[</span>
-                <span class="s2">&quot;isotr with pow spectrum&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;isotr template&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;none&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;bkge&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+                <span class="s2">"isotr with pow spectrum"</span><span class="p">,</span>
+                <span class="s2">"isotr template"</span><span class="p">,</span>
+                <span class="s2">"none"</span><span class="p">,</span>
+                <span class="s2">"bkge"</span><span class="p">,</span>
+                <span class="s2">"auto"</span><span class="p">,</span>
             <span class="p">],</span>
         <span class="p">)</span>
 
@@ -479,12 +479,12 @@
 
         <span class="c1">##################################</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;source_model&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">"source_model"</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">LATLikelihoodParameter</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
-            <span class="n">help_string</span><span class="o">=</span><span class="s2">&quot;Source model&quot;</span><span class="p">,</span>
-            <span class="n">default_value</span><span class="o">=</span><span class="s2">&quot;PowerLaw2&quot;</span><span class="p">,</span>
+            <span class="n">help_string</span><span class="o">=</span><span class="s2">"Source model"</span><span class="p">,</span>
+            <span class="n">default_value</span><span class="o">=</span><span class="s2">"PowerLaw2"</span><span class="p">,</span>
             <span class="n">is_number</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="n">allowed_values</span><span class="o">=</span><span class="n">spectra</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span>
         <span class="p">)</span>
@@ -493,12 +493,12 @@
 
         <span class="c1">##################################</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;tsmin&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">"tsmin"</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">LATLikelihoodParameter</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
             <span class="n">default_value</span><span class="o">=</span><span class="mf">20.0</span><span class="p">,</span>
-            <span class="n">help_string</span><span class="o">=</span><span class="s2">&quot;Minimum TS to consider a detection&quot;</span><span class="p">,</span>
+            <span class="n">help_string</span><span class="o">=</span><span class="s2">"Minimum TS to consider a detection"</span><span class="p">,</span>
             <span class="n">is_number</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
 
@@ -506,51 +506,37 @@
 
         <span class="c1">##################################</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;strategy&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">"strategy"</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">LATLikelihoodParameter</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
-            <span class="n">default_value</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span>
-            <span class="n">help_string</span><span class="o">=</span><span class="s2">&quot;Strategy for Zenith cut: events or time&quot;</span><span class="p">,</span>
+            <span class="n">default_value</span><span class="o">=</span><span class="s2">"time"</span><span class="p">,</span>
+            <span class="n">help_string</span><span class="o">=</span><span class="s2">"Strategy for Zenith cut: events or time"</span><span class="p">,</span>
             <span class="n">is_number</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">allowed_values</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;events&quot;</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">],</span>
+            <span class="n">allowed_values</span><span class="o">=</span><span class="p">[</span><span class="s2">"events"</span><span class="p">,</span> <span class="s2">"time"</span><span class="p">],</span>
         <span class="p">)</span>
 
         <span class="nb">super</span><span class="p">(</span><span class="n">TransientLATDataBuilder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
 
         <span class="c1">##################################</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;thetamax&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">"thetamax"</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">LATLikelihoodParameter</span><span class="p">(</span>
-            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">default_value</span><span class="o">=</span><span class="mf">180.0</span><span class="p">,</span> <span class="n">help_string</span><span class="o">=</span><span class="s2">&quot;Theta cut&quot;</span><span class="p">,</span> <span class="n">is_number</span><span class="o">=</span><span class="kc">True</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">default_value</span><span class="o">=</span><span class="mf">180.0</span><span class="p">,</span> <span class="n">help_string</span><span class="o">=</span><span class="s2">"Theta cut"</span><span class="p">,</span> <span class="n">is_number</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
 
         <span class="nb">super</span><span class="p">(</span><span class="n">TransientLATDataBuilder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
 
         <span class="c1">##################################</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;spectralfiles&quot;</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">LATLikelihoodParameter</span><span class="p">(</span>
-            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
-            <span class="n">default_value</span><span class="o">=</span><span class="s2">&quot;no&quot;</span><span class="p">,</span>
-            <span class="n">help_string</span><span class="o">=</span><span class="s2">&quot;Produce spectral files to be used in XSPEC?&quot;</span><span class="p">,</span>
-            <span class="n">allowed_values</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;yes&quot;</span><span class="p">,</span> <span class="s2">&quot;no&quot;</span><span class="p">],</span>
-            <span class="n">is_number</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="p">)</span>
-
-        <span class="nb">super</span><span class="p">(</span><span class="n">TransientLATDataBuilder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
-
-        <span class="c1">##################################</span>
-
-        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;liketype&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">"spectralfiles"</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">LATLikelihoodParameter</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
-            <span class="n">default_value</span><span class="o">=</span><span class="s2">&quot;unbinned&quot;</span><span class="p">,</span>
-            <span class="n">help_string</span><span class="o">=</span><span class="s2">&quot;Likelihood type (binned or unbinned)&quot;</span><span class="p">,</span>
-            <span class="n">allowed_values</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;binned&quot;</span><span class="p">,</span> <span class="s2">&quot;unbinned&quot;</span><span class="p">],</span>
+            <span class="n">default_value</span><span class="o">=</span><span class="s2">"no"</span><span class="p">,</span>
+            <span class="n">help_string</span><span class="o">=</span><span class="s2">"Produce spectral files to be used in XSPEC?"</span><span class="p">,</span>
+            <span class="n">allowed_values</span><span class="o">=</span><span class="p">[</span><span class="s2">"yes"</span><span class="p">,</span> <span class="s2">"no"</span><span class="p">],</span>
             <span class="n">is_number</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
 
@@ -558,11 +544,25 @@
 
         <span class="c1">##################################</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;bin_file&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">"liketype"</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">LATLikelihoodParameter</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">default_value</span><span class="o">=</span><span class="s2">"unbinned"</span><span class="p">,</span>
+            <span class="n">help_string</span><span class="o">=</span><span class="s2">"Likelihood type (binned or unbinned)"</span><span class="p">,</span>
+            <span class="n">allowed_values</span><span class="o">=</span><span class="p">[</span><span class="s2">"binned"</span><span class="p">,</span> <span class="s2">"unbinned"</span><span class="p">],</span>
+            <span class="n">is_number</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">TransientLATDataBuilder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+
+        <span class="c1">##################################</span>
+
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">"bin_file"</span>
 
         <span class="n">help_str</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="s2">&quot;A string containing a text file &#39;res.txt start end&#39; will get the start and&quot;</span>
-            <span class="s2">&quot; stop times from the columns &#39;start&#39; and &#39;end&#39; in the file res.txt.&quot;</span><span class="p">,</span>
+            <span class="s2">"A string containing a text file 'res.txt start end' will get the start and"</span>
+            <span class="s2">" stop times from the columns 'start' and 'end' in the file res.txt."</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">LATLikelihoodParameter</span><span class="p">(</span>
@@ -575,8 +575,8 @@
 
         <span class="c1">##################################</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;log_bins&quot;</span>
-        <span class="n">help_str</span> <span class="o">=</span> <span class="s2">&quot;Use logarithmically-spaced bins. For example: &#39;1.0 10000.0 30&#39;&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">"log_bins"</span>
+        <span class="n">help_str</span> <span class="o">=</span> <span class="s2">"Use logarithmically-spaced bins. For example: '1.0 10000.0 30'"</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">LATLikelihoodParameter</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
             <span class="n">default_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -587,13 +587,13 @@
 
         <span class="c1">##################################</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;optimizeposition&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">"optimizeposition"</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">LATLikelihoodParameter</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
-            <span class="n">default_value</span><span class="o">=</span><span class="s2">&quot;no&quot;</span><span class="p">,</span>
-            <span class="n">help_string</span><span class="o">=</span><span class="s2">&quot;Optimize position with gtfindsrc?&quot;</span><span class="p">,</span>
-            <span class="n">allowed_values</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;no&quot;</span><span class="p">,</span> <span class="s2">&quot;yes&quot;</span><span class="p">],</span>
+            <span class="n">default_value</span><span class="o">=</span><span class="s2">"no"</span><span class="p">,</span>
+            <span class="n">help_string</span><span class="o">=</span><span class="s2">"Optimize position with gtfindsrc?"</span><span class="p">,</span>
+            <span class="n">allowed_values</span><span class="o">=</span><span class="p">[</span><span class="s2">"no"</span><span class="p">,</span> <span class="s2">"yes"</span><span class="p">],</span>
             <span class="n">is_number</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
 
@@ -601,12 +601,12 @@
 
         <span class="c1">##################################</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;datarepository&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">"datarepository"</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">LATLikelihoodParameter</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
-            <span class="n">default_value</span><span class="o">=</span><span class="n">configuration</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dataRepository&quot;</span><span class="p">),</span>
-            <span class="n">help_string</span><span class="o">=</span><span class="s2">&quot;Dir where data are stored&quot;</span><span class="p">,</span>
+            <span class="n">default_value</span><span class="o">=</span><span class="n">configuration</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"dataRepository"</span><span class="p">),</span>
+            <span class="n">help_string</span><span class="o">=</span><span class="s2">"Dir where data are stored"</span><span class="p">,</span>
             <span class="n">is_number</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
 
@@ -614,12 +614,12 @@
 
         <span class="c1">##################################</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;ltcube&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">"ltcube"</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">LATLikelihoodParameter</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
-            <span class="n">default_value</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
-            <span class="n">help_string</span><span class="o">=</span><span class="s2">&quot;Pre-computed livetime cube&quot;</span><span class="p">,</span>
+            <span class="n">default_value</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span>
+            <span class="n">help_string</span><span class="o">=</span><span class="s2">"Pre-computed livetime cube"</span><span class="p">,</span>
             <span class="n">is_number</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
 
@@ -627,12 +627,12 @@
 
         <span class="c1">##################################</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;expomap&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">"expomap"</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">LATLikelihoodParameter</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
-            <span class="n">default_value</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
-            <span class="n">help_string</span><span class="o">=</span><span class="s2">&quot;Pre-computed exposure map&quot;</span><span class="p">,</span>
+            <span class="n">default_value</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span>
+            <span class="n">help_string</span><span class="o">=</span><span class="s2">"Pre-computed exposure map"</span><span class="p">,</span>
             <span class="n">is_number</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
 
@@ -640,12 +640,12 @@
 
         <span class="c1">##################################</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;ulphindex&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">"ulphindex"</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">LATLikelihoodParameter</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
             <span class="n">default_value</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span>
-            <span class="n">help_string</span><span class="o">=</span><span class="s2">&quot;Photon index for upper limits&quot;</span><span class="p">,</span>
+            <span class="n">help_string</span><span class="o">=</span><span class="s2">"Photon index for upper limits"</span><span class="p">,</span>
             <span class="n">is_number</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
 
@@ -653,12 +653,12 @@
 
         <span class="c1">##################################</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;flemin&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">"flemin"</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">LATLikelihoodParameter</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
             <span class="n">default_value</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-            <span class="n">help_string</span><span class="o">=</span><span class="s2">&quot;Lower bound energy for flux/upper limit computation&quot;</span><span class="p">,</span>
+            <span class="n">help_string</span><span class="o">=</span><span class="s2">"Lower bound energy for flux/upper limit computation"</span><span class="p">,</span>
             <span class="n">is_number</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
 
@@ -666,12 +666,12 @@
 
         <span class="c1">##################################</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;flemax&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">"flemax"</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">LATLikelihoodParameter</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
             <span class="n">default_value</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span>
-            <span class="n">help_string</span><span class="o">=</span><span class="s2">&quot;Upper bound energy for flux/upper limit computation&quot;</span><span class="p">,</span>
+            <span class="n">help_string</span><span class="o">=</span><span class="s2">"Upper bound energy for flux/upper limit computation"</span><span class="p">,</span>
             <span class="n">is_number</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
 
@@ -679,14 +679,14 @@
 
         <span class="c1">##################################</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;fgl_mode&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">"fgl_mode"</span>
         <span class="n">help_str</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="s2">&quot;Set &#39;complete&#39; to use all FGL sources, set &#39;fast&#39; to use only &quot;</span>
-            <span class="s2">&quot;bright sources&quot;</span>
+            <span class="s2">"Set 'complete' to use all FGL sources, set 'fast' to use only "</span>
+            <span class="s2">"bright sources"</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">LATLikelihoodParameter</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
-            <span class="n">default_value</span><span class="o">=</span><span class="s2">&quot;fast&quot;</span><span class="p">,</span>
+            <span class="n">default_value</span><span class="o">=</span><span class="s2">"fast"</span><span class="p">,</span>
             <span class="n">help_string</span><span class="o">=</span><span class="n">help_str</span><span class="p">,</span>
             <span class="n">is_number</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
@@ -695,10 +695,10 @@
 
         <span class="c1">##################################</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;tsmap_spec&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">"tsmap_spec"</span>
         <span class="n">help_str</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="s2">&quot;A TS map specification of the type half_size,n_side. For example: &quot;</span>
-            <span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> 0.5,8&#39; makes a TS map 1 deg x 1 deg with 64 points&quot;</span>
+            <span class="s2">"A TS map specification of the type half_size,n_side. For example: "</span>
+            <span class="s2">"</span><span class="se">\n</span><span class="s2"> 0.5,8' makes a TS map 1 deg x 1 deg with 64 points"</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">LATLikelihoodParameter</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
@@ -711,12 +711,12 @@
 
         <span class="c1">##################################</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;filter_GTI&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">"filter_GTI"</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">LATLikelihoodParameter</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
             <span class="n">default_value</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">help_string</span><span class="o">=</span><span class="s2">&quot;Automatically divide time intervals crossing GTIs&quot;</span><span class="p">,</span>
+            <span class="n">help_string</span><span class="o">=</span><span class="s2">"Automatically divide time intervals crossing GTIs"</span><span class="p">,</span>
             <span class="n">is_bool</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">is_number</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
@@ -725,10 +725,10 @@
 
         <span class="c1">##################################</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;likelihood_profile&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">"likelihood_profile"</span>
         <span class="n">help_str</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="s2">&quot;Produce a text file containing the profile of the likelihood for a &quot;</span>
-            <span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> changing normalization&quot;</span>
+            <span class="s2">"Produce a text file containing the profile of the likelihood for a "</span>
+            <span class="s2">"</span><span class="se">\n</span><span class="s2"> changing normalization"</span>
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">LATLikelihoodParameter</span><span class="p">(</span>
@@ -743,10 +743,10 @@
 
         <span class="c1">##################################</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;remove_fits_files&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">"remove_fits_files"</span>
         <span class="n">help_str</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="s2">&quot;Whether to remove the FITS files of every interval in order to &quot;</span>
-            <span class="s2">&quot;save disk space&quot;</span>
+            <span class="s2">"Whether to remove the FITS files of every interval in order to "</span>
+            <span class="s2">"save disk space"</span>
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">LATLikelihoodParameter</span><span class="p">(</span>
@@ -765,12 +765,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_process_keywords</span><span class="p">(</span><span class="o">**</span><span class="n">init_values</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_process_keywords</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Processes the keywords from a dictionary likely loaded from a yaml</span>
+<span class="w">        </span><span class="sd">"""Processes the keywords from a dictionary likely loaded from a yaml</span>
 <span class="sd">        config.</span>
 
 <span class="sd">        :returns:</span>
 <span class="sd">        :rtype:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">:</span>
@@ -781,31 +781,31 @@
                 <span class="k">pass</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Override this so that we cannot erase parameters.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Override this so that we cannot erase parameters."""</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="n">name</span> <span class="ow">in</span> <span class="n">_required_parameters</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">name</span> <span class="ow">in</span> <span class="n">_optional_parameters</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> is an immutable attribute.&quot;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2"> is an immutable attribute."</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="nb">super</span><span class="p">(</span><span class="n">TransientLATDataBuilder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_command_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;This builds the cmd string for the script.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""This builds the cmd string for the script."""</span>
         <span class="n">executable</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-            <span class="s2">&quot;fermitools&quot;</span><span class="p">,</span> <span class="s2">&quot;GtBurst&quot;</span><span class="p">,</span> <span class="s2">&quot;scripts&quot;</span><span class="p">,</span> <span class="s2">&quot;doTimeResolvedLike.py&quot;</span>
+            <span class="s2">"fermitools"</span><span class="p">,</span> <span class="s2">"GtBurst"</span><span class="p">,</span> <span class="s2">"scripts"</span><span class="p">,</span> <span class="s2">"doTimeResolvedLike.py"</span>
         <span class="p">)</span>
-        <span class="n">cmd_str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">executable</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_triggername</span><span class="p">)</span>
+        <span class="n">cmd_str</span> <span class="o">=</span> <span class="s2">"</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">executable</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_triggername</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="c1"># only add on the parameters that are set</span>
 
             <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">is_set</span><span class="p">:</span>
-                <span class="n">cmd_str</span> <span class="o">+=</span> <span class="s2">&quot; </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">v</span><span class="o">.</span><span class="n">value</span>
+                <span class="n">cmd_str</span> <span class="o">+=</span> <span class="s2">" </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">v</span><span class="o">.</span><span class="n">value</span>
 
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># but fail if we did not set the ones needed</span>
 
                 <span class="k">assert</span> <span class="n">v</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_required_parameters</span><span class="p">,</span> <span class="p">(</span>
-                    <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> is not set but is required&quot;</span> <span class="o">%</span> <span class="n">v</span><span class="o">.</span><span class="n">name</span>
+                    <span class="s2">"</span><span class="si">%s</span><span class="s2"> is not set but is required"</span> <span class="o">%</span> <span class="n">v</span><span class="o">.</span><span class="n">name</span>
                 <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">cmd_str</span>
@@ -813,12 +813,12 @@
 <div class="viewcode-block" id="TransientLATDataBuilder.run">
 <a class="viewcode-back" href="../../../../../api/threeML.utils.data_builders.fermi.html#threeML.utils.data_builders.TransientLATDataBuilder.run">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_previous_intervals</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">recompute_intervals</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run GtBurst to produce the files needed for the FermiLATLike</span>
-<span class="sd">        plugin.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Run GtBurst to produce the files needed for the FermiLATLike</span>
+<span class="sd">        plugin."""</span>
 
         <span class="k">assert</span> <span class="p">(</span>
             <span class="n">has_fermitools</span>
-        <span class="p">),</span> <span class="s2">&quot;You do not have the fermitools installed and cannot run GtBurst&quot;</span>
+        <span class="p">),</span> <span class="s2">"You do not have the fermitools installed and cannot run GtBurst"</span>
 
         <span class="c1"># This is not the cleanest way to do this, but at the moment I see</span>
         <span class="c1"># no way around it as I do not want to rewrite the fermitools</span>
@@ -832,27 +832,27 @@
 
         <span class="n">cmd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">site_pkg</span><span class="p">,</span> <span class="n">cmd</span><span class="p">)</span>
         <span class="n">executable</span> <span class="o">=</span> <span class="n">cmd</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">gtapp_mp_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">site_pkg</span><span class="p">,</span> <span class="s2">&quot;fermitools&quot;</span><span class="p">,</span> <span class="s2">&quot;GtBurst&quot;</span><span class="p">,</span> <span class="s2">&quot;gtapps_mp&quot;</span><span class="p">)</span>
+        <span class="n">gtapp_mp_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">site_pkg</span><span class="p">,</span> <span class="s2">"fermitools"</span><span class="p">,</span> <span class="s2">"GtBurst"</span><span class="p">,</span> <span class="s2">"gtapps_mp"</span><span class="p">)</span>
         <span class="n">executables</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">executable</span><span class="p">,</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">gtapp_mp_dir</span><span class="p">,</span> <span class="s2">&quot;gtdiffrsp_mp.py&quot;</span><span class="p">),</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">gtapp_mp_dir</span><span class="p">,</span> <span class="s2">&quot;gtexpmap_mp.py&quot;</span><span class="p">),</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">gtapp_mp_dir</span><span class="p">,</span> <span class="s2">&quot;gtltcube_mp.py&quot;</span><span class="p">),</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">gtapp_mp_dir</span><span class="p">,</span> <span class="s2">&quot;gttsmap_mp.py&quot;</span><span class="p">),</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">gtapp_mp_dir</span><span class="p">,</span> <span class="s2">"gtdiffrsp_mp.py"</span><span class="p">),</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">gtapp_mp_dir</span><span class="p">,</span> <span class="s2">"gtexpmap_mp.py"</span><span class="p">),</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">gtapp_mp_dir</span><span class="p">,</span> <span class="s2">"gtltcube_mp.py"</span><span class="p">),</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">gtapp_mp_dir</span><span class="p">,</span> <span class="s2">"gttsmap_mp.py"</span><span class="p">),</span>
         <span class="p">]</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">_e</span> <span class="ow">in</span> <span class="n">executables</span><span class="p">:</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Changing permission to </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">_e</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Changing permission to </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">_e</span><span class="p">)</span>
                 <span class="n">os</span><span class="o">.</span><span class="n">chmod</span><span class="p">(</span><span class="n">_e</span><span class="p">,</span> <span class="mo">0o755</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">PermissionError</span><span class="p">:</span>
             <span class="k">pass</span>
 
-        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;About to run the following command:</span><span class="se">\n</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">cmd</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"About to run the following command:</span><span class="se">\n</span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">cmd</span><span class="p">)</span>
 
         <span class="c1"># see what we already have</span>
 
-        <span class="n">intervals_before_run</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="s2">&quot;interval*-*&quot;</span><span class="p">)</span>
+        <span class="n">intervals_before_run</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="s2">"interval*-*"</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">recompute_intervals</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">intervals_before_run</span><span class="p">:</span>
@@ -861,12 +861,12 @@
                 <span class="c1"># so that they are not lost</span>
 
                 <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                    <span class="s2">&quot;You have choosen to recompute the time intervals in this folder&quot;</span>
+                    <span class="s2">"You have choosen to recompute the time intervals in this folder"</span>
                 <span class="p">)</span>
 
-                <span class="n">tmp_dir</span> <span class="o">=</span> <span class="s2">&quot;tmp_</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
+                <span class="n">tmp_dir</span> <span class="o">=</span> <span class="s2">"tmp_</span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
 
-                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;The older entries will be moved to </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">tmp_dir</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"The older entries will be moved to </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">tmp_dir</span><span class="p">)</span>
 
                 <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">tmp_dir</span><span class="p">)</span>
 
@@ -889,11 +889,11 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_create_lat_observations_from_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">intervals_before_run</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;After a run of gtburst, this collects the all the relevant files</span>
+<span class="w">        </span><span class="sd">"""After a run of gtburst, this collects the all the relevant files</span>
 <span class="sd">        from each inteval and turns them into LAT observations.</span>
 
 <span class="sd">        :rtype:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># scroll thru the intervals that were created</span>
 
@@ -906,94 +906,94 @@
         <span class="n">lat_observations</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="c1"># need a strategy to collect the intervals</span>
-        <span class="n">intervals</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;interval*-*&quot;</span><span class="p">))</span>
+        <span class="n">intervals</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="p">(</span><span class="s2">"interval*-*"</span><span class="p">))</span>
 
         <span class="k">for</span> <span class="n">interval</span> <span class="ow">in</span> <span class="n">intervals</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">interval</span> <span class="ow">in</span> <span class="n">intervals_before_run</span><span class="p">:</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">interval</span><span class="si">}</span><span class="s2"> existed before this run,</span><span class="se">\n</span><span class="s2"> it will not be auto &quot;</span>
-                    <span class="s2">&quot;included in the list,</span><span class="se">\n</span><span class="s2"> but you can manually see grab the data.&quot;</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">interval</span><span class="si">}</span><span class="s2"> existed before this run,</span><span class="se">\n</span><span class="s2"> it will not be auto "</span>
+                    <span class="s2">"included in the list,</span><span class="se">\n</span><span class="s2"> but you can manually see grab the data."</span>
                 <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># check that either tstarts,tstops or log_bins are defined</span>
                 <span class="k">if</span> <span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="s2">&quot;tstarts&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-                    <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="s2">&quot;tstops&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="s2">"tstarts"</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                    <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="s2">"tstops"</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
                 <span class="p">):</span>
                     <span class="n">tstart</span><span class="p">,</span> <span class="n">tstop</span> <span class="o">=</span> <span class="p">[</span>
                         <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
                         <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span>
-                            <span class="sa">r</span><span class="s2">&quot;^interval(-?\d*\.\d*)-(-?\d*\.\d*)\/?$&quot;</span><span class="p">,</span> <span class="n">interval</span>
+                            <span class="sa">r</span><span class="s2">"^interval(-?\d*\.\d*)-(-?\d*\.\d*)\/?$"</span><span class="p">,</span> <span class="n">interval</span>
                         <span class="p">)</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
                     <span class="p">]</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">assert</span> <span class="p">(</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="s2">&quot;log_bins&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span>
-                    <span class="p">),</span> <span class="s2">&quot;Choose either to use tstarts and tstops, or to use log_bins&quot;</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="s2">"log_bins"</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span>
+                    <span class="p">),</span> <span class="s2">"Choose either to use tstarts and tstops, or to use log_bins"</span>
 
                 <span class="n">event_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                    <span class="n">interval</span><span class="p">,</span> <span class="s2">&quot;gll_ft1_tr_bn</span><span class="si">%s</span><span class="s2">_v00_filt.fit&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_triggername</span>
+                    <span class="n">interval</span><span class="p">,</span> <span class="s2">"gll_ft1_tr_bn</span><span class="si">%s</span><span class="s2">_v00_filt.fit"</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_triggername</span>
                 <span class="p">)</span>
 
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">file_existing_and_readable</span><span class="p">(</span><span class="n">event_file</span><span class="p">):</span>
-                    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;The event file does not exist. Please examine!&quot;</span><span class="p">)</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"The event file does not exist. Please examine!"</span><span class="p">)</span>
 
                 <span class="n">ft2_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                    <span class="n">interval</span><span class="p">,</span> <span class="s2">&quot;gll_ft2_tr_bn</span><span class="si">%s</span><span class="s2">_v00_filt.fit&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_triggername</span>
+                    <span class="n">interval</span><span class="p">,</span> <span class="s2">"gll_ft2_tr_bn</span><span class="si">%s</span><span class="s2">_v00_filt.fit"</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_triggername</span>
                 <span class="p">)</span>
 
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">file_existing_and_readable</span><span class="p">(</span><span class="n">ft2_file</span><span class="p">):</span>
-                    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;The ft2 file does not exist. Please examine!&quot;</span><span class="p">)</span>
-                    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;we will grab the data file for you.&quot;</span><span class="p">)</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"The ft2 file does not exist. Please examine!"</span><span class="p">)</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"we will grab the data file for you."</span><span class="p">)</span>
 
                     <span class="n">base_ft2_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                        <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">datarepository</span><span class="o">.</span><span class="n">get_disp_value</span><span class="p">(),</span>
-                        <span class="s2">&quot;bn</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_triggername</span><span class="p">,</span>
-                        <span class="s2">&quot;gll_ft2_tr_bn</span><span class="si">%s</span><span class="s2">_v00.fit&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_triggername</span><span class="p">,</span>
+                        <span class="s2">"</span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">datarepository</span><span class="o">.</span><span class="n">get_disp_value</span><span class="p">(),</span>
+                        <span class="s2">"bn</span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_triggername</span><span class="p">,</span>
+                        <span class="s2">"gll_ft2_tr_bn</span><span class="si">%s</span><span class="s2">_v00.fit"</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_triggername</span><span class="p">,</span>
                     <span class="p">)</span>
 
                     <span class="k">if</span> <span class="ow">not</span> <span class="n">file_existing_and_readable</span><span class="p">(</span><span class="n">base_ft2_file</span><span class="p">):</span>
-                        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Cannot find any FT2 files!&quot;</span><span class="p">)</span>
+                        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"Cannot find any FT2 files!"</span><span class="p">)</span>
 
                         <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">()</span>
 
                     <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">base_ft2_file</span><span class="p">,</span> <span class="n">interval</span><span class="p">)</span>
 
                     <span class="n">ft2_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                        <span class="n">interval</span><span class="p">,</span> <span class="s2">&quot;gll_ft2_tr_bn</span><span class="si">%s</span><span class="s2">_v00.fit&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_triggername</span>
+                        <span class="n">interval</span><span class="p">,</span> <span class="s2">"gll_ft2_tr_bn</span><span class="si">%s</span><span class="s2">_v00.fit"</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_triggername</span>
                     <span class="p">)</span>
 
-                    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;copied </span><span class="si">%s</span><span class="s2"> to </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">base_ft2_file</span><span class="p">,</span> <span class="n">ft2_file</span><span class="p">))</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"copied </span><span class="si">%s</span><span class="s2"> to </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">base_ft2_file</span><span class="p">,</span> <span class="n">ft2_file</span><span class="p">))</span>
 
                 <span class="n">exposure_map</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                    <span class="n">interval</span><span class="p">,</span> <span class="s2">&quot;gll_ft1_tr_bn</span><span class="si">%s</span><span class="s2">_v00_filt_expomap.fit&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_triggername</span>
+                    <span class="n">interval</span><span class="p">,</span> <span class="s2">"gll_ft1_tr_bn</span><span class="si">%s</span><span class="s2">_v00_filt_expomap.fit"</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_triggername</span>
                 <span class="p">)</span>
 
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">file_existing_and_readable</span><span class="p">(</span><span class="n">exposure_map</span><span class="p">):</span>
-                    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;The exposure map does not exist. Please examine!&quot;</span><span class="p">)</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"The exposure map does not exist. Please examine!"</span><span class="p">)</span>
 
                 <span class="n">livetime_cube</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                    <span class="n">interval</span><span class="p">,</span> <span class="s2">&quot;gll_ft1_tr_bn</span><span class="si">%s</span><span class="s2">_v00_filt_ltcube.fit&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_triggername</span>
+                    <span class="n">interval</span><span class="p">,</span> <span class="s2">"gll_ft1_tr_bn</span><span class="si">%s</span><span class="s2">_v00_filt_ltcube.fit"</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_triggername</span>
                 <span class="p">)</span>
 
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">file_existing_and_readable</span><span class="p">(</span><span class="n">livetime_cube</span><span class="p">):</span>
-                    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;The livetime_cube does not exist. Please examine!&quot;</span><span class="p">)</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"The livetime_cube does not exist. Please examine!"</span><span class="p">)</span>
 
                 <span class="c1"># optional bin_file parameter</span>
-                <span class="c1"># if self._parameters[&#39;bin_file&#39;].value is not None:</span>
+                <span class="c1"># if self._parameters['bin_file'].value is not None:</span>
 
                 <span class="c1"># liketype matches</span>
-                <span class="c1">#    assert self._parameters[&#39;liketype&#39;] == &#39;binned&#39;, &#39;liketype must be</span>
+                <span class="c1">#    assert self._parameters['liketype'] == 'binned', 'liketype must be</span>
                 <span class="c1"># binned to use bin_file parameter</span>
-                <span class="c1"># %s&#39;%self._parameters[&#39;bin_file&#39;].value</span>
+                <span class="c1"># %s'%self._parameters['bin_file'].value</span>
 
                 <span class="c1"># value carries a few arguments, take first value- path</span>
-                <span class="c1">#   bin_file_path = self._parameters[&#39;bin_file&#39;].value.split()[0]</span>
+                <span class="c1">#   bin_file_path = self._parameters['bin_file'].value.split()[0]</span>
                 <span class="c1">#   bin_file = os.path.join(interval, bin_file_path)</span>
 
                 <span class="c1">#   if not file_existing_and_readable(bin_file):</span>
-                <span class="c1">#       print(&#39;The bin_file at %s does not exist. Please examine!</span>
-                <span class="c1"># &#39;%bin_file)</span>
+                <span class="c1">#       print('The bin_file at %s does not exist. Please examine!</span>
+                <span class="c1"># '%bin_file)</span>
 
                 <span class="c1"># now create a LAT observation object</span>
                 <span class="n">this_obs</span> <span class="o">=</span> <span class="n">LATObservation</span><span class="p">(</span>
@@ -1003,7 +1003,7 @@
                     <span class="n">livetime_cube</span><span class="p">,</span>
                     <span class="n">tstart</span><span class="p">,</span>
                     <span class="n">tstop</span><span class="p">,</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="s2">&quot;liketype&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get_disp_value</span><span class="p">(),</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="s2">"liketype"</span><span class="p">]</span><span class="o">.</span><span class="n">get_disp_value</span><span class="p">(),</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_triggername</span><span class="p">,</span>
                 <span class="p">)</span>  <span class="c1"># @, bin_file)</span>
 
@@ -1025,7 +1025,7 @@
 <div class="viewcode-block" id="TransientLATDataBuilder.display">
 <a class="viewcode-back" href="../../../../../api/threeML.utils.data_builders.fermi.html#threeML.utils.data_builders.TransientLATDataBuilder.display">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">display</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">get</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Display the current set parameters.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Display the current set parameters."""</span>
 
         <span class="n">out</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
 
@@ -1047,13 +1047,13 @@
 <div class="viewcode-block" id="TransientLATDataBuilder.save_configuration">
 <a class="viewcode-back" href="../../../../../api/threeML.utils.data_builders.fermi.html#threeML.utils.data_builders.TransientLATDataBuilder.save_configuration">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">save_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save the current configuration to a yaml file for use later.</span>
+<span class="w">        </span><span class="sd">"""Save the current configuration to a yaml file for use later.</span>
 <span class="sd">        Suggested extension is .yml.</span>
 
 <span class="sd">        :param filename: the yaml file name to save to</span>
 <span class="sd">        :returns:</span>
 <span class="sd">        :rtype:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># create a temporary dict to hold</span>
         <span class="c1"># the set values</span>
@@ -1064,7 +1064,7 @@
             <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">is_set</span><span class="p">:</span>
                 <span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">get_disp_value</span><span class="p">()</span>
 
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
             <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">outfile</span><span class="p">,</span> <span class="n">default_flow_style</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
 
@@ -1072,15 +1072,15 @@
 <a class="viewcode-back" href="../../../../../api/threeML.utils.data_builders.fermi.html#threeML.utils.data_builders.TransientLATDataBuilder.from_saved_configuration">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_saved_configuration</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">triggername</span><span class="p">,</span> <span class="n">config_file</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load a saved yaml configuration for the given trigger name.</span>
+<span class="w">        </span><span class="sd">"""Load a saved yaml configuration for the given trigger name.</span>
 
 <span class="sd">        :param triggername: Trigger name of the source in YYMMDDXXX</span>
 <span class="sd">        :param config_file: the saved yaml configuration to use</span>
 <span class="sd">        :returns:</span>
 <span class="sd">        :rtype:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">config_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">config_file</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
             <span class="n">loaded_config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">triggername</span><span class="p">,</span> <span class="o">**</span><span class="n">loaded_config</span><span class="p">)</span></div>
@@ -1102,7 +1102,7 @@
         <span class="n">liketype</span><span class="p">,</span>
         <span class="n">triggername</span><span class="p">,</span>
     <span class="p">):</span>  <span class="c1"># , bin_file):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A container to formalize the storage of Fermi LAT observation files.</span>
+<span class="w">        </span><span class="sd">"""A container to formalize the storage of Fermi LAT observation files.</span>
 
 <span class="sd">        :param event_file:</span>
 <span class="sd">        :param ft2_file:</span>
@@ -1114,7 +1114,7 @@
 <span class="sd">        :param triggername:</span>
 <span class="sd">        :returns:</span>
 <span class="sd">        :rtype:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_event_file</span> <span class="o">=</span> <span class="n">event_file</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ft2_file</span> <span class="o">=</span> <span class="n">ft2_file</span>
@@ -1165,14 +1165,14 @@
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">output</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
 
-        <span class="n">output</span><span class="p">[</span><span class="s2">&quot;time interval&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%.3f</span><span class="s2">-</span><span class="si">%.3f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tstart</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tstop</span><span class="p">)</span>
-        <span class="n">output</span><span class="p">[</span><span class="s2">&quot;event_file&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_event_file</span>
-        <span class="n">output</span><span class="p">[</span><span class="s2">&quot;ft2_file&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ft2_file</span>
-        <span class="n">output</span><span class="p">[</span><span class="s2">&quot;exposure_map&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exposure_map</span>
-        <span class="n">output</span><span class="p">[</span><span class="s2">&quot;livetime_cube&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_livetime_cube</span>
-        <span class="n">output</span><span class="p">[</span><span class="s2">&quot;triggername&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_triggername</span>
-        <span class="n">output</span><span class="p">[</span><span class="s2">&quot;liketype&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_liketype</span>
-        <span class="c1"># output[&#39;bin_file&#39;] = self._bin_file</span>
+        <span class="n">output</span><span class="p">[</span><span class="s2">"time interval"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"</span><span class="si">%.3f</span><span class="s2">-</span><span class="si">%.3f</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tstart</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tstop</span><span class="p">)</span>
+        <span class="n">output</span><span class="p">[</span><span class="s2">"event_file"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_event_file</span>
+        <span class="n">output</span><span class="p">[</span><span class="s2">"ft2_file"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ft2_file</span>
+        <span class="n">output</span><span class="p">[</span><span class="s2">"exposure_map"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exposure_map</span>
+        <span class="n">output</span><span class="p">[</span><span class="s2">"livetime_cube"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_livetime_cube</span>
+        <span class="n">output</span><span class="p">[</span><span class="s2">"triggername"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_triggername</span>
+        <span class="n">output</span><span class="p">[</span><span class="s2">"liketype"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_liketype</span>
+        <span class="c1"># output['bin_file'] = self._bin_file</span>
 
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
 
@@ -1182,7 +1182,7 @@
 <a class="viewcode-back" href="../../../../../api/threeML.utils.data_builders.fermi.html#threeML.utils.data_builders.LATObservation.to_LATLike">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_LATLike</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">_fermi_lat_like</span> <span class="o">=</span> <span class="n">FermiLATLike</span><span class="p">(</span>
-            <span class="n">name</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;LAT</span><span class="si">%d</span><span class="s2">X</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tstart</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tstop</span><span class="p">))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;n&quot;</span><span class="p">),</span>
+            <span class="n">name</span><span class="o">=</span><span class="p">(</span><span class="s2">"LAT</span><span class="si">%d</span><span class="s2">X</span><span class="si">%d</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tstart</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tstop</span><span class="p">))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"-"</span><span class="p">,</span> <span class="s2">"n"</span><span class="p">),</span>
             <span class="n">event_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_event_file</span><span class="p">,</span>
             <span class="n">ft2_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_ft2_file</span><span class="p">,</span>
             <span class="n">livetime_cube_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_livetime_cube</span><span class="p">,</span>

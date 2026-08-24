@@ -164,7 +164,7 @@
         <span class="n">data_list</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DataList</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Implements the MultiNest sampler of https://github.com/farhanferoz/MultiNest</span>
 <span class="sd">        via the python wrapper of https://github.com/JohannesBuchner/PyMultiNest</span>
 
@@ -173,9 +173,9 @@
 <span class="sd">        :returns:</span>
 <span class="sd">        :rtype:</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
-        <span class="k">assert</span> <span class="n">has_pymultinest</span><span class="p">,</span> <span class="s2">&quot;You must install MultiNest to use this sampler&quot;</span>
+        <span class="k">assert</span> <span class="n">has_pymultinest</span><span class="p">,</span> <span class="s2">"You must install MultiNest to use this sampler"</span>
 
         <span class="nb">super</span><span class="p">(</span><span class="n">MultiNestSampler</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">likelihood_model</span><span class="p">,</span> <span class="n">data_list</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -184,13 +184,13 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">n_live_points</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">400</span><span class="p">,</span>
-        <span class="n">chain_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;chains/fit-&quot;</span><span class="p">,</span>
+        <span class="n">chain_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"chains/fit-"</span><span class="p">,</span>
         <span class="n">resume</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">importance_nested_sampling</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">auto_clean</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Setup the MultiNest Sampler. For details see:</span>
 <span class="sd">        https://github.com/farhanferoz/MultiNest</span>
 
@@ -202,18 +202,18 @@
 <span class="sd">        :returns:</span>
 <span class="sd">        :rtype:</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Setup for MultiNest sampler: n_live_points:</span><span class="si">{</span><span class="n">n_live_points</span><span class="si">}</span><span class="s2">, chain_name:&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">chain_name</span><span class="si">}</span><span class="s2">, resume: </span><span class="si">{</span><span class="n">resume</span><span class="si">}</span><span class="s2">, importance_nested_sampling: &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">importance_nested_sampling</span><span class="si">}</span><span class="s2">. Other input: </span><span class="si">{</span><span class="n">kwargs</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">"Setup for MultiNest sampler: n_live_points:</span><span class="si">{</span><span class="n">n_live_points</span><span class="si">}</span><span class="s2">, chain_name:"</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">chain_name</span><span class="si">}</span><span class="s2">, resume: </span><span class="si">{</span><span class="n">resume</span><span class="si">}</span><span class="s2">, importance_nested_sampling: "</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">importance_nested_sampling</span><span class="si">}</span><span class="s2">. Other input: </span><span class="si">{</span><span class="n">kwargs</span><span class="si">}</span><span class="s2">"</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;n_live_points&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_live_points</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;outputfiles_basename&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">chain_name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;importance_nested_sampling&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">importance_nested_sampling</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;chain_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">chain_name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;resume&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">resume</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">"n_live_points"</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_live_points</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">"outputfiles_basename"</span><span class="p">]</span> <span class="o">=</span> <span class="n">chain_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">"importance_nested_sampling"</span><span class="p">]</span> <span class="o">=</span> <span class="n">importance_nested_sampling</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">"chain_name"</span><span class="p">]</span> <span class="o">=</span> <span class="n">chain_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">"resume"</span><span class="p">]</span> <span class="o">=</span> <span class="n">resume</span>
 
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
@@ -226,22 +226,22 @@
 <div class="viewcode-block" id="MultiNestSampler.sample">
 <a class="viewcode-back" href="../../../api/threeML.bayesian.html#threeML.bayesian.multinest_sampler.MultiNestSampler.sample">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">quiet</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sample using the MultiNest numerical integration method.</span>
+<span class="w">        </span><span class="sd">"""Sample using the MultiNest numerical integration method.</span>
 
 <span class="sd">        :returns:</span>
 <span class="sd">        :rtype:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_setup</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;You forgot to setup the sampler!&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"You forgot to setup the sampler!"</span><span class="p">)</span>
             <span class="k">return</span>
 
         <span class="k">assert</span> <span class="n">has_pymultinest</span><span class="p">,</span> <span class="p">(</span>
-            <span class="s2">&quot;You don&#39;t have pymultinest installed, so you cannot run the Multinest &quot;</span>
-            <span class="s2">&quot;sampler&quot;</span>
+            <span class="s2">"You don't have pymultinest installed, so you cannot run the Multinest "</span>
+            <span class="s2">"sampler"</span>
         <span class="p">)</span>
 
         <span class="n">loud</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">quiet</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;verbose&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">loud</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">"verbose"</span><span class="p">]</span> <span class="o">=</span> <span class="n">loud</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_free_parameters</span><span class="p">()</span>
 
@@ -256,7 +256,7 @@
         <span class="c1"># the disk to write and if not,</span>
         <span class="c1"># create one</span>
 
-        <span class="n">chain_name</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;chain_name&quot;</span><span class="p">))</span>
+        <span class="n">chain_name</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"chain_name"</span><span class="p">))</span>
 
         <span class="n">chain_dir</span> <span class="o">=</span> <span class="n">chain_name</span><span class="o">.</span><span class="n">parent</span>
 
@@ -270,32 +270,32 @@
                 <span class="c1"># create mcmc chains directory only on first engine</span>
 
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">chain_dir</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-                    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Create </span><span class="si">{</span><span class="n">chain_dir</span><span class="si">}</span><span class="s2"> for multinest output&quot;</span><span class="p">)</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Create </span><span class="si">{</span><span class="n">chain_dir</span><span class="si">}</span><span class="s2"> for multinest output"</span><span class="p">)</span>
                     <span class="n">chain_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">()</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">chain_dir</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Create </span><span class="si">{</span><span class="n">chain_dir</span><span class="si">}</span><span class="s2"> for multinest output&quot;</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Create </span><span class="si">{</span><span class="n">chain_dir</span><span class="si">}</span><span class="s2"> for multinest output"</span><span class="p">)</span>
                 <span class="n">chain_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">()</span>
 
         <span class="c1"># Multinest must be run parallel via an external method</span>
         <span class="c1"># see the demo in the examples folder!!</span>
 
-        <span class="k">if</span> <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;parallel&quot;</span><span class="p">][</span><span class="s2">&quot;use_parallel&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">threeML_config</span><span class="p">[</span><span class="s2">"parallel"</span><span class="p">][</span><span class="s2">"use_parallel"</span><span class="p">]:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="s2">&quot;If you want to run multinest in parallell you need to use an ad-hoc&quot;</span>
-                <span class="s2">&quot; method&quot;</span>
+                <span class="s2">"If you want to run multinest in parallell you need to use an ad-hoc"</span>
+                <span class="s2">" method"</span>
             <span class="p">)</span>
 
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="k">with</span> <span class="n">use_astromodels_memoization</span><span class="p">(</span><span class="kc">False</span><span class="p">):</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Start multinest run&quot;</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Start multinest run"</span><span class="p">)</span>
                 <span class="n">sampler</span> <span class="o">=</span> <span class="n">pymultinest</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
                     <span class="n">loglike</span><span class="p">,</span> <span class="n">multinest_prior</span><span class="p">,</span> <span class="n">n_dim</span><span class="p">,</span> <span class="n">n_dim</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span>
                 <span class="p">)</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Multinest run done&quot;</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Multinest run done"</span><span class="p">)</span>
 
         <span class="c1"># Use PyMULTINEST analyzer to gather parameter info</span>
 
@@ -342,7 +342,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_build_samples_dictionary</span><span class="p">()</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_marginal_likelihood</span> <span class="o">=</span> <span class="n">multinest_analyzer</span><span class="o">.</span><span class="n">get_stats</span><span class="p">()[</span>
-                <span class="s2">&quot;global evidence&quot;</span>
+                <span class="s2">"global evidence"</span>
             <span class="p">]</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">10.0</span><span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_build_results</span><span class="p">()</span>
@@ -354,7 +354,7 @@
             <span class="c1"># now clean up the chains if requested</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_auto_clean</span><span class="p">:</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;deleting the chain directory </span><span class="si">{</span><span class="n">chain_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"deleting the chain directory </span><span class="si">{</span><span class="n">chain_dir</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
                 <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">chain_dir</span><span class="p">)</span>
 

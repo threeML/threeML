@@ -116,7 +116,7 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">builtins</span><span class="w"> </span><span class="kn">import</span> <span class="nb">range</span><span class="p">,</span> <span class="nb">zip</span>
 
-<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;grburgess&quot;</span>
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">"grburgess"</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
 
@@ -184,7 +184,7 @@
         <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">edges</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The EventList is a container for event data that is tagged in time</span>
+<span class="w">        </span><span class="sd">"""The EventList is a container for event data that is tagged in time</span>
 <span class="sd">        and in PHA/energy. It handles event selection, temporal polynomial</span>
 <span class="sd">        fitting, temporal binning, and exposure calculations (in subclasses).</span>
 <span class="sd">        Once events are selected and/or polynomials are fit, the selections can</span>
@@ -206,7 +206,7 @@
 <span class="sd">        :param verbose:</span>
 <span class="sd">        :param  ra:</span>
 <span class="sd">        :param  dec:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># pass up to TimeSeries</span>
 
@@ -231,7 +231,7 @@
 
         <span class="k">assert</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_arrival_times</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_measurement</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="p">),</span> <span class="s2">&quot;Arrival time (</span><span class="si">%d</span><span class="s2">) and energies (</span><span class="si">%d</span><span class="s2">) have different shapes&quot;</span> <span class="o">%</span> <span class="p">(</span>
+        <span class="p">),</span> <span class="s2">"Arrival time (</span><span class="si">%d</span><span class="s2">) and energies (</span><span class="si">%d</span><span class="s2">) have different shapes"</span> <span class="o">%</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_arrival_times</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_measurement</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
         <span class="p">)</span>
@@ -253,12 +253,12 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_temporal_binner</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_temporal_binner</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;This EventList has no binning specified&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"This EventList has no binning specified"</span><span class="p">)</span>
 
 <div class="viewcode-block" id="EventList.bin_by_significance">
 <a class="viewcode-back" href="../../../../api/threeML.utils.time_series.html#threeML.utils.time_series.event_list.EventList.bin_by_significance">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">bin_by_significance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">min_counts</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Interface to the temporal binner&#39;s significance binning model.</span>
+<span class="w">        </span><span class="sd">"""Interface to the temporal binner's significance binning model.</span>
 
 <span class="sd">        :param start: start of the interval to bin on</span>
 <span class="sd">        :param stop: stop of the interval ot bin on</span>
@@ -267,7 +267,7 @@
 <span class="sd">            ,significance</span>
 <span class="sd">        :param min_counts: minimum number of counts per bin</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># create phas to check</span>
@@ -308,13 +308,13 @@
 <div class="viewcode-block" id="EventList.bin_by_constant">
 <a class="viewcode-back" href="../../../../api/threeML.utils.time_series.html#threeML.utils.time_series.event_list.EventList.bin_by_constant">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">bin_by_constant</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Interface to the temporal binner&#39;s constant binning mode.</span>
+<span class="w">        </span><span class="sd">"""Interface to the temporal binner's constant binning mode.</span>
 
 <span class="sd">        :param start: start time of the bins</span>
 <span class="sd">        :param stop: stop time of the bins</span>
 <span class="sd">        :param dt: temporal spacing of the bins</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">events</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_arrival_times</span><span class="p">[</span>
             <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_arrival_times</span> <span class="o">&gt;=</span> <span class="n">start</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_arrival_times</span> <span class="o">&lt;=</span> <span class="n">stop</span><span class="p">)</span>
@@ -326,12 +326,12 @@
 <div class="viewcode-block" id="EventList.bin_by_custom">
 <a class="viewcode-back" href="../../../../api/threeML.utils.time_series.html#threeML.utils.time_series.event_list.EventList.bin_by_custom">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">bin_by_custom</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Interface to temporal binner&#39;s custom bin mode.</span>
+<span class="w">        </span><span class="sd">"""Interface to temporal binner's custom bin mode.</span>
 
 <span class="sd">        :param start: start times of the bins</span>
 <span class="sd">        :param stop: stop times of the bins</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_temporal_binner</span> <span class="o">=</span> <span class="n">TemporalBinner</span><span class="o">.</span><span class="n">bin_by_custom</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">)</span></div>
 
@@ -371,19 +371,19 @@
         <span class="n">use_echans_stop</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
         <span class="c1"># type: (float, float, float, bool) -&gt; None</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        :param start:</span>
 <span class="sd">        :param stop:</span>
 <span class="sd">        :param dt:</span>
 <span class="sd">        :param use_binner:</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># validate echan mask input</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">use_echans_start</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;The use_echans_start variable must be a integer.&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot; Input is </span><span class="si">{</span><span class="n">use_echans_start</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">"The use_echans_start variable must be a integer."</span>
+                <span class="sa">f</span><span class="s2">" Input is </span><span class="si">{</span><span class="n">use_echans_start</span><span class="si">}</span><span class="s2">."</span>
             <span class="p">)</span>
             <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">()</span>
 
@@ -392,16 +392,16 @@
             <span class="ow">and</span> <span class="n">use_echans_start</span> <span class="o">&lt;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_channels</span><span class="p">)</span>
         <span class="p">):</span>
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;The use_echans_start variable must be&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;between </span><span class="si">{</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_channels</span><span class="p">)</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_channels</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">.&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot; Input is </span><span class="si">{</span><span class="n">use_echans_start</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">"The use_echans_start variable must be"</span>
+                <span class="sa">f</span><span class="s2">"between </span><span class="si">{</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_channels</span><span class="p">)</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_channels</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">."</span>
+                <span class="sa">f</span><span class="s2">" Input is </span><span class="si">{</span><span class="n">use_echans_start</span><span class="si">}</span><span class="s2">."</span>
             <span class="p">)</span>
             <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">use_echans_stop</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;The use_echans_stop variable must be a integer.&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot; Input is </span><span class="si">{</span><span class="n">use_echans_stop</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">"The use_echans_stop variable must be a integer."</span>
+                <span class="sa">f</span><span class="s2">" Input is </span><span class="si">{</span><span class="n">use_echans_stop</span><span class="si">}</span><span class="s2">."</span>
             <span class="p">)</span>
             <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">()</span>
 
@@ -410,9 +410,9 @@
             <span class="ow">and</span> <span class="n">use_echans_stop</span> <span class="o">&lt;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_channels</span><span class="p">)</span>
         <span class="p">):</span>
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;The use_echans_stop variable must be&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;between </span><span class="si">{</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_channels</span><span class="p">)</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_channels</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">.&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot; Input is </span><span class="si">{</span><span class="n">use_echans_stop</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">"The use_echans_stop variable must be"</span>
+                <span class="sa">f</span><span class="s2">"between </span><span class="si">{</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_channels</span><span class="p">)</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_channels</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">."</span>
+                <span class="sa">f</span><span class="s2">" Input is </span><span class="si">{</span><span class="n">use_echans_stop</span><span class="si">}</span><span class="s2">."</span>
             <span class="p">)</span>
             <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">()</span>
 
@@ -424,10 +424,10 @@
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">use_echans_stop</span> <span class="o">&gt;=</span> <span class="n">use_echans_start</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;The use_echans_stop variable must be larger&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot; or equal than the use_echans_start variable&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot; Input is use_echans_start: </span><span class="si">{</span><span class="n">use_echans_start</span><span class="si">}</span><span class="s2">&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot; &gt; use_echans_stop: </span><span class="si">{</span><span class="n">use_echans_stop</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"The use_echans_stop variable must be larger"</span>
+                <span class="sa">f</span><span class="s2">" or equal than the use_echans_start variable"</span>
+                <span class="sa">f</span><span class="s2">" Input is use_echans_start: </span><span class="si">{</span><span class="n">use_echans_start</span><span class="si">}</span><span class="s2">"</span>
+                <span class="sa">f</span><span class="s2">" &gt; use_echans_stop: </span><span class="si">{</span><span class="n">use_echans_stop</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
             <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">()</span>
 
@@ -528,12 +528,12 @@
 <div class="viewcode-block" id="EventList.counts_over_interval">
 <a class="viewcode-back" href="../../../../api/threeML.utils.time_series.html#threeML.utils.time_series.event_list.EventList.counts_over_interval">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">counts_over_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the number of counts in the selected interval :param start:</span>
+<span class="w">        </span><span class="sd">"""Return the number of counts in the selected interval :param start:</span>
 
 <span class="sd">        start of interval</span>
 <span class="sd">        :param stop: stop of interval</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># this will be a boolean list and the sum will be the</span>
         <span class="c1"># number of events</span>
@@ -561,17 +561,17 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_select_events</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return an index of the selected events :param start: start time</span>
-<span class="sd">        :param stop: stop time :return:&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return an index of the selected events :param start: start time</span>
+<span class="sd">        :param stop: stop time :return:"""</span>
 
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">start</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_arrival_times</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_arrival_times</span> <span class="o">&lt;=</span> <span class="n">stop</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_fit_polynomials</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bayes</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Binned fit to each channel. Sets the polynomial array that will be</span>
+<span class="w">        </span><span class="sd">"""Binned fit to each channel. Sets the polynomial array that will be</span>
 <span class="sd">        used to compute counts over an interval.</span>
 
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_poly_fit_exists</span> <span class="o">=</span> <span class="kc">True</span>
 
@@ -654,7 +654,7 @@
             <span class="p">)</span>
 
             <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                <span class="s2">&quot;Auto-determined polynomial order: </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optimal_polynomial_grade</span>
+                <span class="s2">"Auto-determined polynomial order: </span><span class="si">%d</span><span class="s2">"</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optimal_polynomial_grade</span>
             <span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
@@ -664,7 +664,7 @@
             <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_first_channel</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_channels</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_first_channel</span><span class="p">)</span>
         <span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;parallel&quot;</span><span class="p">][</span><span class="s2">&quot;use_parallel&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">threeML_config</span><span class="p">[</span><span class="s2">"parallel"</span><span class="p">][</span><span class="s2">"use_parallel"</span><span class="p">]:</span>
 
             <span class="k">def</span><span class="w"> </span><span class="nf">worker</span><span class="p">(</span><span class="n">channel</span><span class="p">):</span>
                 <span class="n">channel_mask</span> <span class="o">=</span> <span class="n">total_poly_energies</span> <span class="o">==</span> <span class="n">channel</span>
@@ -690,14 +690,14 @@
             <span class="n">client</span> <span class="o">=</span> <span class="n">ParallelClient</span><span class="p">()</span>
 
             <span class="n">polynomials</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">execute_with_progress_bar</span><span class="p">(</span>
-                <span class="n">worker</span><span class="p">,</span> <span class="n">channels</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Fitting </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_instrument</span><span class="si">}</span><span class="s2"> background&quot;</span>
+                <span class="n">worker</span><span class="p">,</span> <span class="n">channels</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Fitting </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_instrument</span><span class="si">}</span><span class="s2"> background"</span>
             <span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="n">polynomials</span> <span class="o">=</span> <span class="p">[]</span>
 
             <span class="k">for</span> <span class="n">channel</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
-                <span class="n">channels</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Fitting </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_instrument</span><span class="si">}</span><span class="s2"> background&quot;</span>
+                <span class="n">channels</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Fitting </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_instrument</span><span class="si">}</span><span class="s2"> background"</span>
             <span class="p">):</span>
                 <span class="n">channel_mask</span> <span class="o">=</span> <span class="n">total_poly_energies</span> <span class="o">==</span> <span class="n">channel</span>
 
@@ -780,7 +780,7 @@
             <span class="p">)</span>
 
             <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Auto-determined polynomial order: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_optimal_polynomial_grade</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"Auto-determined polynomial order: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_optimal_polynomial_grade</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
@@ -795,7 +795,7 @@
         <span class="n">t_start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bkg_intervals</span><span class="o">.</span><span class="n">start_times</span>
         <span class="n">t_stop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bkg_intervals</span><span class="o">.</span><span class="n">stop_times</span>
 
-        <span class="k">if</span> <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;parallel&quot;</span><span class="p">][</span><span class="s2">&quot;use_parallel&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">threeML_config</span><span class="p">[</span><span class="s2">"parallel"</span><span class="p">][</span><span class="s2">"use_parallel"</span><span class="p">]:</span>
 
             <span class="k">def</span><span class="w"> </span><span class="nf">worker</span><span class="p">(</span><span class="n">channel</span><span class="p">):</span>
                 <span class="n">channel_mask</span> <span class="o">=</span> <span class="n">total_poly_energies</span> <span class="o">==</span> <span class="n">channel</span>
@@ -820,14 +820,14 @@
             <span class="n">client</span> <span class="o">=</span> <span class="n">ParallelClient</span><span class="p">()</span>
 
             <span class="n">polynomials</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">execute_with_progress_bar</span><span class="p">(</span>
-                <span class="n">worker</span><span class="p">,</span> <span class="n">channels</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Fitting </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_instrument</span><span class="si">}</span><span class="s2"> background&quot;</span>
+                <span class="n">worker</span><span class="p">,</span> <span class="n">channels</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Fitting </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_instrument</span><span class="si">}</span><span class="s2"> background"</span>
             <span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="n">polynomials</span> <span class="o">=</span> <span class="p">[]</span>
 
             <span class="k">for</span> <span class="n">channel</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
-                <span class="n">channels</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Fitting </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_instrument</span><span class="si">}</span><span class="s2"> background&quot;</span>
+                <span class="n">channels</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Fitting </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_instrument</span><span class="si">}</span><span class="s2"> background"</span>
             <span class="p">):</span>
                 <span class="n">channel_mask</span> <span class="o">=</span> <span class="n">total_poly_energies</span> <span class="o">==</span> <span class="n">channel</span>
 
@@ -855,14 +855,14 @@
 <div class="viewcode-block" id="EventList.set_active_time_intervals">
 <a class="viewcode-back" href="../../../../api/threeML.utils.time_series.html#threeML.utils.time_series.event_list.EventList.set_active_time_intervals">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_active_time_intervals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the time interval(s) to be used during the analysis.</span>
+<span class="w">        </span><span class="sd">"""Set the time interval(s) to be used during the analysis.</span>
 
-<span class="sd">        Specified as &#39;tmin-tmax&#39;. Intervals are in seconds. Example:</span>
+<span class="sd">        Specified as 'tmin-tmax'. Intervals are in seconds. Example:</span>
 
-<span class="sd">        set_active_time_intervals(&quot;0.0-10.0&quot;)</span>
+<span class="sd">        set_active_time_intervals("0.0-10.0")</span>
 
 <span class="sd">        which will set the energy range 0-10. seconds.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_time_selection_exists</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="n">interval_masks</span> <span class="o">=</span> <span class="p">[]</span>
@@ -896,9 +896,9 @@
             <span class="c1"># check that the exposure is not larger than the total time</span>
             <span class="k">if</span> <span class="n">this_exposure</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">tmax</span> <span class="o">-</span> <span class="n">tmin</span><span class="p">):</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                    <span class="s2">&quot;The exposure in the active time bin is larger &quot;</span>
-                    <span class="s2">&quot;than the total active time. &quot;</span>
-                    <span class="s2">&quot;Something must be wrong!&quot;</span>
+                    <span class="s2">"The exposure in the active time bin is larger "</span>
+                    <span class="s2">"than the total active time. "</span>
+                    <span class="s2">"Something must be wrong!"</span>
                 <span class="p">)</span>
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
             <span class="n">exposure</span> <span class="o">+=</span> <span class="n">this_exposure</span>
@@ -923,7 +923,7 @@
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poly_fit_exists</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poly_fit_exists</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;A polynomial fit to the channels does not exist!&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"A polynomial fit to the channels does not exist!"</span><span class="p">)</span>
 
             <span class="k">for</span> <span class="n">chan</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_channels</span><span class="p">):</span>
                 <span class="n">total_counts</span> <span class="o">=</span> <span class="mi">0</span>
@@ -977,7 +977,7 @@
         <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">edges</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;An EventList where the exposure is calculated via and array of dead</span>
+<span class="w">        </span><span class="sd">"""An EventList where the exposure is calculated via and array of dead</span>
 <span class="sd">        times per.</span>
 
 <span class="sd">        event. Summing these dead times over an</span>
@@ -1000,7 +1000,7 @@
 <span class="sd">        :param  verbose: verbose level</span>
 <span class="sd">        :param  ra:</span>
 <span class="sd">        :param  dec:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="nb">super</span><span class="p">(</span><span class="n">EventListWithDeadTime</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">arrival_times</span><span class="p">,</span>
@@ -1023,7 +1023,7 @@
 
             <span class="k">assert</span> <span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_arrival_times</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dead_time</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="p">),</span> <span class="s2">&quot;Arrival time (</span><span class="si">%d</span><span class="s2">) and Dead Time (</span><span class="si">%d</span><span class="s2">) have different shapes&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="p">),</span> <span class="s2">"Arrival time (</span><span class="si">%d</span><span class="s2">) and Dead Time (</span><span class="si">%d</span><span class="s2">) have different shapes"</span> <span class="o">%</span> <span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_arrival_times</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_dead_time</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
             <span class="p">)</span>
@@ -1034,12 +1034,12 @@
 <div class="viewcode-block" id="EventListWithDeadTime.exposure_over_interval">
 <a class="viewcode-back" href="../../../../api/threeML.utils.time_series.html#threeML.utils.time_series.event_list.EventListWithDeadTime.exposure_over_interval">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">exposure_over_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the exposure over the given interval.</span>
+<span class="w">        </span><span class="sd">"""Calculate the exposure over the given interval.</span>
 
 <span class="sd">        :param start: start time</span>
 <span class="sd">        :param stop: stop time</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_select_events</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">)</span>
 
@@ -1074,7 +1074,7 @@
         <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">edges</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;An EventList where the exposure is calculated via and array dead</span>
+<span class="w">        </span><span class="sd">"""An EventList where the exposure is calculated via and array dead</span>
 <span class="sd">        time fractions per event .</span>
 
 <span class="sd">        Summing these dead times over an</span>
@@ -1097,7 +1097,7 @@
 <span class="sd">        :param  verbose: verbose level</span>
 <span class="sd">        :param  ra:</span>
 <span class="sd">        :param  dec:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="nb">super</span><span class="p">(</span><span class="n">EventListWithDeadTimeFraction</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">arrival_times</span><span class="p">,</span>
@@ -1120,7 +1120,7 @@
 
             <span class="k">assert</span> <span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_arrival_times</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dead_time_fraction</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="p">),</span> <span class="s2">&quot;Arrival time (</span><span class="si">%d</span><span class="s2">) and Dead Time (</span><span class="si">%d</span><span class="s2">) have different shapes&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="p">),</span> <span class="s2">"Arrival time (</span><span class="si">%d</span><span class="s2">) and Dead Time (</span><span class="si">%d</span><span class="s2">) have different shapes"</span> <span class="o">%</span> <span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_arrival_times</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_dead_time_fraction</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
             <span class="p">)</span>
@@ -1131,12 +1131,12 @@
 <div class="viewcode-block" id="EventListWithDeadTimeFraction.exposure_over_interval">
 <a class="viewcode-back" href="../../../../api/threeML.utils.time_series.html#threeML.utils.time_series.event_list.EventListWithDeadTimeFraction.exposure_over_interval">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">exposure_over_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the exposure over the given interval.</span>
+<span class="w">        </span><span class="sd">"""Calculate the exposure over the given interval.</span>
 
 <span class="sd">        :param start: start time</span>
 <span class="sd">        :param stop: stop time</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_select_events</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">)</span>
 
@@ -1176,7 +1176,7 @@
         <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">edges</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;An EventList where the exposure is calculated via and array of</span>
+<span class="w">        </span><span class="sd">"""An EventList where the exposure is calculated via and array of</span>
 <span class="sd">        livetimes per interval.</span>
 
 <span class="sd">        :param  arrival_times: list of event arrival times</span>
@@ -1197,18 +1197,18 @@
 <span class="sd">        :param verbose:</span>
 <span class="sd">        :param  ra:</span>
 <span class="sd">        :param  dec:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">live_time</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
             <span class="n">live_time_starts</span>
-        <span class="p">),</span> <span class="s2">&quot;Live time fraction (</span><span class="si">%d</span><span class="s2">) and live time start (</span><span class="si">%d</span><span class="s2">) have different shapes&quot;</span> <span class="o">%</span> <span class="p">(</span>
+        <span class="p">),</span> <span class="s2">"Live time fraction (</span><span class="si">%d</span><span class="s2">) and live time start (</span><span class="si">%d</span><span class="s2">) have different shapes"</span> <span class="o">%</span> <span class="p">(</span>
             <span class="nb">len</span><span class="p">(</span><span class="n">live_time</span><span class="p">),</span>
             <span class="nb">len</span><span class="p">(</span><span class="n">live_time_starts</span><span class="p">),</span>
         <span class="p">)</span>
 
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">live_time</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
             <span class="n">live_time_stops</span>
-        <span class="p">),</span> <span class="s2">&quot;Live time fraction (</span><span class="si">%d</span><span class="s2">) and live time stop (</span><span class="si">%d</span><span class="s2">) have different shapes&quot;</span> <span class="o">%</span> <span class="p">(</span>
+        <span class="p">),</span> <span class="s2">"Live time fraction (</span><span class="si">%d</span><span class="s2">) and live time stop (</span><span class="si">%d</span><span class="s2">) have different shapes"</span> <span class="o">%</span> <span class="p">(</span>
             <span class="nb">len</span><span class="p">(</span><span class="n">live_time</span><span class="p">),</span>
             <span class="nb">len</span><span class="p">(</span><span class="n">live_time_stops</span><span class="p">),</span>
         <span class="p">)</span>
@@ -1235,12 +1235,12 @@
 <div class="viewcode-block" id="EventListWithLiveTime.exposure_over_interval">
 <a class="viewcode-back" href="../../../../api/threeML.utils.time_series.html#threeML.utils.time_series.event_list.EventListWithLiveTime.exposure_over_interval">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">exposure_over_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 
 <span class="sd">        :param start: start time of interval</span>
 <span class="sd">        :param stop: stop time of interval</span>
 <span class="sd">        :return: exposure</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># First see if the interval is completely contained inside a</span>
         <span class="c1"># livetime interval. In this case we only compute that.</span>

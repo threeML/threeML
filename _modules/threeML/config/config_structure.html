@@ -139,10 +139,10 @@
 <a class="viewcode-back" href="../../../api/threeML.config.html#threeML.config.config_structure.Logging">[docs]</a>
 <span class="nd">@dataclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Logging</span><span class="p">:</span>
-    <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;~/.threeml/log&quot;</span>
-    <span class="n">developer</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="s2">&quot;off&quot;</span>
-    <span class="n">usr</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="s2">&quot;on&quot;</span>
-    <span class="n">console</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="s2">&quot;on&quot;</span>
+    <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"~/.threeml/log"</span>
+    <span class="n">developer</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="s2">"off"</span>
+    <span class="n">usr</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="s2">"on"</span>
+    <span class="n">console</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="s2">"on"</span>
     <span class="n">level</span><span class="p">:</span> <span class="n">LoggingLevel</span> <span class="o">=</span> <span class="n">LoggingLevel</span><span class="o">.</span><span class="n">INFO</span></div>
 
 
@@ -151,7 +151,7 @@
 <a class="viewcode-back" href="../../../api/threeML.config.html#threeML.config.config_structure.Parallel">[docs]</a>
 <span class="nd">@dataclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Parallel</span><span class="p">:</span>
-    <span class="n">profile_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span>
+    <span class="n">profile_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"default"</span>
     <span class="n">use_parallel</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">use_joblib</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span></div>
 
@@ -161,10 +161,10 @@
 <a class="viewcode-back" href="../../../api/threeML.config.html#threeML.config.config_structure.Interface">[docs]</a>
 <span class="nd">@dataclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Interface</span><span class="p">:</span>
-    <span class="n">progress_bars</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="s2">&quot;on&quot;</span>
-    <span class="n">multi_progress_color</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="s2">&quot;on&quot;</span>
-    <span class="n">multi_progress_cmap</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;viridis&quot;</span>
-    <span class="n">progress_bar_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;#9C04FF&quot;</span></div>
+    <span class="n">progress_bars</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="s2">"on"</span>
+    <span class="n">multi_progress_color</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="s2">"on"</span>
+    <span class="n">multi_progress_cmap</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"viridis"</span>
+    <span class="n">progress_bar_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"#9C04FF"</span></div>
 
 
 
@@ -187,15 +187,15 @@
 
     <span class="n">LAT</span><span class="p">:</span> <span class="n">PublicDataServer</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
         <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">PublicDataServer</span><span class="p">(</span>
-            <span class="n">public_ftp_location</span><span class="o">=</span><span class="s2">&quot;ftp://heasarc.nasa.gov/fermi/data&quot;</span><span class="p">,</span>
-            <span class="n">public_http_location</span><span class="o">=</span><span class="s2">&quot;https://heasarc.gsfc.nasa.gov/FTP/fermi/data/lat&quot;</span><span class="p">,</span>
-            <span class="n">query_form</span><span class="o">=</span><span class="s2">&quot;https://fermi.gsfc.nasa.gov/cgi-bin/ssc/LAT/LATDataQuery.cgi&quot;</span><span class="p">,</span>
+            <span class="n">public_ftp_location</span><span class="o">=</span><span class="s2">"ftp://heasarc.nasa.gov/fermi/data"</span><span class="p">,</span>
+            <span class="n">public_http_location</span><span class="o">=</span><span class="s2">"https://heasarc.gsfc.nasa.gov/FTP/fermi/data/lat"</span><span class="p">,</span>
+            <span class="n">query_form</span><span class="o">=</span><span class="s2">"https://fermi.gsfc.nasa.gov/cgi-bin/ssc/LAT/LATDataQuery.cgi"</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="p">)</span>
     <span class="n">GBM</span><span class="p">:</span> <span class="n">PublicDataServer</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
         <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">PublicDataServer</span><span class="p">(</span>
-            <span class="n">public_ftp_location</span><span class="o">=</span><span class="s2">&quot;ftp://heasarc.nasa.gov/fermi/data&quot;</span><span class="p">,</span>
-            <span class="n">public_http_location</span><span class="o">=</span><span class="s2">&quot;https://heasarc.gsfc.nasa.gov/FTP/fermi/data/gbm&quot;</span><span class="p">,</span>
+            <span class="n">public_ftp_location</span><span class="o">=</span><span class="s2">"ftp://heasarc.nasa.gov/fermi/data"</span><span class="p">,</span>
+            <span class="n">public_http_location</span><span class="o">=</span><span class="s2">"https://heasarc.gsfc.nasa.gov/FTP/fermi/data/gbm"</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="p">)</span>
     <span class="n">catalogs</span><span class="p">:</span> <span class="n">Catalogs</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">Catalogs</span><span class="p">())</span></div>

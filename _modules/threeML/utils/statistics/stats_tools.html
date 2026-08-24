@@ -129,11 +129,11 @@
 <div class="viewcode-block" id="aic">
 <a class="viewcode-back" href="../../../../api/threeML.utils.statistics.html#threeML.utils.statistics.stats_tools.aic">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">aic</span><span class="p">(</span><span class="n">log_like</span><span class="p">,</span> <span class="n">n_parameters</span><span class="p">,</span> <span class="n">n_data_points</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;The Aikake information criterion.</span>
+<span class="w">    </span><span class="sd">"""The Aikake information criterion.</span>
 
 <span class="sd">    A model comparison tool based of infomormation theory. It assumes</span>
 <span class="sd">    that N is large i.e., that the model is approaching the CLT.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">val</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">log_like</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">n_parameters</span>
         <span class="n">val</span> <span class="o">+=</span> <span class="p">(</span>
@@ -149,7 +149,7 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
         <span class="n">val</span> <span class="o">=</span> <span class="mi">0</span>
 
-        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;AIC was NAN. Recording zero, but you should examine your fit.&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"AIC was NAN. Recording zero, but you should examine your fit."</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">val</span></div>
 
@@ -158,13 +158,13 @@
 <div class="viewcode-block" id="bic">
 <a class="viewcode-back" href="../../../../api/threeML.utils.statistics.html#threeML.utils.statistics.stats_tools.bic">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">bic</span><span class="p">(</span><span class="n">log_like</span><span class="p">,</span> <span class="n">n_parameters</span><span class="p">,</span> <span class="n">n_data_points</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;The Bayesian information criterion.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""The Bayesian information criterion."""</span>
     <span class="n">val</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">log_like</span> <span class="o">+</span> <span class="n">n_parameters</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">n_data_points</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
         <span class="n">val</span> <span class="o">=</span> <span class="mi">0</span>
 
-        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;BIC was NAN. Recording zero, but you should examine your fit.&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"BIC was NAN. Recording zero, but you should examine your fit."</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">val</span></div>
 
@@ -173,14 +173,14 @@
 <div class="viewcode-block" id="waic">
 <a class="viewcode-back" href="../../../../api/threeML.utils.statistics.html#threeML.utils.statistics.stats_tools.waic">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">waic</span><span class="p">(</span><span class="n">bayesian_trace</span><span class="p">):</span>
-    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Coming soon to a theater near you.&quot;</span><span class="p">)</span></div>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"Coming soon to a theater near you."</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="dic">
 <a class="viewcode-back" href="../../../../api/threeML.utils.statistics.html#threeML.utils.statistics.stats_tools.dic">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">dic</span><span class="p">(</span><span class="n">bayes_analysis</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    elpd_DIC = log p(y|mean(parameters)) - p_DIC</span>
 
 <span class="sd">    the first term is the deviance at the mean of the posterior</span>
@@ -196,7 +196,7 @@
 <span class="sd">    :param bayes_analysis: a bayesian analysis object</span>
 <span class="sd">    :return dic, effective number of free parameters:</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">mean_of_free_parameters</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">bayes_analysis</span><span class="o">.</span><span class="n">raw_samples</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
@@ -212,7 +212,7 @@
         <span class="n">elpd_dic</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">pdic</span> <span class="o">=</span> <span class="mi">0</span>
 
-        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;DIC was NAN. Recording zero, but you should examine your fit.&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"DIC was NAN. Recording zero, but you should examine your fit."</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="n">elpd_dic</span><span class="p">,</span> <span class="n">pdic</span></div>
 
@@ -221,10 +221,10 @@
 <div class="viewcode-block" id="sqrt_sum_of_squares">
 <a class="viewcode-back" href="../../../../api/threeML.utils.statistics.html#threeML.utils.statistics.stats_tools.sqrt_sum_of_squares">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">sqrt_sum_of_squares</span><span class="p">(</span><span class="n">arg</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    :param arg: and array of number to be squared and summed</span>
 <span class="sd">    :return: the sqrt of the sum of the squares</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span></div>
 
@@ -233,10 +233,10 @@
 <div class="viewcode-block" id="PoissonResiduals">
 <a class="viewcode-back" href="../../../../api/threeML.utils.statistics.html#threeML.utils.statistics.stats_tools.PoissonResiduals">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">PoissonResiduals</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;This class implements a way to compute residuals for a Poisson</span>
+<span class="w">    </span><span class="sd">"""This class implements a way to compute residuals for a Poisson</span>
 <span class="sd">    distribution mapping them to residuals of a standard normal distribution.</span>
 <span class="sd">    The probability of obtaining the observed counts given the expected one is</span>
-<span class="sd">    computed, and then transformed &quot;in unit of sigma&quot;, i.e., the sigma value</span>
+<span class="sd">    computed, and then transformed "in unit of sigma", i.e., the sigma value</span>
 <span class="sd">    corresponding to that probability is computed.</span>
 
 <span class="sd">    The algorithm implemented here uses different branches so that it is fairly accurate</span>
@@ -250,7 +250,7 @@
 <span class="sd">    strongly on the expected number of counts. Under normal circumstances residuals are</span>
 <span class="sd">    expected to be a few sigma at most, in which case the effect becomes important for</span>
 <span class="sd">    expected number of counts &lt;~ 15-20.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="c1"># Putting these here make them part of the *class*, not the instance, i.e., they are</span>
     <span class="c1"># created only once when the module is imported, and then are referred to by any</span>
@@ -271,7 +271,7 @@
     <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Non</span><span class="p">,</span> <span class="n">Noff</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="n">alpha</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">alpha</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;alpha was </span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">alpha</span>
+        <span class="k">assert</span> <span class="n">alpha</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">alpha</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"alpha was </span><span class="si">%f</span><span class="s2">"</span> <span class="o">%</span> <span class="n">alpha</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">Non</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Non</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">ndmin</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
@@ -347,10 +347,10 @@
 <div class="viewcode-block" id="Significance">
 <a class="viewcode-back" href="../../../../api/threeML.utils.statistics.html#threeML.utils.statistics.stats_tools.Significance">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Significance</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Implements equations in Li&amp;Ma 1983.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Implements equations in Li&amp;Ma 1983."""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Non</span><span class="p">,</span> <span class="n">Noff</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-        <span class="c1"># assert alpha &gt; 0 and alpha &lt;= 1, &quot;alpha was %f&quot; % alpha</span>
+        <span class="c1"># assert alpha &gt; 0 and alpha &lt;= 1, "alpha was %f" % alpha</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_Non</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Non</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">ndmin</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
@@ -385,7 +385,7 @@
 <div class="viewcode-block" id="Significance.known_background">
 <a class="viewcode-back" href="../../../../api/threeML.utils.statistics.html#threeML.utils.statistics.stats_tools.Significance.known_background">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">known_background</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the significance under the hypothesis that there is no</span>
+<span class="w">        </span><span class="sd">"""Compute the significance under the hypothesis that there is no</span>
 <span class="sd">        uncertainty in the background. In other words, compute the probability</span>
 <span class="sd">        of obtaining the observed counts given the expected counts from the</span>
 <span class="sd">        background, then transform it in sigma.</span>
@@ -401,7 +401,7 @@
 <span class="sd">        that the Poisson distribution is very skewed at low counts.</span>
 
 <span class="sd">        :return: significance vector</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># Poisson probability of obtaining Non given Noff * alpha, in sigma units</span>
 
@@ -415,7 +415,7 @@
 <div class="viewcode-block" id="Significance.li_and_ma">
 <a class="viewcode-back" href="../../../../api/threeML.utils.statistics.html#threeML.utils.statistics.stats_tools.Significance.li_and_ma">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">li_and_ma</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">assign_sign</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the significance using the formula from Li &amp; Ma 1983, which</span>
+<span class="w">        </span><span class="sd">"""Compute the significance using the formula from Li &amp; Ma 1983, which</span>
 <span class="sd">        is appropriate when both background and observed signal are counts</span>
 <span class="sd">        coming from a Poisson distribution.</span>
 
@@ -423,7 +423,7 @@
 <span class="sd">        the sign of the net counts Non - alpha * Noff, so that excesses will have</span>
 <span class="sd">        positive significances and defects negative significances</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">one</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_Non</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
 
@@ -452,7 +452,7 @@
 <div class="viewcode-block" id="Significance.li_and_ma_equivalent_for_gaussian_background">
 <a class="viewcode-back" href="../../../../api/threeML.utils.statistics.html#threeML.utils.statistics.stats_tools.Significance.li_and_ma_equivalent_for_gaussian_background">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">li_and_ma_equivalent_for_gaussian_background</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sigma_b</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Compute the significance using the formula from Vianello 2018</span>
 <span class="sd">        (https://iopscience.iop.org/article/10.3847/1538-4365/aab780/meta),</span>
 <span class="sd">        which is appropriate when the observation is Poisson distributed but</span>
@@ -461,7 +461,7 @@
 <span class="sd">        :param sigma_b: The gaussian 1 sigma errors on the background</span>
 <span class="sd">        :return:</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># This is a computation I need to publish (G. Vianello)</span>
 
@@ -486,11 +486,11 @@
 <div class="viewcode-block" id="Significance.gaussian_background">
 <a class="viewcode-back" href="../../../../api/threeML.utils.statistics.html#threeML.utils.statistics.stats_tools.Significance.gaussian_background">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">gaussian_background</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sigma_c</span><span class="p">,</span> <span class="n">sigma_b</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        :param sigma_b: The gaussian 1 sigma errors on the background</span>
 <span class="sd">        :return:</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">net</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sigma_c</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">sigma_b</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span></div>
 </div>
 

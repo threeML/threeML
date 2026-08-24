@@ -128,39 +128,39 @@
 <a class="viewcode-back" href="../../../api/threeML.catalogs.html#threeML.catalogs.FermiLLE.FermiLLEBurstCatalog">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">FermiLLEBurstCatalog</span><span class="p">(</span><span class="n">VirtualObservatoryCatalog</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The Fermi-LAT LAT Low-Energy (LLE) trigger catalog. Search for GRBs</span>
+<span class="w">        </span><span class="sd">"""The Fermi-LAT LAT Low-Energy (LLE) trigger catalog. Search for GRBs</span>
 <span class="sd">        and solar flares by trigger number, location, trigger type and date</span>
 <span class="sd">        range.</span>
 
 <span class="sd">        :param update: force update the XML VO table</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_update</span> <span class="o">=</span> <span class="n">update</span>
 
         <span class="nb">super</span><span class="p">(</span><span class="n">FermiLLEBurstCatalog</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="s2">&quot;fermille&quot;</span><span class="p">,</span>
-            <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;catalogs&quot;</span><span class="p">][</span><span class="s2">&quot;Fermi&quot;</span><span class="p">][</span><span class="s2">&quot;catalogs&quot;</span><span class="p">][</span><span class="s2">&quot;LLE catalog&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">url</span><span class="p">,</span>
-            <span class="s2">&quot;Fermi-LAT/LLE catalog&quot;</span><span class="p">,</span>
+            <span class="s2">"fermille"</span><span class="p">,</span>
+            <span class="n">threeML_config</span><span class="p">[</span><span class="s2">"catalogs"</span><span class="p">][</span><span class="s2">"Fermi"</span><span class="p">][</span><span class="s2">"catalogs"</span><span class="p">][</span><span class="s2">"LLE catalog"</span><span class="p">]</span><span class="o">.</span><span class="n">url</span><span class="p">,</span>
+            <span class="s2">"Fermi-LAT/LLE catalog"</span><span class="p">,</span>
         <span class="p">)</span>
 
 <div class="viewcode-block" id="FermiLLEBurstCatalog.apply_format">
 <a class="viewcode-back" href="../../../api/threeML.catalogs.html#threeML.catalogs.FermiLLE.FermiLLEBurstCatalog.apply_format">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">apply_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">):</span>
-        <span class="n">new_table</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;ra&quot;</span><span class="p">,</span> <span class="s2">&quot;dec&quot;</span><span class="p">,</span> <span class="s2">&quot;trigger_time&quot;</span><span class="p">,</span> <span class="s2">&quot;trigger_type&quot;</span><span class="p">]</span>
+        <span class="n">new_table</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"ra"</span><span class="p">,</span> <span class="s2">"dec"</span><span class="p">,</span> <span class="s2">"trigger_time"</span><span class="p">,</span> <span class="s2">"trigger_type"</span><span class="p">]</span>
 
         <span class="c1"># Remove rows with masked elements in trigger_time column</span>
         <span class="k">if</span> <span class="n">new_table</span><span class="o">.</span><span class="n">masked</span><span class="p">:</span>
-            <span class="n">new_table</span> <span class="o">=</span> <span class="n">new_table</span><span class="p">[</span><span class="o">~</span><span class="n">new_table</span><span class="p">[</span><span class="s2">&quot;trigger_time&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span>
+            <span class="n">new_table</span> <span class="o">=</span> <span class="n">new_table</span><span class="p">[</span><span class="o">~</span><span class="n">new_table</span><span class="p">[</span><span class="s2">"trigger_time"</span><span class="p">]</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span>
 
-        <span class="n">new_table</span><span class="p">[</span><span class="s2">&quot;ra&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="s2">&quot;5.3f&quot;</span>
-        <span class="n">new_table</span><span class="p">[</span><span class="s2">&quot;dec&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="s2">&quot;5.3f&quot;</span>
+        <span class="n">new_table</span><span class="p">[</span><span class="s2">"ra"</span><span class="p">]</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="s2">"5.3f"</span>
+        <span class="n">new_table</span><span class="p">[</span><span class="s2">"dec"</span><span class="p">]</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="s2">"5.3f"</span>
 
-        <span class="k">return</span> <span class="n">new_table</span><span class="o">.</span><span class="n">group_by</span><span class="p">(</span><span class="s2">&quot;trigger_time&quot;</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">new_table</span><span class="o">.</span><span class="n">group_by</span><span class="p">(</span><span class="s2">"trigger_time"</span><span class="p">)</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_vo_table_from_source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span> <span class="o">=</span> <span class="n">get_heasarc_table_as_pandas</span><span class="p">(</span>
-            <span class="s2">&quot;fermille&quot;</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">,</span> <span class="n">cache_time_days</span><span class="o">=</span><span class="mf">5.0</span>
+            <span class="s2">"fermille"</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">,</span> <span class="n">cache_time_days</span><span class="o">=</span><span class="mf">5.0</span>
         <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_source_is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>

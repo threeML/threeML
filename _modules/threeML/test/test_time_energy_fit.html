@@ -126,11 +126,11 @@
 <div class="viewcode-block" id="test_energy_time_fit">
 <a class="viewcode-back" href="../../../api/threeML.test.html#threeML.test.test_time_energy_fit.test_energy_time_fit">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">test_energy_time_fit</span><span class="p">():</span>
-    <span class="c1"># Let&#39;s generate our dataset of 4 spectra with a normalization that follows</span>
+    <span class="c1"># Let's generate our dataset of 4 spectra with a normalization that follows</span>
     <span class="c1"># a powerlaw in time</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">generate_one</span><span class="p">(</span><span class="n">K</span><span class="p">):</span>
-        <span class="c1"># Let&#39;s generate some data with y = Powerlaw(x)</span>
+        <span class="c1"># Let's generate some data with y = Powerlaw(x)</span>
 
         <span class="n">gen_function</span> <span class="o">=</span> <span class="n">Powerlaw</span><span class="p">()</span>
         <span class="n">gen_function</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="n">K</span>
@@ -141,15 +141,15 @@
         <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
 
         <span class="n">xyl_generator</span> <span class="o">=</span> <span class="n">XYLike</span><span class="o">.</span><span class="n">from_function</span><span class="p">(</span>
-            <span class="s2">&quot;sim_data&quot;</span><span class="p">,</span> <span class="n">function</span><span class="o">=</span><span class="n">gen_function</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="mf">0.3</span> <span class="o">*</span> <span class="n">gen_function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="s2">"sim_data"</span><span class="p">,</span> <span class="n">function</span><span class="o">=</span><span class="n">gen_function</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="mf">0.3</span> <span class="o">*</span> <span class="n">gen_function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="p">)</span>
 
         <span class="n">y</span> <span class="o">=</span> <span class="n">xyl_generator</span><span class="o">.</span><span class="n">y</span>
         <span class="n">y_err</span> <span class="o">=</span> <span class="n">xyl_generator</span><span class="o">.</span><span class="n">yerr</span>
 
-        <span class="c1"># xyl = XYLike(&quot;data&quot;, x, y, y_err)</span>
+        <span class="c1"># xyl = XYLike("data", x, y, y_err)</span>
 
-        <span class="c1"># xyl.plot(x_scale=&#39;log&#39;, y_scale=&#39;log&#39;)</span>
+        <span class="c1"># xyl.plot(x_scale='log', y_scale='log')</span>
 
         <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">y_err</span>
 
@@ -163,14 +163,14 @@
 
     <span class="c1"># Now set up the fit and fit it</span>
 
-    <span class="n">time</span> <span class="o">=</span> <span class="n">IndependentVariable</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
+    <span class="n">time</span> <span class="o">=</span> <span class="n">IndependentVariable</span><span class="p">(</span><span class="s2">"time"</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
 
     <span class="n">plugins</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">datasets</span><span class="p">):</span>
         <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">y_err</span> <span class="o">=</span> <span class="n">dataset</span>
 
-        <span class="n">xyl</span> <span class="o">=</span> <span class="n">XYLike</span><span class="p">(</span><span class="s2">&quot;data</span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">y_err</span><span class="p">)</span>
+        <span class="n">xyl</span> <span class="o">=</span> <span class="n">XYLike</span><span class="p">(</span><span class="s2">"data</span><span class="si">%i</span><span class="s2">"</span> <span class="o">%</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">y_err</span><span class="p">)</span>
 
         <span class="n">xyl</span><span class="o">.</span><span class="n">tag</span> <span class="o">=</span> <span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">time_tags</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
 
@@ -183,7 +183,7 @@
     <span class="n">spectrum</span> <span class="o">=</span> <span class="n">Powerlaw</span><span class="p">()</span>
     <span class="n">spectrum</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">1000.0</span><span class="p">)</span>
 
-    <span class="n">src</span> <span class="o">=</span> <span class="n">PointSource</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">spectrum</span><span class="p">)</span>
+    <span class="n">src</span> <span class="o">=</span> <span class="n">PointSource</span><span class="p">(</span><span class="s2">"test"</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">spectrum</span><span class="p">)</span>
 
     <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
 
@@ -198,14 +198,14 @@
 
     <span class="n">jl</span> <span class="o">=</span> <span class="n">JointLikelihood</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
 
-    <span class="n">jl</span><span class="o">.</span><span class="n">set_minimizer</span><span class="p">(</span><span class="s2">&quot;minuit&quot;</span><span class="p">)</span>
+    <span class="n">jl</span><span class="o">.</span><span class="n">set_minimizer</span><span class="p">(</span><span class="s2">"minuit"</span><span class="p">)</span>
 
     <span class="n">best_fit_parameters</span><span class="p">,</span> <span class="n">likelihood_values</span> <span class="o">=</span> <span class="n">jl</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
 
     <span class="c1"># Make sure we are within 10% of the expected result</span>
 
     <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span>
-        <span class="n">best_fit_parameters</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+        <span class="n">best_fit_parameters</span><span class="p">[</span><span class="s2">"value"</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
         <span class="p">[</span><span class="mf">0.25496115</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.2282951</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.01508341</span><span class="p">],</span>
         <span class="n">rtol</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
     <span class="p">)</span></div>

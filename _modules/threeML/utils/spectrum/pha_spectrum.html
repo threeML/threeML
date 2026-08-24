@@ -136,37 +136,37 @@
 <span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 <span class="n">_required_keywords</span> <span class="o">=</span> <span class="p">{}</span>
-<span class="n">_required_keywords</span><span class="p">[</span><span class="s2">&quot;observed&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="s2">&quot;mission:TELESCOP,instrument:INSTRUME,filter:FILTER,&quot;</span>
-    <span class="o">+</span> <span class="s2">&quot;exposure:EXPOSURE,backfile:BACKFILE,&quot;</span>
-    <span class="o">+</span> <span class="s2">&quot;respfile:RESPFILE,&quot;</span>
-    <span class="o">+</span> <span class="s2">&quot;ancrfile:ANCRFILE,hduclass:HDUCLASS,&quot;</span>
-    <span class="o">+</span> <span class="s2">&quot;hduclas1:HDUCLAS1,poisserr:POISSERR,&quot;</span>
-    <span class="o">+</span> <span class="s2">&quot;chantype:CHANTYPE,detchans:DETCHANS,&quot;</span>
-    <span class="s2">&quot;backscal:BACKSCAL&quot;</span>
-<span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+<span class="n">_required_keywords</span><span class="p">[</span><span class="s2">"observed"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">"mission:TELESCOP,instrument:INSTRUME,filter:FILTER,"</span>
+    <span class="o">+</span> <span class="s2">"exposure:EXPOSURE,backfile:BACKFILE,"</span>
+    <span class="o">+</span> <span class="s2">"respfile:RESPFILE,"</span>
+    <span class="o">+</span> <span class="s2">"ancrfile:ANCRFILE,hduclass:HDUCLASS,"</span>
+    <span class="o">+</span> <span class="s2">"hduclas1:HDUCLAS1,poisserr:POISSERR,"</span>
+    <span class="o">+</span> <span class="s2">"chantype:CHANTYPE,detchans:DETCHANS,"</span>
+    <span class="s2">"backscal:BACKSCAL"</span>
+<span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">","</span><span class="p">)</span>
 
 <span class="c1"># python types, not fits</span>
-<span class="n">_required_keyword_types</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;POISSERR&quot;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">}</span>
+<span class="n">_required_keyword_types</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"POISSERR"</span><span class="p">:</span> <span class="nb">bool</span><span class="p">}</span>
 
 <span class="c1"># hduvers:HDUVERS</span>
 
-<span class="n">_required_keywords</span><span class="p">[</span><span class="s2">&quot;background&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="s2">&quot;mission:TELESCOP,instrument:INSTRUME,filter:FILTER,&quot;</span>
-    <span class="o">+</span> <span class="s2">&quot;exposure:EXPOSURE,&quot;</span>
-    <span class="o">+</span> <span class="s2">&quot;hduclass:HDUCLASS,&quot;</span>
-    <span class="o">+</span> <span class="s2">&quot;hduclas1:HDUCLAS1,poisserr:POISSERR,&quot;</span>
-    <span class="o">+</span> <span class="s2">&quot;chantype:CHANTYPE,detchans:DETCHANS,&quot;</span>
-    <span class="s2">&quot;backscal:BACKSCAL&quot;</span>
-<span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+<span class="n">_required_keywords</span><span class="p">[</span><span class="s2">"background"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">"mission:TELESCOP,instrument:INSTRUME,filter:FILTER,"</span>
+    <span class="o">+</span> <span class="s2">"exposure:EXPOSURE,"</span>
+    <span class="o">+</span> <span class="s2">"hduclass:HDUCLASS,"</span>
+    <span class="o">+</span> <span class="s2">"hduclas1:HDUCLAS1,poisserr:POISSERR,"</span>
+    <span class="o">+</span> <span class="s2">"chantype:CHANTYPE,detchans:DETCHANS,"</span>
+    <span class="s2">"backscal:BACKSCAL"</span>
+<span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">","</span><span class="p">)</span>
 
 <span class="c1"># hduvers:HDUVERS</span>
 
 <span class="n">_might_be_columns</span> <span class="o">=</span> <span class="p">{}</span>
-<span class="n">_might_be_columns</span><span class="p">[</span><span class="s2">&quot;observed&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="s2">&quot;EXPOSURE,BACKFILE,&quot;</span> <span class="o">+</span> <span class="s2">&quot;CORRFILE,CORRSCAL,&quot;</span> <span class="o">+</span> <span class="s2">&quot;RESPFILE,ANCRFILE,BACKSCAL&quot;</span>
-<span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
-<span class="n">_might_be_columns</span><span class="p">[</span><span class="s2">&quot;background&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;EXPOSURE,BACKSCAL&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+<span class="n">_might_be_columns</span><span class="p">[</span><span class="s2">"observed"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">"EXPOSURE,BACKFILE,"</span> <span class="o">+</span> <span class="s2">"CORRFILE,CORRSCAL,"</span> <span class="o">+</span> <span class="s2">"RESPFILE,ANCRFILE,BACKSCAL"</span>
+<span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">","</span><span class="p">)</span>
+<span class="n">_might_be_columns</span><span class="p">[</span><span class="s2">"background"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"EXPOSURE,BACKSCAL"</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">","</span><span class="p">)</span>
 
 
 <span class="n">_valid_input_types</span> <span class="o">=</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">PHAII</span><span class="p">,</span> <span class="n">FITSFile</span><span class="p">)</span>
@@ -174,7 +174,7 @@
 
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">_PHAInfo</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A container to hold all the gathered information.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""A container to hold all the gathered information."""</span>
 
     <span class="n">counts</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span>
     <span class="n">rates</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span>
@@ -194,12 +194,12 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">_read_pha_or_pha2_file</span><span class="p">(</span>
     <span class="n">pha_file_or_instance</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">PHAII</span><span class="p">,</span> <span class="n">FITSFile</span><span class="p">],</span>
     <span class="n">spectrum_number</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">file_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;observed&quot;</span><span class="p">,</span>
+    <span class="n">file_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"observed"</span><span class="p">,</span>
     <span class="n">rsp_file</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">InstrumentResponse</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">arf_file</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">treat_as_time_series</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_PHAInfo</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A function to extract information from pha and pha2 files. It is kept</span>
+<span class="w">    </span><span class="sd">"""A function to extract information from pha and pha2 files. It is kept</span>
 <span class="sd">    separate because the same method is used for reading time series (MUCH</span>
 <span class="sd">    faster than building a lot of individual spectra) and single spectra.</span>
 
@@ -213,7 +213,7 @@
 <span class="sd">    :param arf_file: (optional) and ARF filename</span>
 <span class="sd">    :param treat_as_time_series:</span>
 <span class="sd">    :return:</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">_valid_input_types</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pha_file_or_instance</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
@@ -221,8 +221,8 @@
 
     <span class="k">else</span><span class="p">:</span>
         <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-            <span class="s2">&quot;Must provide a FITS file name or PHAII/FITSFile instance. &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;Got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">pha_file_or_instance</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="s2">"Must provide a FITS file name or PHAII/FITSFile instance. "</span>
+            <span class="sa">f</span><span class="s2">"Got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">pha_file_or_instance</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
         <span class="p">)</span>
 
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
@@ -232,10 +232,10 @@
 
         <span class="n">ext</span> <span class="o">=</span> <span class="n">pha_file_or_instance</span><span class="o">.</span><span class="n">suffix</span>
 
-        <span class="k">if</span> <span class="s2">&quot;{&quot;</span> <span class="ow">in</span> <span class="n">ext</span><span class="p">:</span>
-            <span class="n">spectrum_number</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ext</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;}&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="s2">"{"</span> <span class="ow">in</span> <span class="n">ext</span><span class="p">:</span>
+            <span class="n">spectrum_number</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ext</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"{"</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"}"</span><span class="p">,</span> <span class="s2">""</span><span class="p">))</span>
 
-            <span class="n">pha_file_or_instance</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">pha_file_or_instance</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">pha_file_or_instance</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">pha_file_or_instance</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"{"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="c1"># Read the data</span>
 
@@ -250,28 +250,28 @@
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pha_file_or_instance</span><span class="p">,</span> <span class="p">(</span><span class="n">PHAII</span><span class="p">,</span> <span class="n">FITSFile</span><span class="p">)):</span>
         <span class="c1"># we simply create a dummy filename</span>
 
-        <span class="n">file_name</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;pha_instance&quot;</span><span class="p">)</span>
+        <span class="n">file_name</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">"pha_instance"</span><span class="p">)</span>
 
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;This is a bug. Should never get here!&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"This is a bug. Should never get here!"</span><span class="p">)</span>
 
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">file_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span>
-        <span class="s2">&quot;observed&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;background&quot;</span><span class="p">,</span>
+        <span class="s2">"observed"</span><span class="p">,</span>
+        <span class="s2">"background"</span><span class="p">,</span>
     <span class="p">]:</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Unrecognized filetype keyword value&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"Unrecognized filetype keyword value"</span><span class="p">)</span>
 
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
 
     <span class="n">file_type</span> <span class="o">=</span> <span class="n">file_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
 
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">HDUidx</span> <span class="o">=</span> <span class="n">pha_file_or_instance</span><span class="o">.</span><span class="n">index_of</span><span class="p">(</span><span class="s2">&quot;SPECTRUM&quot;</span><span class="p">)</span>
+        <span class="n">HDUidx</span> <span class="o">=</span> <span class="n">pha_file_or_instance</span><span class="o">.</span><span class="n">index_of</span><span class="p">(</span><span class="s2">"SPECTRUM"</span><span class="p">)</span>
 
     <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The input file </span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2"> is not in PHA format&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">"The input file </span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2"> is not in PHA format"</span><span class="p">)</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
 
     <span class="c1"># spectrum_number = spectrum_number</span>
@@ -282,29 +282,29 @@
 
     <span class="n">header</span> <span class="o">=</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">header</span>
 
-    <span class="c1"># We don&#39;t support yet the rescaling</span>
+    <span class="c1"># We don't support yet the rescaling</span>
 
-    <span class="k">if</span> <span class="s2">&quot;CORRFILE&quot;</span> <span class="ow">in</span> <span class="n">header</span><span class="p">:</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;CORRFILE&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;NONE&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
-            <span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;CORRFILE&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">if</span> <span class="s2">"CORRFILE"</span> <span class="ow">in</span> <span class="n">header</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"CORRFILE"</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">"NONE"</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
+            <span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"CORRFILE"</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">""</span>
         <span class="p">):</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;CORRFILE is not yet supported&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"CORRFILE is not yet supported"</span><span class="p">)</span>
 
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
 
     <span class="c1"># See if there is there is a QUALITY==0 in the header</span>
 
-    <span class="k">if</span> <span class="s2">&quot;QUALITY&quot;</span> <span class="ow">in</span> <span class="n">header</span><span class="p">:</span>
+    <span class="k">if</span> <span class="s2">"QUALITY"</span> <span class="ow">in</span> <span class="n">header</span><span class="p">:</span>
         <span class="n">has_quality_column</span> <span class="o">=</span> <span class="kc">False</span>
 
-        <span class="k">if</span> <span class="n">header</span><span class="p">[</span><span class="s2">&quot;QUALITY&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">header</span><span class="p">[</span><span class="s2">"QUALITY"</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">is_all_data_good</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="n">is_all_data_good</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">if</span> <span class="s2">&quot;QUALITY&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">"QUALITY"</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
             <span class="n">has_quality_column</span> <span class="o">=</span> <span class="kc">True</span>
 
             <span class="n">is_all_data_good</span> <span class="o">=</span> <span class="kc">False</span>
@@ -315,8 +315,8 @@
             <span class="n">is_all_data_good</span> <span class="o">=</span> <span class="kc">True</span>
 
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;Could not find QUALITY in columns or header of PHA file. This is not a&quot;</span>
-                <span class="s2">&quot; valid OGIP file. Assuming QUALITY =0 (good)&quot;</span>
+                <span class="s2">"Could not find QUALITY in columns or header of PHA file. This is not a"</span>
+                <span class="s2">" valid OGIP file. Assuming QUALITY =0 (good)"</span>
             <span class="p">)</span>
 
     <span class="c1"># looking for tstart and tstop</span>
@@ -328,58 +328,58 @@
     <span class="n">has_tstop</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">has_telapse</span> <span class="o">=</span> <span class="kc">False</span>
 
-    <span class="k">if</span> <span class="s2">&quot;TSTART&quot;</span> <span class="ow">in</span> <span class="n">header</span><span class="p">:</span>
+    <span class="k">if</span> <span class="s2">"TSTART"</span> <span class="ow">in</span> <span class="n">header</span><span class="p">:</span>
         <span class="n">has_tstart_column</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="n">has_tstart</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">if</span> <span class="s2">&quot;TSTART&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">"TSTART"</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
             <span class="n">has_tstart_column</span> <span class="o">=</span> <span class="kc">True</span>
 
             <span class="n">has_tstart</span> <span class="o">=</span> <span class="kc">True</span>
 
-    <span class="k">if</span> <span class="s2">&quot;TELAPSE&quot;</span> <span class="ow">in</span> <span class="n">header</span><span class="p">:</span>
+    <span class="k">if</span> <span class="s2">"TELAPSE"</span> <span class="ow">in</span> <span class="n">header</span><span class="p">:</span>
         <span class="n">has_telapse_column</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="n">has_telapse</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">if</span> <span class="s2">&quot;TELAPSE&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">"TELAPSE"</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
             <span class="n">has_telapse_column</span> <span class="o">=</span> <span class="kc">True</span>
 
             <span class="n">has_telapse</span> <span class="o">=</span> <span class="kc">True</span>
 
-    <span class="k">if</span> <span class="s2">&quot;TSTOP&quot;</span> <span class="ow">in</span> <span class="n">header</span><span class="p">:</span>
+    <span class="k">if</span> <span class="s2">"TSTOP"</span> <span class="ow">in</span> <span class="n">header</span><span class="p">:</span>
         <span class="n">has_tstop_column</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="n">has_tstop</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">if</span> <span class="s2">&quot;TSTOP&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">"TSTOP"</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
             <span class="n">has_tstop_column</span> <span class="o">=</span> <span class="kc">True</span>
 
             <span class="n">has_tstop</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">if</span> <span class="n">has_tstop</span> <span class="ow">and</span> <span class="n">has_telapse</span><span class="p">:</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Found TSTOP and TELAPSE. This file is invalid. Using TSTOP.&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Found TSTOP and TELAPSE. This file is invalid. Using TSTOP."</span><span class="p">)</span>
 
         <span class="n">has_telapse</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="c1"># Determine if this file contains COUNTS or RATES</span>
 
-    <span class="k">if</span> <span class="s2">&quot;COUNTS&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+    <span class="k">if</span> <span class="s2">"COUNTS"</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
         <span class="n">has_rates</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="n">data_column_name</span> <span class="o">=</span> <span class="s2">&quot;COUNTS&quot;</span>
+        <span class="n">data_column_name</span> <span class="o">=</span> <span class="s2">"COUNTS"</span>
 
-    <span class="k">elif</span> <span class="s2">&quot;RATE&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="s2">"RATE"</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
         <span class="n">has_rates</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="n">data_column_name</span> <span class="o">=</span> <span class="s2">&quot;RATE&quot;</span>
+        <span class="n">data_column_name</span> <span class="o">=</span> <span class="s2">"RATE"</span>
 
     <span class="k">else</span><span class="p">:</span>
         <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-            <span class="s2">&quot;This file does not contain a RATE nor a COUNTS column. &quot;</span>
-            <span class="s2">&quot;This is not a valid PHA file&quot;</span>
+            <span class="s2">"This file does not contain a RATE nor a COUNTS column. "</span>
+            <span class="s2">"This is not a valid PHA file"</span>
         <span class="p">)</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
 
@@ -390,11 +390,11 @@
 
         <span class="k">if</span> <span class="n">spectrum_number</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">treat_as_time_series</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="s2">&quot;This is a PHA Type II file. You have to provide a spectrum number&quot;</span>
+                <span class="s2">"This is a PHA Type II file. You have to provide a spectrum number"</span>
             <span class="p">)</span>
 
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                <span class="s2">&quot;This is a PHA Type II file. You have to provide a spectrum number&quot;</span>
+                <span class="s2">"This is a PHA Type II file. You have to provide a spectrum number"</span>
             <span class="p">)</span>
 
     <span class="k">else</span><span class="p">:</span>
@@ -407,7 +407,7 @@
     <span class="n">gathered_keywords</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
-        <span class="n">internal_name</span><span class="p">,</span> <span class="n">keyname</span> <span class="o">=</span> <span class="n">k</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+        <span class="n">internal_name</span><span class="p">,</span> <span class="n">keyname</span> <span class="o">=</span> <span class="n">k</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">":"</span><span class="p">)</span>
 
         <span class="n">key_has_been_collected</span> <span class="o">=</span> <span class="kc">False</span>
 
@@ -417,18 +417,18 @@
                 <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">keyname</span><span class="p">))</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">_required_keyword_types</span><span class="p">[</span><span class="n">keyname</span><span class="p">]</span>
             <span class="p">):</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;unexpected type of </span><span class="si">{</span><span class="n">keyname</span><span class="si">}</span><span class="s2">, expected &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_required_keyword_types</span><span class="p">[</span><span class="n">keyname</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2"> found &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">keyname</span><span class="p">))</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">keyname</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">"unexpected type of </span><span class="si">{</span><span class="n">keyname</span><span class="si">}</span><span class="s2">, expected "</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">_required_keyword_types</span><span class="p">[</span><span class="n">keyname</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2"> found "</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">keyname</span><span class="p">))</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">keyname</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
                 <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">gathered_keywords</span><span class="p">[</span><span class="n">internal_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">keyname</span><span class="p">)</span>
 
-                <span class="c1"># Fix &quot;NONE&quot; in None</span>
+                <span class="c1"># Fix "NONE" in None</span>
 
                 <span class="k">if</span> <span class="p">(</span>
-                    <span class="n">gathered_keywords</span><span class="p">[</span><span class="n">internal_name</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;NONE&quot;</span>
-                    <span class="ow">or</span> <span class="n">gathered_keywords</span><span class="p">[</span><span class="n">internal_name</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span>
+                    <span class="n">gathered_keywords</span><span class="p">[</span><span class="n">internal_name</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"NONE"</span>
+                    <span class="ow">or</span> <span class="n">gathered_keywords</span><span class="p">[</span><span class="n">internal_name</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"none"</span>
                 <span class="p">):</span>
                     <span class="n">gathered_keywords</span><span class="p">[</span><span class="n">internal_name</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -455,17 +455,17 @@
 
                     <span class="n">gathered_keywords</span><span class="p">[</span><span class="n">internal_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">keyname</span><span class="p">]</span>
 
-                <span class="c1"># Fix &quot;NONE&quot; in None</span>
+                <span class="c1"># Fix "NONE" in None</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gathered_keywords</span><span class="p">[</span><span class="n">internal_name</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
                     <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
-                        <span class="p">(</span><span class="n">gathered_keywords</span><span class="p">[</span><span class="n">internal_name</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;NONE&quot;</span><span class="p">)</span>
-                        <span class="o">|</span> <span class="p">(</span><span class="n">gathered_keywords</span><span class="p">[</span><span class="n">internal_name</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span><span class="p">)</span>
+                        <span class="p">(</span><span class="n">gathered_keywords</span><span class="p">[</span><span class="n">internal_name</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"NONE"</span><span class="p">)</span>
+                        <span class="o">|</span> <span class="p">(</span><span class="n">gathered_keywords</span><span class="p">[</span><span class="n">internal_name</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"none"</span><span class="p">)</span>
                     <span class="p">)</span>
                     <span class="n">gathered_keywords</span><span class="p">[</span><span class="n">internal_name</span><span class="p">][</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">if</span> <span class="p">(</span>
-                        <span class="n">gathered_keywords</span><span class="p">[</span><span class="n">internal_name</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;NONE&quot;</span>
-                        <span class="ow">or</span> <span class="n">gathered_keywords</span><span class="p">[</span><span class="n">internal_name</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span>
+                        <span class="n">gathered_keywords</span><span class="p">[</span><span class="n">internal_name</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"NONE"</span>
+                        <span class="ow">or</span> <span class="n">gathered_keywords</span><span class="p">[</span><span class="n">internal_name</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"none"</span>
                     <span class="p">):</span>
                         <span class="n">gathered_keywords</span><span class="p">[</span><span class="n">internal_name</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -475,57 +475,57 @@
             <span class="c1"># The keyword POISSERR is a special case, because even if it is missing,</span>
             <span class="c1"># it is assumed to be False if there is a STAT_ERR column in the file</span>
 
-            <span class="k">if</span> <span class="n">keyname</span> <span class="o">==</span> <span class="s2">&quot;POISSERR&quot;</span> <span class="ow">and</span> <span class="s2">&quot;STAT_ERR&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">keyname</span> <span class="o">==</span> <span class="s2">"POISSERR"</span> <span class="ow">and</span> <span class="s2">"STAT_ERR"</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                    <span class="s2">&quot;POISSERR is not set. Assuming non-poisson errors as given in the &quot;</span>
-                    <span class="s2">&quot;STAT_ERR column&quot;</span>
+                    <span class="s2">"POISSERR is not set. Assuming non-poisson errors as given in the "</span>
+                    <span class="s2">"STAT_ERR column"</span>
                 <span class="p">)</span>
 
-                <span class="n">gathered_keywords</span><span class="p">[</span><span class="s2">&quot;poisserr&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="n">gathered_keywords</span><span class="p">[</span><span class="s2">"poisserr"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
 
-            <span class="k">elif</span> <span class="n">keyname</span> <span class="o">==</span> <span class="s2">&quot;ANCRFILE&quot;</span><span class="p">:</span>
-                <span class="c1"># Some non-compliant files have no ARF because they don&#39;t need one.</span>
-                <span class="c1"># Don&#39;t fail, but issue a warning</span>
-
-                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                    <span class="s2">&quot;ANCRFILE is not set. This is not a compliant OGIP file. Assuming &quot;</span>
-                    <span class="s2">&quot;no ARF.&quot;</span>
-                <span class="p">)</span>
-
-                <span class="n">gathered_keywords</span><span class="p">[</span><span class="s2">&quot;ancrfile&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-
-            <span class="k">elif</span> <span class="n">keyname</span> <span class="o">==</span> <span class="s2">&quot;FILTER&quot;</span><span class="p">:</span>
-                <span class="c1"># Some non-compliant files have no FILTER because they don&#39;t need one.</span>
-                <span class="c1"># Don&#39;t fail, but issue a warning</span>
+            <span class="k">elif</span> <span class="n">keyname</span> <span class="o">==</span> <span class="s2">"ANCRFILE"</span><span class="p">:</span>
+                <span class="c1"># Some non-compliant files have no ARF because they don't need one.</span>
+                <span class="c1"># Don't fail, but issue a warning</span>
 
                 <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                    <span class="s2">&quot;FILTER is not set. This is not a compliant OGIP file. Assuming no &quot;</span>
-                    <span class="s2">&quot;FILTER.&quot;</span>
+                    <span class="s2">"ANCRFILE is not set. This is not a compliant OGIP file. Assuming "</span>
+                    <span class="s2">"no ARF."</span>
                 <span class="p">)</span>
 
-                <span class="n">gathered_keywords</span><span class="p">[</span><span class="s2">&quot;filter&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">gathered_keywords</span><span class="p">[</span><span class="s2">"ancrfile"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="k">elif</span> <span class="n">keyname</span> <span class="o">==</span> <span class="s2">"FILTER"</span><span class="p">:</span>
+                <span class="c1"># Some non-compliant files have no FILTER because they don't need one.</span>
+                <span class="c1"># Don't fail, but issue a warning</span>
+
+                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">"FILTER is not set. This is not a compliant OGIP file. Assuming no "</span>
+                    <span class="s2">"FILTER."</span>
+                <span class="p">)</span>
+
+                <span class="n">gathered_keywords</span><span class="p">[</span><span class="s2">"filter"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Keyword </span><span class="si">{</span><span class="n">keyname</span><span class="si">}</span><span class="s2"> not found. File </span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2"> is not a proper PHA&quot;</span>
-                    <span class="s2">&quot; file&quot;</span>
+                    <span class="sa">f</span><span class="s2">"Keyword </span><span class="si">{</span><span class="n">keyname</span><span class="si">}</span><span class="s2"> not found. File </span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2"> is not a proper PHA"</span>
+                    <span class="s2">" file"</span>
                 <span class="p">)</span>
 
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
 
-    <span class="n">is_poisson</span> <span class="o">=</span> <span class="n">gathered_keywords</span><span class="p">[</span><span class="s2">&quot;poisserr&quot;</span><span class="p">]</span>
+    <span class="n">is_poisson</span> <span class="o">=</span> <span class="n">gathered_keywords</span><span class="p">[</span><span class="s2">"poisserr"</span><span class="p">]</span>
 
-    <span class="n">exposure</span> <span class="o">=</span> <span class="n">gathered_keywords</span><span class="p">[</span><span class="s2">&quot;exposure&quot;</span><span class="p">]</span>
+    <span class="n">exposure</span> <span class="o">=</span> <span class="n">gathered_keywords</span><span class="p">[</span><span class="s2">"exposure"</span><span class="p">]</span>
 
     <span class="c1"># now we need to get the response file so that we can extract the EBOUNDS</span>
 
-    <span class="k">if</span> <span class="n">file_type</span> <span class="o">==</span> <span class="s2">&quot;observed&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">file_type</span> <span class="o">==</span> <span class="s2">"observed"</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">rsp_file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># this means it should be specified in the header</span>
-            <span class="n">rsp_file</span> <span class="o">=</span> <span class="n">gathered_keywords</span><span class="p">[</span><span class="s2">&quot;respfile&quot;</span><span class="p">]</span>
+            <span class="n">rsp_file</span> <span class="o">=</span> <span class="n">gathered_keywords</span><span class="p">[</span><span class="s2">"respfile"</span><span class="p">]</span>
 
             <span class="k">if</span> <span class="n">arf_file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">arf_file</span> <span class="o">=</span> <span class="n">gathered_keywords</span><span class="p">[</span><span class="s2">&quot;ancrfile&quot;</span><span class="p">]</span>
+                <span class="n">arf_file</span> <span class="o">=</span> <span class="n">gathered_keywords</span><span class="p">[</span><span class="s2">"ancrfile"</span><span class="p">]</span>
 
                 <span class="c1"># Read in the response</span>
 
@@ -541,15 +541,15 @@
             <span class="n">rsp</span> <span class="o">=</span> <span class="n">rsp_file</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">rsp_file</span><span class="si">}</span><span class="s2"> is not correct type&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">rsp_file</span><span class="si">}</span><span class="s2"> is not correct type"</span><span class="p">)</span>
 
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
 
-    <span class="k">if</span> <span class="n">file_type</span> <span class="o">==</span> <span class="s2">&quot;background&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">file_type</span> <span class="o">==</span> <span class="s2">"background"</span><span class="p">:</span>
         <span class="c1"># we need the rsp ebounds from response to build the histogram</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rsp_file</span><span class="p">,</span> <span class="n">InstrumentResponse</span><span class="p">):</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;You must supply and OGIPResponse to extract the energy bounds&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"You must supply and OGIPResponse to extract the energy bounds"</span><span class="p">)</span>
 
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
 
@@ -561,7 +561,7 @@
     <span class="k">if</span> <span class="n">is_typeII_file</span><span class="p">:</span>
         <span class="c1"># PHA II file</span>
         <span class="k">if</span> <span class="n">has_rates</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2"> has rates and NOT counts&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2"> has rates and NOT counts"</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="n">treat_as_time_series</span><span class="p">:</span>
                 <span class="n">rates</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">data_column_name</span><span class="p">)[</span><span class="n">spectrum_number</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
@@ -569,7 +569,7 @@
                 <span class="n">rate_errors</span> <span class="o">=</span> <span class="kc">None</span>
 
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">is_poisson</span><span class="p">:</span>
-                    <span class="n">rate_errors</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;STAT_ERR&quot;</span><span class="p">)[</span><span class="n">spectrum_number</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
+                    <span class="n">rate_errors</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">"STAT_ERR"</span><span class="p">)[</span><span class="n">spectrum_number</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
 
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">rates</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">data_column_name</span><span class="p">)</span>
@@ -577,10 +577,10 @@
                 <span class="n">rate_errors</span> <span class="o">=</span> <span class="kc">None</span>
 
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">is_poisson</span><span class="p">:</span>
-                    <span class="n">rate_errors</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;STAT_ERR&quot;</span><span class="p">)</span>
+                    <span class="n">rate_errors</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">"STAT_ERR"</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2"> has counts and NOT rates&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2"> has counts and NOT rates"</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="n">treat_as_time_series</span><span class="p">:</span>
                 <span class="c1"># extract the counts</span>
@@ -597,7 +597,7 @@
 
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">is_poisson</span><span class="p">:</span>
                     <span class="n">rate_errors</span> <span class="o">=</span> <span class="p">(</span>
-                        <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;STAT_ERR&quot;</span><span class="p">)[</span><span class="n">spectrum_number</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">/</span> <span class="n">exposure</span>
+                        <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">"STAT_ERR"</span><span class="p">)[</span><span class="n">spectrum_number</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">/</span> <span class="n">exposure</span>
                     <span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
@@ -608,14 +608,14 @@
                 <span class="n">rate_errors</span> <span class="o">=</span> <span class="kc">None</span>
 
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">is_poisson</span><span class="p">:</span>
-                    <span class="n">rate_errors</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;STAT_ERR&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">exposure</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+                    <span class="n">rate_errors</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">"STAT_ERR"</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">exposure</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
 
-        <span class="k">if</span> <span class="s2">&quot;SYS_ERR&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">"SYS_ERR"</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">treat_as_time_series</span><span class="p">:</span>
-                <span class="n">sys_errors</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;SYS_ERR&quot;</span><span class="p">)[</span><span class="n">spectrum_number</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
+                <span class="n">sys_errors</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">"SYS_ERR"</span><span class="p">)[</span><span class="n">spectrum_number</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
 
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">sys_errors</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;SYS_ERR&quot;</span><span class="p">)</span>
+                <span class="n">sys_errors</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">"SYS_ERR"</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="n">sys_errors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">rates</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
@@ -623,18 +623,18 @@
         <span class="k">if</span> <span class="n">has_quality_column</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">treat_as_time_series</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
-                    <span class="n">quality</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;QUALITY&quot;</span><span class="p">)[</span><span class="n">spectrum_number</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
+                    <span class="n">quality</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">"QUALITY"</span><span class="p">)[</span><span class="n">spectrum_number</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
 
                 <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
                     <span class="c1"># GBM CSPEC files do not follow OGIP conventions and instead</span>
                     <span class="c1"># list simply QUALITY=0 for each spectrum</span>
                     <span class="c1"># so we have to read them differently</span>
 
-                    <span class="n">quality_element</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;QUALITY&quot;</span><span class="p">)[</span><span class="n">spectrum_number</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+                    <span class="n">quality_element</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">"QUALITY"</span><span class="p">)[</span><span class="n">spectrum_number</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
 
                     <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                        <span class="s2">&quot;The QUALITY column has the wrong shape. This PHAII file does &quot;</span>
-                        <span class="s2">&quot;not follow OGIP standards&quot;</span>
+                        <span class="s2">"The QUALITY column has the wrong shape. This PHAII file does "</span>
+                        <span class="s2">"not follow OGIP standards"</span>
                     <span class="p">)</span>
 
                     <span class="k">if</span> <span class="n">quality_element</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -647,7 +647,7 @@
                 <span class="c1"># we need to be careful again because the QUALITY column is not always</span>
                 <span class="c1"># the correct shape</span>
 
-                <span class="n">quality_element</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;QUALITY&quot;</span><span class="p">)</span>
+                <span class="n">quality_element</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">"QUALITY"</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">quality_element</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">rates</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
                     <span class="c1"># This is the proper way for the quality to be stored</span>
@@ -671,32 +671,32 @@
         <span class="k">if</span> <span class="n">has_tstart</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">has_tstart_column</span><span class="p">:</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">treat_as_time_series</span><span class="p">:</span>
-                    <span class="n">tstart</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;TSTART&quot;</span><span class="p">)[</span><span class="n">spectrum_number</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+                    <span class="n">tstart</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">"TSTART"</span><span class="p">)[</span><span class="n">spectrum_number</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
 
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">tstart</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;TSTART&quot;</span><span class="p">)</span>
+                    <span class="n">tstart</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">"TSTART"</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">has_tstop</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">has_tstop_column</span><span class="p">:</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">treat_as_time_series</span><span class="p">:</span>
-                    <span class="n">tstop</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;TSTOP&quot;</span><span class="p">)[</span><span class="n">spectrum_number</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+                    <span class="n">tstop</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">"TSTOP"</span><span class="p">)[</span><span class="n">spectrum_number</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
 
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">tstop</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;TSTOP&quot;</span><span class="p">)</span>
+                    <span class="n">tstop</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">"TSTOP"</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">has_telapse</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">has_telapse_column</span><span class="p">:</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">treat_as_time_series</span><span class="p">:</span>
-                    <span class="n">tstop</span> <span class="o">=</span> <span class="n">tstart</span> <span class="o">+</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;TELAPSE&quot;</span><span class="p">)[</span><span class="n">spectrum_number</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+                    <span class="n">tstop</span> <span class="o">=</span> <span class="n">tstart</span> <span class="o">+</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">"TELAPSE"</span><span class="p">)[</span><span class="n">spectrum_number</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
 
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">tstop</span> <span class="o">=</span> <span class="n">tstart</span> <span class="o">+</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;TELAPSE&quot;</span><span class="p">)</span>
+                    <span class="n">tstop</span> <span class="o">=</span> <span class="n">tstart</span> <span class="o">+</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">"TELAPSE"</span><span class="p">)</span>
 
     <span class="k">elif</span> <span class="ow">not</span> <span class="n">is_typeII_file</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">treat_as_time_series</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="s2">&quot;This is not a PHAII file but you specified to treat it as a time &quot;</span>
-                <span class="s2">&quot;series&quot;</span>
+                <span class="s2">"This is not a PHAII file but you specified to treat it as a time "</span>
+                <span class="s2">"series"</span>
             <span class="p">)</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
 
@@ -707,7 +707,7 @@
             <span class="n">rate_errors</span> <span class="o">=</span> <span class="kc">None</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="n">is_poisson</span><span class="p">:</span>
-                <span class="n">rate_errors</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;STAT_ERR&quot;</span><span class="p">)</span>
+                <span class="n">rate_errors</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">"STAT_ERR"</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="n">counts</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">data_column_name</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
@@ -717,16 +717,16 @@
             <span class="n">rate_errors</span> <span class="o">=</span> <span class="kc">None</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="n">is_poisson</span><span class="p">:</span>
-                <span class="n">rate_errors</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;STAT_ERR&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="n">exposure</span>
+                <span class="n">rate_errors</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">"STAT_ERR"</span><span class="p">)</span> <span class="o">/</span> <span class="n">exposure</span>
 
-        <span class="k">if</span> <span class="s2">&quot;SYS_ERR&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
-            <span class="n">sys_errors</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;SYS_ERR&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">"SYS_ERR"</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+            <span class="n">sys_errors</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">"SYS_ERR"</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="n">sys_errors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">rates</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">has_quality_column</span><span class="p">:</span>
-            <span class="n">quality</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;QUALITY&quot;</span><span class="p">)</span>
+            <span class="n">quality</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">"QUALITY"</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">is_all_data_good</span><span class="p">:</span>
@@ -739,54 +739,54 @@
 
         <span class="k">if</span> <span class="n">has_tstart</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">has_tstart_column</span><span class="p">:</span>
-                <span class="n">tstart</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;TSTART&quot;</span><span class="p">)</span>
+                <span class="n">tstart</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">"TSTART"</span><span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">tstart</span> <span class="o">=</span> <span class="n">header</span><span class="p">[</span><span class="s2">&quot;TSTART&quot;</span><span class="p">]</span>
+                <span class="n">tstart</span> <span class="o">=</span> <span class="n">header</span><span class="p">[</span><span class="s2">"TSTART"</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="n">has_tstop</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">has_tstop_column</span><span class="p">:</span>
-                <span class="n">tstop</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;TSTOP&quot;</span><span class="p">)</span>
+                <span class="n">tstop</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">"TSTOP"</span><span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">tstop</span> <span class="o">=</span> <span class="n">header</span><span class="p">[</span><span class="s2">&quot;TSTOP&quot;</span><span class="p">]</span>
+                <span class="n">tstop</span> <span class="o">=</span> <span class="n">header</span><span class="p">[</span><span class="s2">"TSTOP"</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="n">has_telapse</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">has_telapse_column</span><span class="p">:</span>
-                <span class="n">tstop</span> <span class="o">=</span> <span class="n">tstart</span> <span class="o">+</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;TELAPSE&quot;</span><span class="p">)</span>
+                <span class="n">tstop</span> <span class="o">=</span> <span class="n">tstart</span> <span class="o">+</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">"TELAPSE"</span><span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">tstop</span> <span class="o">=</span> <span class="n">tstart</span> <span class="o">+</span> <span class="n">header</span><span class="p">[</span><span class="s2">&quot;TELAPSE&quot;</span><span class="p">]</span>
+                <span class="n">tstop</span> <span class="o">=</span> <span class="n">tstart</span> <span class="o">+</span> <span class="n">header</span><span class="p">[</span><span class="s2">"TELAPSE"</span><span class="p">]</span>
 
         <span class="c1"># Now that we have read it, some safety checks</span>
 
-        <span class="k">if</span> <span class="n">rates</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">gathered_keywords</span><span class="p">[</span><span class="s2">&quot;detchans&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">rates</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">gathered_keywords</span><span class="p">[</span><span class="s2">"detchans"</span><span class="p">]:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="s2">&quot;The data column (RATES or COUNTS) has a different number of entries &quot;</span>
-                <span class="s2">&quot;than the DETCHANS declared in the header&quot;</span>
+                <span class="s2">"The data column (RATES or COUNTS) has a different number of entries "</span>
+                <span class="s2">"than the DETCHANS declared in the header"</span>
             <span class="p">)</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
 
     <span class="n">quality</span> <span class="o">=</span> <span class="n">Quality</span><span class="o">.</span><span class="n">from_ogip</span><span class="p">(</span><span class="n">quality</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">treat_as_time_series</span><span class="p">:</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2"> is not a time series&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2"> is not a time series"</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">has_rates</span><span class="p">:</span>
             <span class="n">counts</span> <span class="o">=</span> <span class="n">rates</span> <span class="o">*</span> <span class="n">exposure</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">is_poisson</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2"> is not Poisson&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2"> is not Poisson"</span><span class="p">)</span>
 
             <span class="n">count_errors</span> <span class="o">=</span> <span class="n">rate_errors</span> <span class="o">*</span> <span class="n">exposure</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2"> is Poisson&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2"> is Poisson"</span><span class="p">)</span>
 
             <span class="n">count_errors</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2"> is a time series&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2"> is a time series"</span><span class="p">)</span>
 
         <span class="n">exposure</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">exposure</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
 
@@ -794,12 +794,12 @@
             <span class="n">counts</span> <span class="o">=</span> <span class="n">rates</span> <span class="o">*</span> <span class="n">exposure</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">is_poisson</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2"> is not Poisson&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2"> is not Poisson"</span><span class="p">)</span>
 
             <span class="n">count_errors</span> <span class="o">=</span> <span class="n">rate_errors</span> <span class="o">*</span> <span class="n">exposure</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2"> is Poisson&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2"> is Poisson"</span><span class="p">)</span>
 
             <span class="n">count_errors</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -827,11 +827,11 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">pha_file_or_instance</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">PHAII</span><span class="p">,</span> <span class="n">FITSFile</span><span class="p">],</span>
         <span class="n">spectrum_number</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">file_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;observed&quot;</span><span class="p">,</span>
+        <span class="n">file_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"observed"</span><span class="p">,</span>
         <span class="n">rsp_file</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">InstrumentResponse</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">arf_file</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A spectrum with dispersion build from an OGIP-compliant PHA FITS</span>
+<span class="w">        </span><span class="sd">"""A spectrum with dispersion build from an OGIP-compliant PHA FITS</span>
 <span class="sd">        file. Both Type I &amp; II files can be read. Type II spectra are selected</span>
 <span class="sd">        either by specifying the spectrum_number or via the {spectrum_number}</span>
 <span class="sd">        file name convention used in XSPEC. If the file_type is background, a</span>
@@ -846,7 +846,7 @@
 <span class="sd">        :param rsp_file: RMF filename or</span>
 <span class="sd">            threeML.plugins.OGIP.response.InstrumentResponse instance</span>
 <span class="sd">        :param arf_file: (optional) and ARF filename</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># extract the spectrum number if needed</span>
 
@@ -856,8 +856,8 @@
 
         <span class="k">else</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="s2">&quot;Must provide a FITS file name or PHAII/FITSFile instance. &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;Got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">pha_file_or_instance</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="s2">"Must provide a FITS file name or PHAII/FITSFile instance. "</span>
+                <span class="sa">f</span><span class="s2">"Got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">pha_file_or_instance</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
 
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
@@ -896,8 +896,8 @@
             <span class="n">sys_errors</span><span class="o">=</span><span class="n">pha_information</span><span class="o">.</span><span class="n">sys_errors</span><span class="p">,</span>
             <span class="n">is_poisson</span><span class="o">=</span><span class="n">pha_information</span><span class="o">.</span><span class="n">is_poisson</span><span class="p">,</span>
             <span class="n">quality</span><span class="o">=</span><span class="n">pha_information</span><span class="o">.</span><span class="n">quality</span><span class="p">,</span>
-            <span class="n">mission</span><span class="o">=</span><span class="n">pha_information</span><span class="o">.</span><span class="n">gathered_keywords</span><span class="p">[</span><span class="s2">&quot;mission&quot;</span><span class="p">],</span>
-            <span class="n">instrument</span><span class="o">=</span><span class="n">pha_information</span><span class="o">.</span><span class="n">gathered_keywords</span><span class="p">[</span><span class="s2">&quot;instrument&quot;</span><span class="p">],</span>
+            <span class="n">mission</span><span class="o">=</span><span class="n">pha_information</span><span class="o">.</span><span class="n">gathered_keywords</span><span class="p">[</span><span class="s2">"mission"</span><span class="p">],</span>
+            <span class="n">instrument</span><span class="o">=</span><span class="n">pha_information</span><span class="o">.</span><span class="n">gathered_keywords</span><span class="p">[</span><span class="s2">"instrument"</span><span class="p">],</span>
             <span class="n">tstart</span><span class="o">=</span><span class="n">pha_information</span><span class="o">.</span><span class="n">tstart</span><span class="p">,</span>
             <span class="n">tstop</span><span class="o">=</span><span class="n">pha_information</span><span class="o">.</span><span class="n">tstop</span><span class="p">,</span>
         <span class="p">)</span>
@@ -912,8 +912,8 @@
 <div class="viewcode-block" id="PHASpectrum.set_ogip_grouping">
 <a class="viewcode-back" href="../../../../api/threeML.utils.spectrum.html#threeML.utils.spectrum.pha_spectrum.PHASpectrum.set_ogip_grouping">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_ogip_grouping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grouping</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;If the counts are rebinned, this updates the grouping :param</span>
-<span class="sd">        grouping:&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""If the counts are rebinned, this updates the grouping :param</span>
+<span class="sd">        grouping:"""</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_grouping</span> <span class="o">=</span> <span class="n">grouping</span></div>
 
@@ -921,7 +921,7 @@
 <div class="viewcode-block" id="PHASpectrum.to_binned_spectrum">
 <a class="viewcode-back" href="../../../../api/threeML.utils.spectrum.html#threeML.utils.spectrum.pha_spectrum.PHASpectrum.to_binned_spectrum">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_binned_spectrum</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BinnedSpectrumWithDispersion</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert directly to as Binned Spectrum :returns:&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Convert directly to as Binned Spectrum :returns:"""</span>
         <span class="k">return</span> <span class="n">BinnedSpectrumWithDispersion</span><span class="p">(</span>
             <span class="n">counts</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">counts</span><span class="p">,</span>
             <span class="n">exposure</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">exposure</span><span class="p">,</span>
@@ -944,42 +944,42 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">background_file</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the background file definied in the header, or None if there</span>
-<span class="sd">        is none defined :return: a path to a file, or None.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Returns the background file definied in the header, or None if there</span>
+<span class="sd">        is none defined :return: a path to a file, or None."""</span>
 
-        <span class="n">back_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_file</span><span class="p">(</span><span class="s2">&quot;backfile&quot;</span><span class="p">)</span>
+        <span class="n">back_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_file</span><span class="p">(</span><span class="s2">"backfile"</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">back_file</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">back_file</span> <span class="o">==</span> <span class="s2">""</span><span class="p">:</span>
             <span class="n">back_file</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">return</span> <span class="n">back_file</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">scale_factor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;This is a scale factor (in the BACKSCAL keyword) which must be used</span>
+<span class="w">        </span><span class="sd">"""This is a scale factor (in the BACKSCAL keyword) which must be used</span>
 <span class="sd">        to rescale background and source regions.</span>
 
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gathered_keywords</span><span class="p">[</span><span class="s2">&quot;backscal&quot;</span><span class="p">]</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gathered_keywords</span><span class="p">[</span><span class="s2">"backscal"</span><span class="p">]</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">response_file</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the response file definied in the header, or None if there</span>
+<span class="w">        </span><span class="sd">"""Returns the response file definied in the header, or None if there</span>
 <span class="sd">        is none defined.</span>
 
 <span class="sd">        :return: a path to a file, or None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_file</span><span class="p">(</span><span class="s2">&quot;respfile&quot;</span><span class="p">)</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_file</span><span class="p">(</span><span class="s2">"respfile"</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">ancillary_file</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the ancillary file definied in the header, or None if there</span>
+<span class="w">        </span><span class="sd">"""Returns the ancillary file definied in the header, or None if there</span>
 <span class="sd">        is none defined.</span>
 
 <span class="sd">        :return: a path to a file, or None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_file</span><span class="p">(</span><span class="s2">&quot;ancrfile&quot;</span><span class="p">)</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_file</span><span class="p">(</span><span class="s2">"ancrfile"</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">grouping</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
@@ -993,8 +993,8 @@
         <span class="n">new_count_errors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">new_exposure</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">new_scale_factor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PHASpectrum&quot;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Make a new spectrum with new counts and errors and all other</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"PHASpectrum"</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Make a new spectrum with new counts and errors and all other</span>
 <span class="sd">        parameters the same.</span>
 
 <span class="sd">        :param new_exposure: the new exposure for the clone</span>
@@ -1002,7 +1002,7 @@
 <span class="sd">        :param new_counts: new counts for the spectrum</span>
 <span class="sd">        :param new_count_errors: new errors from the spectrum</span>
 <span class="sd">        :return: new pha spectrum</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="n">new_exposure</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">new_exposure</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">exposure</span>
@@ -1058,7 +1058,7 @@
 <a class="viewcode-back" href="../../../../api/threeML.utils.spectrum.html#threeML.utils.spectrum.pha_spectrum.PHASpectrum.from_dispersion_spectrum">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_dispersion_spectrum</span><span class="p">(</span>
-        <span class="bp">cls</span><span class="p">,</span> <span class="n">dispersion_spectrum</span><span class="p">,</span> <span class="n">file_type</span><span class="o">=</span><span class="s2">&quot;observed&quot;</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="kc">None</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">dispersion_spectrum</span><span class="p">,</span> <span class="n">file_type</span><span class="o">=</span><span class="s2">"observed"</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">):</span>
         <span class="c1"># type: (BinnedSpectrumWithDispersion, str) -&gt; PHASpectrum</span>
 
@@ -1097,11 +1097,11 @@
             <span class="n">is_poisson</span><span class="o">=</span><span class="n">dispersion_spectrum</span><span class="o">.</span><span class="n">is_poisson</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">file_type</span> <span class="o">==</span> <span class="s2">&quot;background&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">file_type</span> <span class="o">==</span> <span class="s2">"background"</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">response</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                    <span class="s2">&quot;passed a background file but no response to extract energy &quot;</span>
-                    <span class="s2">&quot;spectra.&quot;</span>
+                    <span class="s2">"passed a background file but no response to extract energy "</span>
+                    <span class="s2">"spectra."</span>
                 <span class="p">)</span>
 
                 <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">()</span>
@@ -1125,11 +1125,11 @@
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">pha_file_or_instance</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">PHAII</span><span class="p">],</span>
-        <span class="n">file_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;observed&quot;</span><span class="p">,</span>
+        <span class="n">file_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"observed"</span><span class="p">,</span>
         <span class="n">rsp_file</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">arf_file</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A spectrum with dispersion build from an OGIP-compliant PHA FITS</span>
+<span class="w">        </span><span class="sd">"""A spectrum with dispersion build from an OGIP-compliant PHA FITS</span>
 <span class="sd">        file. Both Type I &amp; II files can be read. Type II spectra are selected</span>
 <span class="sd">        either by specifying the spectrum_number or via the {spectrum_number}</span>
 <span class="sd">        file name convention used in XSPEC. If the file_type is background, a</span>
@@ -1144,7 +1144,7 @@
 <span class="sd">        :param rsp_file: RMF filename or</span>
 <span class="sd">            threeML.plugins.OGIP.response.InstrumentResponse instance</span>
 <span class="sd">        :param arf_file: (optional) and ARF filename</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># extract the spectrum number if needed</span>
 
@@ -1154,34 +1154,34 @@
 
         <span class="k">else</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="s2">&quot;Must provide a FITS file name or PHAII instance. &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;Got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">pha_file_or_instance</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="s2">"Must provide a FITS file name or PHAII instance. "</span>
+                <span class="sa">f</span><span class="s2">"Got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">pha_file_or_instance</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
 
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
 
         <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">pha_file_or_instance</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">HDUidx</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">index_of</span><span class="p">(</span><span class="s2">&quot;SPECTRUM&quot;</span><span class="p">)</span>
+                <span class="n">HDUidx</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">index_of</span><span class="p">(</span><span class="s2">"SPECTRUM"</span><span class="p">)</span>
 
             <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                    <span class="s2">&quot;The input file </span><span class="si">%s</span><span class="s2"> is not in PHA format&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pha_file_or_instance</span><span class="p">)</span>
+                    <span class="s2">"The input file </span><span class="si">%s</span><span class="s2"> is not in PHA format"</span> <span class="o">%</span> <span class="p">(</span><span class="n">pha_file_or_instance</span><span class="p">)</span>
                 <span class="p">)</span>
 
             <span class="n">spectrum</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="n">HDUidx</span><span class="p">]</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">data</span>
 
-            <span class="k">if</span> <span class="s2">&quot;COUNTS&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
-                <span class="n">data_column_name</span> <span class="o">=</span> <span class="s2">&quot;COUNTS&quot;</span>
+            <span class="k">if</span> <span class="s2">"COUNTS"</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+                <span class="n">data_column_name</span> <span class="o">=</span> <span class="s2">"COUNTS"</span>
 
-            <span class="k">elif</span> <span class="s2">&quot;RATE&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
-                <span class="n">data_column_name</span> <span class="o">=</span> <span class="s2">&quot;RATE&quot;</span>
+            <span class="k">elif</span> <span class="s2">"RATE"</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+                <span class="n">data_column_name</span> <span class="o">=</span> <span class="s2">"RATE"</span>
 
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                    <span class="s2">&quot;This file does not contain a RATE nor a COUNTS column. &quot;</span>
-                    <span class="s2">&quot;This is not a valid PHA file&quot;</span>
+                    <span class="s2">"This file does not contain a RATE nor a COUNTS column. "</span>
+                    <span class="s2">"This is not a valid PHA file"</span>
                 <span class="p">)</span>
 
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
@@ -1191,7 +1191,7 @@
                 <span class="n">num_spectra</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">data_column_name</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;This appears to be a PHA I and not PHA II file&quot;</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"This appears to be a PHA I and not PHA II file"</span><span class="p">)</span>
 
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
 
@@ -1239,7 +1239,7 @@
 
         <span class="n">list_of_binned_spectra</span> <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">trange</span><span class="p">(</span><span class="n">num_spectra</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Loading PHAII Spectra&quot;</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">trange</span><span class="p">(</span><span class="n">num_spectra</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">"Loading PHAII Spectra"</span><span class="p">):</span>
             <span class="n">list_of_binned_spectra</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                 <span class="n">BinnedSpectrumWithDispersion</span><span class="p">(</span>
                     <span class="n">counts</span><span class="o">=</span><span class="n">pha_information</span><span class="o">.</span><span class="n">counts</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
@@ -1249,8 +1249,8 @@
                     <span class="n">sys_errors</span><span class="o">=</span><span class="n">pha_information</span><span class="o">.</span><span class="n">sys_errors</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
                     <span class="n">is_poisson</span><span class="o">=</span><span class="n">pha_information</span><span class="o">.</span><span class="n">is_poisson</span><span class="p">,</span>
                     <span class="n">quality</span><span class="o">=</span><span class="n">pha_information</span><span class="o">.</span><span class="n">quality</span><span class="o">.</span><span class="n">get_slice</span><span class="p">(</span><span class="n">i</span><span class="p">),</span>
-                    <span class="n">mission</span><span class="o">=</span><span class="n">pha_information</span><span class="o">.</span><span class="n">gathered_keywords</span><span class="p">[</span><span class="s2">&quot;mission&quot;</span><span class="p">],</span>
-                    <span class="n">instrument</span><span class="o">=</span><span class="n">pha_information</span><span class="o">.</span><span class="n">gathered_keywords</span><span class="p">[</span><span class="s2">&quot;instrument&quot;</span><span class="p">],</span>
+                    <span class="n">mission</span><span class="o">=</span><span class="n">pha_information</span><span class="o">.</span><span class="n">gathered_keywords</span><span class="p">[</span><span class="s2">"mission"</span><span class="p">],</span>
+                    <span class="n">instrument</span><span class="o">=</span><span class="n">pha_information</span><span class="o">.</span><span class="n">gathered_keywords</span><span class="p">[</span><span class="s2">"instrument"</span><span class="p">],</span>
                     <span class="n">tstart</span><span class="o">=</span><span class="n">tstart</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
                     <span class="n">tstop</span><span class="o">=</span><span class="n">tstop</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
                 <span class="p">)</span>
@@ -1258,7 +1258,7 @@
 
         <span class="c1"># now get the time intervals</span>
 
-        <span class="n">_allowed_time_keys</span> <span class="o">=</span> <span class="p">((</span><span class="s2">&quot;TIME&quot;</span><span class="p">,</span> <span class="s2">&quot;ENDTIME&quot;</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;TSTART&quot;</span><span class="p">,</span> <span class="s2">&quot;TSTOP&quot;</span><span class="p">))</span>
+        <span class="n">_allowed_time_keys</span> <span class="o">=</span> <span class="p">((</span><span class="s2">"TIME"</span><span class="p">,</span> <span class="s2">"ENDTIME"</span><span class="p">),</span> <span class="p">(</span><span class="s2">"TSTART"</span><span class="p">,</span> <span class="s2">"TSTOP"</span><span class="p">))</span>
 
         <span class="k">for</span> <span class="n">keys</span> <span class="ow">in</span> <span class="n">_allowed_time_keys</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
@@ -1271,8 +1271,8 @@
 
         <span class="k">else</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Could not find times in </span><span class="si">{</span><span class="n">pha_file_or_instance</span><span class="si">}</span><span class="s2">. Tried: &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_allowed_time_keys</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"Could not find times in </span><span class="si">{</span><span class="n">pha_file_or_instance</span><span class="si">}</span><span class="s2">. Tried: "</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">_allowed_time_keys</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
 
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
@@ -1283,12 +1283,12 @@
 
         <span class="c1"># see if there is a reference time in the file</span>
 
-        <span class="k">if</span> <span class="s2">&quot;TRIGTIME&quot;</span> <span class="ow">in</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">header</span><span class="p">:</span>
-            <span class="n">reference_time</span> <span class="o">=</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;TRIGTIME&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s2">"TRIGTIME"</span> <span class="ow">in</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">header</span><span class="p">:</span>
+            <span class="n">reference_time</span> <span class="o">=</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">"TRIGTIME"</span><span class="p">]</span>
 
-        <span class="k">for</span> <span class="n">t_number</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">spectrum</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;TFIELDS&quot;</span><span class="p">]):</span>
-            <span class="k">if</span> <span class="s2">&quot;TZERO</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">t_number</span> <span class="ow">in</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">header</span><span class="p">:</span>
-                <span class="n">reference_time</span> <span class="o">=</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;TZERO</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">t_number</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">t_number</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">spectrum</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">"TFIELDS"</span><span class="p">]):</span>
+            <span class="k">if</span> <span class="s2">"TZERO</span><span class="si">%d</span><span class="s2">"</span> <span class="o">%</span> <span class="n">t_number</span> <span class="ow">in</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">header</span><span class="p">:</span>
+                <span class="n">reference_time</span> <span class="o">=</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">"TZERO</span><span class="si">%d</span><span class="s2">"</span> <span class="o">%</span> <span class="n">t_number</span><span class="p">]</span>
 
         <span class="nb">super</span><span class="p">(</span><span class="n">PHASpectrumSet</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">list_of_binned_spectra</span><span class="p">,</span>
@@ -1306,8 +1306,8 @@
 <div class="viewcode-block" id="PHASpectrumSet.set_ogip_grouping">
 <a class="viewcode-back" href="../../../../api/threeML.utils.spectrum.html#threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.set_ogip_grouping">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_ogip_grouping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grouping</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;If the counts are rebinned, this updates the grouping :param</span>
-<span class="sd">        grouping:&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""If the counts are rebinned, this updates the grouping :param</span>
+<span class="sd">        grouping:"""</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_grouping</span> <span class="o">=</span> <span class="n">grouping</span></div>
 
@@ -1318,37 +1318,37 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">background_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the background file definied in the header, or None if there</span>
-<span class="sd">        is none defined :return: a path to a file, or None.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Returns the background file definied in the header, or None if there</span>
+<span class="sd">        is none defined :return: a path to a file, or None."""</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_file</span><span class="p">(</span><span class="s2">&quot;backfile&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_file</span><span class="p">(</span><span class="s2">"backfile"</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">scale_factor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;This is a scale factor (in the BACKSCAL keyword) which must be used</span>
+<span class="w">        </span><span class="sd">"""This is a scale factor (in the BACKSCAL keyword) which must be used</span>
 <span class="sd">        to rescale background and source regions.</span>
 
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gathered_keywords</span><span class="p">[</span><span class="s2">&quot;backscal&quot;</span><span class="p">]</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gathered_keywords</span><span class="p">[</span><span class="s2">"backscal"</span><span class="p">]</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">response_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the response file definied in the header, or None if there</span>
+<span class="w">        </span><span class="sd">"""Returns the response file definied in the header, or None if there</span>
 <span class="sd">        is none defined.</span>
 
 <span class="sd">        :return: a path to a file, or None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_file</span><span class="p">(</span><span class="s2">&quot;respfile&quot;</span><span class="p">)</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_file</span><span class="p">(</span><span class="s2">"respfile"</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">ancillary_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the ancillary file definied in the header, or None if there</span>
+<span class="w">        </span><span class="sd">"""Returns the ancillary file definied in the header, or None if there</span>
 <span class="sd">        is none defined.</span>
 
 <span class="sd">        :return: a path to a file, or None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_file</span><span class="p">(</span><span class="s2">&quot;ancrfile&quot;</span><span class="p">)</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_file</span><span class="p">(</span><span class="s2">"ancrfile"</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">grouping</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1361,13 +1361,13 @@
         <span class="n">new_counts</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">new_count_errors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Make a new spectrum with new counts and errors and all other</span>
+<span class="w">        </span><span class="sd">"""Make a new spectrum with new counts and errors and all other</span>
 <span class="sd">        parameters the same.</span>
 
 <span class="sd">        :param new_counts: new counts for the spectrum</span>
 <span class="sd">        :param new_count_errors: new errors from the spectrum</span>
 <span class="sd">        :return: new pha spectrum</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="n">new_counts</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">new_counts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">counts</span>
@@ -1404,7 +1404,7 @@
 <div class="viewcode-block" id="PHASpectrumSet.from_dispersion_spectrum">
 <a class="viewcode-back" href="../../../../api/threeML.utils.spectrum.html#threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.from_dispersion_spectrum">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">from_dispersion_spectrum</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dispersion_spectrum</span><span class="p">,</span> <span class="n">file_type</span><span class="o">=</span><span class="s2">&quot;observed&quot;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_dispersion_spectrum</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dispersion_spectrum</span><span class="p">,</span> <span class="n">file_type</span><span class="o">=</span><span class="s2">"observed"</span><span class="p">):</span>
         <span class="c1"># type: (BinnedSpectrumWithDispersion, str) -&gt; PHASpectrum</span>
 
         <span class="k">if</span> <span class="n">dispersion_spectrum</span><span class="o">.</span><span class="n">is_poisson</span><span class="p">:</span>

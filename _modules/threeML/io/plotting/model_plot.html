@@ -114,7 +114,7 @@
   <h1>Source code for threeML.io.plotting.model_plot</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 
-<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;grburgess&quot;</span>
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">"grburgess"</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
@@ -131,7 +131,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.plotting.cmap_cycle</span><span class="w"> </span><span class="kn">import</span> <span class="n">cmap_intervals</span>
 
 <span class="k">if</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">use_threeml_style</span><span class="p">:</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">get_path_of_data_file</span><span class="p">(</span><span class="s2">&quot;threeml.mplstyle&quot;</span><span class="p">)))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">get_path_of_data_file</span><span class="p">(</span><span class="s2">"threeml.mplstyle"</span><span class="p">)))</span>
 
 
 <span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -140,7 +140,7 @@
 <div class="viewcode-block" id="plot_point_source_spectra">
 <a class="viewcode-back" href="../../../../api/threeML.io.plotting.html#threeML.io.plotting.model_plot.plot_point_source_spectra">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">plot_point_source_spectra</span><span class="p">(</span><span class="o">*</span><span class="n">analysis_results</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;plot_point_source_spectra() has been replaced by plot_spectra().&quot;</span><span class="p">)</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"plot_point_source_spectra() has been replaced by plot_spectra()."</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">plot_spectra</span><span class="p">(</span><span class="o">*</span><span class="n">analysis_results</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
@@ -148,7 +148,7 @@
 <div class="viewcode-block" id="plot_spectra">
 <a class="viewcode-back" href="../../../../api/threeML.io.plotting.html#threeML.io.plotting.model_plot.plot_spectra">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">plot_spectra</span><span class="p">(</span><span class="o">*</span><span class="n">analysis_results</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plotting routine for fitted point source spectra.</span>
+<span class="w">    </span><span class="sd">"""Plotting routine for fitted point source spectra.</span>
 
 <span class="sd">    :param analysis_results: fitted JointLikelihood or BayesianAnalysis</span>
 <span class="sd">        objects</span>
@@ -165,7 +165,7 @@
 <span class="sd">    :param use_components: (optional) True or False to plot the spectral</span>
 <span class="sd">        components</span>
 <span class="sd">    :param components_to_use: (optional) list of string names of the</span>
-<span class="sd">        components to plot: including &#39;total&#39; will also plot the total</span>
+<span class="sd">        components to plot: including 'total' will also plot the total</span>
 <span class="sd">        spectrum</span>
 <span class="sd">    :param sum_sources: (optional) sum over all the MLE and Bayesian sources</span>
 <span class="sd">    :param show_contours: (optional) True or False to plot the contour</span>
@@ -179,12 +179,12 @@
 <span class="sd">    :param contour_cmap: MPL color map to iterate over for plotting</span>
 <span class="sd">        contours for multiple analyses</span>
 <span class="sd">    :param subplot: subplot to use</span>
-<span class="sd">    :param xscale: &#39;log&#39; or &#39;linear&#39;</span>
-<span class="sd">    :param yscale: &#39;log&#39; or &#39;linear&#39;</span>
+<span class="sd">    :param xscale: 'log' or 'linear'</span>
+<span class="sd">    :param yscale: 'log' or 'linear'</span>
 <span class="sd">    :param include_extended: True or False, also plot extended source</span>
 <span class="sd">        spectra.</span>
 <span class="sd">    :return:</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="c1"># allow matplotlib to plot quantities to the access</span>
 
@@ -193,79 +193,79 @@
     <span class="n">_sub_menu</span> <span class="o">=</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">model_plot</span><span class="o">.</span><span class="n">point_source_plot</span>
 
     <span class="n">_defaults</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;fit_cmap&quot;</span><span class="p">:</span> <span class="n">_sub_menu</span><span class="o">.</span><span class="n">fit_cmap</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-        <span class="s2">&quot;contour_cmap&quot;</span><span class="p">:</span> <span class="n">_sub_menu</span><span class="o">.</span><span class="n">contour_cmap</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-        <span class="s2">&quot;contour_colors&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="s2">&quot;fit_colors&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="s2">&quot;confidence_level&quot;</span><span class="p">:</span> <span class="mf">0.68</span><span class="p">,</span>
-        <span class="s2">&quot;equal_tailed&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="s2">&quot;best_fit&quot;</span><span class="p">:</span> <span class="s2">&quot;median&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;energy_unit&quot;</span><span class="p">:</span> <span class="n">_sub_menu</span><span class="o">.</span><span class="n">ene_unit</span><span class="p">,</span>
-        <span class="s2">&quot;flux_unit&quot;</span><span class="p">:</span> <span class="n">_sub_menu</span><span class="o">.</span><span class="n">flux_unit</span><span class="p">,</span>
-        <span class="s2">&quot;ene_min&quot;</span><span class="p">:</span> <span class="n">_sub_menu</span><span class="o">.</span><span class="n">emin</span><span class="p">,</span>
-        <span class="s2">&quot;ene_max&quot;</span><span class="p">:</span> <span class="n">_sub_menu</span><span class="o">.</span><span class="n">emax</span><span class="p">,</span>
-        <span class="s2">&quot;num_ene&quot;</span><span class="p">:</span> <span class="n">_sub_menu</span><span class="o">.</span><span class="n">num_ene</span><span class="p">,</span>
-        <span class="s2">&quot;use_components&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="s2">&quot;components_to_use&quot;</span><span class="p">:</span> <span class="p">[],</span>
-        <span class="s2">&quot;sources_to_use&quot;</span><span class="p">:</span> <span class="p">[],</span>
-        <span class="s2">&quot;sum_sources&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="s2">&quot;show_contours&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="s2">&quot;plot_style_kwargs&quot;</span><span class="p">:</span> <span class="n">_sub_menu</span><span class="o">.</span><span class="n">plot_style</span><span class="p">,</span>
-        <span class="s2">&quot;contour_style_kwargs&quot;</span><span class="p">:</span> <span class="n">_sub_menu</span><span class="o">.</span><span class="n">contour_style</span><span class="p">,</span>
-        <span class="s2">&quot;show_legend&quot;</span><span class="p">:</span> <span class="n">_sub_menu</span><span class="o">.</span><span class="n">show_legend</span><span class="p">,</span>
-        <span class="s2">&quot;legend_kwargs&quot;</span><span class="p">:</span> <span class="n">_sub_menu</span><span class="o">.</span><span class="n">legend_style</span><span class="p">,</span>
-        <span class="s2">&quot;subplot&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="s2">&quot;xscale&quot;</span><span class="p">:</span> <span class="s2">&quot;log&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;yscale&quot;</span><span class="p">:</span> <span class="s2">&quot;log&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;include_extended&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">"fit_cmap"</span><span class="p">:</span> <span class="n">_sub_menu</span><span class="o">.</span><span class="n">fit_cmap</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+        <span class="s2">"contour_cmap"</span><span class="p">:</span> <span class="n">_sub_menu</span><span class="o">.</span><span class="n">contour_cmap</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+        <span class="s2">"contour_colors"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s2">"fit_colors"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s2">"confidence_level"</span><span class="p">:</span> <span class="mf">0.68</span><span class="p">,</span>
+        <span class="s2">"equal_tailed"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">"best_fit"</span><span class="p">:</span> <span class="s2">"median"</span><span class="p">,</span>
+        <span class="s2">"energy_unit"</span><span class="p">:</span> <span class="n">_sub_menu</span><span class="o">.</span><span class="n">ene_unit</span><span class="p">,</span>
+        <span class="s2">"flux_unit"</span><span class="p">:</span> <span class="n">_sub_menu</span><span class="o">.</span><span class="n">flux_unit</span><span class="p">,</span>
+        <span class="s2">"ene_min"</span><span class="p">:</span> <span class="n">_sub_menu</span><span class="o">.</span><span class="n">emin</span><span class="p">,</span>
+        <span class="s2">"ene_max"</span><span class="p">:</span> <span class="n">_sub_menu</span><span class="o">.</span><span class="n">emax</span><span class="p">,</span>
+        <span class="s2">"num_ene"</span><span class="p">:</span> <span class="n">_sub_menu</span><span class="o">.</span><span class="n">num_ene</span><span class="p">,</span>
+        <span class="s2">"use_components"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">"components_to_use"</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s2">"sources_to_use"</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s2">"sum_sources"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">"show_contours"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">"plot_style_kwargs"</span><span class="p">:</span> <span class="n">_sub_menu</span><span class="o">.</span><span class="n">plot_style</span><span class="p">,</span>
+        <span class="s2">"contour_style_kwargs"</span><span class="p">:</span> <span class="n">_sub_menu</span><span class="o">.</span><span class="n">contour_style</span><span class="p">,</span>
+        <span class="s2">"show_legend"</span><span class="p">:</span> <span class="n">_sub_menu</span><span class="o">.</span><span class="n">show_legend</span><span class="p">,</span>
+        <span class="s2">"legend_kwargs"</span><span class="p">:</span> <span class="n">_sub_menu</span><span class="o">.</span><span class="n">legend_style</span><span class="p">,</span>
+        <span class="s2">"subplot"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s2">"xscale"</span><span class="p">:</span> <span class="s2">"log"</span><span class="p">,</span>
+        <span class="s2">"yscale"</span><span class="p">:</span> <span class="s2">"log"</span><span class="p">,</span>
+        <span class="s2">"include_extended"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">}</span>
 
     <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">_defaults</span><span class="p">:</span>
             <span class="n">_defaults</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;ene_min&quot;</span><span class="p">],</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;ene_max&quot;</span><span class="p">],</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;both energy arguments must be Quantities&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"ene_min"</span><span class="p">],</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"ene_max"</span><span class="p">],</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"both energy arguments must be Quantities"</span><span class="p">)</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
 
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;ene_max&quot;</span><span class="p">],</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;ene_min&quot;</span><span class="p">],</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;both energy arguments must be Quantities&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"ene_max"</span><span class="p">],</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"ene_min"</span><span class="p">],</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"both energy arguments must be Quantities"</span><span class="p">)</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
 
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;ene_max&quot;</span><span class="p">],</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"ene_max"</span><span class="p">],</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
         <span class="n">energy_range</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span>
-            <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;ene_min&quot;</span><span class="p">],</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;ene_max&quot;</span><span class="p">],</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;num_ene&quot;</span><span class="p">]</span>
+            <span class="n">_defaults</span><span class="p">[</span><span class="s2">"ene_min"</span><span class="p">],</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">"ene_max"</span><span class="p">],</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">"num_ene"</span><span class="p">]</span>
         <span class="p">)</span>  <span class="c1"># type: u.Quantity</span>
 
-        <span class="c1"># _defaults[&quot;energy_unit&quot;] = energy_range.unit</span>
+        <span class="c1"># _defaults["energy_unit"] = energy_range.unit</span>
 
-        <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;xscale&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;log&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">"xscale"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"log"</span><span class="p">:</span>
             <span class="n">energy_range</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span>
                     <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">energy_range</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
                     <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">energy_range</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
-                    <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;num_ene&quot;</span><span class="p">],</span>
+                    <span class="n">_defaults</span><span class="p">[</span><span class="s2">"num_ene"</span><span class="p">],</span>
                 <span class="p">)</span>
                 <span class="o">*</span> <span class="n">energy_range</span><span class="o">.</span><span class="n">unit</span>
             <span class="p">)</span>
 
             <span class="n">energy_range</span> <span class="o">=</span> <span class="n">energy_range</span><span class="o">.</span><span class="n">to</span><span class="p">(</span>
-                <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;energy_unit&quot;</span><span class="p">],</span> <span class="n">equivalencies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">spectral</span><span class="p">()</span>
+                <span class="n">_defaults</span><span class="p">[</span><span class="s2">"energy_unit"</span><span class="p">],</span> <span class="n">equivalencies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">spectral</span><span class="p">()</span>
             <span class="p">)</span>
 
     <span class="k">else</span><span class="p">:</span>
         <span class="n">energy_range</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;ene_min&quot;</span><span class="p">]),</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;ene_max&quot;</span><span class="p">]),</span>
-            <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;num_ene&quot;</span><span class="p">],</span>
-        <span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;energy_unit&quot;</span><span class="p">])</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"ene_min"</span><span class="p">]),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"ene_max"</span><span class="p">]),</span>
+            <span class="n">_defaults</span><span class="p">[</span><span class="s2">"num_ene"</span><span class="p">],</span>
+        <span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"energy_unit"</span><span class="p">])</span>
 
         <span class="c1"># scale the units to the defaults</span>
 
-        <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;ene_min&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;ene_min&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;energy_unit&quot;</span><span class="p">])</span>
-        <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;ene_max&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;ene_max&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;energy_unit&quot;</span><span class="p">])</span>
+        <span class="n">_defaults</span><span class="p">[</span><span class="s2">"ene_min"</span><span class="p">]</span> <span class="o">=</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">"ene_min"</span><span class="p">]</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"energy_unit"</span><span class="p">])</span>
+        <span class="n">_defaults</span><span class="p">[</span><span class="s2">"ene_max"</span><span class="p">]</span> <span class="o">=</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">"ene_max"</span><span class="p">]</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"energy_unit"</span><span class="p">])</span>
 
     <span class="p">(</span>
         <span class="n">mle_analyses</span><span class="p">,</span>
@@ -275,15 +275,15 @@
     <span class="p">)</span> <span class="o">=</span> <span class="n">_setup_analysis_dictionaries</span><span class="p">(</span>
         <span class="n">analysis_results</span><span class="p">,</span>
         <span class="n">energy_range</span><span class="p">,</span>
-        <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;energy_unit&quot;</span><span class="p">],</span>
-        <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;flux_unit&quot;</span><span class="p">],</span>
-        <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;use_components&quot;</span><span class="p">],</span>
-        <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;components_to_use&quot;</span><span class="p">],</span>
-        <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;confidence_level&quot;</span><span class="p">],</span>
-        <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;equal_tailed&quot;</span><span class="p">],</span>
+        <span class="n">_defaults</span><span class="p">[</span><span class="s2">"energy_unit"</span><span class="p">],</span>
+        <span class="n">_defaults</span><span class="p">[</span><span class="s2">"flux_unit"</span><span class="p">],</span>
+        <span class="n">_defaults</span><span class="p">[</span><span class="s2">"use_components"</span><span class="p">],</span>
+        <span class="n">_defaults</span><span class="p">[</span><span class="s2">"components_to_use"</span><span class="p">],</span>
+        <span class="n">_defaults</span><span class="p">[</span><span class="s2">"confidence_level"</span><span class="p">],</span>
+        <span class="n">_defaults</span><span class="p">[</span><span class="s2">"equal_tailed"</span><span class="p">],</span>
         <span class="n">differential</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">sources_to_use</span><span class="o">=</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;sources_to_use&quot;</span><span class="p">],</span>
-        <span class="n">include_extended</span><span class="o">=</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;include_extended&quot;</span><span class="p">],</span>
+        <span class="n">sources_to_use</span><span class="o">=</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"sources_to_use"</span><span class="p">],</span>
+        <span class="n">include_extended</span><span class="o">=</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"include_extended"</span><span class="p">],</span>
     <span class="p">)</span>
 
     <span class="c1"># we are now ready to plot.</span>
@@ -291,51 +291,51 @@
 
     <span class="c1"># if we are not going to sum sources</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;sum_sources&quot;</span><span class="p">]:</span>
-        <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;fit_colors&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">color_fit</span> <span class="o">=</span> <span class="n">cmap_intervals</span><span class="p">(</span><span class="n">num_sources_to_plot</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;fit_cmap&quot;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">"sum_sources"</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">"fit_colors"</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">color_fit</span> <span class="o">=</span> <span class="n">cmap_intervals</span><span class="p">(</span><span class="n">num_sources_to_plot</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">"fit_cmap"</span><span class="p">])</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># duck typing</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;fit_colors&quot;</span><span class="p">],</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">)):</span>
-                <span class="n">color_fit</span> <span class="o">=</span> <span class="p">[</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;fit_colors&quot;</span><span class="p">]]</span> <span class="o">*</span> <span class="n">num_sources_to_plot</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"fit_colors"</span><span class="p">],</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">)):</span>
+                <span class="n">color_fit</span> <span class="o">=</span> <span class="p">[</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"fit_colors"</span><span class="p">]]</span> <span class="o">*</span> <span class="n">num_sources_to_plot</span>
 
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;fit_colors&quot;</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
-                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;fit_colors&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="n">num_sources_to_plot</span><span class="p">,</span> <span class="p">(</span>
-                    <span class="s2">&quot;list of colors (</span><span class="si">%d</span><span class="s2">) must be the same length as sources ot plot &quot;</span>
-                    <span class="s2">&quot;(</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;fit_colors&quot;</span><span class="p">]),</span> <span class="n">num_sources_to_plot</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"fit_colors"</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"fit_colors"</span><span class="p">])</span> <span class="o">==</span> <span class="n">num_sources_to_plot</span><span class="p">,</span> <span class="p">(</span>
+                    <span class="s2">"list of colors (</span><span class="si">%d</span><span class="s2">) must be the same length as sources ot plot "</span>
+                    <span class="s2">"(</span><span class="si">%s</span><span class="s2">)"</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"fit_colors"</span><span class="p">]),</span> <span class="n">num_sources_to_plot</span><span class="p">)</span>
                 <span class="p">)</span>
 
-                <span class="n">color_fit</span> <span class="o">=</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;fit_colors&quot;</span><span class="p">]</span>
+                <span class="n">color_fit</span> <span class="o">=</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">"fit_colors"</span><span class="p">]</span>
 
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;Can not setup color, wrong type:&quot;</span><span class="p">,</span>
-                    <span class="nb">type</span><span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;fit_colors&quot;</span><span class="p">]),</span>
+                    <span class="s2">"Can not setup color, wrong type:"</span><span class="p">,</span>
+                    <span class="nb">type</span><span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"fit_colors"</span><span class="p">]),</span>
                 <span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;contour_colors&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">"contour_colors"</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">color_contour</span> <span class="o">=</span> <span class="n">cmap_intervals</span><span class="p">(</span>
-                <span class="n">num_sources_to_plot</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;contour_cmap&quot;</span><span class="p">]</span>
+                <span class="n">num_sources_to_plot</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">"contour_cmap"</span><span class="p">]</span>
             <span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># duck typing</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;contour_colors&quot;</span><span class="p">],</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">)):</span>
-                <span class="n">color_contour</span> <span class="o">=</span> <span class="p">[</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;contour_colors&quot;</span><span class="p">]]</span> <span class="o">*</span> <span class="n">num_sources_to_plot</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"contour_colors"</span><span class="p">],</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">)):</span>
+                <span class="n">color_contour</span> <span class="o">=</span> <span class="p">[</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"contour_colors"</span><span class="p">]]</span> <span class="o">*</span> <span class="n">num_sources_to_plot</span>
 
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;contour_colors&quot;</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
-                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;contour_colors&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="n">num_sources_to_plot</span><span class="p">,</span> <span class="p">(</span>
-                    <span class="s2">&quot;list of colors (</span><span class="si">%d</span><span class="s2">) must be the same length as sources ot plot &quot;</span>
-                    <span class="s2">&quot;(</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;contour_colors&quot;</span><span class="p">]),</span> <span class="n">num_sources_to_plot</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"contour_colors"</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"contour_colors"</span><span class="p">])</span> <span class="o">==</span> <span class="n">num_sources_to_plot</span><span class="p">,</span> <span class="p">(</span>
+                    <span class="s2">"list of colors (</span><span class="si">%d</span><span class="s2">) must be the same length as sources ot plot "</span>
+                    <span class="s2">"(</span><span class="si">%s</span><span class="s2">)"</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"contour_colors"</span><span class="p">]),</span> <span class="n">num_sources_to_plot</span><span class="p">)</span>
                 <span class="p">)</span>
 
-                <span class="n">color_contour</span> <span class="o">=</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;fit_colors&quot;</span><span class="p">]</span>
+                <span class="n">color_contour</span> <span class="o">=</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">"fit_colors"</span><span class="p">]</span>
 
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;Can not setup contour color, wrong type:&quot;</span><span class="p">,</span>
-                    <span class="nb">type</span><span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;contour_colors&quot;</span><span class="p">]),</span>
+                    <span class="s2">"Can not setup contour color, wrong type:"</span><span class="p">,</span>
+                    <span class="nb">type</span><span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"contour_colors"</span><span class="p">]),</span>
                 <span class="p">)</span>
 
         <span class="n">color_itr</span> <span class="o">=</span> <span class="mi">0</span>
@@ -344,48 +344,48 @@
 
         <span class="n">plotter</span> <span class="o">=</span> <span class="n">SpectralContourPlot</span><span class="p">(</span>
             <span class="n">num_sources_to_plot</span><span class="p">,</span>
-            <span class="n">xscale</span><span class="o">=</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;xscale&quot;</span><span class="p">],</span>
-            <span class="n">yscale</span><span class="o">=</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;yscale&quot;</span><span class="p">],</span>
-            <span class="n">show_legend</span><span class="o">=</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;show_legend&quot;</span><span class="p">],</span>
-            <span class="n">plot_kwargs</span><span class="o">=</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;plot_style_kwargs&quot;</span><span class="p">],</span>
-            <span class="n">contour_kwargs</span><span class="o">=</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;contour_style_kwargs&quot;</span><span class="p">],</span>
-            <span class="n">legend_kwargs</span><span class="o">=</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;legend_kwargs&quot;</span><span class="p">],</span>
-            <span class="n">emin</span><span class="o">=</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;ene_min&quot;</span><span class="p">],</span>
-            <span class="n">emax</span><span class="o">=</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;ene_max&quot;</span><span class="p">],</span>
-            <span class="n">subplot</span><span class="o">=</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;subplot&quot;</span><span class="p">],</span>
+            <span class="n">xscale</span><span class="o">=</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"xscale"</span><span class="p">],</span>
+            <span class="n">yscale</span><span class="o">=</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"yscale"</span><span class="p">],</span>
+            <span class="n">show_legend</span><span class="o">=</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"show_legend"</span><span class="p">],</span>
+            <span class="n">plot_kwargs</span><span class="o">=</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"plot_style_kwargs"</span><span class="p">],</span>
+            <span class="n">contour_kwargs</span><span class="o">=</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"contour_style_kwargs"</span><span class="p">],</span>
+            <span class="n">legend_kwargs</span><span class="o">=</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"legend_kwargs"</span><span class="p">],</span>
+            <span class="n">emin</span><span class="o">=</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"ene_min"</span><span class="p">],</span>
+            <span class="n">emax</span><span class="o">=</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"ene_max"</span><span class="p">],</span>
+            <span class="n">subplot</span><span class="o">=</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"subplot"</span><span class="p">],</span>
         <span class="p">)</span>
 
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">mle_analyses</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
-            <span class="c1"># we won&#39;t assume to plot the total until the end</span>
+            <span class="c1"># we won't assume to plot the total until the end</span>
 
             <span class="n">plot_total</span> <span class="o">=</span> <span class="kc">False</span>
 
-            <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;use_components&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">"use_components"</span><span class="p">]:</span>
                 <span class="c1"># if this source has no components or none that we wish to plot</span>
                 <span class="c1"># then we will plot the total spectrum after this</span>
 
-                <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">list</span><span class="p">(</span><span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;components&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span> <span class="ow">or</span> <span class="p">(</span>
-                    <span class="s2">&quot;total&quot;</span> <span class="ow">in</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;components_to_use&quot;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">list</span><span class="p">(</span><span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"components"</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span> <span class="ow">or</span> <span class="p">(</span>
+                    <span class="s2">"total"</span> <span class="ow">in</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">"components_to_use"</span><span class="p">]</span>
                 <span class="p">):</span>
                     <span class="n">plot_total</span> <span class="o">=</span> <span class="kc">True</span>
 
-                <span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;components&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"components"</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
                     <span class="n">positive_error</span> <span class="o">=</span> <span class="kc">None</span>
                     <span class="n">negative_error</span> <span class="o">=</span> <span class="kc">None</span>
 
                     <span class="c1"># extract the information and plot it</span>
 
-                    <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;best_fit&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;average&quot;</span><span class="p">:</span>
-                        <span class="n">best_fit</span> <span class="o">=</span> <span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;components&quot;</span><span class="p">][</span><span class="n">component</span><span class="p">]</span><span class="o">.</span><span class="n">average</span>
+                    <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">"best_fit"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"average"</span><span class="p">:</span>
+                        <span class="n">best_fit</span> <span class="o">=</span> <span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"components"</span><span class="p">][</span><span class="n">component</span><span class="p">]</span><span class="o">.</span><span class="n">average</span>
 
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="n">best_fit</span> <span class="o">=</span> <span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;components&quot;</span><span class="p">][</span><span class="n">component</span><span class="p">]</span><span class="o">.</span><span class="n">median</span>
+                        <span class="n">best_fit</span> <span class="o">=</span> <span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"components"</span><span class="p">][</span><span class="n">component</span><span class="p">]</span><span class="o">.</span><span class="n">median</span>
 
-                    <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;show_contours&quot;</span><span class="p">]:</span>
-                        <span class="n">positive_error</span> <span class="o">=</span> <span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;components&quot;</span><span class="p">][</span>
+                    <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">"show_contours"</span><span class="p">]:</span>
+                        <span class="n">positive_error</span> <span class="o">=</span> <span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"components"</span><span class="p">][</span>
                             <span class="n">component</span>
                         <span class="p">]</span><span class="o">.</span><span class="n">upper_error</span>
-                        <span class="n">negative_error</span> <span class="o">=</span> <span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;components&quot;</span><span class="p">][</span>
+                        <span class="n">negative_error</span> <span class="o">=</span> <span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"components"</span><span class="p">][</span>
                             <span class="n">component</span>
                         <span class="p">]</span><span class="o">.</span><span class="n">lower_error</span>
 
@@ -395,14 +395,14 @@
 
                         <span class="n">negative_error</span><span class="p">[</span><span class="n">neg_mask</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">best_fit</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.9</span>
 
-                    <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">component</span><span class="p">)</span>
+                    <span class="n">label</span> <span class="o">=</span> <span class="s2">"</span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">component</span><span class="p">)</span>
 
                     <span class="c1"># this is where we keep track of duplicates</span>
 
                     <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">duplicate_keys</span><span class="p">:</span>
-                        <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: MLE&quot;</span> <span class="o">%</span> <span class="n">label</span>
+                        <span class="n">label</span> <span class="o">=</span> <span class="s2">"</span><span class="si">%s</span><span class="s2">: MLE"</span> <span class="o">%</span> <span class="n">label</span>
 
-                    <span class="k">if</span> <span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;components&quot;</span><span class="p">][</span><span class="n">component</span><span class="p">]</span><span class="o">.</span><span class="n">is_dimensionless</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"components"</span><span class="p">][</span><span class="n">component</span><span class="p">]</span><span class="o">.</span><span class="n">is_dimensionless</span><span class="p">:</span>
                         <span class="n">plotter</span><span class="o">.</span><span class="n">add_dimensionless_model</span><span class="p">(</span>
                             <span class="n">energy_range</span><span class="o">=</span><span class="n">energy_range</span><span class="p">,</span>
                             <span class="n">best_fit</span><span class="o">=</span><span class="n">best_fit</span><span class="p">,</span>
@@ -433,18 +433,18 @@
                 <span class="c1"># it ends up that we need to plot the total spectrum</span>
                 <span class="c1"># which is just a repeat of the process</span>
 
-                <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;best_fit&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;average&quot;</span><span class="p">:</span>
-                    <span class="n">best_fit</span> <span class="o">=</span> <span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;fitted point source&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">average</span>
+                <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">"best_fit"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"average"</span><span class="p">:</span>
+                    <span class="n">best_fit</span> <span class="o">=</span> <span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"fitted point source"</span><span class="p">]</span><span class="o">.</span><span class="n">average</span>
 
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">best_fit</span> <span class="o">=</span> <span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;fitted point source&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">median</span>
+                    <span class="n">best_fit</span> <span class="o">=</span> <span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"fitted point source"</span><span class="p">]</span><span class="o">.</span><span class="n">median</span>
 
-                <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;show_contours&quot;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">"show_contours"</span><span class="p">]:</span>
                     <span class="n">positive_error</span> <span class="o">=</span> <span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span>
-                        <span class="s2">&quot;fitted point source&quot;</span>
+                        <span class="s2">"fitted point source"</span>
                     <span class="p">]</span><span class="o">.</span><span class="n">upper_error</span>
                     <span class="n">negative_error</span> <span class="o">=</span> <span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span>
-                        <span class="s2">&quot;fitted point source&quot;</span>
+                        <span class="s2">"fitted point source"</span>
                     <span class="p">]</span><span class="o">.</span><span class="n">lower_error</span>
 
                     <span class="n">neg_mask</span> <span class="o">=</span> <span class="n">negative_error</span> <span class="o">&lt;=</span> <span class="mi">0</span>
@@ -457,10 +457,10 @@
                     <span class="n">positive_error</span> <span class="o">=</span> <span class="kc">None</span>
                     <span class="n">negative_error</span> <span class="o">=</span> <span class="kc">None</span>
 
-                <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">key</span>
+                <span class="n">label</span> <span class="o">=</span> <span class="s2">"</span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">key</span>
 
                 <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">duplicate_keys</span><span class="p">:</span>
-                    <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: MLE&quot;</span> <span class="o">%</span> <span class="n">label</span>
+                    <span class="n">label</span> <span class="o">=</span> <span class="s2">"</span><span class="si">%s</span><span class="s2">: MLE"</span> <span class="o">%</span> <span class="n">label</span>
 
                 <span class="n">plotter</span><span class="o">.</span><span class="n">add_model</span><span class="p">(</span>
                     <span class="n">energy_range</span><span class="o">=</span><span class="n">energy_range</span><span class="p">,</span>
@@ -479,40 +479,40 @@
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">bayesian_analyses</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
             <span class="n">plot_total</span> <span class="o">=</span> <span class="kc">False</span>
 
-            <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;use_components&quot;</span><span class="p">]:</span>
-                <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">list</span><span class="p">(</span><span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;components&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span> <span class="ow">or</span> <span class="p">(</span>
-                    <span class="s2">&quot;total&quot;</span> <span class="ow">in</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;components_to_use&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">"use_components"</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">list</span><span class="p">(</span><span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"components"</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span> <span class="ow">or</span> <span class="p">(</span>
+                    <span class="s2">"total"</span> <span class="ow">in</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">"components_to_use"</span><span class="p">]</span>
                 <span class="p">):</span>
                     <span class="n">plot_total</span> <span class="o">=</span> <span class="kc">True</span>
 
-                <span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;components&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"components"</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
                     <span class="n">positive_error</span> <span class="o">=</span> <span class="kc">None</span>
                     <span class="n">negative_error</span> <span class="o">=</span> <span class="kc">None</span>
 
-                    <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;best_fit&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;average&quot;</span><span class="p">:</span>
-                        <span class="n">best_fit</span> <span class="o">=</span> <span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;components&quot;</span><span class="p">][</span>
+                    <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">"best_fit"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"average"</span><span class="p">:</span>
+                        <span class="n">best_fit</span> <span class="o">=</span> <span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"components"</span><span class="p">][</span>
                             <span class="n">component</span>
                         <span class="p">]</span><span class="o">.</span><span class="n">average</span>
 
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="n">best_fit</span> <span class="o">=</span> <span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;components&quot;</span><span class="p">][</span>
+                        <span class="n">best_fit</span> <span class="o">=</span> <span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"components"</span><span class="p">][</span>
                             <span class="n">component</span>
                         <span class="p">]</span><span class="o">.</span><span class="n">median</span>
 
-                    <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;show_contours&quot;</span><span class="p">]:</span>
-                        <span class="n">positive_error</span> <span class="o">=</span> <span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;components&quot;</span><span class="p">][</span>
+                    <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">"show_contours"</span><span class="p">]:</span>
+                        <span class="n">positive_error</span> <span class="o">=</span> <span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"components"</span><span class="p">][</span>
                             <span class="n">component</span>
                         <span class="p">]</span><span class="o">.</span><span class="n">upper_error</span>
-                        <span class="n">negative_error</span> <span class="o">=</span> <span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;components&quot;</span><span class="p">][</span>
+                        <span class="n">negative_error</span> <span class="o">=</span> <span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"components"</span><span class="p">][</span>
                             <span class="n">component</span>
                         <span class="p">]</span><span class="o">.</span><span class="n">lower_error</span>
 
-                    <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">component</span><span class="p">)</span>
+                    <span class="n">label</span> <span class="o">=</span> <span class="s2">"</span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">component</span><span class="p">)</span>
 
                     <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">duplicate_keys</span><span class="p">:</span>
-                        <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: Bayesian&quot;</span> <span class="o">%</span> <span class="n">label</span>
+                        <span class="n">label</span> <span class="o">=</span> <span class="s2">"</span><span class="si">%s</span><span class="s2">: Bayesian"</span> <span class="o">%</span> <span class="n">label</span>
 
-                    <span class="k">if</span> <span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;components&quot;</span><span class="p">][</span><span class="n">component</span><span class="p">]</span><span class="o">.</span><span class="n">is_dimensionless</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"components"</span><span class="p">][</span><span class="n">component</span><span class="p">]</span><span class="o">.</span><span class="n">is_dimensionless</span><span class="p">:</span>
                         <span class="n">plotter</span><span class="o">.</span><span class="n">add_dimensionless_model</span><span class="p">(</span>
                             <span class="n">energy_range</span><span class="o">=</span><span class="n">energy_range</span><span class="p">,</span>
                             <span class="n">best_fit</span><span class="o">=</span><span class="n">best_fit</span><span class="p">,</span>
@@ -540,27 +540,27 @@
                 <span class="n">plot_total</span> <span class="o">=</span> <span class="kc">True</span>
 
             <span class="k">if</span> <span class="n">plot_total</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;best_fit&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;average&quot;</span><span class="p">:</span>
-                    <span class="n">best_fit</span> <span class="o">=</span> <span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;fitted point source&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">average</span>
+                <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">"best_fit"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"average"</span><span class="p">:</span>
+                    <span class="n">best_fit</span> <span class="o">=</span> <span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"fitted point source"</span><span class="p">]</span><span class="o">.</span><span class="n">average</span>
 
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">best_fit</span> <span class="o">=</span> <span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;fitted point source&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">median</span>
+                    <span class="n">best_fit</span> <span class="o">=</span> <span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"fitted point source"</span><span class="p">]</span><span class="o">.</span><span class="n">median</span>
 
                 <span class="n">positive_error</span> <span class="o">=</span> <span class="kc">None</span>
                 <span class="n">negative_error</span> <span class="o">=</span> <span class="kc">None</span>
 
-                <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;show_contours&quot;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">"show_contours"</span><span class="p">]:</span>
                     <span class="n">positive_error</span> <span class="o">=</span> <span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span>
-                        <span class="s2">&quot;fitted point source&quot;</span>
+                        <span class="s2">"fitted point source"</span>
                     <span class="p">]</span><span class="o">.</span><span class="n">upper_error</span>
                     <span class="n">negative_error</span> <span class="o">=</span> <span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span>
-                        <span class="s2">&quot;fitted point source&quot;</span>
+                        <span class="s2">"fitted point source"</span>
                     <span class="p">]</span><span class="o">.</span><span class="n">lower_error</span>
 
-                <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">key</span>
+                <span class="n">label</span> <span class="o">=</span> <span class="s2">"</span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">key</span>
 
                 <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">duplicate_keys</span><span class="p">:</span>
-                    <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: Bayesian&quot;</span> <span class="o">%</span> <span class="n">label</span>
+                    <span class="n">label</span> <span class="o">=</span> <span class="s2">"</span><span class="si">%s</span><span class="s2">: Bayesian"</span> <span class="o">%</span> <span class="n">label</span>
 
                 <span class="n">plotter</span><span class="o">.</span><span class="n">add_model</span><span class="p">(</span>
                     <span class="n">energy_range</span><span class="o">=</span><span class="n">energy_range</span><span class="p">,</span>
@@ -586,8 +586,8 @@
             <span class="n">num_sources_to_plot</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">=</span> <span class="n">_collect_sums_into_dictionaries</span><span class="p">(</span>
             <span class="n">mle_analyses</span><span class="p">,</span>
-            <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;use_components&quot;</span><span class="p">],</span>
-            <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;components_to_use&quot;</span><span class="p">],</span>
+            <span class="n">_defaults</span><span class="p">[</span><span class="s2">"use_components"</span><span class="p">],</span>
+            <span class="n">_defaults</span><span class="p">[</span><span class="s2">"components_to_use"</span><span class="p">],</span>
         <span class="p">)</span>
 
         <span class="p">(</span>
@@ -596,36 +596,36 @@
             <span class="n">num_sources_to_plot_bayes</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">=</span> <span class="n">_collect_sums_into_dictionaries</span><span class="p">(</span>
             <span class="n">bayesian_analyses</span><span class="p">,</span>
-            <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;use_components&quot;</span><span class="p">],</span>
-            <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;components_to_use&quot;</span><span class="p">],</span>
+            <span class="n">_defaults</span><span class="p">[</span><span class="s2">"use_components"</span><span class="p">],</span>
+            <span class="n">_defaults</span><span class="p">[</span><span class="s2">"components_to_use"</span><span class="p">],</span>
         <span class="p">)</span>
 
         <span class="n">num_sources_to_plot</span> <span class="o">+=</span> <span class="n">num_sources_to_plot_bayes</span>
 
         <span class="n">plotter</span> <span class="o">=</span> <span class="n">SpectralContourPlot</span><span class="p">(</span>
             <span class="n">num_sources_to_plot</span><span class="p">,</span>
-            <span class="n">xscale</span><span class="o">=</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;xscale&quot;</span><span class="p">],</span>
-            <span class="n">yscale</span><span class="o">=</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;yscale&quot;</span><span class="p">],</span>
-            <span class="n">show_legend</span><span class="o">=</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;show_legend&quot;</span><span class="p">],</span>
-            <span class="n">plot_kwargs</span><span class="o">=</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;plot_style_kwargs&quot;</span><span class="p">],</span>
-            <span class="n">contour_kwargs</span><span class="o">=</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;contour_style_kwargs&quot;</span><span class="p">],</span>
-            <span class="n">legend_kwargs</span><span class="o">=</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;legend_kwargs&quot;</span><span class="p">],</span>
-            <span class="n">emin</span><span class="o">=</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;ene_min&quot;</span><span class="p">],</span>
-            <span class="n">emax</span><span class="o">=</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;ene_max&quot;</span><span class="p">],</span>
-            <span class="n">subplot</span><span class="o">=</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;subplot&quot;</span><span class="p">],</span>
+            <span class="n">xscale</span><span class="o">=</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"xscale"</span><span class="p">],</span>
+            <span class="n">yscale</span><span class="o">=</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"yscale"</span><span class="p">],</span>
+            <span class="n">show_legend</span><span class="o">=</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"show_legend"</span><span class="p">],</span>
+            <span class="n">plot_kwargs</span><span class="o">=</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"plot_style_kwargs"</span><span class="p">],</span>
+            <span class="n">contour_kwargs</span><span class="o">=</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"contour_style_kwargs"</span><span class="p">],</span>
+            <span class="n">legend_kwargs</span><span class="o">=</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"legend_kwargs"</span><span class="p">],</span>
+            <span class="n">emin</span><span class="o">=</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"ene_min"</span><span class="p">],</span>
+            <span class="n">emax</span><span class="o">=</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"ene_max"</span><span class="p">],</span>
+            <span class="n">subplot</span><span class="o">=</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"subplot"</span><span class="p">],</span>
         <span class="p">)</span>
 
-        <span class="n">color_fit</span> <span class="o">=</span> <span class="n">cmap_intervals</span><span class="p">(</span><span class="n">num_sources_to_plot</span><span class="p">,</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;fit_cmap&quot;</span><span class="p">])</span>
-        <span class="n">color_contour</span> <span class="o">=</span> <span class="n">cmap_intervals</span><span class="p">(</span><span class="n">num_sources_to_plot</span><span class="p">,</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;contour_cmap&quot;</span><span class="p">])</span>
+        <span class="n">color_fit</span> <span class="o">=</span> <span class="n">cmap_intervals</span><span class="p">(</span><span class="n">num_sources_to_plot</span><span class="p">,</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">"fit_cmap"</span><span class="p">])</span>
+        <span class="n">color_contour</span> <span class="o">=</span> <span class="n">cmap_intervals</span><span class="p">(</span><span class="n">num_sources_to_plot</span><span class="p">,</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">"contour_cmap"</span><span class="p">])</span>
         <span class="n">color_itr</span> <span class="o">=</span> <span class="mi">0</span>
 
-        <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;use_components&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="nb">list</span><span class="p">(</span><span class="n">component_sum_dict_mle</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+        <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">"use_components"</span><span class="p">]</span> <span class="ow">and</span> <span class="nb">list</span><span class="p">(</span><span class="n">component_sum_dict_mle</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
             <span class="c1"># we have components to plot</span>
 
             <span class="k">for</span> <span class="n">component</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">component_sum_dict_mle</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="n">summed_analysis</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
 
-                <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;best_fit&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;average&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">"best_fit"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"average"</span><span class="p">:</span>
                     <span class="n">best_fit</span> <span class="o">=</span> <span class="n">summed_analysis</span><span class="o">.</span><span class="n">average</span>
 
                 <span class="k">else</span><span class="p">:</span>
@@ -634,7 +634,7 @@
                 <span class="n">positive_error</span> <span class="o">=</span> <span class="kc">None</span>
                 <span class="n">negative_error</span> <span class="o">=</span> <span class="kc">None</span>
 
-                <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;show_contours&quot;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">"show_contours"</span><span class="p">]:</span>
                     <span class="n">positive_error</span> <span class="o">=</span> <span class="n">summed_analysis</span><span class="o">.</span><span class="n">upper_error</span>
 
                     <span class="n">negative_error</span> <span class="o">=</span> <span class="n">summed_analysis</span><span class="o">.</span><span class="n">lower_error</span>
@@ -655,7 +655,7 @@
                         <span class="n">upper_error</span><span class="o">=</span><span class="n">positive_error</span><span class="p">,</span>
                         <span class="n">lower_error</span><span class="o">=</span><span class="n">negative_error</span><span class="p">,</span>
                         <span class="n">contour_color</span><span class="o">=</span><span class="n">color_contour</span><span class="p">[</span><span class="n">color_itr</span><span class="p">],</span>
-                        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: MLE&quot;</span> <span class="o">%</span> <span class="n">component</span><span class="p">,</span>
+                        <span class="n">label</span><span class="o">=</span><span class="s2">"</span><span class="si">%s</span><span class="s2">: MLE"</span> <span class="o">%</span> <span class="n">component</span><span class="p">,</span>
                     <span class="p">)</span>
 
                 <span class="k">else</span><span class="p">:</span>
@@ -666,7 +666,7 @@
                         <span class="n">upper_error</span><span class="o">=</span><span class="n">positive_error</span><span class="p">,</span>
                         <span class="n">lower_error</span><span class="o">=</span><span class="n">negative_error</span><span class="p">,</span>
                         <span class="n">contour_color</span><span class="o">=</span><span class="n">color_contour</span><span class="p">[</span><span class="n">color_itr</span><span class="p">],</span>
-                        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: MLE&quot;</span> <span class="o">%</span> <span class="n">component</span><span class="p">,</span>
+                        <span class="n">label</span><span class="o">=</span><span class="s2">"</span><span class="si">%s</span><span class="s2">: MLE"</span> <span class="o">%</span> <span class="n">component</span><span class="p">,</span>
                     <span class="p">)</span>
 
                 <span class="n">color_itr</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -677,7 +677,7 @@
 
             <span class="n">summed_analysis</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">total_analysis_mle</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;best_fit&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;average&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">"best_fit"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"average"</span><span class="p">:</span>
                 <span class="n">best_fit</span> <span class="o">=</span> <span class="n">summed_analysis</span><span class="o">.</span><span class="n">average</span>
 
             <span class="k">else</span><span class="p">:</span>
@@ -686,7 +686,7 @@
             <span class="n">positive_error</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="n">negative_error</span> <span class="o">=</span> <span class="kc">None</span>
 
-            <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;show_contours&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">"show_contours"</span><span class="p">]:</span>
                 <span class="n">positive_error</span> <span class="o">=</span> <span class="n">best_fit</span> <span class="o">+</span> <span class="n">summed_analysis</span><span class="o">.</span><span class="n">upper_error</span>
 
                 <span class="n">negative_error</span> <span class="o">=</span> <span class="n">best_fit</span> <span class="o">-</span> <span class="n">summed_analysis</span><span class="o">.</span><span class="n">lower_error</span>
@@ -704,18 +704,18 @@
                 <span class="n">upper_error</span><span class="o">=</span><span class="n">positive_error</span><span class="p">,</span>
                 <span class="n">lower_error</span><span class="o">=</span><span class="n">negative_error</span><span class="p">,</span>
                 <span class="n">contour_color</span><span class="o">=</span><span class="n">color_contour</span><span class="p">[</span><span class="n">color_itr</span><span class="p">],</span>
-                <span class="n">label</span><span class="o">=</span><span class="s2">&quot;total: MLE&quot;</span><span class="p">,</span>
+                <span class="n">label</span><span class="o">=</span><span class="s2">"total: MLE"</span><span class="p">,</span>
             <span class="p">)</span>
 
             <span class="n">color_itr</span> <span class="o">+=</span> <span class="mi">1</span>
 
-        <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;use_components&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="nb">list</span><span class="p">(</span><span class="n">component_sum_dict_bayes</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+        <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">"use_components"</span><span class="p">]</span> <span class="ow">and</span> <span class="nb">list</span><span class="p">(</span><span class="n">component_sum_dict_bayes</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
             <span class="c1"># we have components to plot</span>
 
             <span class="k">for</span> <span class="n">component</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">component_sum_dict_bayes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="n">summed_analysis</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
 
-                <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;best_fit&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;average&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">"best_fit"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"average"</span><span class="p">:</span>
                     <span class="n">best_fit</span> <span class="o">=</span> <span class="n">summed_analysis</span><span class="o">.</span><span class="n">average</span>
 
                 <span class="k">else</span><span class="p">:</span>
@@ -724,7 +724,7 @@
                 <span class="n">positive_error</span> <span class="o">=</span> <span class="kc">None</span>
                 <span class="n">negative_error</span> <span class="o">=</span> <span class="kc">None</span>
 
-                <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;show_contours&quot;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">"show_contours"</span><span class="p">]:</span>
                     <span class="n">positive_error</span> <span class="o">=</span> <span class="n">summed_analysis</span><span class="o">.</span><span class="n">upper_error</span>
 
                     <span class="n">negative_error</span> <span class="o">=</span> <span class="n">summed_analysis</span><span class="o">.</span><span class="n">lower_error</span>
@@ -739,7 +739,7 @@
                         <span class="n">upper_error</span><span class="o">=</span><span class="n">positive_error</span><span class="p">,</span>
                         <span class="n">lower_error</span><span class="o">=</span><span class="n">negative_error</span><span class="p">,</span>
                         <span class="n">contour_color</span><span class="o">=</span><span class="n">color_contour</span><span class="p">[</span><span class="n">color_itr</span><span class="p">],</span>
-                        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: Bayesian&quot;</span> <span class="o">%</span> <span class="n">component</span><span class="p">,</span>
+                        <span class="n">label</span><span class="o">=</span><span class="s2">"</span><span class="si">%s</span><span class="s2">: Bayesian"</span> <span class="o">%</span> <span class="n">component</span><span class="p">,</span>
                     <span class="p">)</span>
 
                 <span class="k">else</span><span class="p">:</span>
@@ -750,7 +750,7 @@
                         <span class="n">upper_error</span><span class="o">=</span><span class="n">positive_error</span><span class="p">,</span>
                         <span class="n">lower_error</span><span class="o">=</span><span class="n">negative_error</span><span class="p">,</span>
                         <span class="n">contour_color</span><span class="o">=</span><span class="n">color_contour</span><span class="p">[</span><span class="n">color_itr</span><span class="p">],</span>
-                        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: Bayesian&quot;</span> <span class="o">%</span> <span class="n">component</span><span class="p">,</span>
+                        <span class="n">label</span><span class="o">=</span><span class="s2">"</span><span class="si">%s</span><span class="s2">: Bayesian"</span> <span class="o">%</span> <span class="n">component</span><span class="p">,</span>
                     <span class="p">)</span>
 
                 <span class="n">color_itr</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -761,7 +761,7 @@
 
             <span class="n">summed_analysis</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">total_analysis_bayes</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;best_fit&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;average&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">"best_fit"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"average"</span><span class="p">:</span>
                 <span class="n">best_fit</span> <span class="o">=</span> <span class="n">summed_analysis</span><span class="o">.</span><span class="n">average</span>
 
             <span class="k">else</span><span class="p">:</span>
@@ -770,7 +770,7 @@
             <span class="n">positive_error</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="n">negative_error</span> <span class="o">=</span> <span class="kc">None</span>
 
-            <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;show_contours&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">"show_contours"</span><span class="p">]:</span>
                 <span class="n">positive_error</span> <span class="o">=</span> <span class="n">summed_analysis</span><span class="o">.</span><span class="n">upper_error</span>
 
                 <span class="n">negative_error</span> <span class="o">=</span> <span class="n">summed_analysis</span><span class="o">.</span><span class="n">lower_error</span>
@@ -782,7 +782,7 @@
                 <span class="n">upper_error</span><span class="o">=</span><span class="n">positive_error</span><span class="p">,</span>
                 <span class="n">lower_error</span><span class="o">=</span><span class="n">negative_error</span><span class="p">,</span>
                 <span class="n">contour_color</span><span class="o">=</span><span class="n">color_contour</span><span class="p">[</span><span class="n">color_itr</span><span class="p">],</span>
-                <span class="n">label</span><span class="o">=</span><span class="s2">&quot;total: Bayesian&quot;</span><span class="p">,</span>
+                <span class="n">label</span><span class="o">=</span><span class="s2">"total: Bayesian"</span><span class="p">,</span>
             <span class="p">)</span>
 
         <span class="n">color_itr</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -797,8 +797,8 @@
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">n_total</span><span class="p">,</span>
-        <span class="n">xscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span>
-        <span class="n">yscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span>
+        <span class="n">xscale</span><span class="o">=</span><span class="s2">"log"</span><span class="p">,</span>
+        <span class="n">yscale</span><span class="o">=</span><span class="s2">"log"</span><span class="p">,</span>
         <span class="n">show_legend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">plot_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">contour_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -807,12 +807,12 @@
         <span class="n">emax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">subplot</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Class to handle plotting of multiple spectral models with contours.</span>
 
 <span class="sd">        :param n_total: total number of models to plot</span>
-<span class="sd">        :param xscale: &#39;log&#39; or &#39;linear&#39;</span>
-<span class="sd">        :param yscale: &#39;log&#39; or &#39;linear&#39;</span>
+<span class="sd">        :param xscale: 'log' or 'linear'</span>
+<span class="sd">        :param yscale: 'log' or 'linear'</span>
 <span class="sd">        :param show_legend: True or False to show legend</span>
 <span class="sd">        :param plot_kwargs: dictionary of MPL plot styling for the best fit curve</span>
 <span class="sd">        :param contour_kwargs: dictionary of MPL plot styling for the contour regions</span>
@@ -820,7 +820,7 @@
 <span class="sd">        :param emin: minimum energy to plot</span>
 <span class="sd">        :param emax: maximum energy to plot</span>
 <span class="sd">        :param subplot: subplot to use</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_n_total</span> <span class="o">=</span> <span class="n">n_total</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_show_legend</span> <span class="o">=</span> <span class="n">show_legend</span>
@@ -854,9 +854,9 @@
         <span class="n">upper_error</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">lower_error</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">contour_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;model&quot;</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="s2">"model"</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Add a model to the plot.</span>
 
 <span class="sd">        :param energy_range: array of energies to plot</span>
@@ -866,7 +866,7 @@
 <span class="sd">        :param lower_error: array of lower error values to plot</span>
 <span class="sd">        :param contour_color: color of the contour region</span>
 <span class="sd">        :param label: label for the model</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
             <span class="n">energy_range</span><span class="p">,</span>
@@ -896,9 +896,9 @@
         <span class="n">upper_error</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">lower_error</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">contour_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;model&quot;</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="s2">"model"</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Add a dimensionless model to the plot.</span>
 
 <span class="sd">        :param energy_range: array of energies to plot</span>
@@ -908,7 +908,7 @@
 <span class="sd">        :param lower_error: array of lower error values to plot</span>
 <span class="sd">        :param contour_color: color of the contour region</span>
 <span class="sd">        :param label: label for the model</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_total</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ax_right</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_ax_right</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="o">.</span><span class="n">twinx</span><span class="p">()</span>
@@ -945,11 +945,11 @@
 <div class="viewcode-block" id="SpectralContourPlot.finalize">
 <a class="viewcode-back" href="../../../../api/threeML.io.plotting.html#threeML.io.plotting.model_plot.SpectralContourPlot.finalize">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">finalize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_defaults</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Finalize the plot by setting scales, legends, and limits.</span>
 <span class="sd">        :param _defaults: dictionary of default values</span>
 <span class="sd">        :return: matplotlib figure</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="o">.</span><span class="n">set_xscale</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_xscale</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_yscale</span><span class="p">)</span>
 
@@ -959,18 +959,18 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ax_right</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_ax_right</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_yscale</span><span class="p">)</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">_ax_right</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Arbitrary units&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ax_right</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Arbitrary units"</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_show_legend</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_ax_right</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_legend_kwargs</span><span class="p">)</span>
 
-        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;converting </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_emin</span><span class="o">.</span><span class="n">unit</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">_defaults</span><span class="p">[</span><span class="s1">&#39;energy_unit&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"converting </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_emin</span><span class="o">.</span><span class="n">unit</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">_defaults</span><span class="p">[</span><span class="s1">'energy_unit'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span>
                 <span class="p">[</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_emin</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;energy_unit&quot;</span><span class="p">],</span> <span class="n">equivalencies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">spectral</span><span class="p">()),</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_emax</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;energy_unit&quot;</span><span class="p">],</span> <span class="n">equivalencies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">spectral</span><span class="p">()),</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_emin</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"energy_unit"</span><span class="p">],</span> <span class="n">equivalencies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">spectral</span><span class="p">()),</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_emax</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">"energy_unit"</span><span class="p">],</span> <span class="n">equivalencies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">spectral</span><span class="p">()),</span>
                 <span class="p">]</span>
             <span class="p">)</span>
 

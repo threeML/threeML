@@ -132,14 +132,6 @@
 
 <span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
-<span class="c1"># Workaround to support astropy 4.1+</span>
-<span class="n">astropy_old</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="n">astropy_version</span> <span class="o">=</span> <span class="n">astropy</span><span class="o">.</span><span class="n">__version__</span>
-<span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">astropy_version</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="mi">4</span> <span class="ow">and</span> <span class="nb">int</span><span class="p">(</span><span class="n">astropy_version</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
-    <span class="n">astropy_old</span> <span class="o">=</span> <span class="kc">False</span>
-<span class="k">elif</span> <span class="nb">int</span><span class="p">(</span><span class="n">astropy_version</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="mi">5</span><span class="p">:</span>
-    <span class="n">astropy_old</span> <span class="o">=</span> <span class="kc">False</span>
-
 
 <div class="viewcode-block" id="ConeSearchFailed">
 <a class="viewcode-back" href="../../../api/threeML.catalogs.html#threeML.catalogs.VirtualObservatoryCatalog.ConeSearchFailed">[docs]</a>
@@ -160,19 +152,34 @@
 
 <div class="viewcode-block" id="VirtualObservatoryCatalog.search_around_source">
 <a class="viewcode-back" href="../../../api/threeML.catalogs.html#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.search_around_source">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">search_around_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_name</span><span class="p">,</span> <span class="n">radius</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Search for sources around the named source. The coordinates of the</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">search_around_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Search for sources around the named source. The coordinates of the</span>
 <span class="sd">        provided source are resolved using the astropy.coordinates.name_resolve</span>
 <span class="sd">        facility.</span>
 
-<span class="sd">        :param source_name: name of the source, like &quot;Crab&quot;</span>
+<span class="sd">        :param source: name of the source, like "Crab" or an astropy SkyCoord</span>
 <span class="sd">        :param radius: radius of the search, in degrees</span>
 <span class="sd">        :return: (ra, dec, table), where ra,dec are the coordinates of</span>
 <span class="sd">            the source as resolved by astropy, and table is a table with</span>
 <span class="sd">            the list of sources</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
-        <span class="n">sky_coord</span> <span class="o">=</span> <span class="n">get_icrs_coordinates</span><span class="p">(</span><span class="n">source_name</span><span class="p">)</span>
+        <span class="c1"># support renamed keyword</span>
+        <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"source_name"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">source</span> <span class="o">=</span> <span class="n">get_icrs_coordinates</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">"The 'source_name' keyword in search_around_source is deprecated, use"</span>
+                <span class="s2">" 'source' instead"</span><span class="p">,</span>
+                <span class="ne">DeprecationWarning</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">astropy</span><span class="o">.</span><span class="n">coordinates</span><span class="o">.</span><span class="n">SkyCoord</span><span class="p">):</span>
+            <span class="n">sky_coord</span> <span class="o">=</span> <span class="n">get_icrs_coordinates</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sky_coord</span> <span class="o">=</span> <span class="n">source</span>
+
+        <span class="k">if</span> <span class="n">radius</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"You need to provide a radius"</span><span class="p">)</span>
 
         <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span> <span class="o">=</span> <span class="p">(</span><span class="n">sky_coord</span><span class="o">.</span><span class="n">fk5</span><span class="o">.</span><span class="n">ra</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">sky_coord</span><span class="o">.</span><span class="n">fk5</span><span class="o">.</span><span class="n">dec</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
 
@@ -182,27 +189,27 @@
 <div class="viewcode-block" id="VirtualObservatoryCatalog.cone_search">
 <a class="viewcode-back" href="../../../api/threeML.catalogs.html#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.cone_search">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">cone_search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">radius</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Searches for sources in a cone of given radius and center.</span>
+<span class="w">        </span><span class="sd">"""Searches for sources in a cone of given radius and center.</span>
 
 <span class="sd">        :param ra: decimal degrees, R.A. of the center of the cone</span>
 <span class="sd">        :param dec: decimal degrees, Dec. of the center of the cone</span>
 <span class="sd">        :param radius: radius in degrees</span>
 <span class="sd">        :return: a table with the list of sources</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
-        <span class="n">skycoord</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span><span class="n">ra</span><span class="o">=</span><span class="n">ra</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="n">dec</span><span class="o">=</span><span class="n">dec</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="s2">&quot;icrs&quot;</span><span class="p">)</span>
+        <span class="n">skycoord</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span><span class="n">ra</span><span class="o">=</span><span class="n">ra</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="n">dec</span><span class="o">=</span><span class="n">dec</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="s2">"icrs"</span><span class="p">)</span>
 
         <span class="c1"># First check that we have an active internet connection</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">internet_connection_is_active</span><span class="p">():</span>  <span class="c1"># pragma: no cover</span>
             <span class="k">raise</span> <span class="n">ConeSearchFailed</span><span class="p">(</span>
-                <span class="s2">&quot;It looks like you don&#39;t have an active internet connection. Cannot &quot;</span>
-                <span class="s2">&quot;continue.&quot;</span>
+                <span class="s2">"It looks like you don't have an active internet connection. Cannot "</span>
+                <span class="s2">"continue."</span>
             <span class="p">)</span>
 
         <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
             <span class="c1"># Ignore all warnings, which are many from the conesearch module</span>
 
-            <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">"ignore"</span><span class="p">)</span>
 
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">votable</span> <span class="o">=</span> <span class="n">conesearch</span><span class="o">.</span><span class="n">conesearch</span><span class="p">(</span>
@@ -217,7 +224,7 @@
             <span class="k">except</span> <span class="n">VOSError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>  <span class="c1"># Pragma: no cover</span>
                 <span class="c1"># Download failed</span>
 
-                <span class="k">raise</span> <span class="n">ConeSearchFailed</span><span class="p">(</span><span class="s2">&quot;Cone search failed. Reason: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">exc</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">ConeSearchFailed</span><span class="p">(</span><span class="s2">"Cone search failed. Reason: </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">exc</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># Download successful</span>
@@ -227,27 +234,20 @@
                     <span class="n">table</span> <span class="o">=</span> <span class="n">votable</span><span class="o">.</span><span class="n">to_table</span><span class="p">()</span>
 
                 <span class="k">if</span> <span class="n">table</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Your search returned nothing&quot;</span><span class="p">)</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"Your search returned nothing"</span><span class="p">)</span>
 
                     <span class="k">return</span> <span class="kc">None</span>
 
                 <span class="n">table</span><span class="o">.</span><span class="n">convert_bytestring_to_unicode</span><span class="p">()</span>
 
                 <span class="n">pandas_df</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="n">table</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">()</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">&quot;Search_Offset&quot;</span><span class="p">)</span>
+                    <span class="n">table</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">()</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">"name"</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">"Search_Offset"</span><span class="p">)</span>
                 <span class="p">)</span>
 
                 <span class="n">str_df</span> <span class="o">=</span> <span class="n">pandas_df</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">([</span><span class="nb">object</span><span class="p">])</span>
 
-                <span class="k">if</span> <span class="n">astropy_old</span><span class="p">:</span>
-                    <span class="n">str_df</span> <span class="o">=</span> <span class="n">str_df</span><span class="o">.</span><span class="n">stack</span><span class="p">()</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">unstack</span><span class="p">()</span>
-
                 <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">str_df</span><span class="p">:</span>
                     <span class="n">pandas_df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">str_df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
-
-                <span class="k">if</span> <span class="n">astropy_old</span><span class="p">:</span>
-                    <span class="n">new_index</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">pandas_df</span><span class="o">.</span><span class="n">index</span><span class="p">]</span>
-                    <span class="n">pandas_df</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">new_index</span>
 
                 <span class="bp">self</span><span class="o">.</span><span class="n">_last_query_results</span> <span class="o">=</span> <span class="n">pandas_df</span>
 
@@ -277,22 +277,22 @@
 <div class="viewcode-block" id="VirtualObservatoryCatalog.apply_format">
 <a class="viewcode-back" href="../../../api/threeML.catalogs.html#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.apply_format">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">apply_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;You have to override this!&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"You have to override this!"</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="VirtualObservatoryCatalog.get_model">
 <a class="viewcode-back" href="../../../api/threeML.catalogs.html#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.get_model">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;You have to override this!&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"You have to override this!"</span><span class="p">)</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_vo_table_from_source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;You have to override this!&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"You have to override this!"</span><span class="p">)</span>
 
 <div class="viewcode-block" id="VirtualObservatoryCatalog.query">
 <a class="viewcode-back" href="../../../api/threeML.catalogs.html#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.query">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        query the entire VO table for the given logical argument. Queries are in the</span>
 <span class="sd">        form of pandas queries:</span>
 <span class="sd">        https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.quer</span>
@@ -303,14 +303,14 @@
 
 <span class="sd">        :param query: pandas style query string</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
-        <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">query</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;query must be a string&quot;</span>
+        <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">query</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">,</span> <span class="s2">"query must be a string"</span>
 
         <span class="n">query_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
 
         <span class="n">table</span> <span class="o">=</span> <span class="n">astro_table</span><span class="o">.</span><span class="n">Table</span><span class="o">.</span><span class="n">from_pandas</span><span class="p">(</span><span class="n">query_results</span><span class="p">)</span>
-        <span class="n">name_column</span> <span class="o">=</span> <span class="n">astro_table</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">query_results</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+        <span class="n">name_column</span> <span class="o">=</span> <span class="n">astro_table</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"name"</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">query_results</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
         <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">name_column</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
         <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">apply_format</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
@@ -323,11 +323,11 @@
 <div class="viewcode-block" id="VirtualObservatoryCatalog.query_sources">
 <a class="viewcode-back" href="../../../api/threeML.catalogs.html#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.query_sources">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">query_sources</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">sources</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Query for the specific source names.</span>
+<span class="w">        </span><span class="sd">"""Query for the specific source names.</span>
 
 <span class="sd">        :param sources: source(s) to search for</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">valid_sources</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -336,13 +336,13 @@
                 <span class="n">valid_sources</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">valid_sources</span><span class="p">:</span>
-            <span class="n">query_string</span> <span class="o">=</span> <span class="s2">&quot; | &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;(index == &quot;</span><span class="si">%s</span><span class="s1">&quot;)&#39;</span> <span class="o">%</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">valid_sources</span><span class="p">])</span>
+            <span class="n">query_string</span> <span class="o">=</span> <span class="s2">" | "</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">'(index == "</span><span class="si">%s</span><span class="s1">")'</span> <span class="o">%</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">valid_sources</span><span class="p">])</span>
 
             <span class="n">query_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">query_string</span><span class="p">)</span>
 
             <span class="n">table</span> <span class="o">=</span> <span class="n">astro_table</span><span class="o">.</span><span class="n">Table</span><span class="o">.</span><span class="n">from_pandas</span><span class="p">(</span><span class="n">query_results</span><span class="p">)</span>
 
-            <span class="n">name_column</span> <span class="o">=</span> <span class="n">astro_table</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">query_results</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+            <span class="n">name_column</span> <span class="o">=</span> <span class="n">astro_table</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"name"</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">query_results</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
             <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">name_column</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
             <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">apply_format</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
@@ -352,18 +352,18 @@
             <span class="k">return</span> <span class="n">out</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;There were not valid sources in your search&quot;</span><span class="p">)</span></div>
+            <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"There were not valid sources in your search"</span><span class="p">)</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_source_is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;You have to override this!&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"You have to override this!"</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">result</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a searchable pandas dataframe of results from the last query.</span>
+<span class="w">        </span><span class="sd">"""Return a searchable pandas dataframe of results from the last query.</span>
 
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_query_results</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 

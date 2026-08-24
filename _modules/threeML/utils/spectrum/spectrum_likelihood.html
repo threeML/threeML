@@ -140,18 +140,18 @@
 <a class="viewcode-back" href="../../../../api/threeML.utils.spectrum.html#threeML.utils.spectrum.spectrum_likelihood.BinnedStatistic">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">BinnedStatistic</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spectrum_plugin</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A class to hold the likelihood call and randomization of spectrum</span>
+<span class="w">        </span><span class="sd">"""A class to hold the likelihood call and randomization of spectrum</span>
 <span class="sd">        counts.</span>
 
 <span class="sd">        :param spectrum_plugin: the spectrum plugin to call</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_spectrum_plugin</span> <span class="o">=</span> <span class="n">spectrum_plugin</span>
 
 <div class="viewcode-block" id="BinnedStatistic.get_current_value">
 <a class="viewcode-back" href="../../../../api/threeML.utils.spectrum.html#threeML.utils.spectrum.spectrum_likelihood.BinnedStatistic.get_current_value">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_current_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;must be implemented in subclass&quot;</span><span class="p">)</span></div>
+        <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"must be implemented in subclass"</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="BinnedStatistic.get_randomized_source_counts">
@@ -205,8 +205,8 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">source_model_counts</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
             <span class="n">source_model_counts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
-            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;simulated spectrum had infinite counts in first channel&quot;</span><span class="p">)</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;setting to ZERO&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"simulated spectrum had infinite counts in first channel"</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"setting to ZERO"</span><span class="p">)</span>
 
         <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spectrum_plugin</span><span class="o">.</span><span class="n">observed_count_errors</span> <span class="o">&gt;</span> <span class="mi">0</span>
 
@@ -226,8 +226,8 @@
 
         <span class="k">if</span> <span class="n">negative_source_n</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;Generated source has negative counts &quot;</span>
-                <span class="s2">&quot;in </span><span class="si">%i</span><span class="s2"> channels. Fixing them to zero&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">negative_source_n</span><span class="p">)</span>
+                <span class="s2">"Generated source has negative counts "</span>
+                <span class="s2">"in </span><span class="si">%i</span><span class="s2"> channels. Fixing them to zero"</span> <span class="o">%</span> <span class="p">(</span><span class="n">negative_source_n</span><span class="p">)</span>
             <span class="p">)</span>
 
             <span class="n">randomized_source_counts</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
@@ -274,8 +274,8 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">source_model_counts</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
             <span class="n">source_model_counts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
-            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;simulated spectrum had infinite counts in first channel&quot;</span><span class="p">)</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;setting to ZERO&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"simulated spectrum had infinite counts in first channel"</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"setting to ZERO"</span><span class="p">)</span>
 
         <span class="n">randomized_source_counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">poisson</span><span class="p">(</span>
             <span class="n">source_model_counts</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spectrum_plugin</span><span class="o">.</span><span class="n">_background_counts</span>
@@ -339,8 +339,8 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">source_model_counts</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
             <span class="n">source_model_counts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
-            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;simulated spectrum had infinite counts in first channel&quot;</span><span class="p">)</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;setting to ZERO&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"simulated spectrum had infinite counts in first channel"</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"setting to ZERO"</span><span class="p">)</span>
 
         <span class="n">randomized_source_counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">poisson</span><span class="p">(</span>
             <span class="n">source_model_counts</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_synthetic_background_plugin</span><span class="o">.</span><span class="n">observed_counts</span>
@@ -399,8 +399,8 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">source_model_counts</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
             <span class="n">source_model_counts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
-            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;simulated spectrum had infinite counts in first channel&quot;</span><span class="p">)</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;setting to ZERO&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"simulated spectrum had infinite counts in first channel"</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"setting to ZERO"</span><span class="p">)</span>
 
         <span class="n">randomized_source_counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">poisson</span><span class="p">(</span><span class="n">source_model_counts</span><span class="p">)</span>
 
@@ -432,15 +432,15 @@
 <a class="viewcode-back" href="../../../../api/threeML.utils.spectrum.html#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedPoissonBackgroundStatistic.get_randomized_source_counts">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_randomized_source_counts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_model_counts</span><span class="p">):</span>
         <span class="c1"># Since we use a profile likelihood, the background model is conditional on the</span>
-        <span class="c1"># source model, so let&#39;s get it from the likelihood function</span>
+        <span class="c1"># source model, so let's get it from the likelihood function</span>
 
         <span class="n">_</span><span class="p">,</span> <span class="n">background_model_counts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_current_value</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">source_model_counts</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
             <span class="n">source_model_counts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
-            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;simulated spectrum had infinite counts in first channel&quot;</span><span class="p">)</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;setting to ZERO&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"simulated spectrum had infinite counts in first channel"</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"setting to ZERO"</span><span class="p">)</span>
 
         <span class="c1"># Now randomize the expectations</span>
 
@@ -497,7 +497,7 @@
 <a class="viewcode-back" href="../../../../api/threeML.utils.spectrum.html#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedGaussianBackgroundStatistic.get_randomized_source_counts">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_randomized_source_counts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_model_counts</span><span class="p">):</span>
         <span class="c1"># Since we use a profile likelihood, the background model is conditional on the</span>
-        <span class="c1"># source model, so let&#39;s get it from the likelihood function</span>
+        <span class="c1"># source model, so let's get it from the likelihood function</span>
 
         <span class="n">_</span><span class="p">,</span> <span class="n">background_model_counts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_current_value</span><span class="p">()</span>
 
@@ -511,24 +511,24 @@
         <span class="n">background_model_counts</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
 
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">background_model_counts</span><span class="p">)):</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;NaN count in background model counts&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"NaN count in background model counts"</span><span class="p">)</span>
 
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">background_model_counts</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">background_model_counts</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">background_model_counts</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">):</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;negative count in background model counts&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"negative count in background model counts"</span><span class="p">)</span>
 
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">background_model_counts</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">background_model_counts</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">source_model_counts</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
             <span class="n">source_model_counts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
-            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;simulated spectrum had infinite counts in first channel&quot;</span><span class="p">)</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;setting to ZERO&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"simulated spectrum had infinite counts in first channel"</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"setting to ZERO"</span><span class="p">)</span>
 
         <span class="c1"># Now randomize the expectations</span>
 
@@ -571,8 +571,8 @@
 
         <span class="k">if</span> <span class="n">negative_background_n</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;Generated background has negative counts &quot;</span>
-                <span class="s2">&quot;in </span><span class="si">%i</span><span class="s2"> channels. Fixing them to zero&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">negative_background_n</span><span class="p">)</span>
+                <span class="s2">"Generated background has negative counts "</span>
+                <span class="s2">"in </span><span class="si">%i</span><span class="s2"> channels. Fixing them to zero"</span> <span class="o">%</span> <span class="p">(</span><span class="n">negative_background_n</span><span class="p">)</span>
             <span class="p">)</span>
 
             <span class="n">randomized_background_counts</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
@@ -592,9 +592,9 @@
 <a class="viewcode-back" href="../../../../api/threeML.utils.spectrum.html#threeML.utils.spectrum.spectrum_likelihood.NotAvailableStatistic">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">NotAvailableStatistic</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spectrum_plugin</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">""""""</span>
         <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-            <span class="s2">&quot;The required statistic is currently restricted to the IXPE plugin only.&quot;</span>
+            <span class="s2">"The required statistic is currently restricted to the IXPE plugin only."</span>
         <span class="p">)</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span></div>
 
@@ -603,22 +603,22 @@
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">ixpepy.likelihood</span><span class="w"> </span><span class="kn">import</span> <span class="n">GaussianObservedGaussianBackgroundStatistic</span>
 
-    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;IXPE plugin found. Enabling Gaussian source with Gaussian background.&quot;</span><span class="p">)</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"IXPE plugin found. Enabling Gaussian source with Gaussian background."</span><span class="p">)</span>
 <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
     <span class="n">GaussianObservedGaussianBackgroundStatistic</span> <span class="o">=</span> <span class="n">NotAvailableStatistic</span>
 
 
 <span class="n">statistic_lookup</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;poisson&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;poisson&quot;</span><span class="p">:</span> <span class="n">PoissonObservedPoissonBackgroundStatistic</span><span class="p">,</span>
-        <span class="s2">&quot;gaussian&quot;</span><span class="p">:</span> <span class="n">PoissonObservedGaussianBackgroundStatistic</span><span class="p">,</span>
-        <span class="s2">&quot;ideal&quot;</span><span class="p">:</span> <span class="n">PoissonObservedIdealBackgroundStatistic</span><span class="p">,</span>
+    <span class="s2">"poisson"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"poisson"</span><span class="p">:</span> <span class="n">PoissonObservedPoissonBackgroundStatistic</span><span class="p">,</span>
+        <span class="s2">"gaussian"</span><span class="p">:</span> <span class="n">PoissonObservedGaussianBackgroundStatistic</span><span class="p">,</span>
+        <span class="s2">"ideal"</span><span class="p">:</span> <span class="n">PoissonObservedIdealBackgroundStatistic</span><span class="p">,</span>
         <span class="kc">None</span><span class="p">:</span> <span class="n">PoissonObservedNoBackgroundStatistic</span><span class="p">,</span>
-        <span class="s2">&quot;modeled&quot;</span><span class="p">:</span> <span class="n">PoissonObservedModeledBackgroundStatistic</span><span class="p">,</span>
+        <span class="s2">"modeled"</span><span class="p">:</span> <span class="n">PoissonObservedModeledBackgroundStatistic</span><span class="p">,</span>
     <span class="p">},</span>
-    <span class="s2">&quot;gaussian&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">"gaussian"</span><span class="p">:</span> <span class="p">{</span>
         <span class="kc">None</span><span class="p">:</span> <span class="n">GaussianObservedStatistic</span><span class="p">,</span>
-        <span class="s2">&quot;gaussian&quot;</span><span class="p">:</span> <span class="n">GaussianObservedGaussianBackgroundStatistic</span><span class="p">,</span>
+        <span class="s2">"gaussian"</span><span class="p">:</span> <span class="n">GaussianObservedGaussianBackgroundStatistic</span><span class="p">,</span>
     <span class="p">},</span>
     <span class="kc">None</span><span class="p">:</span> <span class="p">{</span><span class="kc">None</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
 <span class="p">}</span>

@@ -112,7 +112,7 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.utils.step_parameter_generator</h1><div class="highlight"><pre>
-<span></span><span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;grburgess &lt;J. Michael Burgess&gt;&quot;</span>
+<span></span><span class="n">__author__</span> <span class="o">=</span> <span class="s2">"grburgess &lt;J. Michael Burgess&gt;"</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astromodels</span><span class="w"> </span><span class="kn">import</span> <span class="n">DiracDelta</span><span class="p">,</span> <span class="n">StepFunctionUpper</span>
@@ -121,7 +121,7 @@
 <div class="viewcode-block" id="step_generator">
 <a class="viewcode-back" href="../../../api/threeML.utils.html#threeML.utils.step_parameter_generator.step_generator">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">step_generator</span><span class="p">(</span><span class="n">intervals</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generates sum of step or dirac delta functions for the given intervals</span>
+<span class="w">    </span><span class="sd">"""Generates sum of step or dirac delta functions for the given intervals</span>
 <span class="sd">    and parameter. This can be used to link time-independent parameters of a</span>
 <span class="sd">    model to time.</span>
 
@@ -137,7 +137,7 @@
 
 <span class="sd">    :param intervals: an array of the 1- or 2-D intervals to be used</span>
 <span class="sd">    :param parameter: astromodels parameter</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">intervals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">intervals</span><span class="p">)</span>
 
@@ -157,7 +157,7 @@
         <span class="n">is_2d</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;These intervals are not yet supported&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"These intervals are not yet supported"</span><span class="p">)</span>
 
     <span class="c1"># Copy the parameter values</span>
     <span class="n">parameter_min</span> <span class="o">=</span> <span class="n">parameter</span><span class="o">.</span><span class="n">min_value</span>
@@ -179,13 +179,13 @@
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">interval</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">intervals</span><span class="p">):</span>
             <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
 
-            <span class="n">func</span><span class="o">.</span><span class="n">free_parameters</span><span class="p">[</span><span class="s2">&quot;value_</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">initial_value</span>
-            <span class="n">func</span><span class="o">.</span><span class="n">free_parameters</span><span class="p">[</span><span class="s2">&quot;value_</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">min_value</span> <span class="o">=</span> <span class="n">parameter_min</span>
-            <span class="n">func</span><span class="o">.</span><span class="n">free_parameters</span><span class="p">[</span><span class="s2">&quot;value_</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">max_value</span> <span class="o">=</span> <span class="n">parameter_max</span>
+            <span class="n">func</span><span class="o">.</span><span class="n">free_parameters</span><span class="p">[</span><span class="s2">"value_</span><span class="si">%d</span><span class="s2">"</span> <span class="o">%</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">initial_value</span>
+            <span class="n">func</span><span class="o">.</span><span class="n">free_parameters</span><span class="p">[</span><span class="s2">"value_</span><span class="si">%d</span><span class="s2">"</span> <span class="o">%</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">min_value</span> <span class="o">=</span> <span class="n">parameter_min</span>
+            <span class="n">func</span><span class="o">.</span><span class="n">free_parameters</span><span class="p">[</span><span class="s2">"value_</span><span class="si">%d</span><span class="s2">"</span> <span class="o">%</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">max_value</span> <span class="o">=</span> <span class="n">parameter_max</span>
 
-            <span class="n">func</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;upper_bound_</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">interval</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">func</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"upper_bound_</span><span class="si">%d</span><span class="s2">"</span> <span class="o">%</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">interval</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
-            <span class="n">func</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;lower_bound_</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">interval</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">func</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"lower_bound_</span><span class="si">%d</span><span class="s2">"</span> <span class="o">%</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">interval</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># For 1-D intervals, just create a sum of delta functions</span>
@@ -200,11 +200,11 @@
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">interval</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">intervals</span><span class="p">):</span>
             <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
 
-            <span class="n">func</span><span class="o">.</span><span class="n">free_parameters</span><span class="p">[</span><span class="s2">&quot;value_</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">initial_value</span>
-            <span class="n">func</span><span class="o">.</span><span class="n">free_parameters</span><span class="p">[</span><span class="s2">&quot;value_</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">min_value</span> <span class="o">=</span> <span class="n">parameter_min</span>
-            <span class="n">func</span><span class="o">.</span><span class="n">free_parameters</span><span class="p">[</span><span class="s2">&quot;value_</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">max_value</span> <span class="o">=</span> <span class="n">parameter_max</span>
+            <span class="n">func</span><span class="o">.</span><span class="n">free_parameters</span><span class="p">[</span><span class="s2">"value_</span><span class="si">%d</span><span class="s2">"</span> <span class="o">%</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">initial_value</span>
+            <span class="n">func</span><span class="o">.</span><span class="n">free_parameters</span><span class="p">[</span><span class="s2">"value_</span><span class="si">%d</span><span class="s2">"</span> <span class="o">%</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">min_value</span> <span class="o">=</span> <span class="n">parameter_min</span>
+            <span class="n">func</span><span class="o">.</span><span class="n">free_parameters</span><span class="p">[</span><span class="s2">"value_</span><span class="si">%d</span><span class="s2">"</span> <span class="o">%</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">max_value</span> <span class="o">=</span> <span class="n">parameter_max</span>
 
-            <span class="n">func</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;zero_point_</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">interval</span>
+            <span class="n">func</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"zero_point_</span><span class="si">%d</span><span class="s2">"</span> <span class="o">%</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">interval</span>
 
     <span class="k">return</span> <span class="n">func</span></div>
 

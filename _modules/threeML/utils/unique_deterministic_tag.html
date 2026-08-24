@@ -118,15 +118,15 @@
 <div class="viewcode-block" id="get_unique_deterministic_tag">
 <a class="viewcode-back" href="../../../api/threeML.utils.html#threeML.utils.unique_deterministic_tag.get_unique_deterministic_tag">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_unique_deterministic_tag</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a hex string with a one to one correspondence with the given</span>
+<span class="w">    </span><span class="sd">"""Return a hex string with a one to one correspondence with the given</span>
 <span class="sd">    string.</span>
 
 <span class="sd">    :param string: a string</span>
 <span class="sd">    :return: a hex unique digest</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">try</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">"utf-8"</span><span class="p">))</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
 
     <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
         <span class="c1"># onyl instance when ther above will fail is when string is not a str</span>

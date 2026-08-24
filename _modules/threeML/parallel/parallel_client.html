@@ -137,7 +137,7 @@
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
-    <span class="n">DEVNULL</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">devnull</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span>
+    <span class="n">DEVNULL</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">devnull</span><span class="p">,</span> <span class="s2">"wb"</span><span class="p">)</span>
 
 <span class="c1"># Check whether we have a parallel system or not</span>
 
@@ -156,10 +156,10 @@
 <div class="viewcode-block" id="get_base_prefix_compat">
 <a class="viewcode-back" href="../../../api/threeML.parallel.html#threeML.parallel.parallel_client.get_base_prefix_compat">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_base_prefix_compat</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get base/real prefix, or sys.prefix if there is none.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Get base/real prefix, or sys.prefix if there is none."""</span>
     <span class="k">return</span> <span class="p">(</span>
-        <span class="nb">getattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s2">&quot;base_prefix&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="ow">or</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s2">&quot;real_prefix&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="nb">getattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s2">"base_prefix"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="ow">or</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s2">"real_prefix"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="ow">or</span> <span class="n">sys</span><span class="o">.</span><span class="n">prefix</span>
     <span class="p">)</span></div>
 
@@ -181,7 +181,7 @@
 
 <span class="c1"># Set up the warnings module to always display our custom warning (otherwise it would</span>
 <span class="c1"># only be displayed once)</span>
-<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;always&quot;</span><span class="p">,</span> <span class="n">NoParallelEnvironment</span><span class="p">)</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">"always"</span><span class="p">,</span> <span class="n">NoParallelEnvironment</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="parallel_computation">
@@ -192,13 +192,13 @@
     <span class="n">start_cluster</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">n_jobs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A context manager which turns on parallel execution temporarily.</span>
+<span class="w">    </span><span class="sd">"""A context manager which turns on parallel execution temporarily.</span>
 
 <span class="sd">    :param profile: the profile to use, if different from the default</span>
 <span class="sd">    :param start_cluster: True or False. Whether to start a new cluster.</span>
 <span class="sd">        If False, try to use an existing one for the same profile</span>
 <span class="sd">    :return:</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="c1"># Memorize the state of the use-parallel config</span>
 
@@ -216,9 +216,9 @@
         <span class="c1"># computation</span>
 
         <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-            <span class="s2">&quot;You requested parallel computation, but no parallel environment is &quot;</span>
-            <span class="s2">&quot;available. You need to install the ipyparallel package. Continuing with &quot;</span>
-            <span class="s2">&quot;serial computation...&quot;</span><span class="p">,</span>
+            <span class="s2">"You requested parallel computation, but no parallel environment is "</span>
+            <span class="s2">"available. You need to install the ipyparallel package. Continuing with "</span>
+            <span class="s2">"serial computation..."</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="n">threeML_config</span><span class="o">.</span><span class="n">parallel</span><span class="o">.</span><span class="n">use_parallel</span> <span class="o">=</span> <span class="kc">False</span>
@@ -238,33 +238,33 @@
 
         <span class="c1"># First find out path of ipcluster</span>
 
-        <span class="c1"># first let&#39;s see if we are in a virtaul env</span>
+        <span class="c1"># first let's see if we are in a virtaul env</span>
 
         <span class="k">if</span> <span class="n">in_virtualenv</span><span class="p">():</span>
-            <span class="n">ipcluster_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;bin&quot;</span> <span class="o">/</span> <span class="s2">&quot;ipcluster&quot;</span>
+            <span class="n">ipcluster_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span> <span class="o">/</span> <span class="s2">"bin"</span> <span class="o">/</span> <span class="s2">"ipcluster"</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="n">ipcluster_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;you are using the virtualenv </span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">prefix</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;but no ipcluster executable was found!&quot;</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"you are using the virtualenv </span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">prefix</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"but no ipcluster executable was found!"</span><span class="p">)</span>
 
-                <span class="n">ipcluster_path</span> <span class="o">=</span> <span class="n">shutil</span><span class="o">.</span><span class="n">which</span><span class="p">(</span><span class="s2">&quot;ipcluster&quot;</span><span class="p">)</span>
+                <span class="n">ipcluster_path</span> <span class="o">=</span> <span class="n">shutil</span><span class="o">.</span><span class="n">which</span><span class="p">(</span><span class="s2">"ipcluster"</span><span class="p">)</span>
 
-                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;using </span><span class="si">{</span><span class="n">ipcluster_path</span><span class="si">}</span><span class="s2"> instead&quot;</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"using </span><span class="si">{</span><span class="n">ipcluster_path</span><span class="si">}</span><span class="s2"> instead"</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">ipcluster_path</span> <span class="o">=</span> <span class="n">shutil</span><span class="o">.</span><span class="n">which</span><span class="p">(</span><span class="s2">&quot;ipcluster&quot;</span><span class="p">)</span>
+            <span class="n">ipcluster_path</span> <span class="o">=</span> <span class="n">shutil</span><span class="o">.</span><span class="n">which</span><span class="p">(</span><span class="s2">"ipcluster"</span><span class="p">)</span>
 
-        <span class="n">cmd_line</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">ipcluster_path</span><span class="p">),</span> <span class="s2">&quot;start&quot;</span><span class="p">]</span>
+        <span class="n">cmd_line</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">ipcluster_path</span><span class="p">),</span> <span class="s2">"start"</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="n">profile</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">cmd_line</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;--profile=</span><span class="si">{</span><span class="n">profile</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">cmd_line</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"--profile=</span><span class="si">{</span><span class="n">profile</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">n_jobs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">cmd_line</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;-n </span><span class="si">{</span><span class="n">n_jobs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">cmd_line</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"-n </span><span class="si">{</span><span class="n">n_jobs</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
         <span class="c1"># Start process asynchronously with Popen, suppressing all output</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting ipyparallel cluster with this command line:&quot;</span><span class="p">)</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cmd_line</span><span class="p">))</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Starting ipyparallel cluster with this command line:"</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cmd_line</span><span class="p">))</span>
 
         <span class="n">ipycluster_process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
             <span class="n">cmd_line</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">DEVNULL</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span>
@@ -278,13 +278,13 @@
                 <span class="n">view</span> <span class="o">=</span> <span class="n">rc</span><span class="p">[:]</span>
 
             <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;waiting on cluster to start&quot;</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"waiting on cluster to start"</span><span class="p">)</span>
                 <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
 
                 <span class="k">continue</span>
 
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">view</span><span class="p">)</span><span class="si">}</span><span class="s2"> engines are active&quot;</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">view</span><span class="p">)</span><span class="si">}</span><span class="s2"> engines are active"</span><span class="p">)</span>
 
                 <span class="k">break</span>
 
@@ -295,12 +295,12 @@
         <span class="k">finally</span><span class="p">:</span>
             <span class="c1"># This gets executed in any case, even if there is an exception</span>
             <span class="c1"># Shut down via Client API first so engines exit cleanly (avoid SIGTERM</span>
-            <span class="c1"># which causes &quot;Event loop stopped before Future completed&quot; in engine logs)</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Shutting down ipcluster...&quot;</span><span class="p">)</span>
+            <span class="c1"># which causes "Event loop stopped before Future completed" in engine logs)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Shutting down ipcluster..."</span><span class="p">)</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">rc</span><span class="o">.</span><span class="n">shutdown</span><span class="p">(</span><span class="n">hub</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">block</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Client shutdown failed (cluster may already be down): </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Client shutdown failed (cluster may already be down): </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
             <span class="c1"># If the process is still running (e.g. ipcluster parent), stop it</span>
             <span class="k">if</span> <span class="n">ipycluster_process</span><span class="o">.</span><span class="n">poll</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">ipycluster_process</span><span class="o">.</span><span class="n">send_signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGINT</span><span class="p">)</span>
@@ -333,21 +333,21 @@
 
     <span class="k">class</span><span class="w"> </span><span class="nc">ParallelClient</span><span class="p">(</span><span class="n">Client</span><span class="p">):</span>
         <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;Wrapper around the IPython Client class, which forces the use of</span>
+<span class="w">            </span><span class="sd">"""Wrapper around the IPython Client class, which forces the use of</span>
 <span class="sd">            dill for object serialization.</span>
 
 <span class="sd">            :param args: same as IPython Client</span>
 <span class="sd">            :param kwargs: same as IPython Client</span>
 <span class="sd">            :return:</span>
-<span class="sd">            &quot;&quot;&quot;</span>
+<span class="sd">            """</span>
 
             <span class="c1"># Just a wrapper around the IPython Client class</span>
             <span class="c1"># forcing the use of dill for object serialization</span>
             <span class="c1"># (more robust, and allows for serialization of class</span>
             <span class="c1"># methods)</span>
 
-            <span class="k">if</span> <span class="s2">&quot;profile&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;profile&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">parallel</span><span class="o">.</span><span class="n">profile_name</span>
+            <span class="k">if</span> <span class="s2">"profile"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">kwargs</span><span class="p">[</span><span class="s2">"profile"</span><span class="p">]</span> <span class="o">=</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">parallel</span><span class="o">.</span><span class="n">profile_name</span>
 
             <span class="nb">super</span><span class="p">(</span><span class="n">ParallelClient</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -364,7 +364,7 @@
         <span class="k">def</span><span class="w"> </span><span class="nf">_interactive_map</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">worker</span><span class="p">,</span> <span class="n">items_to_process</span><span class="p">,</span> <span class="n">ordered</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">chunk_size</span><span class="o">=</span><span class="kc">None</span>
         <span class="p">):</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;Subdivide the work among the active engines, taking care of</span>
+<span class="w">            </span><span class="sd">"""Subdivide the work among the active engines, taking care of</span>
 <span class="sd">            dividing it among them.</span>
 
 <span class="sd">            :param worker: the function to be applied</span>
@@ -377,7 +377,7 @@
 <span class="sd">                  process before reporting back. Use None for an</span>
 <span class="sd">                  automatic choice.</span>
 <span class="sd">            :return: a AsyncResult object</span>
-<span class="sd">            &quot;&quot;&quot;</span>
+<span class="sd">            """</span>
 
             <span class="c1"># Split the work evenly between the engines</span>
             <span class="n">n_total_engines</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_number_of_engines</span><span class="p">()</span>
@@ -387,7 +387,7 @@
             <span class="c1"># Get a load-balanced view with the appropriate number of engines</span>
 
             <span class="k">if</span> <span class="n">n_items</span> <span class="o">&lt;</span> <span class="n">n_total_engines</span><span class="p">:</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;More engines than items to process&quot;</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"More engines than items to process"</span><span class="p">)</span>
 
                 <span class="c1"># Limit the view to the needed engines</span>
 
@@ -420,9 +420,9 @@
 <div class="viewcode-block" id="ParallelClient.execute_with_progress_bar">
 <a class="viewcode-back" href="../../../api/threeML.parallel.html#threeML.parallel.parallel_client.ParallelClient.execute_with_progress_bar">[docs]</a>
         <span class="k">def</span><span class="w"> </span><span class="nf">execute_with_progress_bar</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span> <span class="n">worker</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="n">chunk_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;progress&quot;</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">worker</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="n">chunk_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"progress"</span>
         <span class="p">):</span>
-            <span class="c1"># Let&#39;s make a wrapper which will allow us to recover the order</span>
+            <span class="c1"># Let's make a wrapper which will allow us to recover the order</span>
             <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
                 <span class="nb">id</span><span class="p">,</span> <span class="n">item</span> <span class="o">=</span> <span class="n">x</span>
 
@@ -453,9 +453,9 @@
     <span class="k">class</span><span class="w"> </span><span class="nc">ParallelClient</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
         <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                <span class="s2">&quot;No parallel environment and attempted to use the ParallelClient class,&quot;</span>
-                <span class="s2">&quot; which should never happen. Please open an issue at &quot;</span>
-                <span class="s2">&quot;https://github.com/threeML/threeML/issues&quot;</span>
+                <span class="s2">"No parallel environment and attempted to use the ParallelClient class,"</span>
+                <span class="s2">" which should never happen. Please open an issue at "</span>
+                <span class="s2">"https://github.com/threeML/threeML/issues"</span>
             <span class="p">)</span></div>
 
 </pre></div>
