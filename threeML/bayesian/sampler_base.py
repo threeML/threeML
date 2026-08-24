@@ -288,10 +288,10 @@ class SamplerBase(metaclass=abc.ABCMeta):
         # self._update_free_parameters()
 
         if len(self._free_parameters) != len(trial_values):
-            msg = "Something is wrong. Number of free parameters\ndo not match the "
-            "number of trial values."
-
-            log.error(msg)
+            msg = (
+                "Something is wrong. Number of free parameters\ndo not match the "
+                + "number of trial values."
+            )
 
             raise AssertionError(msg)
 
@@ -437,6 +437,11 @@ class SamplerBase(metaclass=abc.ABCMeta):
             ]
 
             log.warning(f"Likelihood value is infinite for parameters: {params}")
+            vals = [
+                f"{d.name}: {v}"
+                for d, v in zip(self._data_list.values(), log_like_values)
+            ]
+            log.warning(f"Likelihood values for the individual plugins: {vals}")
 
             return -np.inf
 
@@ -500,7 +505,7 @@ class UnitCubeSampler(SamplerBase):
             return log_like
 
         # Now construct the prior
-        # MULTINEST priors are defined on the unit cube
+        # UnitCubeSampler priors are defined on the unit cube
         # and should return the value in the bounds... not the
         # probability. Therefore, we must make some transforms
 
