@@ -18,14 +18,6 @@ from threeML.io.network import internet_connection_is_active
 
 log = logging.getLogger(__name__)
 
-# Workaround to support astropy 4.1+
-astropy_old = True
-astropy_version = astropy.__version__
-if int(astropy_version[0]) == 4 and int(astropy_version[2]) >= 1:
-    astropy_old = False
-elif int(astropy_version[0]) >= 5:
-    astropy_old = False
-
 
 class ConeSearchFailed(RuntimeError):
     pass
@@ -115,15 +107,8 @@ class VirtualObservatoryCatalog(object):
 
                 str_df = pandas_df.select_dtypes([object])
 
-                if astropy_old:
-                    str_df = str_df.stack().str.decode("utf-8").unstack()
-
                 for col in str_df:
                     pandas_df[col] = str_df[col]
-
-                if astropy_old:
-                    new_index = [x.decode("utf-8") for x in pandas_df.index]
-                    pandas_df.index = new_index
 
                 self._last_query_results = pandas_df
 
