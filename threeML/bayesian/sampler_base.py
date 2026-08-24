@@ -375,7 +375,7 @@ class SamplerBase(metaclass=abc.ABCMeta):
                 # Old way; every dataset independendly - This is fine if the
                 # spectrum calc is fast.
 
-                for i, dataset in enumerate(self._data_list.values()):
+                for i, dataset in enumerate(list(self._data_list.values())):
                     log_like_values[i] = dataset.get_log_like()
 
             else:
