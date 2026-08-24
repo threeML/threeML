@@ -12,6 +12,7 @@ from threeML.catalogs.Swift import SwiftGRBCatalog
 from threeML.io.network import internet_connection_is_active
 from astropy.table import Table
 from astropy.coordinates.name_resolve import NameResolveError
+from astropy.coordinates import SkyCoord
 
 skip_if_internet_is_not_available = pytest.mark.skipif(
     not internet_connection_is_active(), reason="No active internet connection"
@@ -32,6 +33,16 @@ def test_gbm_catalog():
     assert gbm_catalog.dec_center == 0.0
     try:
         gbm_catalog.search_around_source("Crab", 5.0)
+    except NameResolveError:
+        pytest.skip(reason="Connection to Sesame failed")
+    try:
+        crab = SkyCoord.from_name("Crab")
+        gbm_catalog.search_around_source(crab, 5.0)
+    except NameResolveError:
+        pytest.skip(reason="Connection to Sesame failed")
+    try:
+        with pytest.warns(DeprecationWarning):
+            gbm_catalog.search_around_source(source_name="Crab", radius=5.0)
     except NameResolveError:
         pytest.skip(reason="Connection to Sesame failed")
 

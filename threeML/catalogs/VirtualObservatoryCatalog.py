@@ -31,19 +31,34 @@ class VirtualObservatoryCatalog(object):
 
         self._last_query_results = None
 
-    def search_around_source(self, source_name, radius):
+    def search_around_source(self, source=None, radius=None, **kwargs):
         """Search for sources around the named source. The coordinates of the
         provided source are resolved using the astropy.coordinates.name_resolve
         facility.
 
-        :param source_name: name of the source, like "Crab"
+        :param source: name of the source, like "Crab" or an astropy SkyCoord
         :param radius: radius of the search, in degrees
         :return: (ra, dec, table), where ra,dec are the coordinates of
             the source as resolved by astropy, and table is a table with
             the list of sources
         """
 
-        sky_coord = get_icrs_coordinates(source_name)
+        # support renamed keyword
+        if kwargs.get("source_name", None) is not None:
+            source = get_icrs_coordinates(source)
+            warnings.warn(
+                "The 'source_name' keyword in search_around_source is deprecated, use"
+                " 'source' instead",
+                DeprecationWarning,
+            )
+
+        if not isinstance(source, astropy.coordinates.SkyCoord):
+            sky_coord = get_icrs_coordinates(source)
+        else:
+            sky_coord = source
+
+        if radius is None:
+            raise ValueError("You need to provide a radius")
 
         ra, dec = (sky_coord.fk5.ra.value, sky_coord.fk5.dec.value)
 
