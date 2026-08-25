@@ -31,7 +31,7 @@ jobs:
              mamba-version: "2.5"
              architecture: x64 
              activate-environment: test_env
-             python-version: 3.11
+             python-version: 3.12
              channels: threeml, conda-forge, fermi
              environment-file: ci/environment.yml 
              use-only-tar-bz2: false
@@ -113,7 +113,7 @@ jobs:
           auto-update-conda: true
           auto-activate: false
           activate-environment: test_env
-          python-version: 3.11
+          python-version: 3.12
           channels: threeml, conda-forge, defaults
           environment-file: ci/environment_hal.yml
           use-only-tar-bz2: false
@@ -185,7 +185,7 @@ jobs:
           auto-activate: false
           miniforge-version: latest
           activate-environment: test_env
-          python-version: 3.11
+          python-version: 3.12
           channels: fermi, threeml, conda-forge, defaults
           environment-file: ci/environment_fermi.yml
           use-only-tar-bz2: false
@@ -264,7 +264,7 @@ jobs:
           auto-activate: false
           miniforge-version: latest
           activate-environment: test_env
-          python-version: 3.11
+          python-version: 3.12
           channels: threeml, conda-forge, defaults
           environment-file: ci/environment_xspec.yml
           use-only-tar-bz2: false
@@ -280,6 +280,7 @@ jobs:
       - name: Install the package
         shell: bash -l {0}
         run: |
+          mamba install -c threeml astromodels
           pip install --upgrade speclite
           if [[ "${ISDEV}" == "true" ]]; then
             mamba remove --force astromodels
@@ -337,7 +338,7 @@ jobs:
           auto-activate: false
           miniforge-version: latest
           activate-environment: test_env
-          python-version: 3.11
+          python-version: 3.12
           channels: threeml, conda-forge, defaults
           environment-file: ci/environment.yml
           use-only-tar-bz2: false
@@ -513,7 +514,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
-          python-version: 3.11
+          python-version: 3.12
 
       - name: Build the API doc
         run: |
@@ -567,7 +568,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
-          python-version: 3.11
+          python-version: 3.12
 
       - name: Install package
         run: |
