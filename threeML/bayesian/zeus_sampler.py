@@ -114,7 +114,7 @@ class ZeusSampler(MCMCSampler):
                     )
 
                     log.debug("Zeus run done")
-                    using_mpi = True
+                using_mpi = True
             elif threeML_config["parallel"]["use_parallel"]:
                 c = ParallelClient()
                 view = c[:]
@@ -140,7 +140,7 @@ class ZeusSampler(MCMCSampler):
                         self._n_iterations + self._n_burn_in,
                         progress=loud,
                     )
-                    using_mpi = True
+                using_mpi = True
 
             else:
                 sampler = zeus.EnsembleSampler(
