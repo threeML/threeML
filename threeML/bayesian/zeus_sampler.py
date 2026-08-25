@@ -1,6 +1,6 @@
 import logging
-from importlib.util import find_spec
 import multiprocessing as mp
+from importlib.util import find_spec
 
 import numpy as np
 from astromodels import use_astromodels_memoization
@@ -16,11 +16,20 @@ if find_spec("zeus") is not None:
     import zeus
 
     has_zeus = True
+
+_WORKER_SAMPLER = None
+
+
+def _worker_logprob(theta):
+    return _WORKER_SAMPLER.get_posterior(theta)
+
+
 has_mpi = False
 if find_spec("mpi4py") is not None:
-    from mpi4py.MPI import COMM_WORLD
+    from mpi4py import MPI
+    from zeus import ChainManager
 
-    comm = COMM_WORLD
+    comm = MPI.COMM_WORLD
     if comm.Get_size() > 1:
         has_mpi = True
 
@@ -86,24 +95,26 @@ class ZeusSampler(MCMCSampler):
         using_mpi = False
         with use_astromodels_memoization(False):
             if has_mpi:
-                with zeus.ChainManager(n_chains, use_dill=False) as cm:
+                global _WORKER_SAMPLER
+                _WORKER_SAMPLER = self
+
+                with ChainManager(n_chains) as cm:
+                    # Every rank already has self in memory
                     sampler = zeus.EnsembleSampler(
-                        logprob_fn=self.get_posterior,
                         nwalkers=self._n_walkers,
                         ndim=n_dim,
+                        logprob_fn=_worker_logprob,
                         pool=cm.get_pool,
-                        verbose=loud,
                     )
 
-                    # Run the true sampling
-                    log.debug("Start zeus run")
-                    using_mpi = True
-                    _ = sampler.run_mcmc(
+                    sampler.run_mcmc(
                         p0,
                         self._n_iterations + self._n_burn_in,
                         progress=loud,
                     )
+
                     log.debug("Zeus run done")
+                    using_mpi = True
             elif threeML_config["parallel"]["use_parallel"]:
                 c = ParallelClient()
                 view = c[:]
@@ -118,7 +129,7 @@ class ZeusSampler(MCMCSampler):
             elif self._sampler_kwargs.get("pool", None) is not None:
                 with mp.pool.Pool(int(self._sampler_kwargs.get("pool"))) as executor:
                     sampler = zeus.EnsembleSampler(
-                        logprob_fn=self.get_posterior,
+                        logprob_fn=self.get_posterior_proxy(),
                         nwalkers=self._n_walkers,
                         ndim=n_dim,
                         pool=executor,
@@ -133,7 +144,7 @@ class ZeusSampler(MCMCSampler):
 
             else:
                 sampler = zeus.EnsembleSampler(
-                    logprob_fn=self.get_posterior,
+                    logprob_fn=self.get_posterior_proxy(),
                     nwalkers=self._n_walkers,
                     ndim=n_dim,
                     verbose=loud,
