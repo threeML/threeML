@@ -119,7 +119,8 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">builtins</span><span class="w"> </span><span class="kn">import</span> <span class="nb">map</span><span class="p">,</span> <span class="nb">object</span><span class="p">,</span> <span class="nb">range</span><span class="p">,</span> <span class="nb">str</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">builtins</span><span class="w"> </span><span class="kn">import</span> <span class="nb">map</span><span class="p">,</span> <span class="nb">range</span><span class="p">,</span> <span class="nb">str</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">importlib.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_spec</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
@@ -216,7 +217,7 @@
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">data_tuple</span><span class="p">):</span>
         <span class="c1"># Init FITS extension</span>
 
-        <span class="nb">super</span><span class="p">(</span><span class="n">SEQUENCE</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">data_tuple</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_HEADER_KEYWORDS</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">data_tuple</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_HEADER_KEYWORDS</span><span class="p">)</span>
 
         <span class="c1"># Update keywords</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hdu</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">"SEQ_TYPE"</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
@@ -225,7 +226,7 @@
 
 <div class="viewcode-block" id="ANALYSIS_RESULTS_HDF">
 <a class="viewcode-back" href="../../api/threeML.html#threeML.analysis_results.ANALYSIS_RESULTS_HDF">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">ANALYSIS_RESULTS_HDF</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ANALYSIS_RESULTS_HDF</span><span class="p">:</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analysis_results</span><span class="p">,</span> <span class="n">hdf_obj</span><span class="p">):</span>
         <span class="n">optimized_model</span> <span class="o">=</span> <span class="n">analysis_results</span><span class="o">.</span><span class="n">optimized_model</span>
 
@@ -505,7 +506,7 @@
 
         <span class="c1"># Init FITS extension</span>
 
-        <span class="nb">super</span><span class="p">(</span><span class="n">ANALYSIS_RESULTS</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">data_tuple</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_HEADER_KEYWORDS</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">data_tuple</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_HEADER_KEYWORDS</span><span class="p">)</span>
 
         <span class="c1"># Update keywords with their values for this instance</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hdu</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">"MODEL"</span><span class="p">,</span> <span class="n">yaml_model_serialization</span><span class="p">)</span>
@@ -571,7 +572,7 @@
         <span class="n">extensions</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">results_ext</span><span class="p">)</span>
 
         <span class="c1"># Create FITS file</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">AnalysisResultsFITS</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">fits_extensions</span><span class="o">=</span><span class="n">extensions</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">fits_extensions</span><span class="o">=</span><span class="n">extensions</span><span class="p">)</span>
 
         <span class="c1"># Set a couple of keywords in the primary header</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_hdu_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">"DATE"</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">())</span>
@@ -583,7 +584,7 @@
 
 
 
-<span class="k">class</span><span class="w"> </span><span class="nc">_AnalysisResults</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_AnalysisResults</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""A unified class to store results from a maximum likelihood or a Bayesian</span>
 <span class="sd">    analysis, which provides a unique interface and allows for "error</span>
 <span class="sd">    propagation" (which means different things in the two contexts) in</span>
@@ -1079,7 +1080,7 @@
         <span class="n">statistical_measures</span><span class="p">,</span>
         <span class="n">log_probabilty</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">BayesianResults</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">optimized_model</span><span class="p">,</span>
             <span class="n">samples</span><span class="p">,</span>
             <span class="n">posterior_values</span><span class="p">,</span>
@@ -1327,7 +1328,7 @@
             <span class="n">i</span><span class="p">,</span>
             <span class="n">val</span><span class="p">,</span>
         <span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">labels</span><span class="p">):</span>
-            <span class="k">if</span> <span class="s2">"$"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="s2">"$"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">val</span><span class="p">:</span>
                 <span class="n">labels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"_"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
 
         <span class="n">samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_samples_transposed</span><span class="o">.</span><span class="n">T</span>
@@ -1454,7 +1455,7 @@
                 <span class="n">i</span><span class="p">,</span>
                 <span class="n">val</span><span class="p">,</span>
             <span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">labels_other</span><span class="p">):</span>
-                <span class="k">if</span> <span class="s2">"$"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">labels_other</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="s2">"$"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">val</span><span class="p">:</span>
                     <span class="n">labels_other</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"_"</span><span class="p">,</span> <span class="s2">" "</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -1489,7 +1490,7 @@
             <span class="n">i</span><span class="p">,</span>
             <span class="n">val</span><span class="p">,</span>
         <span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">labels</span><span class="p">):</span>
-            <span class="k">if</span> <span class="s2">"$"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="s2">"$"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">val</span><span class="p">:</span>
                 <span class="n">labels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"_"</span><span class="p">,</span> <span class="s2">" "</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -1786,62 +1787,68 @@
             <span class="c1"># Make a fake covariance matrix</span>
             <span class="n">covariance_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">expected_shape</span><span class="p">)</span>
 
-        <span class="c1"># Now reject the samples outside of the boundaries. If we reject more than 1% we</span>
-        <span class="c1"># warn the user</span>
+        <span class="c1"># Gather boundaries, replacing None/nan with -inf/inf</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">optimized_model</span><span class="o">.</span><span class="n">free_parameters</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="n">param_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">params</span><span class="p">]</span>
 
-        <span class="c1"># Gather boundaries</span>
-        <span class="c1"># NOTE: every None boundary will become nan thanks to the casting to float</span>
-        <span class="n">low_bounds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">x</span><span class="o">.</span><span class="n">_get_internal_min_value</span><span class="p">()</span>
-                <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">optimized_model</span><span class="o">.</span><span class="n">free_parameters</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-            <span class="p">],</span>
-            <span class="nb">float</span><span class="p">,</span>
+        <span class="n">low_bounds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">_get_internal_min_value</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">params</span><span class="p">],</span> <span class="nb">float</span><span class="p">)</span>
+        <span class="n">hi_bounds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">_get_internal_max_value</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">params</span><span class="p">],</span> <span class="nb">float</span><span class="p">)</span>
+
+        <span class="n">low_bounds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">low_bounds</span><span class="p">),</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">low_bounds</span><span class="p">)</span>
+        <span class="n">hi_bounds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">hi_bounds</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">hi_bounds</span><span class="p">)</span>
+
+        <span class="c1"># Vectorized boundary check</span>
+        <span class="n">to_be_kept_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">samples</span> <span class="o">&gt;=</span> <span class="n">low_bounds</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">samples</span> <span class="o">&lt;=</span> <span class="n">hi_bounds</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
         <span class="p">)</span>
-        <span class="n">hi_bounds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">x</span><span class="o">.</span><span class="n">_get_internal_max_value</span><span class="p">()</span>
-                <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">optimized_model</span><span class="o">.</span><span class="n">free_parameters</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-            <span class="p">],</span>
-            <span class="nb">float</span><span class="p">,</span>
-        <span class="p">)</span>
-
-        <span class="c1"># Fix all nans</span>
-        <span class="n">low_bounds</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">low_bounds</span><span class="p">)]</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
-        <span class="n">hi_bounds</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">hi_bounds</span><span class="p">)]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
-
-        <span class="n">to_be_kept_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">bool</span><span class="p">)</span>
-
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">sample</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">samples</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">sample</span> <span class="o">&gt;</span> <span class="n">hi_bounds</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">sample</span> <span class="o">&lt;</span> <span class="n">low_bounds</span><span class="p">):</span>
-                <span class="c1"># Remove this sample</span>
-                <span class="n">to_be_kept_mask</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
-
-        <span class="c1"># Compute how many samples we have removed</span>
-        <span class="n">n_removed_samples</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">to_be_kept_mask</span><span class="p">)</span>
-
-        <span class="c1"># Warn the user if more than 1% of the samples have been lost</span>
+        <span class="n">n_removed_samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">~</span><span class="n">to_be_kept_mask</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">n_removed_samples</span> <span class="o">&gt;</span> <span class="n">samples</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mf">100.0</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">"</span><span class="si">%s</span><span class="s2"> percent of samples have been thrown away because they failed the "</span>
-                <span class="s2">"constraints on the parameters. This results might not be suitable for "</span>
-                <span class="s2">"error propagation. Enlarge the boundaries until you loose less than 1 "</span>
-                <span class="s2">"percent of the samples."</span>
-                <span class="o">%</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">n_removed_samples</span><span class="p">)</span> <span class="o">/</span> <span class="n">samples</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mf">100.0</span><span class="p">)</span>
+            <span class="n">discarded</span> <span class="o">=</span> <span class="n">samples</span><span class="p">[</span><span class="o">~</span><span class="n">to_be_kept_mask</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+            <span class="c1"># Transform discarded samples to external space for reporting</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">parameter</span><span class="o">.</span><span class="n">has_transformation</span><span class="p">():</span>
+                    <span class="n">discarded</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">parameter</span><span class="o">.</span><span class="n">transformation</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">discarded</span><span class="p">[:,</span> <span class="n">i</span><span class="p">])</span>
+
+            <span class="c1"># Also transform bounds to external space</span>
+            <span class="n">ext_low</span> <span class="o">=</span> <span class="n">low_bounds</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">ext_hi</span> <span class="o">=</span> <span class="n">hi_bounds</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">parameter</span><span class="o">.</span><span class="n">has_transformation</span><span class="p">():</span>
+                    <span class="n">ext_low</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">parameter</span><span class="o">.</span><span class="n">transformation</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">low_bounds</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                    <span class="n">ext_hi</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">parameter</span><span class="o">.</span><span class="n">transformation</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">hi_bounds</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                    <span class="c1"># Ensure low &lt;= hi after transformation</span>
+                    <span class="k">if</span> <span class="n">ext_low</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">ext_hi</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                        <span class="n">ext_low</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">ext_hi</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">ext_hi</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">ext_low</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+            <span class="n">means</span> <span class="o">=</span> <span class="n">discarded</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">stds</span> <span class="o">=</span> <span class="n">discarded</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+            <span class="n">summary</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: mean=</span><span class="si">{</span><span class="n">m</span><span class="si">:</span><span class="s2">.4g</span><span class="si">}</span><span class="s2">, std=</span><span class="si">{</span><span class="n">s</span><span class="si">:</span><span class="s2">.4g</span><span class="si">}</span><span class="s2">, bounds=[</span><span class="si">{</span><span class="n">lo</span><span class="si">:</span><span class="s2">.4g</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">hi</span><span class="si">:</span><span class="s2">.4g</span><span class="si">}</span><span class="s2">]"</span>
+                <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">param_names</span><span class="p">,</span> <span class="n">means</span><span class="p">,</span> <span class="n">stds</span><span class="p">,</span> <span class="n">ext_low</span><span class="p">,</span> <span class="n">ext_hi</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="ne">UserWarning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">n_removed_samples</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">samples</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">100.0</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">% of samples "</span>
+                    <span class="s2">"have been thrown away because they failed the constraints on the "</span>
+                    <span class="s2">"parameters. This result might not be suitable for error "</span>
+                    <span class="s2">"propagation. Enlarge the boundaries until you lose less than 1</span><span class="si">% o</span><span class="s2">f"</span>
+                    <span class="s2">"the samples.</span><span class="se">\n</span><span class="s2">Discarded samples in excluded parameter space "</span>
+                    <span class="sa">f</span><span class="s2">"(</span><span class="si">{</span><span class="n">n_removed_samples</span><span class="si">}</span><span class="s2"> samples):</span><span class="se">\n</span><span class="si">{</span><span class="n">summary</span><span class="si">}</span><span class="s2">"</span>
+                <span class="p">)</span>
             <span class="p">)</span>
 
-        <span class="c1"># Now remove them</span>
-        <span class="n">samples</span> <span class="o">=</span> <span class="n">samples</span><span class="p">[</span><span class="n">to_be_kept_mask</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">samples</span> <span class="o">=</span> <span class="n">samples</span><span class="p">[</span><span class="n">to_be_kept_mask</span><span class="p">]</span>
 
-        <span class="c1"># Now transform in the external space</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">optimized_model</span><span class="o">.</span><span class="n">free_parameters</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+        <span class="c1"># Transform to external space</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">parameter</span><span class="o">.</span><span class="n">has_transformation</span><span class="p">():</span>
                 <span class="n">samples</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">parameter</span><span class="o">.</span><span class="n">transformation</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">samples</span><span class="p">[:,</span> <span class="n">i</span><span class="p">])</span>
-
         <span class="c1"># Finally build the class</span>
 
-        <span class="nb">super</span><span class="p">(</span><span class="n">MLEResults</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">optimized_model</span><span class="p">,</span>
             <span class="n">samples</span><span class="p">,</span>
             <span class="n">likelihood_values</span><span class="p">,</span>
