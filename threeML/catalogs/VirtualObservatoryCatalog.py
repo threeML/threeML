@@ -45,7 +45,7 @@ class VirtualObservatoryCatalog(object):
 
         # support renamed keyword
         if kwargs.get("source_name", None) is not None:
-            source = get_icrs_coordinates(source)
+            source = get_icrs_coordinates(kwargs.get("source_name"))
             warnings.warn(
                 "The 'source_name' keyword in search_around_source is deprecated, use"
                 " 'source' instead",
