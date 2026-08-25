@@ -72,7 +72,7 @@ jobs:
 
                   pip install -e .
               env:
-                  ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
+                  ISDEV: ${{ github.ref == 'refs/heads/dev' || github.base_ref == 'dev' || github.head_ref == 'dev' }}
             - name: Lint with flake8
               run: |
                   flake8 . --count --show-source --statistics
@@ -166,7 +166,7 @@ jobs:
                   miniforge-version: latest
                   mamba-version: "2.5"
               env:
-                  ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
+                  ISDEV: ${{ github.ref == 'refs/heads/dev' || github.base_ref == 'dev' || github.head_ref == 'dev' }}
                   ENV_FILE: >-
                     ${{ 
                       matrix.os == 'ubuntu-24.04-arm' && 'ci/environment_aarch64.yml' ||
@@ -189,7 +189,7 @@ jobs:
                       fi
                   fi
               env:
-                  ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
+                  ISDEV: ${{ github.ref == 'refs/heads/dev' || github.base_ref == 'dev' || github.head_ref == 'dev' }}
             - name: Conda list
               shell: bash -l {0}
               run: |

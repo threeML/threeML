@@ -33,6 +33,7 @@ jobs:
              activate-environment: test_env
              python-version: 3.12
              channels: threeml, conda-forge, fermi
+             channels-priority: strict
              environment-file: ci/environment.yml 
              use-only-tar-bz2: false
              miniforge-version: latest
@@ -59,7 +60,7 @@ jobs:
           fi
           pip install -e .
         env:
-          ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
+          ISDEV: ${{ github.ref == 'refs/heads/dev' || github.base_ref == 'dev' || github.head_ref == 'dev' }}
       - name: Conda list
         shell: bash -l {0}
         run: |
@@ -115,6 +116,7 @@ jobs:
           activate-environment: test_env
           python-version: 3.12
           channels: threeml, conda-forge, defaults
+          channels-priority: strict
           environment-file: ci/environment_hal.yml
           use-only-tar-bz2: false
           architecture: "x64"
@@ -139,7 +141,7 @@ jobs:
           fi
           pip install -e .
         env:
-          ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
+          ISDEV: ${{ github.ref == 'refs/heads/dev' || github.base_ref == 'dev' || github.head_ref == 'dev' }}
       - name: Execute the notebooks
         shell: bash -l {0}
         run: |
@@ -187,6 +189,7 @@ jobs:
           activate-environment: test_env
           python-version: 3.12
           channels: fermi, threeml, conda-forge, defaults
+          channels-priority: strict
           environment-file: ci/environment_fermi.yml
           use-only-tar-bz2: false
           architecture: "x64"
@@ -209,7 +212,7 @@ jobs:
           fi
           pip install -e .
         env:
-          ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
+          ISDEV: ${{ github.ref == 'refs/heads/dev' || github.base_ref == 'dev' || github.head_ref == 'dev' }}
 
       - name: Execute the notebooks
         shell: bash -l {0}
@@ -266,6 +269,7 @@ jobs:
           activate-environment: test_env
           python-version: 3.12
           channels: threeml, conda-forge, defaults
+          channels-priority: strict
           environment-file: ci/environment_xspec.yml
           use-only-tar-bz2: false
           architecture: x64
@@ -280,7 +284,7 @@ jobs:
       - name: Install the package
         shell: bash -l {0}
         run: |
-          mamba install -c threeml astromodels
+          mamba install -c threeml astromodels --override-channels --force-reinstall
           pip install --upgrade speclite
           if [[ "${ISDEV}" == "true" ]]; then
             mamba remove --force astromodels
@@ -288,7 +292,7 @@ jobs:
           fi
           pip install -e .
         env:
-          ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
+          ISDEV: ${{ github.ref == 'refs/heads/dev' || github.base_ref == 'dev' || github.head_ref == 'dev' }}
       - name: Execute the notebooks
         shell: bash -l {0}
         run: |
@@ -340,6 +344,7 @@ jobs:
           activate-environment: test_env
           python-version: 3.12
           channels: threeml, conda-forge, defaults
+          channels-priority: strict
           environment-file: ci/environment.yml
           use-only-tar-bz2: false
           architecture: "x64"
@@ -375,7 +380,7 @@ jobs:
           fi
           pip install -e .
         env:
-          ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
+          ISDEV: ${{ github.ref == 'refs/heads/dev' || github.base_ref == 'dev' || github.head_ref == 'dev' }}
 
       - name: Execute the notebooks
         shell: bash -l {0}
@@ -596,7 +601,7 @@ jobs:
           rm -rf docs/md_docs/*
 
         env:
-          ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
+          ISDEV: ${{ github.ref == 'refs/heads/dev' || github.base_ref == 'dev' || github.head_ref == 'dev' }}
 
       - name: Set commit sha for RTD
         id: set_commit_sha
