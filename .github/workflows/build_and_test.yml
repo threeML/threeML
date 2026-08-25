@@ -188,6 +188,7 @@ jobs:
                         mamba install -c conda-forge ultranest
                       fi
                   fi
+                  pip install --upgrade --no-deps fermipy
               env:
                   ISDEV: ${{ github.ref == 'refs/heads/dev' || github.base_ref == 'dev' || github.head_ref == 'dev' }}
             - name: Conda list
