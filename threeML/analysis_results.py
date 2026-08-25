@@ -5,7 +5,8 @@ import inspect
 import logging
 import math
 import os
-from builtins import map, object, range, str
+import warnings
+from builtins import map, range, str
 from importlib.util import find_spec
 from pathlib import Path
 from typing import Dict, List, Optional
@@ -100,13 +101,13 @@ class SEQUENCE(FITSExtension):
     def __init__(self, name, data_tuple):
         # Init FITS extension
 
-        super(SEQUENCE, self).__init__(data_tuple, self._HEADER_KEYWORDS)
+        super().__init__(data_tuple, self._HEADER_KEYWORDS)
 
         # Update keywords
         self.hdu.header.set("SEQ_TYPE", name)
 
 
-class ANALYSIS_RESULTS_HDF(object):
+class ANALYSIS_RESULTS_HDF:
     def __init__(self, analysis_results, hdf_obj):
         optimized_model = analysis_results.optimized_model
 
@@ -383,7 +384,7 @@ class ANALYSIS_RESULTS(FITSExtension):
 
         # Init FITS extension
 
-        super(ANALYSIS_RESULTS, self).__init__(data_tuple, self._HEADER_KEYWORDS)
+        super().__init__(data_tuple, self._HEADER_KEYWORDS)
 
         # Update keywords with their values for this instance
         self.hdu.header.set("MODEL", yaml_model_serialization)
@@ -446,7 +447,7 @@ class AnalysisResultsFITS(FITSFile):
         extensions.extend(results_ext)
 
         # Create FITS file
-        super(AnalysisResultsFITS, self).__init__(fits_extensions=extensions)
+        super().__init__(fits_extensions=extensions)
 
         # Set a couple of keywords in the primary header
         self._hdu_list[0].header.set("DATE", datetime.datetime.now().isoformat())
@@ -457,7 +458,7 @@ class AnalysisResultsFITS(FITSFile):
         )
 
 
-class _AnalysisResults(object):
+class _AnalysisResults:
     """A unified class to store results from a maximum likelihood or a Bayesian
     analysis, which provides a unique interface and allows for "error
     propagation" (which means different things in the two contexts) in
@@ -951,7 +952,7 @@ class BayesianResults(_AnalysisResults):
         statistical_measures,
         log_probabilty,
     ):
-        super(BayesianResults, self).__init__(
+        super().__init__(
             optimized_model,
             samples,
             posterior_values,
@@ -1185,7 +1186,7 @@ class BayesianResults(_AnalysisResults):
             i,
             val,
         ) in enumerate(labels):
-            if "$" not in labels[i]:
+            if "$" not in val:
                 labels[i] = val.replace("_", "")
 
         samples = self._samples_transposed.T
@@ -1309,7 +1310,7 @@ class BayesianResults(_AnalysisResults):
                 i,
                 val,
             ) in enumerate(labels_other):
-                if "$" not in labels_other[i]:
+                if "$" not in val:
                     labels_other[i] = val.replace("_", " ")
 
             if names is not None:
@@ -1344,7 +1345,7 @@ class BayesianResults(_AnalysisResults):
             i,
             val,
         ) in enumerate(labels):
-            if "$" not in labels[i]:
+            if "$" not in val:
                 labels[i] = val.replace("_", " ")
 
         if names is not None:
@@ -1622,62 +1623,68 @@ class MLEResults(_AnalysisResults):
             # Make a fake covariance matrix
             covariance_matrix = np.zeros(expected_shape)
 
-        # Now reject the samples outside of the boundaries. If we reject more than 1% we
-        # warn the user
+        # Gather boundaries, replacing None/nan with -inf/inf
+        params = list(optimized_model.free_parameters.values())
+        param_names = [p.name for p in params]
 
-        # Gather boundaries
-        # NOTE: every None boundary will become nan thanks to the casting to float
-        low_bounds = np.array(
-            [
-                x._get_internal_min_value()
-                for x in list(optimized_model.free_parameters.values())
-            ],
-            float,
+        low_bounds = np.array([x._get_internal_min_value() for x in params], float)
+        hi_bounds = np.array([x._get_internal_max_value() for x in params], float)
+
+        low_bounds = np.where(np.isnan(low_bounds), -np.inf, low_bounds)
+        hi_bounds = np.where(np.isnan(hi_bounds), np.inf, hi_bounds)
+
+        # Vectorized boundary check
+        to_be_kept_mask = np.all(
+            (samples >= low_bounds) & (samples <= hi_bounds), axis=1
         )
-        hi_bounds = np.array(
-            [
-                x._get_internal_max_value()
-                for x in list(optimized_model.free_parameters.values())
-            ],
-            float,
-        )
-
-        # Fix all nans
-        low_bounds[np.isnan(low_bounds)] = -np.inf
-        hi_bounds[np.isnan(hi_bounds)] = np.inf
-
-        to_be_kept_mask = np.ones(samples.shape[0], bool)
-
-        for i, sample in enumerate(samples):
-            if np.any(sample > hi_bounds) or np.any(sample < low_bounds):
-                # Remove this sample
-                to_be_kept_mask[i] = False
-
-        # Compute how many samples we have removed
-        n_removed_samples = samples.shape[0] - np.sum(to_be_kept_mask)
-
-        # Warn the user if more than 1% of the samples have been lost
+        n_removed_samples = np.sum(~to_be_kept_mask)
 
         if n_removed_samples > samples.shape[0] / 100.0:
-            log.warning(
-                "%s percent of samples have been thrown away because they failed the "
-                "constraints on the parameters. This results might not be suitable for "
-                "error propagation. Enlarge the boundaries until you loose less than 1 "
-                "percent of the samples."
-                % (float(n_removed_samples) / samples.shape[0] * 100.0)
+            discarded = samples[~to_be_kept_mask].copy()
+
+            # Transform discarded samples to external space for reporting
+            for i, parameter in enumerate(params):
+                if parameter.has_transformation():
+                    discarded[:, i] = parameter.transformation.backward(discarded[:, i])
+
+            # Also transform bounds to external space
+            ext_low = low_bounds.copy()
+            ext_hi = hi_bounds.copy()
+            for i, parameter in enumerate(params):
+                if parameter.has_transformation():
+                    ext_low[i] = parameter.transformation.backward(low_bounds[i])
+                    ext_hi[i] = parameter.transformation.backward(hi_bounds[i])
+                    # Ensure low <= hi after transformation
+                    if ext_low[i] > ext_hi[i]:
+                        ext_low[i], ext_hi[i] = ext_hi[i], ext_low[i]
+
+            means = discarded.mean(axis=0)
+            stds = discarded.std(axis=0)
+
+            summary = "\n".join(
+                f"  {name}: mean={m:.4g}, std={s:.4g}, bounds=[{lo:.4g}, {hi:.4g}]"
+                for name, m, s, lo, hi in zip(param_names, means, stds, ext_low, ext_hi)
+            )
+            warnings.warn(
+                UserWarning(
+                    f"{n_removed_samples / samples.shape[0] * 100.0:.1f}% of samples "
+                    "have been thrown away because they failed the constraints on the "
+                    "parameters. This result might not be suitable for error "
+                    "propagation. Enlarge the boundaries until you lose less than 1% of"
+                    "the samples.\nDiscarded samples in excluded parameter space "
+                    f"({n_removed_samples} samples):\n{summary}"
+                )
             )
 
-        # Now remove them
-        samples = samples[to_be_kept_mask, :]
+        samples = samples[to_be_kept_mask]
 
-        # Now transform in the external space
-        for i, parameter in enumerate(optimized_model.free_parameters.values()):
+        # Transform to external space
+        for i, parameter in enumerate(params):
             if parameter.has_transformation():
                 samples[:, i] = parameter.transformation.backward(samples[:, i])
-
         # Finally build the class
 
-        super(MLEResults, self).__init__(
+        super().__init__(
             optimized_model,
             samples,
             likelihood_values,
