@@ -7,7 +7,6 @@ from astromodels import use_astromodels_memoization
 
 from threeML.bayesian.sampler_base import MCMCSampler
 from threeML.config.config import threeML_config
-
 from threeML.parallel.parallel_client import ParallelClient
 
 log = logging.getLogger(__name__)
@@ -127,18 +126,23 @@ class ZeusSampler(MCMCSampler):
                     verbose=loud,
                 )
             elif self._sampler_kwargs.get("pool", None) is not None:
+                _WORKER_SAMPLER = self
+
                 with mp.pool.Pool(int(self._sampler_kwargs.get("pool"))) as executor:
+                    self._sampler_kwargs.pop("pool")
                     sampler = zeus.EnsembleSampler(
-                        logprob_fn=self.get_posterior_proxy(),
+                        logprob_fn=_worker_logprob,
                         nwalkers=self._n_walkers,
                         ndim=n_dim,
                         pool=executor,
                         verbose=loud,
+                        **self._sampler_kwargs,
                     )
                     sampler.run_mcmc(
                         p0,
                         self._n_iterations + self._n_burn_in,
                         progress=loud,
+                        **kwargs,
                     )
                     using_mpi = True
 
@@ -148,14 +152,14 @@ class ZeusSampler(MCMCSampler):
                     nwalkers=self._n_walkers,
                     ndim=n_dim,
                     verbose=loud,
-                    **kwargs,
+                    **self._sampler_kwargs,
                 )
 
             # Sample the burn-in
             if not using_mpi:
                 log.debug("Start zeus run")
                 _ = sampler.run_mcmc(
-                    p0, self._n_iterations + self._n_burn_in, progress=loud
+                    p0, self._n_iterations + self._n_burn_in, progress=loud, **kwargs
                 )
                 log.debug("Zeus run done")
 
