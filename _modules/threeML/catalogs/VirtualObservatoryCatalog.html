@@ -166,7 +166,7 @@
 
         <span class="c1"># support renamed keyword</span>
         <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"source_name"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">source</span> <span class="o">=</span> <span class="n">get_icrs_coordinates</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+            <span class="n">source</span> <span class="o">=</span> <span class="n">get_icrs_coordinates</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"source_name"</span><span class="p">))</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
                 <span class="s2">"The 'source_name' keyword in search_around_source is deprecated, use"</span>
                 <span class="s2">" 'source' instead"</span><span class="p">,</span>

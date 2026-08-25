@@ -2,7 +2,7 @@
  "cells": [
   {
    "cell_type": "markdown",
-   "id": "c5042957",
+   "id": "81a5fff3",
    "metadata": {},
    "source": [
     "# Building Custom Plugins\n"
@@ -11,13 +11,13 @@
   {
    "cell_type": "code",
    "execution_count": 1,
-   "id": "05d82910",
+   "id": "f414ecb9",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2026-08-25T00:21:24.838170Z",
-     "iopub.status.busy": "2026-08-25T00:21:24.838017Z",
-     "iopub.status.idle": "2026-08-25T00:21:24.882966Z",
-     "shell.execute_reply": "2026-08-25T00:21:24.882253Z"
+     "iopub.execute_input": "2026-08-25T19:56:05.988775Z",
+     "iopub.status.busy": "2026-08-25T19:56:05.988599Z",
+     "iopub.status.idle": "2026-08-25T19:56:06.034781Z",
+     "shell.execute_reply": "2026-08-25T19:56:06.034009Z"
     },
     "lines_to_next_cell": 2
    },
@@ -44,7 +44,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "7a5c4a5b",
+   "id": "2558ee0a",
    "metadata": {},
    "source": [
     "The 3ML instrument/data philosophy focuses on the abstraction of the data to likelihood interface. Rather than placing square pegs in round holes by enforcing a common, restrictive data format, 3ML provides an interface that takes a model and returns the likelhood value of that model with its current parameter values.\n",
@@ -58,7 +58,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "aec2351b",
+   "id": "953ef52a",
    "metadata": {},
    "source": [
     "## The PluginPrototype class\n",
@@ -68,7 +68,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "01817e1d",
+   "id": "ad175ce8",
    "metadata": {},
    "source": [
     "```\n",
@@ -228,7 +228,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "db1283f2",
+   "id": "ae98279a",
    "metadata": {},
    "source": [
     "### Unique Properties\n",
@@ -253,13 +253,13 @@
   {
    "cell_type": "code",
    "execution_count": 2,
-   "id": "26565aab",
+   "id": "b6e7a20e",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2026-08-25T00:21:24.884593Z",
-     "iopub.status.busy": "2026-08-25T00:21:24.884376Z",
-     "iopub.status.idle": "2026-08-25T00:21:28.651220Z",
-     "shell.execute_reply": "2026-08-25T00:21:28.650410Z"
+     "iopub.execute_input": "2026-08-25T19:56:06.036320Z",
+     "iopub.status.busy": "2026-08-25T19:56:06.036111Z",
+     "iopub.status.idle": "2026-08-25T19:56:10.287686Z",
+     "shell.execute_reply": "2026-08-25T19:56:10.286909Z"
     }
    },
    "outputs": [],
@@ -270,7 +270,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "f739506f",
+   "id": "543dadf4",
    "metadata": {
     "lines_to_next_cell": 2
    },
@@ -281,13 +281,13 @@
   {
    "cell_type": "code",
    "execution_count": 3,
-   "id": "f45162ff",
+   "id": "02e141b4",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2026-08-25T00:21:28.652840Z",
-     "iopub.status.busy": "2026-08-25T00:21:28.652535Z",
-     "iopub.status.idle": "2026-08-25T00:21:28.655290Z",
-     "shell.execute_reply": "2026-08-25T00:21:28.654586Z"
+     "iopub.execute_input": "2026-08-25T19:56:10.289897Z",
+     "iopub.status.busy": "2026-08-25T19:56:10.289075Z",
+     "iopub.status.idle": "2026-08-25T19:56:10.292471Z",
+     "shell.execute_reply": "2026-08-25T19:56:10.291766Z"
     }
    },
    "outputs": [],
@@ -300,13 +300,13 @@
   {
    "cell_type": "code",
    "execution_count": 4,
-   "id": "798acf69",
+   "id": "5482dabf",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2026-08-25T00:21:28.656564Z",
-     "iopub.status.busy": "2026-08-25T00:21:28.656383Z",
-     "iopub.status.idle": "2026-08-25T00:21:28.659578Z",
-     "shell.execute_reply": "2026-08-25T00:21:28.658818Z"
+     "iopub.execute_input": "2026-08-25T19:56:10.293758Z",
+     "iopub.status.busy": "2026-08-25T19:56:10.293609Z",
+     "iopub.status.idle": "2026-08-25T19:56:10.296546Z",
+     "shell.execute_reply": "2026-08-25T19:56:10.295906Z"
     }
    },
    "outputs": [
@@ -314,7 +314,7 @@
      "name": "stdout",
      "output_type": "stream",
      "text": [
-      "Can't instantiate abstract class BadPlugin with abstract methods get_log_like, inner_fit, set_model\n"
+      "Can't instantiate abstract class BadPlugin without an implementation for abstract methods 'get_log_like', 'inner_fit', 'set_model'\n"
      ]
     }
    ],
@@ -328,7 +328,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "c66710a2",
+   "id": "5f69279e",
    "metadata": {},
    "source": [
     "So, let's instead build a proper plugin"
@@ -337,13 +337,13 @@
   {
    "cell_type": "code",
    "execution_count": 5,
-   "id": "68ae0c03",
+   "id": "f9f404e8",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2026-08-25T00:21:28.660868Z",
-     "iopub.status.busy": "2026-08-25T00:21:28.660726Z",
-     "iopub.status.idle": "2026-08-25T00:21:28.665296Z",
-     "shell.execute_reply": "2026-08-25T00:21:28.664587Z"
+     "iopub.execute_input": "2026-08-25T19:56:10.298041Z",
+     "iopub.status.busy": "2026-08-25T19:56:10.297867Z",
+     "iopub.status.idle": "2026-08-25T19:56:10.301556Z",
+     "shell.execute_reply": "2026-08-25T19:56:10.300915Z"
     }
    },
    "outputs": [],
@@ -394,13 +394,13 @@
   {
    "cell_type": "code",
    "execution_count": 6,
-   "id": "27cff9bd",
+   "id": "a4d4e5c0",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2026-08-25T00:21:28.666592Z",
-     "iopub.status.busy": "2026-08-25T00:21:28.666424Z",
-     "iopub.status.idle": "2026-08-25T00:21:28.669280Z",
-     "shell.execute_reply": "2026-08-25T00:21:28.668367Z"
+     "iopub.execute_input": "2026-08-25T19:56:10.303026Z",
+     "iopub.status.busy": "2026-08-25T19:56:10.302852Z",
+     "iopub.status.idle": "2026-08-25T19:56:10.305374Z",
+     "shell.execute_reply": "2026-08-25T19:56:10.304787Z"
     }
    },
    "outputs": [],
@@ -411,13 +411,13 @@
   {
    "cell_type": "code",
    "execution_count": 7,
-   "id": "93e0a27e",
+   "id": "3ee87079",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2026-08-25T00:21:28.670524Z",
-     "iopub.status.busy": "2026-08-25T00:21:28.670340Z",
-     "iopub.status.idle": "2026-08-25T00:21:28.673596Z",
-     "shell.execute_reply": "2026-08-25T00:21:28.672927Z"
+     "iopub.execute_input": "2026-08-25T19:56:10.306891Z",
+     "iopub.status.busy": "2026-08-25T19:56:10.306742Z",
+     "iopub.status.idle": "2026-08-25T19:56:10.310035Z",
+     "shell.execute_reply": "2026-08-25T19:56:10.309336Z"
     }
    },
    "outputs": [
@@ -439,13 +439,13 @@
   {
    "cell_type": "code",
    "execution_count": 8,
-   "id": "c212c03e",
+   "id": "a0822117",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2026-08-25T00:21:28.674803Z",
-     "iopub.status.busy": "2026-08-25T00:21:28.674662Z",
-     "iopub.status.idle": "2026-08-25T00:21:28.677914Z",
-     "shell.execute_reply": "2026-08-25T00:21:28.677237Z"
+     "iopub.execute_input": "2026-08-25T19:56:10.311311Z",
+     "iopub.status.busy": "2026-08-25T19:56:10.311148Z",
+     "iopub.status.idle": "2026-08-25T19:56:10.314529Z",
+     "shell.execute_reply": "2026-08-25T19:56:10.313840Z"
     }
    },
    "outputs": [
@@ -467,13 +467,13 @@
   {
    "cell_type": "code",
    "execution_count": 9,
-   "id": "f51e3fa8",
+   "id": "9a3776ba",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2026-08-25T00:21:28.679364Z",
-     "iopub.status.busy": "2026-08-25T00:21:28.679213Z",
-     "iopub.status.idle": "2026-08-25T00:21:28.682659Z",
-     "shell.execute_reply": "2026-08-25T00:21:28.681902Z"
+     "iopub.execute_input": "2026-08-25T19:56:10.315844Z",
+     "iopub.status.busy": "2026-08-25T19:56:10.315698Z",
+     "iopub.status.idle": "2026-08-25T19:56:10.318868Z",
+     "shell.execute_reply": "2026-08-25T19:56:10.318138Z"
     }
    },
    "outputs": [
@@ -496,7 +496,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "09a4081f",
+   "id": "9888dc84",
    "metadata": {},
    "source": [
     "While our plugin is not very useful, we can now see how to build a plugin. Examine the source code of other plugins that are provided. Figure out how to interface your instrument's model evaluation and likelihood computation to python and place these methods inside your plugin class. We have taken care of the rest."
@@ -522,7 +522,7 @@
    "name": "python",
    "nbconvert_exporter": "python",
    "pygments_lexer": "ipython3",
-   "version": "3.11.16"
+   "version": "3.12.14"
   }
  },
  "nbformat": 4,
