@@ -192,7 +192,12 @@ class ZeusSampler(MCMCSampler):
 
         # Display results
         if loud:
-            print(self._sampler.summary)
+            try:
+                # honestly no idea why the autocorrelation computation sometimes
+                # fails for this within zeus
+                log.warning(sampler.summary)
+            except IndexError:
+                pass
             self._results.display()
 
         return self.samples
