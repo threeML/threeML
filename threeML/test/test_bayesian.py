@@ -297,7 +297,7 @@ def test_pocomc(bayes_fitter, completed_bn090217206_bayesian_analysis):
     bayes.set_sampler("pocomc")
     assert bayes.sample() is None
 
-    bayes.sampler.setup(n_effective=1024, precondition=False)
+    bayes.sampler.setup()
 
     bayes.sample()
 
