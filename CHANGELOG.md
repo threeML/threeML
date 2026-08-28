@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v2.6
+### [v2.6.1](https://github.com/threeML/threeML/tree/v2.6.1) (2026-08-28)
+
+[Full Changelog](https://github.com/threeML/threeML/compare/v2.5.0...v2.6.1)
+
+**Closed issues:**
+
+- \[DOCS\] logging documentation is outdated [\#681](https://github.com/threeML/threeML/issues/681)
+- WARNING message about JointLikelihood [\#675](https://github.com/threeML/threeML/issues/675)
+- Questions regarding Bayesian analysis of GBM data results when using complex models [\#673](https://github.com/threeML/threeML/issues/673)
+
+
 ## v2.5
 ### [v2.5.0](https://github.com/threeML/threeML/tree/v2.5.0) (2026-02-24)
 
@@ -124,7 +136,6 @@
 - XS\_gauss\(\) equivalent width [\#558](https://github.com/threeML/threeML/issues/558)
 - OGIPLike plugin cannot find spectra: get\_path\_of\_data\_file\(\) [\#556](https://github.com/threeML/threeML/issues/556)
 - collections.Sequence is deprecated in Python 3.7 and removed in python 3.10 [\#555](https://github.com/threeML/threeML/issues/555)
-- Use from astromodels Xspec import \* error [\#549](https://github.com/threeML/threeML/issues/549)
 - How do I install a stable threeml module? [\#544](https://github.com/threeML/threeML/issues/544)
 - Getting error while trying to build likelihood using Fermi LAT data [\#529](https://github.com/threeML/threeML/issues/529)
 - Using XSTAR atable.fits like in XSPEC [\#527](https://github.com/threeML/threeML/issues/527)
