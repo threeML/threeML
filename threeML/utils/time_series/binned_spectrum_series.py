@@ -1,10 +1,12 @@
+import logging
+
 from builtins import range, zip
 
 import matplotlib.pyplot as plt
 import numpy as np
 
 from threeML.config.config import threeML_config
-from threeML.io.logging import setup_logger, silence_console_log
+from threeML.io.logging import silence_console_log
 from threeML.io.plotting.light_curve_plots import binned_light_curve_plot
 from threeML.parallel.parallel_client import ParallelClient
 from threeML.utils.progress_bar import tqdm
@@ -12,7 +14,7 @@ from threeML.utils.time_interval import TimeIntervalSet
 from threeML.utils.time_series.polynomial import polyfit
 from threeML.utils.time_series.time_series import TimeSeries
 
-log = setup_logger(__name__)
+log = logging.getLogger(__name__)
 
 
 class BinnedSpectrumSeries(TimeSeries):
@@ -363,7 +365,7 @@ class BinnedSpectrumSeries(TimeSeries):
         if threeML_config["parallel"]["use_parallel"]:
 
             def worker(counts):
-                with silence_console_log():
+                with silence_console_log(log):
                     polynomial, _ = polyfit(
                         selected_midpoints,
                         counts,
@@ -389,7 +391,7 @@ class BinnedSpectrumSeries(TimeSeries):
             for counts in tqdm(
                 selected_counts.T, desc=f"Fitting {self._instrument} background"
             ):
-                with silence_console_log():
+                with silence_console_log(log):
                     polynomial, _ = polyfit(
                         selected_midpoints,
                         counts,

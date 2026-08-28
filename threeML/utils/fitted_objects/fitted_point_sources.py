@@ -1,3 +1,5 @@
+import logging
+
 __author__ = "grburgess"
 
 import collections
@@ -10,12 +12,12 @@ from astropy import units as u
 
 from threeML.config import threeML_config
 from threeML.config.point_source_structure import IntegrateMethod
-from threeML.io.logging import setup_logger
+
 from threeML.utils.fitted_objects.fitted_source_handler import (
     GenericFittedSourceHandler,
 )
 
-log = setup_logger(__name__)
+log = logging.getLogger(__name__)
 
 np_version = Version(np.__version__)
 if np_version < Version("2.0.0"):
@@ -39,10 +41,14 @@ class InvalidUnitError(RuntimeError):
 
 class FluxConversion(object):
     def __init__(self, flux_unit, energy_unit, flux_model):
-        """A generic flux conversion class to handle transforming spectra
-        between different flux units :param flux_unit: the desired flux unit
-        :param energy_unit: the energy unit :param flux_model: the model to be
-        transformed."""
+        """
+        A generic flux conversion class to handle transforming spectra between different
+        flux units
+
+        :param flux_unit: an astropy unit string for flux
+        :param energy_unit: an astropy unit string for energy
+        :param flux_model: the base flux model to use
+        """
 
         self._flux_unit = flux_unit
 
@@ -59,6 +65,9 @@ class FluxConversion(object):
         self._calculate_conversion()
 
     def _determine_quantity(self):
+        """
+        Determine the type of flux quantity based on the flux unit provided.
+        """
         # scroll thru conversions until one works
 
         for k, v in self._flux_lookup.items():
@@ -76,6 +85,10 @@ class FluxConversion(object):
             )
 
     def _calculate_conversion(self):
+        """
+        Calculate the conversion factor needed to convert the model to the desired flux
+        unit.
+        """
         # convert the model to the right units so that we can
         # convert back later for speed
 
@@ -100,7 +113,8 @@ class FluxConversion(object):
 
     @property
     def model(self):
-        """The model converted.
+        """
+        The model converted.
 
         :return: a model in the proper units
         """
@@ -123,10 +137,10 @@ class DifferentialFluxConversion(FluxConversion):
         """Handles differential flux conversion and model building for point
         sources.
 
-        :param test_model: model to test the flux on
         :param flux_unit: an astropy unit string for differential flux
         :param energy_unit: an astropy unit string for energy
         :param flux_model: the base flux model to use
+        :param test_model: model to test the flux on
         """
 
         self._flux_lookup = {
@@ -157,7 +171,7 @@ class DifferentialFluxConversion(FluxConversion):
 
 def trap_integral(func, e1, e2, **args):
     if e2 / e1 > 100:
-        e_grid = np.logspace(np.log10(e1), np.log10(e2), 50)
+        e_grid = np.geomspace(e1, e2, 50)
 
     else:
         e_grid = np.linspace(e1, e2, 50)
@@ -244,18 +258,22 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
         component=None,
         is_differential_flux=True,
     ):
-        """A 3ML fitted point source.
+        """A 3ML fitted point source spectral handler that can be used to extract the
+        flux and errors from a 3ML analysis result. This class can handle both
+        differential and integral fluxes, as well as composite models.
 
-        :param confidence_level:
-        :param equal_tailed:
-        :param is_differential_flux:
-        :param analysis_result: a 3ML analysis
-        :param source: the source to solve for
-        :param energy_range: an array of energies to calculate the
-            source over
-        :param energy_unit: string astropy unit
-        :param flux_unit: string astropy flux unit
-        :param component: the component name to calculate
+        :param analysis_result: a 3ML analysis result object
+        :param source: the name of the source to extract the flux from
+        :param energy_range: the energy range to extract the flux from
+        :param energy_unit: the energy unit to use for the flux extraction
+        :param flux_unit: the flux unit to use for the flux extraction
+        :param confidence_level: the confidence level to use for the flux extraction
+        :param equal_tailed: whether to use equal tailed or highest posterior density
+            intervals
+        :param component: the name of the component to extract the flux from (if
+            applicable)
+        :param is_differential_flux: whether to extract differential flux (True) or
+            integral flux (False)
         """
 
         # first extract the source
@@ -265,9 +283,18 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
         # extract the components
 
         try:
+
             composite_model = self._point_source.spectrum.main.composite
 
-            self._components = self._solve_for_component_flux(composite_model)
+            self._components, one_free = self._solve_for_component_flux(composite_model)
+            if not one_free:
+                log.warning(
+                    "You have provided a composite function, with one composing "
+                    "function only having fixed parameters - we cannot split that into "
+                    "components and will only calculate the total"
+                )
+                self._components = None
+                component = None
 
         except Exception:
             try:
@@ -297,6 +324,7 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
                 raise NotCompositeModelError("This is not a composite model!")
 
         else:
+            # TODO: genealize this to handle components not named main as well
             model = self._point_source.spectrum.main.shape.evaluate_at
             parameters = self._point_source.spectrum.main.shape.parameters
             test_model = self._point_source.spectrum.main.shape
@@ -415,7 +443,12 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
         :return: dict of component properties
         """
 
+        # TODO: need to check if there are free parameters in every component of the
+        # composite model. If not the _build_propagated_function will not work.
+        # will need to evaluate them togheter with a different component
+
         function_dict = {}
+        at_least_one_free = True
 
         names = [f.name for f in composite_model.functions]
 
@@ -436,14 +469,14 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
             # extract the parameter names using the static_name property
             # because this is what the children will use in evaluate_at
 
-            parameter_names = [
-                par.static_name for par in list(function.parameters.values())
+            tmp_dict["parameter_names"] = [
+                p.static_name for p in function.parameters.values()
             ]
-
-            tmp_dict["parameter_names"] = parameter_names
 
             tmp_dict["function"] = function
 
             function_dict[names[i]] = tmp_dict
+            if not function.has_free_parameters:
+                at_least_one_free = False
 
-        return function_dict
+        return function_dict, at_least_one_free

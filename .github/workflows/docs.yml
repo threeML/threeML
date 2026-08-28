@@ -22,19 +22,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Setup Miniconda
-        uses: conda-incubator/setup-miniconda@v3
+        uses: conda-incubator/setup-miniconda@v4
         with:
              auto-update-conda: true
              auto-activate: false
-             mamba-version: "*"
+             mamba-version: "2.5"
              architecture: x64 
              activate-environment: test_env
-             python-version: 3.11
+             python-version: 3.12
              channels: threeml, conda-forge, fermi
+             channel-priority: strict
              environment-file: ci/environment.yml 
              use-only-tar-bz2: false
+             miniforge-version: latest
 
       # is that really needed?
       - name: install latex
@@ -46,7 +48,7 @@ jobs:
         shell: bash -l {0}
         run: |
           set -e
-          mamba install jupytext jupyterthemes ipython_genutils jupyter notebook black 
+          mamba install jupytext jupyterthemes ipython_genutils jupyter notebook black ultranest
 
 
       - name: Install the package
@@ -58,7 +60,7 @@ jobs:
           fi
           pip install -e .
         env:
-          ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
+          ISDEV: ${{ github.ref == 'refs/heads/dev' || github.base_ref == 'dev' || github.head_ref == 'dev' }}
       - name: Conda list
         shell: bash -l {0}
         run: |
@@ -96,9 +98,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Cache conda
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         env:
           # Increase this value to reset cache if etc/example-environment.yml has not changed
           CACHE_NUMBER: 0
@@ -107,17 +109,19 @@ jobs:
           key: conda-hal_notebooks-python-3.11-${{ hashFiles('ci/environment_hal.yml') }}
 
       - name: Setup Miniconda
-        uses: conda-incubator/setup-miniconda@v3
+        uses: conda-incubator/setup-miniconda@v4
         with:
           auto-update-conda: true
           auto-activate: false
-          miniforge-version: latest
           activate-environment: test_env
-          python-version: 3.11
+          python-version: 3.12
           channels: threeml, conda-forge, defaults
+          channel-priority: strict
           environment-file: ci/environment_hal.yml
           use-only-tar-bz2: false
           architecture: "x64"
+          mamba-version: "2.5"
+          miniforge-version: latest
 
       - name: Init Environment
         shell: bash -l {0}
@@ -137,7 +141,7 @@ jobs:
           fi
           pip install -e .
         env:
-          ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
+          ISDEV: ${{ github.ref == 'refs/heads/dev' || github.base_ref == 'dev' || github.head_ref == 'dev' }}
       - name: Execute the notebooks
         shell: bash -l {0}
         run: |
@@ -166,9 +170,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Cache conda
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         env:
           # Increase this value to reset cache if etc/example-environment.yml has not changed
           CACHE_NUMBER: 0
@@ -177,14 +181,15 @@ jobs:
           key: conda-fermi_notebooks-python-3.11-${{ hashFiles('ci/environment_fermi.yml') }}
 
       - name: Setup Miniconda
-        uses: conda-incubator/setup-miniconda@v3
+        uses: conda-incubator/setup-miniconda@v4
         with:
           auto-update-conda: true
           auto-activate: false
           miniforge-version: latest
           activate-environment: test_env
-          python-version: 3.11
+          python-version: 3.12
           channels: fermi, threeml, conda-forge, defaults
+          channel-priority: strict
           environment-file: ci/environment_fermi.yml
           use-only-tar-bz2: false
           architecture: "x64"
@@ -200,6 +205,7 @@ jobs:
         shell: bash -l {0}
         run: |
           pip install --upgrade speclite
+          pip install --upgrade fermipy
                     
           if [[ "${ISDEV}" == "true" ]]; then
             pip install --upgrade --pre astromodels
@@ -207,7 +213,7 @@ jobs:
           fi
           pip install -e .
         env:
-          ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
+          ISDEV: ${{ github.ref == 'refs/heads/dev' || github.base_ref == 'dev' || github.head_ref == 'dev' }}
 
       - name: Execute the notebooks
         shell: bash -l {0}
@@ -245,9 +251,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Cache conda
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         env:
           # Increase this value to reset cache if etc/example-environment.yml has not changed
           CACHE_NUMBER: 0
@@ -256,17 +262,19 @@ jobs:
           key: conda-xspec_notebooks-python-3.11-${{ hashFiles('ci/environment_xspec.yml') }}
 
       - name: Setup Miniconda
-        uses: conda-incubator/setup-miniconda@v3
+        uses: conda-incubator/setup-miniconda@v4
         with:
           auto-update-conda: true
           auto-activate: false
           miniforge-version: latest
           activate-environment: test_env
-          python-version: 3.11
+          python-version: 3.12
           channels: threeml, conda-forge, defaults
+          channel-priority: strict
           environment-file: ci/environment_xspec.yml
           use-only-tar-bz2: false
           architecture: x64
+          mamba-version: "2.5"
 
       - name: Init Environment
         shell: bash -l {0}
@@ -277,6 +285,7 @@ jobs:
       - name: Install the package
         shell: bash -l {0}
         run: |
+          mamba install -c threeml astromodels --override-channels --force-reinstall
           pip install --upgrade speclite
           if [[ "${ISDEV}" == "true" ]]; then
             mamba remove --force astromodels
@@ -284,7 +293,7 @@ jobs:
           fi
           pip install -e .
         env:
-          ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
+          ISDEV: ${{ github.ref == 'refs/heads/dev' || github.base_ref == 'dev' || github.head_ref == 'dev' }}
       - name: Execute the notebooks
         shell: bash -l {0}
         run: |
@@ -317,9 +326,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Cache conda
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         env:
           # Increase this value to reset cache if etc/example-environment.yml has not changed
           CACHE_NUMBER: 0
@@ -328,17 +337,19 @@ jobs:
           key: conda-multinest_notebooks-python-3.11-${{ hashFiles('ci/environment.yml') }}
 
       - name: Setup Miniconda
-        uses: conda-incubator/setup-miniconda@v3
+        uses: conda-incubator/setup-miniconda@v4
         with:
           auto-update-conda: true
           auto-activate: false
           miniforge-version: latest
           activate-environment: test_env
-          python-version: 3.11
+          python-version: 3.12
           channels: threeml, conda-forge, defaults
+          channel-priority: strict
           environment-file: ci/environment.yml
           use-only-tar-bz2: false
           architecture: "x64"
+          mamba-version: "2.5"
 
       - name: Init Environment
         shell: bash -l {0}
@@ -356,16 +367,13 @@ jobs:
 
           # eval "$(/usr/libexec/path_helper)"
           # sudo apt-get install texlive
-
+          
           mamba install ${compilers} jupytext jupyterthemes jupyter_latex_envs texlive-core ipython_genutils jupyter notebook jupyterthemes jupyter_latex_envs
 
       - name: Install the package
         shell: bash -l {0}
         run: |
-          pip install black 
-          pip install --upgrade speclite
-          #pip install git+https://github.com/desihub/speclite.git
-          #pip install --no-binary :all: root_numpy
+          mamba install -c conda-forge black speclite pygmo ultranest
           
           if [[ "${ISDEV}" == "true" ]]; then
             mamba remove --force astromodels
@@ -373,7 +381,7 @@ jobs:
           fi
           pip install -e .
         env:
-          ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
+          ISDEV: ${{ github.ref == 'refs/heads/dev' || github.base_ref == 'dev' || github.head_ref == 'dev' }}
 
       - name: Execute the notebooks
         shell: bash -l {0}
@@ -416,7 +424,7 @@ jobs:
     
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - uses: actions/download-artifact@v7
         with:
@@ -464,7 +472,7 @@ jobs:
           path: docs/notebooks
           
       - name: Sleep for 10 min
-        uses: juliangruber/sleep-action@v2
+        uses: juliangruber/sleep-action@master
         with:
           time: 10m
           
@@ -504,15 +512,15 @@ jobs:
     name: "Create the API stubs"
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
           fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
-          python-version: 3.11
+          python-version: 3.12
 
       - name: Build the API doc
         run: |
@@ -558,15 +566,15 @@ jobs:
     steps:
 
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
           fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
-          python-version: 3.11
+          python-version: 3.12
 
       - name: Install package
         run: |
@@ -594,7 +602,7 @@ jobs:
           rm -rf docs/md_docs/*
 
         env:
-          ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
+          ISDEV: ${{ github.ref == 'refs/heads/dev' || github.base_ref == 'dev' || github.head_ref == 'dev' }}
 
       - name: Set commit sha for RTD
         id: set_commit_sha

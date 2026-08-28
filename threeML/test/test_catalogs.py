@@ -5,11 +5,14 @@ from threeML.catalogs.FermiLAT import (
     FermiLATSourceCatalog,
     FermiPySourceCatalog,
     have_fermipy,
+    fermipy_catalogs,
 )
 from threeML.catalogs.FermiLLE import FermiLLEBurstCatalog
 from threeML.catalogs.Swift import SwiftGRBCatalog
 from threeML.io.network import internet_connection_is_active
 from astropy.table import Table
+from astropy.coordinates.name_resolve import NameResolveError
+from astropy.coordinates import SkyCoord
 
 skip_if_internet_is_not_available = pytest.mark.skipif(
     not internet_connection_is_active(), reason="No active internet connection"
@@ -28,8 +31,20 @@ def test_gbm_catalog():
 
     assert gbm_catalog.ra_center == 0.0
     assert gbm_catalog.dec_center == 0.0
-
-    gbm_catalog.search_around_source("Crab", 5.0)
+    try:
+        gbm_catalog.search_around_source("Crab", 5.0)
+    except NameResolveError:
+        pytest.skip(reason="Connection to Sesame failed")
+    try:
+        crab = SkyCoord.from_name("Crab")
+        gbm_catalog.search_around_source(crab, 5.0)
+    except NameResolveError:
+        pytest.skip(reason="Connection to Sesame failed")
+    try:
+        with pytest.warns(DeprecationWarning):
+            gbm_catalog.search_around_source(source_name="Crab", radius=5.0)
+    except NameResolveError:
+        pytest.skip(reason="Connection to Sesame failed")
 
     models = ["band", "comp", "plaw", "sbpl"]
     intervals = ["peak", "fluence"]
@@ -54,8 +69,10 @@ def test_gbm_catalog():
 @skip_if_internet_is_not_available
 def test_LAT_catalog():
     lat_catalog = FermiLATSourceCatalog()
-
-    ra, dec, table1 = lat_catalog.search_around_source("Crab", 1.0)
+    try:
+        ra, dec, table1 = lat_catalog.search_around_source("Crab", 1.0)
+    except NameResolveError:
+        pytest.skip(reason="Connection to Sesame failed")
 
     table2 = lat_catalog.cone_search(ra, dec, 1.0)
 
@@ -73,26 +90,34 @@ def test_LLE_catalog():
 
     assert lle_catalog.ra_center == 0.0
     assert lle_catalog.dec_center == 0.0
-
-    lle_catalog.search_around_source("Crab", 5.0)
+    try:
+        lle_catalog.search_around_source("Crab", 5.0)
+    except NameResolveError:
+        pytest.skip(reason="Connection to Sesame failed")
 
     _ = lle_catalog.query_sources("GRB080916009")
 
     _ = lle_catalog.query('trigger_type == "GRB"')
 
 
-@skip_if_internet_is_not_available
 @skip_if_fermipy_is_not_installed
 def test_fermipy_catalog():
-    fp_catalog = FermiPySourceCatalog()
+    for catalog_name in fermipy_catalogs:
+        if catalog_name == "FL16Y":
+            continue  # this catalog has not been released yet by fermipy
 
-    _ = fp_catalog.cone_search(0.0, 0.0, 300.0)
+        fp_catalog = FermiPySourceCatalog(catalog_name)
+        _ = fp_catalog.cone_search(0.0, 0.0, 300.0)
 
-    assert fp_catalog.ra_center == 0.0
-    assert fp_catalog.dec_center == 0.0
+        assert fp_catalog.ra_center == 0.0
+        assert fp_catalog.dec_center == 0.0
 
-    ra, dec, tab = fp_catalog.search_around_source("Crab", 5.0)
-    assert isinstance(tab, Table)
+        try:
+            ra, dec, tab = fp_catalog.search_around_source("Crab", 5.0)
+        except NameResolveError:
+            pytest.skip(reason="Connection to Sesame failed")
+
+        assert isinstance(tab, Table)
 
 
 @skip_if_internet_is_not_available
@@ -142,16 +167,20 @@ def test_old_fermi_module():
 
     assert lle_catalog.ra_center == 0.0
     assert lle_catalog.dec_center == 0.0
-
-    lle_catalog.search_around_source("Crab", 5.0)
+    try:
+        lle_catalog.search_around_source("Crab", 5.0)
+    except NameResolveError:
+        pytest.skip(reason="Connection to Sesame failed")
 
     _ = lle_catalog.query_sources("GRB080916009")
 
     _ = lle_catalog.query('trigger_type == "GRB"')
 
     lat_catalog = LATSC()
-
-    ra, dec, table1 = lat_catalog.search_around_source("Crab", 1.0)
+    try:
+        ra, dec, table1 = lat_catalog.search_around_source("Crab", 1.0)
+    except NameResolveError:
+        pytest.skip(reason="Connection to Sesame failed")
 
     table2 = lat_catalog.cone_search(ra, dec, 1.0)
 
@@ -166,8 +195,10 @@ def test_old_fermi_module():
 
     assert gbm_catalog.ra_center == 0.0
     assert gbm_catalog.dec_center == 0.0
-
-    gbm_catalog.search_around_source("Crab", 5.0)
+    try:
+        gbm_catalog.search_around_source("Crab", 5.0)
+    except NameResolveError:
+        pytest.skip(reason="Connection to Sesame failed")
 
     models = ["band", "comp", "plaw", "sbpl"]
     intervals = ["peak", "fluence"]

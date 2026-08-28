@@ -121,7 +121,7 @@ evfile, scfile = download_LAT_data(
 
 
 .. note::
-    Currently, the FermipyLike plugin does not provide an interface to handle extended sources. This will change
+    The Fermipy plugin only supports `Disk_on_sphere`, `Gaussian_on_sphere` and `SpatialTemplate_2D` as spatial models.
 
 
 ```python

@@ -1,13 +1,18 @@
 from pathlib import Path
+import os
 
 import pytest
 import yaml
 from omegaconf import OmegaConf
 from omegaconf.errors import ReadonlyConfigError
 
-from threeML.config import get_current_configuration_copy, show_configuration
+from threeML.config import (
+    get_current_configuration_copy,
+    show_configuration,
+    update_config_with_user_configs,
+)
 from threeML.config.config_structure import Config
-from threeML.io.package_data import get_path_of_user_config
+from threeML.config.config import get_path_of_user_config
 
 
 def test_default_configuration():
@@ -38,22 +43,32 @@ def test_default_configuration():
     path.unlink()
 
 
-def test_user_configuration():
-    dummy_config = OmegaConf.structured(Config)
+def test_user_configuration(tmp_path):
+    original_config_path = os.environ.get("THREEML_CONFIG")
+    os.environ["THREEML_CONFIG"] = str(tmp_path)
+    try:
 
-    configs = [{"logging": {"usr": "off"}}, {"parallel": {"profile_name": "test"}}]
+        dummy_config = OmegaConf.structured(Config)
 
-    for i, c in enumerate(configs):
-        path = Path(f"conf_{i}.yml")
+        configs = [
+            {"logging": {"usr": "off", "startup_warnings": "off"}},
+            {"parallel": {"profile_name": "test"}},
+        ]
 
-        with path.open("w") as f:
-            yaml.dump(stream=f, data=c, Dumper=yaml.SafeDumper)
+        for i, c in enumerate(configs):
+            path = tmp_path / f"conf_{i}.yml"
 
-        cc = OmegaConf.load(path)
+            with path.open("w") as f:
+                yaml.dump(stream=f, data=c, Dumper=yaml.SafeDumper)
 
-        dummy_config = OmegaConf.merge(dummy_config, cc)
-
-        path.unlink()
+        dummy_config = update_config_with_user_configs(dummy_config)
+    except Exception as e:
+        raise e
+    finally:
+        original_config_path = (
+            "" if original_config_path is None else original_config_path
+        )
+        os.environ["THREEML_CONFIG"] = original_config_path
 
 
 def test_frozen_config():

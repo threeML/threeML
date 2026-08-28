@@ -149,3 +149,36 @@ bayes_analysis.results.corner_plot();
 
 
 ```
+
+## nautilus 
+
+```python
+bayes_analysis.set_sampler('nautilus')
+bayes_analysis.sampler.setup(n_live=3000, verbose = False)
+bayes_analysis.sample()
+
+xyl.plot();
+bayes_analysis.results.corner_plot();
+
+
+```
+
+## autoemcee
+
+```python
+bayes_analysis.set_sampler('autoemcee')
+bayes_analysis.sampler.setup(num_global_samples=10000,
+        num_chains=4,
+        num_walkers=None,
+        max_ncalls=1000000,
+        max_improvement_loops=4,
+        num_initial_steps=100,
+        min_autocorr_times=0,
+)
+bayes_analysis.sample()
+
+xyl.plot();
+bayes_analysis.results.corner_plot();
+
+
+```

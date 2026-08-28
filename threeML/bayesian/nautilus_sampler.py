@@ -1,3 +1,5 @@
+import logging
+
 import inspect
 
 import numpy as np
@@ -5,7 +7,6 @@ from astromodels import use_astromodels_memoization
 
 from threeML.bayesian.sampler_base import UnitCubeSampler
 from threeML.config.config import threeML_config
-from threeML.io.logging import setup_logger
 
 try:
     import nautilus
@@ -32,7 +33,7 @@ try:
 except ModuleNotFoundError:
     using_mpi: bool = False
 
-log = setup_logger(__name__)
+log = logging.getLogger(__name__)
 
 
 class NautilusSampler(UnitCubeSampler):
@@ -123,15 +124,15 @@ class NautilusSampler(UnitCubeSampler):
 
         if threeML_config["parallel"]["use_parallel"]:
             raise RuntimeError(
-                "If you want to run ultranest in parallel you need to use an ad-hoc "
-                "method"
+                "If you want to run nautilus in parallel you need to use an ad-hoc "
+                "method or pass the 'pool=size_of_pool' keyword to the setup method"
             )
 
         else:
             with use_astromodels_memoization(False):
                 log.debug("Start nautilus run")
 
-                sampler.run(**self._run_dict)
+                sampler.run(**self._run_dict, verbose=loud)
 
                 log.debug("nautilus run done")
 

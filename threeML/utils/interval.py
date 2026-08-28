@@ -1,12 +1,12 @@
+import logging
+
 import copy
 import re
 from operator import attrgetter, itemgetter
 
 import numpy as np
 
-from threeML.io.logging import setup_logger
-
-log = setup_logger(__name__)
+log = logging.getLogger(__name__)
 
 
 class IntervalsDoNotOverlap(RuntimeError):
@@ -480,16 +480,9 @@ class IntervalSet:
         """Return an array of time edges if contiguous :return:"""
 
         if self.is_contiguous() and self.is_sorted:
-            edges = [
-                interval.start
-                for interval in itemgetter(*self.argsort())(self._intervals)
-            ]
-            edges.append(
-                [
-                    interval.stop
-                    for interval in itemgetter(*self.argsort())(self._intervals)
-                ][-1]
-            )
+            sorted_intervals = [self._intervals[i] for i in self.argsort()]
+            edges = [interval.start for interval in sorted_intervals]
+            edges.append(sorted_intervals[-1].stop)
 
         else:
             raise IntervalsNotContiguous(
