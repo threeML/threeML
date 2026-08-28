@@ -659,16 +659,9 @@
 <span class="w">        </span><span class="sd">"""Return an array of time edges if contiguous :return:"""</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_contiguous</span><span class="p">()</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_sorted</span><span class="p">:</span>
-            <span class="n">edges</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="n">interval</span><span class="o">.</span><span class="n">start</span>
-                <span class="k">for</span> <span class="n">interval</span> <span class="ow">in</span> <span class="n">itemgetter</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">argsort</span><span class="p">())(</span><span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">)</span>
-            <span class="p">]</span>
-            <span class="n">edges</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="p">[</span>
-                    <span class="n">interval</span><span class="o">.</span><span class="n">stop</span>
-                    <span class="k">for</span> <span class="n">interval</span> <span class="ow">in</span> <span class="n">itemgetter</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">argsort</span><span class="p">())(</span><span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">)</span>
-                <span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-            <span class="p">)</span>
+            <span class="n">sorted_intervals</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">argsort</span><span class="p">()]</span>
+            <span class="n">edges</span> <span class="o">=</span> <span class="p">[</span><span class="n">interval</span><span class="o">.</span><span class="n">start</span> <span class="k">for</span> <span class="n">interval</span> <span class="ow">in</span> <span class="n">sorted_intervals</span><span class="p">]</span>
+            <span class="n">edges</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sorted_intervals</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">stop</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">IntervalsNotContiguous</span><span class="p">(</span>
