@@ -869,14 +869,17 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
         new_count_errors=None,
         new_exposure=None,
         new_scale_factor=None,
+        new_sys_errors=None,
     ) -> "PHASpectrum":
         """Make a new spectrum with new counts and errors and all other
         parameters the same.
 
-        :param new_exposure: the new exposure for the clone
-        :param new_scale_factor: the new scale factor for the clone
         :param new_counts: new counts for the spectrum
         :param new_count_errors: new errors from the spectrum
+        :param new_exposure: the new exposure for the clone
+        :param new_scale_factor: the new scale factor for the clone
+        :param new_sys_errors: the new systematics errors for the clone
+
         :return: new pha spectrum
         """
 
@@ -892,6 +895,9 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
 
         else:
             stat_err = new_count_errors / new_exposure
+        
+        if new_sys_errors is None:
+            new_sys_errors = self.sys_errors
 
         if self._tstart is None:
             tstart = 0
@@ -918,6 +924,7 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
             channel=list(range(1, len(self) + 1)),
             rate=new_counts / self.exposure,
             stat_err=stat_err,
+            sys_err=new_sys_errors,
             quality=self.quality.to_ogip(),
             grouping=self.grouping,
             exposure=new_exposure,
@@ -927,7 +934,11 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
             is_poisson=self.is_poisson,
         )
 
-        return pha
+        return PHASpectrum(
+            pha_file_or_instance=pha,
+            spectrum_number=1,
+            file_type=self._file_type,
+            rsp_file=self.response)
 
     @classmethod
     def from_dispersion_spectrum(
@@ -961,6 +972,7 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
             channel=list(range(1, len(dispersion_spectrum) + 1)),
             rate=dispersion_spectrum.rates,
             stat_err=rate_errors,
+            sys_err=dispersion_spectrum.sys_errors,
             quality=dispersion_spectrum.quality.to_ogip(),
             grouping=np.ones(len(dispersion_spectrum)),
             exposure=dispersion_spectrum.exposure,
@@ -1224,12 +1236,14 @@ class PHASpectrumSet(BinnedSpectrumSet):
         self,
         new_counts=None,
         new_count_errors=None,
+        new_sys_errors=None,
     ):
         """Make a new spectrum with new counts and errors and all other
         parameters the same.
 
         :param new_counts: new counts for the spectrum
         :param new_count_errors: new errors from the spectrum
+        :param new_sys_errors: new systematics errors from the spectrum
         :return: new pha spectrum
         """
 
@@ -1242,6 +1256,9 @@ class PHASpectrumSet(BinnedSpectrumSet):
 
         else:
             stat_err = new_count_errors / self.exposure
+        
+        if new_sys_errors is None:
+            new_sys_errors = self.sys_errors
 
         # create a new PHAII instance
 
@@ -1253,6 +1270,7 @@ class PHASpectrumSet(BinnedSpectrumSet):
             channel=list(range(1, len(self) + 1)),
             rate=new_counts / self.exposure,
             stat_err=stat_err,
+            sys_err=new_sys_errors,
             quality=self.quality.to_ogip(),
             grouping=self.grouping,
             exposure=self.exposure,
@@ -1282,6 +1300,7 @@ class PHASpectrumSet(BinnedSpectrumSet):
             channel=list(range(1, len(dispersion_spectrum) + 1)),
             rate=dispersion_spectrum.rates,
             stat_err=rate_errors,
+            sys_err=dispersion_spectrum.sys_errors,
             quality=dispersion_spectrum.quality.to_ogip(),
             grouping=np.ones(len(dispersion_spectrum)),
             exposure=dispersion_spectrum.exposure,
