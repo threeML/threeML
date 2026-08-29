@@ -80,8 +80,21 @@ class PocoMCSampler(MCMCSampler):
                 ]
             )
 
+            global _WORKER_SAMPLER
+            if has_mpi:
+                _WORKER_SAMPLER = self
+                with pc.parallel.MPIPool() as executor:
+                    self._sampler_kwargs.pop("pool")
+                    sampler = pc.Sampler(
+                        prior=prior,
+                        likelihood=_worker_logprob,
+                        pool=executor,
+                        **self._sampler_kwargs,
+                    )
+
+                    sampler.run(**kwargs)
+
             if self._sampler_kwargs.get("pool", None) is not None:
-                global _WORKER_SAMPLER
                 _WORKER_SAMPLER = self
                 with mp.pool.Pool(int(self._sampler_kwargs.get("pool"))) as executor:
                     self._sampler_kwargs.pop("pool")
