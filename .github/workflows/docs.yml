@@ -266,32 +266,28 @@ jobs:
         with:
           auto-update-conda: true
           auto-activate: false
-          miniforge-version: latest
+          miniconda-version: latest
+          conda-solver: libmamba
           activate-environment: test_env
           python-version: 3.12
-          channels: threeml, conda-forge, defaults
           channel-priority: strict
           environment-file: ci/environment_xspec.yml
-          use-only-tar-bz2: false
-          architecture: x64
-          mamba-version: "2.5"
-
       - name: Init Environment
         shell: bash -l {0}
         run: |
           set -e
-          mamba install jupytext jupyterthemes ipython_genutils jupyter notebook black 
-
+          conda install jupytext jupyterthemes ipython_genutils jupyter notebook black 
       - name: Install the package
         shell: bash -l {0}
         run: |
-          mamba install -c threeml astromodels --override-channels --force-reinstall
           pip install --upgrade speclite
           if [[ "${ISDEV}" == "true" ]]; then
-            mamba remove --force astromodels
+            conda remove --force astromodels
             pip install --pre -U astromodels
           fi
           pip install -e .
+          conda list astromodels
+          python -c "import astromodels.xspec; print('xspec OK')"
         env:
           ISDEV: ${{ github.ref == 'refs/heads/dev' || github.base_ref == 'dev' || github.head_ref == 'dev' }}
       - name: Execute the notebooks
