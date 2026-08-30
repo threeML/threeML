@@ -266,27 +266,27 @@ jobs:
         with:
           auto-update-conda: true
           auto-activate: false
-          miniconda-version: latest
-          conda-solver: libmamba
+          miniforge-version: latest
           activate-environment: test_env
           python-version: 3.12
           channel-priority: strict
           environment-file: ci/environment_xspec.yml
+          mamba-version: "2.5"
       - name: Init Environment
         shell: bash -l {0}
         run: |
           set -e
-          conda install jupytext jupyterthemes ipython_genutils jupyter notebook black 
+          mamba install jupytext jupyterthemes ipython_genutils jupyter notebook black 
       - name: Install the package
         shell: bash -l {0}
         run: |
           pip install --upgrade speclite
           if [[ "${ISDEV}" == "true" ]]; then
-            conda remove --force astromodels
+            mamba remove --force astromodels
             pip install --pre -U astromodels
           fi
           pip install -e .
-          conda list astromodels
+          mamba list astromodels
           python -c "import astromodels.xspec; print('xspec OK')"
         env:
           ISDEV: ${{ github.ref == 'refs/heads/dev' || github.base_ref == 'dev' || github.head_ref == 'dev' }}
