@@ -142,6 +142,11 @@ jobs:
           pip install -e .
         env:
           ISDEV: ${{ github.ref == 'refs/heads/dev' || github.base_ref == 'dev' || github.head_ref == 'dev' }}
+
+      - name: Conda list
+        shell: bash -l {0}
+        run: |
+            mamba list
       - name: Execute the notebooks
         shell: bash -l {0}
         run: |
@@ -214,6 +219,10 @@ jobs:
           pip install -e .
         env:
           ISDEV: ${{ github.ref == 'refs/heads/dev' || github.base_ref == 'dev' || github.head_ref == 'dev' }}
+      - name: Conda list
+        shell: bash -l {0}
+        run: |
+            mamba list
 
       - name: Execute the notebooks
         shell: bash -l {0}
@@ -294,6 +303,11 @@ jobs:
           pip install -e .
         env:
           ISDEV: ${{ github.ref == 'refs/heads/dev' || github.base_ref == 'dev' || github.head_ref == 'dev' }}
+      - name: Conda list
+        shell: bash -l {0}
+        run: |
+            mamba list
+
       - name: Execute the notebooks
         shell: bash -l {0}
         run: |
@@ -382,6 +396,10 @@ jobs:
           pip install -e .
         env:
           ISDEV: ${{ github.ref == 'refs/heads/dev' || github.base_ref == 'dev' || github.head_ref == 'dev' }}
+      - name: Conda list
+        shell: bash -l {0}
+        run: |
+            mamba list
 
       - name: Execute the notebooks
         shell: bash -l {0}
