@@ -549,6 +549,10 @@ class _AnalysisResults:
             fits_file = AnalysisResultsFITS(self)
 
             fits_file.writeto(sanitize_filename(filename), overwrite=overwrite)
+            log.info(
+                "Successfully wrote the FITS result file to "
+                f"{sanitize_filename(filename)}"
+            )
 
         else:
             with h5py.File(sanitize_filename(filename), "w") as f:
@@ -557,6 +561,10 @@ class _AnalysisResults:
                 grp = f.create_group("AnalysisResults_0")
 
                 ANALYSIS_RESULTS_HDF(self, grp)
+            log.info(
+                "Successfully wrote the HDF5 result file to "
+                f"{sanitize_filename(filename)}"
+            )
 
     def get_variates(self, param_path: str) -> RandomVariates:
         """
