@@ -162,9 +162,8 @@ jobs:
                         && 'threeml/label/dev,conda-forge,fermi'
                         || 'threeml,conda-forge,fermi'}}
                   environment-file: ${{ env.ENV_FILE }}
-                  use-only-tar-bz2: false
                   miniforge-version: latest
-                  mamba-version: "2.5"
+                  mamba-version: "*"
               env:
                   ISDEV: ${{ github.ref == 'refs/heads/dev' || github.base_ref == 'dev' || github.head_ref == 'dev' }}
                   ENV_FILE: >-
