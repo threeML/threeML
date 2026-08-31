@@ -276,18 +276,18 @@ jobs:
         shell: bash -l {0}
         run: |
           set -e
-          mamba install jupytext jupyterthemes ipython_genutils jupyter notebook black 
-
+          conda install jupytext jupyterthemes ipython_genutils jupyter notebook black 
       - name: Install the package
         shell: bash -l {0}
         run: |
-          mamba install -c threeml astromodels --override-channels --force-reinstall
           pip install --upgrade speclite
           if [[ "${ISDEV}" == "true" ]]; then
-            mamba remove --force astromodels
+            conda remove --force astromodels
             pip install --pre -U astromodels
           fi
           pip install -e .
+          conda list astromodels
+          python -c "import astromodels.xspec; print('xspec OK')"
         env:
           ISDEV: ${{ github.ref == 'refs/heads/dev' || github.base_ref == 'dev' || github.head_ref == 'dev' }}
       - name: Conda list

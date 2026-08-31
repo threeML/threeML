@@ -2,15 +2,31 @@
 
 
 ## v2.6
-### [v2.6.1](https://github.com/threeML/threeML/tree/v2.6.1) (2026-08-28)
+### [v2.6.1](https://github.com/threeML/threeML/tree/v2.6.1) (2026-08-29)
 
 [Full Changelog](https://github.com/threeML/threeML/compare/v2.5.0...v2.6.1)
+
+**Implemented enhancements:**
+
+- \[FEAT\]: More logging info discarded samples [\#686](https://github.com/threeML/threeML/pull/686) ([PreisTo](https://github.com/PreisTo))
+- Gammapy plugin [\#684](https://github.com/threeML/threeML/pull/684) ([PreisTo](https://github.com/PreisTo))
 
 **Closed issues:**
 
 - \[DOCS\] logging documentation is outdated [\#681](https://github.com/threeML/threeML/issues/681)
 - WARNING message about JointLikelihood [\#675](https://github.com/threeML/threeML/issues/675)
 - Questions regarding Bayesian analysis of GBM data results when using complex models [\#673](https://github.com/threeML/threeML/issues/673)
+
+**Merged pull requests:**
+
+- Dev [\#687](https://github.com/threeML/threeML/pull/687) ([ndilalla](https://github.com/ndilalla))
+- Polpy [\#685](https://github.com/threeML/threeML/pull/685) ([ndilalla](https://github.com/ndilalla))
+- Fix custom startup\_warnings setup in user configs [\#680](https://github.com/threeML/threeML/pull/680) ([PreisTo](https://github.com/PreisTo))
+- Switch to rattler-build [\#677](https://github.com/threeML/threeML/pull/677) ([PreisTo](https://github.com/PreisTo))
+- Getting polpy branch up to date with dev [\#676](https://github.com/threeML/threeML/pull/676) ([sujaymate](https://github.com/sujaymate))
+- Use logging.getLogger\(\_\_name\_\_\) instead of setup\_logger. [\#672](https://github.com/threeML/threeML/pull/672) ([israelmcmc](https://github.com/israelmcmc))
+- Update User Informations [\#668](https://github.com/threeML/threeML/pull/668) ([PreisTo](https://github.com/PreisTo))
+- Merge divergent branches [\#643](https://github.com/threeML/threeML/pull/643) ([sujaymate](https://github.com/sujaymate))
 
 
 ## v2.5
