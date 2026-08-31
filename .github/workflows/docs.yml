@@ -26,17 +26,13 @@ jobs:
       - name: Setup Miniconda
         uses: conda-incubator/setup-miniconda@v4
         with:
-             auto-update-conda: true
-             auto-activate: false
-             mamba-version: "2.5"
-             architecture: x64 
-             activate-environment: test_env
-             python-version: 3.12
-             channels: threeml, conda-forge, fermi
-             channel-priority: strict
-             environment-file: ci/environment.yml 
-             use-only-tar-bz2: false
-             miniforge-version: latest
+          auto-update-conda: true
+          auto-activate: true
+          miniforge-version: latest
+          mamba-version: "*"
+          activate-environment: test_env
+          python-version: 3.12
+          environment-file: ci/environment.yml 
 
       # is that really needed?
       - name: install latex
@@ -112,16 +108,13 @@ jobs:
         uses: conda-incubator/setup-miniconda@v4
         with:
           auto-update-conda: true
-          auto-activate: false
+          auto-activate: true
           activate-environment: test_env
           python-version: 3.12
-          channels: threeml, conda-forge, defaults
-          channel-priority: strict
           environment-file: ci/environment_hal.yml
-          use-only-tar-bz2: false
-          architecture: "x64"
-          mamba-version: "2.5"
           miniforge-version: latest
+          mamba-version: "*"
+
 
       - name: Init Environment
         shell: bash -l {0}
@@ -189,15 +182,13 @@ jobs:
         uses: conda-incubator/setup-miniconda@v4
         with:
           auto-update-conda: true
-          auto-activate: false
+          auto-activate: true
           miniforge-version: latest
+          mamba-version: "*"
+
           activate-environment: test_env
           python-version: 3.12
-          channels: fermi, threeml, conda-forge, defaults
-          channel-priority: strict
           environment-file: ci/environment_fermi.yml
-          use-only-tar-bz2: false
-          architecture: "x64"
 
       - name: Init Environment
         shell: bash -l {0}
@@ -274,16 +265,12 @@ jobs:
         uses: conda-incubator/setup-miniconda@v4
         with:
           auto-update-conda: true
-          auto-activate: false
+          auto-activate: true
           miniforge-version: latest
+          mamba-version: "*"
           activate-environment: test_env
           python-version: 3.12
-          channels: threeml, conda-forge, defaults
-          channel-priority: strict
           environment-file: ci/environment_xspec.yml
-          use-only-tar-bz2: false
-          architecture: x64
-          mamba-version: "2.5"
 
       - name: Init Environment
         shell: bash -l {0}
@@ -354,17 +341,13 @@ jobs:
         uses: conda-incubator/setup-miniconda@v4
         with:
           auto-update-conda: true
-          auto-activate: false
+          auto-activate: true
           miniforge-version: latest
+          mamba-version: "*"
           activate-environment: test_env
           python-version: 3.12
-          channels: threeml, conda-forge, defaults
-          channel-priority: strict
           environment-file: ci/environment.yml
-          use-only-tar-bz2: false
-          architecture: "x64"
-          mamba-version: "2.5"
-
+  
       - name: Init Environment
         shell: bash -l {0}
         run: |
