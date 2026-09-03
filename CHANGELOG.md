@@ -2,7 +2,7 @@
 
 
 ## v2.6
-### [v2.6.1](https://github.com/threeML/threeML/tree/v2.6.1) (2026-08-29)
+### [v2.6.1](https://github.com/threeML/threeML/tree/v2.6.1) (2026-09-03)
 
 [Full Changelog](https://github.com/threeML/threeML/compare/v2.5.0...v2.6.1)
 
@@ -16,9 +16,11 @@
 - \[DOCS\] logging documentation is outdated [\#681](https://github.com/threeML/threeML/issues/681)
 - WARNING message about JointLikelihood [\#675](https://github.com/threeML/threeML/issues/675)
 - Questions regarding Bayesian analysis of GBM data results when using complex models [\#673](https://github.com/threeML/threeML/issues/673)
+- Change how threeML configures logging \(or rather, do not configure logging\) [\#647](https://github.com/threeML/threeML/issues/647)
 
 **Merged pull requests:**
 
+- Fix Docs CI  [\#689](https://github.com/threeML/threeML/pull/689) ([PreisTo](https://github.com/PreisTo))
 - Dev [\#687](https://github.com/threeML/threeML/pull/687) ([ndilalla](https://github.com/ndilalla))
 - Polpy [\#685](https://github.com/threeML/threeML/pull/685) ([ndilalla](https://github.com/ndilalla))
 - Fix custom startup\_warnings setup in user configs [\#680](https://github.com/threeML/threeML/pull/680) ([PreisTo](https://github.com/PreisTo))
