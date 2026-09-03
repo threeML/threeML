@@ -2,7 +2,7 @@
  "cells": [
   {
    "cell_type": "markdown",
-   "id": "a04fc91c",
+   "id": "45811842",
    "metadata": {},
    "source": [
     "## What happens to the model/function during a fit?\n",
@@ -14,13 +14,13 @@
   {
    "cell_type": "code",
    "execution_count": 1,
-   "id": "ab8d4eb4",
+   "id": "324d3808",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2026-08-30T21:39:59.149526Z",
-     "iopub.status.busy": "2026-08-30T21:39:59.149381Z",
-     "iopub.status.idle": "2026-08-30T21:40:03.323823Z",
-     "shell.execute_reply": "2026-08-30T21:40:03.323083Z"
+     "iopub.execute_input": "2026-09-03T06:10:50.003628Z",
+     "iopub.status.busy": "2026-09-03T06:10:50.003442Z",
+     "iopub.status.idle": "2026-09-03T06:10:54.038227Z",
+     "shell.execute_reply": "2026-09-03T06:10:54.037337Z"
     },
     "lines_to_next_cell": 2
    },
@@ -50,13 +50,13 @@
   {
    "cell_type": "code",
    "execution_count": 2,
-   "id": "567fc275",
+   "id": "0b191984",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2026-08-30T21:40:03.325936Z",
-     "iopub.status.busy": "2026-08-30T21:40:03.325557Z",
-     "iopub.status.idle": "2026-08-30T21:40:04.454232Z",
-     "shell.execute_reply": "2026-08-30T21:40:04.453524Z"
+     "iopub.execute_input": "2026-09-03T06:10:54.040173Z",
+     "iopub.status.busy": "2026-09-03T06:10:54.039765Z",
+     "iopub.status.idle": "2026-09-03T06:10:55.993160Z",
+     "shell.execute_reply": "2026-09-03T06:10:55.992358Z"
     }
    },
    "outputs": [
@@ -117,12 +117,12 @@
        "  <tbody>\n",
        "    <tr>\n",
        "      <th>source.spectrum.main.Powerlaw.K</th>\n",
-       "      <td>1.029 +/- 0.028</td>\n",
+       "      <td>(9.84 +/- 0.28) x 10^-1</td>\n",
        "      <td>1 / (keV s cm2)</td>\n",
        "    </tr>\n",
        "    <tr>\n",
        "      <th>source.spectrum.main.Powerlaw.index</th>\n",
-       "      <td>-1.509 +/- 0.010</td>\n",
+       "      <td>-1.498 +/- 0.011</td>\n",
        "      <td></td>\n",
        "    </tr>\n",
        "  </tbody>\n",
@@ -130,10 +130,10 @@
        "</div>"
       ],
       "text/plain": [
-       "                                               result             unit\n",
-       "parameter                                                             \n",
-       "source.spectrum.main.Powerlaw.K       1.029 +/- 0.028  1 / (keV s cm2)\n",
-       "source.spectrum.main.Powerlaw.index  -1.509 +/- 0.010                 "
+       "                                                      result             unit\n",
+       "parameter                                                                    \n",
+       "source.spectrum.main.Powerlaw.K      (9.84 +/- 0.28) x 10^-1  1 / (keV s cm2)\n",
+       "source.spectrum.main.Powerlaw.index         -1.498 +/- 0.011                 "
       ]
      },
      "metadata": {},
@@ -159,7 +159,7 @@
     {
      "data": {
       "text/html": [
-       "<div><table id=\"table140024739972160\">\n",
+       "<div><table id=\"table140112688639168\">\n",
        "<tr><td>1.00</td><td>-0.86</td></tr>\n",
        "<tr><td>-0.86</td><td>1.00</td></tr>\n",
        "</table></div>"
@@ -216,11 +216,11 @@
        "  <tbody>\n",
        "    <tr>\n",
        "      <th>data</th>\n",
-       "      <td>26.553665</td>\n",
+       "      <td>19.98426</td>\n",
        "    </tr>\n",
        "    <tr>\n",
        "      <th>total</th>\n",
-       "      <td>26.553665</td>\n",
+       "      <td>19.98426</td>\n",
        "    </tr>\n",
        "  </tbody>\n",
        "</table>\n",
@@ -228,8 +228,8 @@
       ],
       "text/plain": [
        "       -log(likelihood)\n",
-       "data          26.553665\n",
-       "total         26.553665"
+       "data           19.98426\n",
+       "total          19.98426"
       ]
      },
      "metadata": {},
@@ -279,11 +279,11 @@
        "  <tbody>\n",
        "    <tr>\n",
        "      <th>AIC</th>\n",
-       "      <td>57.362648</td>\n",
+       "      <td>44.223839</td>\n",
        "    </tr>\n",
        "    <tr>\n",
        "      <th>BIC</th>\n",
-       "      <td>60.931375</td>\n",
+       "      <td>47.792565</td>\n",
        "    </tr>\n",
        "  </tbody>\n",
        "</table>\n",
@@ -291,8 +291,8 @@
       ],
       "text/plain": [
        "     statistical measures\n",
-       "AIC             57.362648\n",
-       "BIC             60.931375"
+       "AIC             44.223839\n",
+       "BIC             47.792565"
       ]
      },
      "metadata": {},
@@ -303,7 +303,7 @@
      "output_type": "stream",
      "text": [
       "power law index after fit:\n",
-      "Parameter index = -1.5091955143538522 []\n",
+      "Parameter index = -1.498025306572458 []\n",
       "(min_value = -10.0, max_value = 10.0, delta = 0.20099999999999998, free = True)\n"
      ]
     }
@@ -336,7 +336,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "d5f50f0b",
+   "id": "c72e0559",
    "metadata": {},
    "source": [
     "After a fit, the fitted result are stored in an AnalysisResults object so that if the fit function's values are further modified, the best fit parameters can still be recovered."
@@ -344,7 +344,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "ba939506",
+   "id": "2f80087b",
    "metadata": {},
    "source": [
     "## Why does my plugin not return a get_log_like()?\n",
@@ -354,7 +354,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "cca41364",
+   "id": "e0b90bef",
    "metadata": {},
    "source": [
     "## Why did my plugin lose its model?\n",
