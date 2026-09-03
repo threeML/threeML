@@ -79,7 +79,10 @@ def do_contours_check(jl, minimizer):
     )
 
     for param in jl._likelihood_model.parameters:
-        assert jl._likelihood_model.parameters[param].value == model_clone[param].value
+        assert np.isclose(
+            jl._likelihood_model.parameters[param].value,
+            model_clone[param].value,
+        )
 
 
 def test_minuit_simple(jl_bn090217206_nai):

@@ -248,8 +248,14 @@ class Simple(Function1D, metaclass=FunctionMeta):
         val = -k * self._gau(x)
 
         if self._track:
-            self._traversed_points.append(float(mu))
-            self._returned_values.append(float(val))
+            if not isinstance(mu, np.ndarray):
+                self._traversed_points.append(float(mu))
+            else:
+                self._traversed_points.extend(list(map(float, mu)))
+            if not isinstance(val, np.ndarray):
+                self._returned_values.append(float(val))
+            else:
+                self._returned_values.extend(list(map(float, val)))
 
         return val
 

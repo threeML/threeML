@@ -23,20 +23,17 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+
       - name: Setup Miniconda
         uses: conda-incubator/setup-miniconda@v4
         with:
-             auto-update-conda: true
-             auto-activate: false
-             mamba-version: "2.5"
-             architecture: x64 
-             activate-environment: test_env
-             python-version: 3.12
-             channels: threeml, conda-forge, fermi
-             channel-priority: strict
-             environment-file: ci/environment.yml 
-             use-only-tar-bz2: false
-             miniforge-version: latest
+          auto-update-conda: true
+          auto-activate: false
+          miniforge-version: latest
+          mamba-version: "*"
+          activate-environment: test_env
+          python-version: 3.12
+          environment-file: ci/environment.yml 
 
       # is that really needed?
       - name: install latex
@@ -50,7 +47,6 @@ jobs:
           set -e
           mamba install jupytext jupyterthemes ipython_genutils jupyter notebook black ultranest
 
-
       - name: Install the package
         shell: bash -l {0}
         run: |
@@ -61,6 +57,7 @@ jobs:
           pip install -e .
         env:
           ISDEV: ${{ github.ref == 'refs/heads/dev' || github.base_ref == 'dev' || github.head_ref == 'dev' }}
+
       - name: Conda list
         shell: bash -l {0}
         run: |
@@ -80,7 +77,6 @@ jobs:
           mv docs/md_docs/fast_execute/*.ipynb docs/notebooks/
 
           ls docs/notebooks
-
         env:
           OMP_NUM_THREADS: 1
           MKL_NUM_THREADS: 1
@@ -99,14 +95,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
-      - name: Cache conda
-        uses: actions/cache@v5
-        env:
-          # Increase this value to reset cache if etc/example-environment.yml has not changed
-          CACHE_NUMBER: 0
-        with:
-          path: ~/conda_pkgs_dir
-          key: conda-hal_notebooks-python-3.11-${{ hashFiles('ci/environment_hal.yml') }}
 
       - name: Setup Miniconda
         uses: conda-incubator/setup-miniconda@v4
@@ -115,13 +103,9 @@ jobs:
           auto-activate: false
           activate-environment: test_env
           python-version: 3.12
-          channels: threeml, conda-forge, defaults
-          channel-priority: strict
           environment-file: ci/environment_hal.yml
-          use-only-tar-bz2: false
-          architecture: "x64"
-          mamba-version: "2.5"
           miniforge-version: latest
+          mamba-version: "*"
 
       - name: Init Environment
         shell: bash -l {0}
@@ -142,6 +126,12 @@ jobs:
           pip install -e .
         env:
           ISDEV: ${{ github.ref == 'refs/heads/dev' || github.base_ref == 'dev' || github.head_ref == 'dev' }}
+
+      - name: Conda list
+        shell: bash -l {0}
+        run: |
+            mamba list
+
       - name: Execute the notebooks
         shell: bash -l {0}
         run: |
@@ -171,14 +161,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
-      - name: Cache conda
-        uses: actions/cache@v5
-        env:
-          # Increase this value to reset cache if etc/example-environment.yml has not changed
-          CACHE_NUMBER: 0
-        with:
-          path: ~/conda_pkgs_dir
-          key: conda-fermi_notebooks-python-3.11-${{ hashFiles('ci/environment_fermi.yml') }}
 
       - name: Setup Miniconda
         uses: conda-incubator/setup-miniconda@v4
@@ -186,13 +168,10 @@ jobs:
           auto-update-conda: true
           auto-activate: false
           miniforge-version: latest
+          mamba-version: "*"
           activate-environment: test_env
           python-version: 3.12
-          channels: fermi, threeml, conda-forge, defaults
-          channel-priority: strict
           environment-file: ci/environment_fermi.yml
-          use-only-tar-bz2: false
-          architecture: "x64"
 
       - name: Init Environment
         shell: bash -l {0}
@@ -215,6 +194,11 @@ jobs:
         env:
           ISDEV: ${{ github.ref == 'refs/heads/dev' || github.base_ref == 'dev' || github.head_ref == 'dev' }}
 
+      - name: Conda list
+        shell: bash -l {0}
+        run: |
+            mamba list
+
       - name: Execute the notebooks
         shell: bash -l {0}
         run: |
@@ -234,7 +218,6 @@ jobs:
 
           mv docs/md_docs/slow_execute/*.ipynb docs/notebooks/
           ls docs/notebooks
-          
         env:
           OMP_NUM_THREADS: 1
           MKL_NUM_THREADS: 1
@@ -252,31 +235,24 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
-      - name: Cache conda
-        uses: actions/cache@v5
-        env:
-          # Increase this value to reset cache if etc/example-environment.yml has not changed
-          CACHE_NUMBER: 0
-        with:
-          path: ~/conda_pkgs_dir
-          key: conda-xspec_notebooks-python-3.11-${{ hashFiles('ci/environment_xspec.yml') }}
-
+        
       - name: Setup Miniconda
         uses: conda-incubator/setup-miniconda@v4
         with:
           auto-update-conda: true
           auto-activate: false
-          miniconda-version: latest
-          conda-solver: libmamba
+          miniforge-version: latest
+          mamba-version: "*"
           activate-environment: test_env
           python-version: 3.12
-          channel-priority: strict
           environment-file: ci/environment_xspec.yml
+
       - name: Init Environment
         shell: bash -l {0}
         run: |
           set -e
           conda install jupytext jupyterthemes ipython_genutils jupyter notebook black 
+
       - name: Install the package
         shell: bash -l {0}
         run: |
@@ -290,6 +266,12 @@ jobs:
           python -c "import astromodels.xspec; print('xspec OK')"
         env:
           ISDEV: ${{ github.ref == 'refs/heads/dev' || github.base_ref == 'dev' || github.head_ref == 'dev' }}
+
+      - name: Conda list
+        shell: bash -l {0}
+        run: |
+            mamba list
+
       - name: Execute the notebooks
         shell: bash -l {0}
         run: |
@@ -305,7 +287,6 @@ jobs:
 
           mv docs/md_docs/slow_execute/*.ipynb docs/notebooks/
           ls docs/notebooks
-
         env:
           OMP_NUM_THREADS: 1
           MKL_NUM_THREADS: 1
@@ -323,14 +304,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
-      - name: Cache conda
-        uses: actions/cache@v5
-        env:
-          # Increase this value to reset cache if etc/example-environment.yml has not changed
-          CACHE_NUMBER: 0
-        with:
-          path: ~/conda_pkgs_dir
-          key: conda-multinest_notebooks-python-3.11-${{ hashFiles('ci/environment.yml') }}
 
       - name: Setup Miniconda
         uses: conda-incubator/setup-miniconda@v4
@@ -338,15 +311,11 @@ jobs:
           auto-update-conda: true
           auto-activate: false
           miniforge-version: latest
+          mamba-version: "*"
           activate-environment: test_env
           python-version: 3.12
-          channels: threeml, conda-forge, defaults
-          channel-priority: strict
           environment-file: ci/environment.yml
-          use-only-tar-bz2: false
-          architecture: "x64"
-          mamba-version: "2.5"
-
+  
       - name: Init Environment
         shell: bash -l {0}
         run: |
@@ -379,6 +348,11 @@ jobs:
         env:
           ISDEV: ${{ github.ref == 'refs/heads/dev' || github.base_ref == 'dev' || github.head_ref == 'dev' }}
 
+      - name: Conda list
+        shell: bash -l {0}
+        run: |
+            mamba list
+
       - name: Execute the notebooks
         shell: bash -l {0}
         run: |
@@ -400,8 +374,6 @@ jobs:
 
           mv docs/md_docs/slow_execute/*.ipynb docs/notebooks/
           ls docs/notebooks
-          
-          
         env:
           OMP_NUM_THREADS: 1
           MKL_NUM_THREADS: 1
@@ -560,7 +532,6 @@ jobs:
     runs-on: macos-latest
     needs: [upload_notebooks, api_doc]
     steps:
-
 
       - uses: actions/checkout@v6
         with:
