@@ -30,6 +30,7 @@ Though **Maximum Likelihood** is in the name for historical reasons, 3ML is an i
    notebooks/Minimization_tutorial.ipynb
    notebooks/Bayesian_tutorial.ipynb
    notebooks/sampler_docs.ipynb
+   notebooks/optimizer_docs.ipynb
    plugins
    modeling
    faq
