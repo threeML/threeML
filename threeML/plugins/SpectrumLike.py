@@ -1673,6 +1673,64 @@ class SpectrumLike(PluginPrototype):
 
             log.info("rebinning had no effect")
 
+    def rebin_on_grouping(self, grouping: Optional[np.ndarray] = None) -> None:
+        """Group the active channels according to an OGIP grouping, as
+        XSPEC does. By default the grouping is read from the GROUPING
+        column of the observed PHA file.
+
+        OGIP convention: 1 marks the first channel of a group, -1 a channel
+        that continues the current group and 0 is treated as the start of
+        a new group. Channels excluded by the active measurements are
+        dropped, so a group crossing the edge of the selection keeps only
+        its active channels.
+
+        Call this after set_active_measurements. To change the active
+        measurements afterwards, use "remove_rebinning" first.
+
+        :param grouping: (optional) array of OGIP grouping values, one per
+            channel. If None, use the grouping stored in the PHA file
+        :return: none
+        """
+
+        if grouping is None:
+
+            grouping = getattr(self._observed_spectrum, "file_grouping", None)
+
+            if grouping is None:
+
+                log.error(
+                    "The observed spectrum has no GROUPING column. Provide the "
+                    "grouping explicitly."
+                )
+
+                raise RuntimeError()
+
+        grouping = np.asarray(grouping)
+
+        if grouping.shape != self._mask.shape:
+
+            log.error(
+                f"The grouping has {grouping.shape[0]} elements but the spectrum has "
+                f"{self._mask.shape[0]} channels"
+            )
+
+            raise RuntimeError()
+
+        rebinner = Rebinner.from_ogip_grouping(grouping, self._mask)
+
+        if rebinner.n_bins < self._mask.sum():
+
+            for spectrum in (self._observed_spectrum, self._background_spectrum):
+
+                if isinstance(spectrum, PHASpectrum):
+                    spectrum.set_ogip_grouping(rebinner.grouping)
+
+            self._apply_rebinner(rebinner)
+
+        else:
+
+            log.info("rebinning had no effect")
+
     def _apply_rebinner(self, rebinner: Rebinner) -> None:
 
         self._rebinner = rebinner
@@ -3190,9 +3248,9 @@ class SpectrumLike(PluginPrototype):
     def get_number_of_data_points(self) -> int:
         """Returns the number of active data bins :return:"""
 
-        # the sum of the mask should be the number of data bins in use
+        # the number of bins in use, taking into account any rebinning
 
-        return self._mask.sum()
+        return self.n_data_points
 
     def display(self):
 
