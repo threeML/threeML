@@ -151,14 +151,24 @@ class ProfileLikelihood(object):
             )
 
             # Create a copy of the optimizer with the new parameters (i.e., one or two
-            # parameters fixed to their current values)
+            # parameters fixed to their current values). If the optimizer has been
+            # created by a local minimization factory, use it again so that the copy
+            # has the same setup (algorithm and options) as the original
 
-            self._optimizer = type(minimizer_instance)(
-                self._wrapper, free_parameters, verbosity=0
-            )
+            factory = getattr(minimizer_instance, "_factory", None)
 
-            if minimizer_instance.algorithm_name is not None:
-                self._optimizer.set_algorithm(minimizer_instance.algorithm_name)
+            if isinstance(factory, LocalMinimization):
+                self._optimizer = factory.get_instance(
+                    self._wrapper, free_parameters, verbosity=0
+                )
+
+            else:
+                self._optimizer = type(minimizer_instance)(
+                    self._wrapper, free_parameters, verbosity=0
+                )
+
+                if minimizer_instance.algorithm_name is not None:
+                    self._optimizer.set_algorithm(minimizer_instance.algorithm_name)
 
         else:
             # Special case when there are no free parameters after fixing the requested
@@ -346,6 +356,10 @@ class LocalMinimization(_Minimization):
 
         # Set up the minimizer
         instance._setup(self._setup_dict)
+
+        # Keep track of the factory, so that copies of this minimizer (e.g., for
+        # profiling the likelihood) can be created with the same setup
+        instance._factory = self
 
         return instance
 
