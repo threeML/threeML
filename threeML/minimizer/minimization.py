@@ -114,6 +114,17 @@ class FunctionWrapper(object):
 
         return self._function(*self._all_values)
 
+    def residuals(self, *trial_values):
+        # Same as __call__, for minimizers working on residuals (least squares)
+
+        if not hasattr(self._function, "residuals"):
+            raise NotImplementedError("The function does not provide residuals")
+
+        self._all_values[self._indexes_of_fixed_par] = self._fixed_parameters_values
+        self._all_values[~self._indexes_of_fixed_par] = trial_values
+
+        return self._function.residuals(*self._all_values)
+
 
 class ProfileLikelihood(object):
     def __init__(self, minimizer_instance, fixed_parameters):
@@ -1251,6 +1262,15 @@ except ImportError:
 
 else:
     _minimizers["SCIPY"] = ScipyMinimizer
+
+try:
+    from threeML.minimizer.least_squares_minimizer import LeastSquaresMinimizer
+
+except ImportError:
+    add_startup_warning(log, "Least squares minimizer is not available")
+
+else:
+    _minimizers["LEAST_SQUARES"] = LeastSquaresMinimizer
 
 # Check that we have at least one minimizer available
 

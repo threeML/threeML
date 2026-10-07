@@ -1922,6 +1922,32 @@ class SpectrumLike(PluginPrototype):
             loglike *= 0
         return loglike
 
+    def get_deviance_residuals(self) -> np.ndarray:
+        """Signed deviance residuals for the current model, one per active
+        (and possibly rebinned) bin. The sum of their squares is
+        -2 * get_log_like() up to a constant. Used by least squares
+        minimizers.
+
+        :return: array of residuals
+        """
+
+        if self._exclude_from_fit:
+            return np.zeros(self.n_data_points)
+
+        try:
+
+            return self._likelihood_evaluator.get_deviance_residuals()
+
+        except NotImplementedError:
+
+            log.error(
+                f"Plugin {self.name}: deviance residuals are not available for the "
+                f"observation/background noise models "
+                f"({self._observation_noise_model}/{self._background_noise_model})"
+            )
+
+            raise
+
     def inner_fit(self) -> float:
 
         return self.get_log_like()

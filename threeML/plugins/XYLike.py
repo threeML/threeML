@@ -447,6 +447,54 @@ class XYLike(PluginPrototype):
                 expectation * self._exposure[self._mask],
             )
 
+    def get_deviance_residuals(self) -> np.ndarray:
+        """Signed deviance residuals for the current model, one per active
+        data point. The sum of their squares is -2 * get_log_like() up to a
+        constant. Used by least squares minimizers.
+
+        :return: array of residuals
+        """
+
+        observed = self._y[self._mask]
+
+        y = np.asarray(observed, dtype=float)
+
+        expectation = (
+            self._get_total_expectation()[self._mask] * self._exposure[self._mask]
+        )
+
+        if self._is_poisson:
+            # Same as in get_log_like, negative expectations are set to zero
+
+            expectation = np.clip(expectation, 0.0, None)
+
+            zeros = np.zeros_like(y)
+
+            log_like, _ = poisson_log_likelihood_ideal_bkg(observed, zeros, expectation)
+
+            # The saturated model reproduces the observed counts
+
+            saturated_log_like, _ = poisson_log_likelihood_ideal_bkg(observed, zeros, y)
+
+            deviance = np.clip(2.0 * (saturated_log_like - log_like), 0.0, None)
+
+            return np.sign(y - expectation) * np.sqrt(deviance)
+
+        else:
+            # Points with no error do not contribute to the chi squared
+
+            yerr = np.asarray(self._yerr[self._mask], dtype=float)
+
+            residuals = np.zeros_like(y)
+
+            has_error = yerr > 0
+
+            residuals[has_error] = (y[has_error] - expectation[has_error]) / yerr[
+                has_error
+            ]
+
+            return residuals
+
     def get_simulated_dataset(self, new_name: Optional[str] = None) -> "XYLike":
         """Return a simulated XYLike plugin."""
 

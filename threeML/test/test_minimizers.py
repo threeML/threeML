@@ -98,6 +98,19 @@ def test_minuit_complete(jl_bn090217206_nai):
     do_contours_check(jl_bn090217206_nai, "minuit")
 
 
+def test_least_squares_simple(jl_bn090217206_nai):
+    do_analysis(jl_bn090217206_nai, "least_squares")
+
+
+def test_least_squares_complete(jl_bn090217206_nai):
+    least_squares = LocalMinimization("least_squares")
+    least_squares.setup(diff_step=0.01, ftol=1e-8)
+
+    do_analysis(jl_bn090217206_nai, least_squares)
+
+    do_contours_check(jl_bn090217206_nai, "least_squares")
+
+
 @pytest.mark.skip(reason="ROOT minimizer currently results in Segmentation Fault")
 @skip_if_ROOT_is_not_available
 def test_ROOT_simple(jl_bn090217206_nai):
