@@ -75,6 +75,50 @@ class _PHAInfo:
     rate_errors: Optional[Iterable[float]]
     sys_errors: Optional[Iterable[float]]
     count_errors: Optional[Iterable[float]]
+    grouping: Optional[np.ndarray] = None
+
+
+def _read_grouping(
+    data,
+    spectrum_number: Optional[int],
+    is_typeII_file: bool,
+    treat_as_time_series: bool,
+    shape,
+) -> Optional[np.ndarray]:
+    """Read the OGIP GROUPING column, if present.
+
+    :return: the grouping (with the same shape as the rates) or None if
+        the column is missing or malformed
+    """
+
+    if "GROUPING" not in data.columns.names:
+        return None
+
+    grouping = np.asarray(data.field("GROUPING"))
+
+    if is_typeII_file and not treat_as_time_series:
+        if grouping.ndim != 2:
+            return None
+
+        grouping = grouping[spectrum_number - 1, :]
+
+    if grouping.shape != tuple(shape):
+        log.warning(
+            "The GROUPING column has the wrong shape and will be ignored. This PHA "
+            "file does not follow OGIP standards"
+        )
+
+        return None
+
+    if not np.all(np.isin(grouping, (-1, 0, 1))):
+        log.warning(
+            "The GROUPING column contains values other than -1, 0 and 1 and will be "
+            "ignored"
+        )
+
+        return None
+
+    return grouping.astype(np.int16)
 
 
 def _read_pha_or_pha2_file(
@@ -655,6 +699,10 @@ def _read_pha_or_pha2_file(
 
     quality = Quality.from_ogip(quality)
 
+    grouping = _read_grouping(
+        data, spectrum_number, is_typeII_file, treat_as_time_series, rates.shape
+    )
+
     if not treat_as_time_series:
         log.debug(f"{file_name} is not a time series")
 
@@ -703,6 +751,7 @@ def _read_pha_or_pha2_file(
         file_name=file_name,
         tstart=tstart,
         tstop=tstop,
+        grouping=grouping,
     )
 
 
@@ -759,6 +808,11 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
         # this will only be altered if the spectrum is rebinned
 
         self._grouping: np.ndarray = np.ones_like(pha_information.counts)
+
+        # keep the grouping stored in the file (if any), so that it can be
+        # applied on request with SpectrumLike.rebin_on_grouping
+
+        self._file_grouping: Optional[np.ndarray] = pha_information.grouping
 
         # this saves the extra properties to the class
 
@@ -862,6 +916,12 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
     @property
     def grouping(self) -> np.ndarray:
         return self._grouping
+
+    @property
+    def file_grouping(self) -> Optional[np.ndarray]:
+        """The OGIP grouping read from the GROUPING column of the file, or
+        None if the file does not provide one."""
+        return self._file_grouping
 
     def clone(
         self,
