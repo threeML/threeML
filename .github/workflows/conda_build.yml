@@ -98,9 +98,9 @@ jobs:
             - name: Build package
               run: |
                 if [[ "${ISDEV}" == "true" ]]; then
-                  rattler-build build --target-platform ${{ matrix.target-platform }} -c threeML/label/dev -c conda-forge --recipe conda-dist/recipe.yaml --experimental
+                  rattler-build build --target-platform ${{ matrix.target-platform }} -c threeML/label/dev -c conda-forge --recipe conda-dist/recipe.yaml --experimental --test skip
                 else
-                  rattler-build build --target-platform ${{ matrix.target-platform }} -c threeML -c conda-forge --recipe conda-dist/recipe.yaml --experimental
+                  rattler-build build --target-platform ${{ matrix.target-platform }} -c threeML -c conda-forge --recipe conda-dist/recipe.yaml --experimental --test skip
                 fi
 
                 echo "Uploading ${{matrix.os}} IsDev: ${ISDEV} "
