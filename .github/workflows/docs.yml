@@ -338,7 +338,7 @@ jobs:
       - name: Install the package
         shell: bash -l {0}
         run: |
-          mamba install -c conda-forge black speclite pygmo ultranest
+          mamba install -c conda-forge black speclite pygmo ultranest "multinest=3.10=h*"
           
           if [[ "${ISDEV}" == "true" ]]; then
             mamba remove --force astromodels
