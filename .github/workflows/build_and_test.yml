@@ -182,8 +182,12 @@ jobs:
                   echo "Python version: ${{matrix.python-version}}"
                   echo "Running on development branch: ${ISDEV} "
                   if [[ ${{ matrix.os }} != macos-latest && ${{ matrix.python-version }} != 3.13 ]]; then
-                      mamba install -c conda-forge pygmo "multinest=3.10=h*"
-                      if [[ ${{ matrix.os }} != ubuntu-24.04-arm ]]; then
+                      if [[ ${{ matrix.os }} == ubuntu-24.04-arm ]]; then
+                        # no multinest builds for linux-aarch64
+                        mamba install -c conda-forge pygmo
+                      else
+                        # pin multinest to avoid the legacy build "2" (links libgfortran.so.3)
+                        mamba install -c conda-forge pygmo "multinest=3.10=h*"
                         mamba install -c conda-forge ultranest
                       fi
                   fi
