@@ -493,9 +493,6 @@ jobs:
       - name: Build the API doc
         run: |
 
-          brew install c-blosc
-          brew install hdf5
-
           pip3 install tempita
           pip3 install blosc2 h5py
           pip3 install numpy scipy numba astropy pandas
@@ -546,9 +543,7 @@ jobs:
       - name: Install package
         run: |
 
-          brew install c-blosc
-          brew install hdf5
-
+          
           pip3 install wheel pkgconfig
           pip3 install blosc2 h5py
 
