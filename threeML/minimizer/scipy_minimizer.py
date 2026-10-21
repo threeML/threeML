@@ -103,11 +103,20 @@ class ScipyMinimizer(LocalMinimizer):
             minima.append(cur_min)
             maxima.append(cur_max)
 
+            # For boundaries at zero the margin cannot be relative to the boundary,
+            # use a fraction of the allowed range instead
+
+            if cur_min is not None and cur_max is not None:
+                width = cur_max - cur_min
+
+            else:
+                width = 1.0
+
             if cur_min is not None:
-                cur_min = cur_min + 0.00005 * abs(cur_min)
+                cur_min = cur_min + 0.00005 * (abs(cur_min) if cur_min != 0 else width)
 
             if cur_max is not None:
-                cur_max = cur_max - 0.00005 * abs(cur_max)
+                cur_max = cur_max - 0.00005 * (abs(cur_max) if cur_max != 0 else width)
 
             bounds.append((cur_min, cur_max))
 

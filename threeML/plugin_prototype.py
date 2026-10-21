@@ -183,6 +183,21 @@ class PluginPrototype(metaclass=abc.ABCMeta):
         log.info("Plug in %s had beed expluded from the fit" % self.name)
         self._exclude_from_fit = flag
 
+    def get_deviance_residuals(self):
+        """Return the signed deviance residuals for the current values of
+        the parameters, one per data bin. The sum of their squares must be
+        -2 * get_log_like() up to a constant independent of the parameters.
+
+        This is optional, and is required only by least squares minimizers
+        (e.g., LEAST_SQUARES). Plugins that do not support it raise
+        NotImplementedError.
+        """
+
+        raise NotImplementedError(
+            f"Plugin {self.name} ({type(self).__name__}) does not provide deviance "
+            "residuals"
+        )
+
     ######################################################################
     # The following methods must be implemented by each plugin
     ######################################################################

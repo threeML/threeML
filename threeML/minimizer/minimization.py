@@ -114,6 +114,17 @@ class FunctionWrapper(object):
 
         return self._function(*self._all_values)
 
+    def residuals(self, *trial_values):
+        # Same as __call__, for minimizers working on residuals (least squares)
+
+        if not hasattr(self._function, "residuals"):
+            raise NotImplementedError("The function does not provide residuals")
+
+        self._all_values[self._indexes_of_fixed_par] = self._fixed_parameters_values
+        self._all_values[~self._indexes_of_fixed_par] = trial_values
+
+        return self._function.residuals(*self._all_values)
+
 
 class ProfileLikelihood(object):
     def __init__(self, minimizer_instance, fixed_parameters):
@@ -151,14 +162,24 @@ class ProfileLikelihood(object):
             )
 
             # Create a copy of the optimizer with the new parameters (i.e., one or two
-            # parameters fixed to their current values)
+            # parameters fixed to their current values). If the optimizer has been
+            # created by a local minimization factory, use it again so that the copy
+            # has the same setup (algorithm and options) as the original
 
-            self._optimizer = type(minimizer_instance)(
-                self._wrapper, free_parameters, verbosity=0
-            )
+            factory = getattr(minimizer_instance, "_factory", None)
 
-            if minimizer_instance.algorithm_name is not None:
-                self._optimizer.set_algorithm(minimizer_instance.algorithm_name)
+            if isinstance(factory, LocalMinimization):
+                self._optimizer = factory.get_instance(
+                    self._wrapper, free_parameters, verbosity=0
+                )
+
+            else:
+                self._optimizer = type(minimizer_instance)(
+                    self._wrapper, free_parameters, verbosity=0
+                )
+
+                if minimizer_instance.algorithm_name is not None:
+                    self._optimizer.set_algorithm(minimizer_instance.algorithm_name)
 
         else:
             # Special case when there are no free parameters after fixing the requested
@@ -346,6 +367,10 @@ class LocalMinimization(_Minimization):
 
         # Set up the minimizer
         instance._setup(self._setup_dict)
+
+        # Keep track of the factory, so that copies of this minimizer (e.g., for
+        # profiling the likelihood) can be created with the same setup
+        instance._factory = self
 
         return instance
 
@@ -1237,6 +1262,15 @@ except ImportError:
 
 else:
     _minimizers["SCIPY"] = ScipyMinimizer
+
+try:
+    from threeML.minimizer.least_squares_minimizer import LeastSquaresMinimizer
+
+except ImportError:
+    add_startup_warning(log, "Least squares minimizer is not available")
+
+else:
+    _minimizers["LEAST_SQUARES"] = LeastSquaresMinimizer
 
 # Check that we have at least one minimizer available
 
