@@ -77,6 +77,18 @@ skip_if_nautilus_is_not_available = pytest.mark.skipif(
     not has_nautilus, reason="No nautilus available"
 )
 
+try:
+    import pocomc
+
+    print(pocomc.__doc__)
+except ModuleNotFoundError:
+    has_pocomc = False
+else:
+    has_pocomc = True
+skip_if_pocomc_is_not_available = pytest.mark.skipif(
+    not has_pocomc, reason="No pocomc available"
+)
+
 
 def remove_priors(model):
     for parameter in model:
@@ -235,6 +247,30 @@ def test_zeus(bayes_fitter, completed_bn090217206_bayesian_analysis):
     check_results(res)
 
 
+@skip_if_zeus_is_not_available
+def test_zeus_automatic_convergence(
+    bayes_fitter, completed_bn090217206_bayesian_analysis
+):
+    bayes, _ = completed_bn090217206_bayesian_analysis
+
+    bayes.set_sampler("zeus")
+    assert bayes.sample() is None
+
+    cb0 = zeus.callbacks.AutocorrelationCallback(
+        ncheck=100, dact=0.01, nact=50, discard=0.5
+    )
+    cb1 = zeus.callbacks.MinIterCallback(nmin=1000)
+    bayes.sampler.setup(n_iterations=20000, n_walkers=4, n_burn_in=0)
+
+    bayes.sample(callbacks=[cb0, cb1])
+
+    res = bayes.results.get_data_frame()
+
+    bayes.restore_median_fit()
+
+    check_results(res)
+
+
 @pytest.mark.filterwarnings("ignore:You provided")
 @skip_if_nautilus_is_not_available
 def test_nautilus(bayes_fitter, completed_bn090217206_bayesian_analysis):
@@ -244,6 +280,24 @@ def test_nautilus(bayes_fitter, completed_bn090217206_bayesian_analysis):
     assert bayes.sample() is None
 
     bayes.sampler.setup(n_live=2000, f_live=0.009, n_shell=5, faulty_keyword=False)
+
+    bayes.sample()
+
+    res = bayes.results.get_data_frame()
+
+    bayes.restore_median_fit()
+
+    check_results(res)
+
+
+@skip_if_pocomc_is_not_available
+def test_pocomc(bayes_fitter, completed_bn090217206_bayesian_analysis):
+    bayes, _ = completed_bn090217206_bayesian_analysis
+
+    bayes.set_sampler("pocomc")
+    assert bayes.sample() is None
+
+    bayes.sampler.setup()
 
     bayes.sample()
 

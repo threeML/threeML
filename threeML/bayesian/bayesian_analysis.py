@@ -55,6 +55,11 @@ _possible_samplers = {
         "from threeML.bayesian.autoemcee_sampler import AutoEmceeSampler",
         "AutoEmceeSampler",
     ],
+    "pocomc": [
+        "pocomc",
+        "from threeML.bayesian.pocomc_sampler import PocoMCSampler",
+        "PocoMCSampler",
+    ],
 }
 
 
@@ -66,7 +71,8 @@ for k, v in _possible_samplers.items():
         exec(f"{v[1]}")
         exec(f"_available_samplers['{k}'] = {v[2]}")
 
-    except ImportError:
+    except ImportError as e:
+        log.debug(e)
         log.debug(f"no {v[0]}")
 
 
