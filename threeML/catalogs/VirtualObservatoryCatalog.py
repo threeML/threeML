@@ -60,7 +60,7 @@ class VirtualObservatoryCatalog(object):
         if radius is None:
             raise ValueError("You need to provide a radius")
 
-        ra, dec = (sky_coord.fk5.ra.value, sky_coord.fk5.dec.value)
+        ra, dec = (sky_coord.icrs.ra.value, sky_coord.icrs.dec.value)
 
         return ra, dec, self.cone_search(ra, dec, radius)
 
