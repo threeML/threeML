@@ -35,6 +35,54 @@ class BinnedStatistic(object):
     def get_current_value(self):
         RuntimeError("must be implemented in subclass")
 
+    def _per_bin_log_like(self, model_counts: np.ndarray) -> np.ndarray:
+        """Log-likelihood of each bin for the given source model counts.
+
+        Must be implemented by the statistics supporting deviance residuals.
+        """
+
+        raise NotImplementedError(
+            f"{type(self).__name__} does not provide per-bin log-likelihood values"
+        )
+
+    def _saturated_model_counts(self) -> np.ndarray:
+        """Source model counts maximizing the log-likelihood of each bin
+        (the saturated model).
+
+        Must be implemented by the statistics supporting deviance residuals.
+        """
+
+        raise NotImplementedError(
+            f"{type(self).__name__} does not provide a saturated model"
+        )
+
+    def get_deviance_residuals(self) -> np.ndarray:
+        """Signed deviance residuals for the current model.
+
+        r_i = sign(s_i - m_i) * sqrt(2 * (logL_i(s_i) - logL_i(m_i))), where
+        m_i are the source model counts and s_i the counts of the saturated
+        model. The sum of the squares of the residuals is -2 logL up to a
+        constant, so minimizing it with a least squares algorithm maximizes
+        the likelihood.
+
+        :return: array of residuals, one per bin
+        """
+
+        model_counts = self._spectrum_plugin.get_model()
+
+        saturated_counts = self._saturated_model_counts()
+
+        deviance = 2.0 * (
+            self._per_bin_log_like(saturated_counts)
+            - self._per_bin_log_like(model_counts)
+        )
+
+        # Rounding can produce tiny negative values close to the saturated model
+
+        deviance = np.clip(deviance, 0.0, None)
+
+        return np.sign(saturated_counts - model_counts) * np.sqrt(deviance)
+
     def get_randomized_source_counts(self, source_model_counts):
         return None
 
@@ -49,9 +97,7 @@ class BinnedStatistic(object):
 
 
 class GaussianObservedStatistic(BinnedStatistic):
-    def get_current_value(self, precalc_fluxes: Optional[np.array] = None):
-        model_counts = self._spectrum_plugin.get_model(precalc_fluxes=precalc_fluxes)
-
+    def _per_bin_log_like(self, model_counts):
         chi2_ = half_chi2(
             self._spectrum_plugin.current_observed_counts,
             self._spectrum_plugin.current_observed_count_errors,
@@ -60,7 +106,15 @@ class GaussianObservedStatistic(BinnedStatistic):
 
         assert np.all(np.isfinite(chi2_))
 
-        return nb_sum(chi2_) * (-1), None
+        return chi2_ * (-1)
+
+    def _saturated_model_counts(self):
+        return np.asarray(self._spectrum_plugin.current_observed_counts, dtype=float)
+
+    def get_current_value(self, precalc_fluxes: Optional[np.array] = None):
+        model_counts = self._spectrum_plugin.get_model(precalc_fluxes=precalc_fluxes)
+
+        return nb_sum(self._per_bin_log_like(model_counts)), None
 
     def get_randomized_source_counts(self, source_model_counts):
         if not np.isfinite(source_model_counts[0]):
@@ -100,19 +154,30 @@ class GaussianObservedStatistic(BinnedStatistic):
 
 
 class PoissonObservedIdealBackgroundStatistic(BinnedStatistic):
-    def get_current_value(self, precalc_fluxes: Optional[np.array] = None):
-        # In this likelihood the background becomes part of the model, which means that
-        # the uncertainty in the background is completely neglected
-
-        model_counts = self._spectrum_plugin.get_model(precalc_fluxes=precalc_fluxes)
-
+    def _per_bin_log_like(self, model_counts):
         loglike, _ = poisson_log_likelihood_ideal_bkg(
             self._spectrum_plugin.current_observed_counts,
             self._spectrum_plugin.current_scaled_background_counts,
             model_counts,
         )
 
-        return nb_sum(loglike), None
+        return loglike
+
+    def _saturated_model_counts(self):
+        return np.clip(
+            self._spectrum_plugin.current_observed_counts
+            - self._spectrum_plugin.current_scaled_background_counts,
+            0.0,
+            None,
+        )
+
+    def get_current_value(self, precalc_fluxes: Optional[np.array] = None):
+        # In this likelihood the background becomes part of the model, which means that
+        # the uncertainty in the background is completely neglected
+
+        model_counts = self._spectrum_plugin.get_model(precalc_fluxes=precalc_fluxes)
+
+        return nb_sum(self._per_bin_log_like(model_counts)), None
 
     def get_randomized_source_counts(self, source_model_counts):
         # Randomize expectations for the source
@@ -201,12 +266,7 @@ class PoissonObservedModeledBackgroundStatistic(BinnedStatistic):
 
 
 class PoissonObservedNoBackgroundStatistic(BinnedStatistic):
-    def get_current_value(self, precalc_fluxes: Optional[np.array] = None):
-        # In this likelihood the background becomes part of the model, which means that
-        # the uncertainty in the background is completely neglected
-
-        model_counts = self._spectrum_plugin.get_model(precalc_fluxes=precalc_fluxes)
-
+    def _per_bin_log_like(self, model_counts):
         background_model_counts = np.zeros_like(model_counts)
 
         loglike, _ = poisson_log_likelihood_ideal_bkg(
@@ -215,7 +275,18 @@ class PoissonObservedNoBackgroundStatistic(BinnedStatistic):
             model_counts,
         )
 
-        return nb_sum(loglike), None
+        return loglike
+
+    def _saturated_model_counts(self):
+        return np.asarray(self._spectrum_plugin.current_observed_counts, dtype=float)
+
+    def get_current_value(self, precalc_fluxes: Optional[np.array] = None):
+        # In this likelihood the background becomes part of the model, which means that
+        # the uncertainty in the background is completely neglected
+
+        model_counts = self._spectrum_plugin.get_model(precalc_fluxes=precalc_fluxes)
+
+        return nb_sum(self._per_bin_log_like(model_counts)), None
 
     def get_randomized_source_counts(self, source_model_counts):
         # Randomize expectations for the source
@@ -233,6 +304,27 @@ class PoissonObservedNoBackgroundStatistic(BinnedStatistic):
 
 
 class PoissonObservedPoissonBackgroundStatistic(BinnedStatistic):
+    def _per_bin_log_like(self, model_counts):
+        loglike, _ = poisson_observed_poisson_background(
+            self._spectrum_plugin.current_observed_counts,
+            self._spectrum_plugin.current_background_counts,
+            self._spectrum_plugin.scale_factor,
+            model_counts,
+        )
+
+        return loglike
+
+    def _saturated_model_counts(self):
+        # The profile likelihood is maximal when the source accounts for the
+        # observed counts in excess of the (scaled) observed background
+        return np.clip(
+            self._spectrum_plugin.current_observed_counts
+            - self._spectrum_plugin.scale_factor
+            * self._spectrum_plugin.current_background_counts,
+            0.0,
+            None,
+        )
+
     def get_current_value(self, precalc_fluxes: Optional[np.array] = None):
         # Scale factor between source and background spectrum
         model_counts = self._spectrum_plugin.get_model(precalc_fluxes=precalc_fluxes)
@@ -283,6 +375,29 @@ class PoissonObservedPoissonBackgroundStatistic(BinnedStatistic):
 
 
 class PoissonObservedGaussianBackgroundStatistic(BinnedStatistic):
+    def _per_bin_log_like(self, model_counts):
+        loglike, _ = poisson_observed_gaussian_background(
+            self._spectrum_plugin.current_observed_counts,
+            self._spectrum_plugin.current_background_counts
+            * self._spectrum_plugin.scale_factor,
+            self._spectrum_plugin.current_background_count_errors
+            * self._spectrum_plugin.scale_factor,
+            model_counts,
+        )
+
+        return loglike
+
+    def _saturated_model_counts(self):
+        # The profile likelihood is maximal when the source accounts for the
+        # observed counts in excess of the (scaled) observed background
+        return np.clip(
+            self._spectrum_plugin.current_observed_counts
+            - self._spectrum_plugin.current_background_counts
+            * self._spectrum_plugin.scale_factor,
+            0.0,
+            None,
+        )
+
     def get_current_value(self, precalc_fluxes: Optional[np.array] = None):
         expected_model_counts = self._spectrum_plugin.get_model(
             precalc_fluxes=precalc_fluxes

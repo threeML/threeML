@@ -96,7 +96,8 @@ def within_directory(directory):
 
     assert path.is_dir(), f"path {path} does not exist!"
 
-    current_dir: Path = Path(".")
+    # An absolute path is needed, Path(".") would refer to the new directory
+    current_dir: Path = Path.cwd()
 
     os.chdir(path)
     try:

@@ -44,6 +44,9 @@ sin = Sin(K=.5, f=.5)
 sin.phi.fix = True
 
 
+# fixed seed, so that the simulated data are always the same
+np.random.seed(0)
+
 x = np.linspace(-1 * np.pi, 1 * np.pi, 50)
 yerr = np.random.uniform(0.01, 0.05, 50)
 
@@ -80,26 +83,16 @@ xyl.plot();
 
 ## ROOT
 
-```python
-sin.K=1
-sin.f=.5
-
-local_minimizer = LocalMinimization("ROOT")
-
-mle_analysis.set_minimizer(local_minimizer)
-
-mle_analysis.fit();
-
-xyl.plot();
-```
+A minimizer based on the Minuit2 implementation of [ROOT](https://root.cern) is also available as ``LocalMinimization("ROOT")``, but only if PyROOT is installed (it is not part of the standard 3ML installation, and it is not used in this documentation).
 
 <!-- #region heading_collapsed=true -->
 ## scipy
 <!-- #endregion -->
 
 ```python hidden=true
-sin.K=1
-sin.f=.5
+# start every fit from the same point
+mle_analysis.likelihood_model.demo.spectrum.main.Sin.K = 1
+mle_analysis.likelihood_model.demo.spectrum.main.Sin.f = 0.5
 
 local_minimizer = LocalMinimization("scipy")
 
@@ -114,8 +107,9 @@ xyl.plot();
 ```
 
 ```python hidden=true
-sin.K=1
-sin.f=.5
+# start every fit from the same point
+mle_analysis.likelihood_model.demo.spectrum.main.Sin.K = 1
+mle_analysis.likelihood_model.demo.spectrum.main.Sin.f = 0.5
 
 local_minimizer = LocalMinimization("scipy")
 
@@ -131,8 +125,9 @@ xyl.plot();
 ```
 
 ```python hidden=true
-sin.K=1
-sin.f=.5
+# start every fit from the same point
+mle_analysis.likelihood_model.demo.spectrum.main.Sin.K = 1
+mle_analysis.likelihood_model.demo.spectrum.main.Sin.f = 0.5
 
 local_minimizer = LocalMinimization("scipy")
 
@@ -147,13 +142,56 @@ xyl.plot();
 
 ```
 
+## least_squares
+
+A Levenberg–Marquardt-like minimizer, similar to the default fitting method of XSPEC. It minimizes the sum of the squares of the deviance residuals of each data point, which is equivalent to minimizing $-\log{L}$, using derivatives with steps proportional to the parameter values. It is robust for models with a limited numerical precision, such as many XSPEC models (see the Minimization tutorial for details).
+
+It requires all the plugins to provide deviance residuals, which is the case for ``XYLike`` and for the spectral plugins (``SpectrumLike``, ``DispersionSpectrumLike``, ``OGIPLike``).
+
+```python
+# start every fit from the same point
+mle_analysis.likelihood_model.demo.spectrum.main.Sin.K = 1
+mle_analysis.likelihood_model.demo.spectrum.main.Sin.f = 0.5
+
+local_minimizer = LocalMinimization("least_squares")
+
+# diff_step: relative step of the derivatives (like "xset delta" in XSPEC)
+# ftol: tolerance on the relative change of the statistic
+local_minimizer.setup(diff_step=0.01, ftol=1e-8)
+
+mle_analysis.set_minimizer(local_minimizer)
+
+mle_analysis.fit();
+
+xyl.plot();
+```
+
+The algorithm of scipy.optimize.least_squares can be selected between "trf" (default) and "dogbox":
+
+```python
+# start every fit from the same point
+mle_analysis.likelihood_model.demo.spectrum.main.Sin.K = 1
+mle_analysis.likelihood_model.demo.spectrum.main.Sin.f = 0.5
+
+local_minimizer = LocalMinimization("least_squares")
+
+local_minimizer.setup(algorithm="dogbox")
+
+mle_analysis.set_minimizer(local_minimizer)
+
+mle_analysis.fit();
+
+xyl.plot();
+```
+
 <!-- #region heading_collapsed=true -->
 ## GRID Minimizer
 <!-- #endregion -->
 
 ```python hidden=true
-sin.K=1
-sin.f=.5
+# start every fit from the same point
+mle_analysis.likelihood_model.demo.spectrum.main.Sin.K = 1
+mle_analysis.likelihood_model.demo.spectrum.main.Sin.f = 0.5
 
 grid_minimizer = GlobalMinimization("grid")
 
@@ -172,9 +210,5 @@ mle_analysis.fit();
 
 xyl.plot();
 
-
-```
-
-```python hidden=true
 
 ```

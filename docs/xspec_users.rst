@@ -41,6 +41,7 @@ XSPEC is an amazing tool built by dedicated, friendly experts. If XSPEC is your 
    * `minuit <https://iminuit.readthedocs.io/en/stable/>`__
    * `PAGMO <https://esa.github.io/pagmo2/> (dozens and dozens of methods)`__
    * `scipy <https://docs.scipy.org/doc/scipy/reference/optimize.html>`__
+   * least squares (Levenberg-Marquardt-like, similar to ``method leven`` in XSPEC)
    *  global and local optimizer combinations
    * `emcee <https://emcee.readthedocs.io/en/stable/>`__
    * `multinest <https://github.com/farhanferoz/MultiNest>`__
@@ -81,7 +82,46 @@ How do I fake a dummy response to fit optical data or a background model?
 How do I choose the likelihood statistic for my fit?
 ----------------------------------------------------
 - It is possible, but if your PHA files are formatted correctly, we probe them and choose the **correct** likelihood for your data.
-- We do support rebinning of data, but not for the purposes of moving from the Poisson regime to the so-called :math:`\chi^2` regime. This is an incorrect and bad practice. 
+- We do support rebinning of data, but not for the purposes of moving from the Poisson regime to the so-called :math:`\chi^2` regime. This is an incorrect and bad practice.
+
+Does 3ML use the GROUPING of my PHA file?
+-----------------------------------------
+- Not automatically: by default every channel is used separately.
+- To group the channels as XSPEC does, call ``rebin_on_grouping()`` on the plugin after selecting the energy range. The grouping is read from the GROUPING column of the PHA file:
+
+.. code-block:: python
+
+    nustar = OGIPLike("FPMA", observation="src_grouped.pha", background="bkg.pha",
+                      response="src.rmf", arf_file="src.arf")
+
+    nustar.set_active_measurements("3-79")
+    nustar.rebin_on_grouping()
+
+- Channels outside of the selection are dropped, so a group crossing the edge of the selection keeps only its selected channels. To change the selection afterwards, call ``remove_rebinning()`` first.
+- You can also pass your own grouping, as an array of OGIP grouping values (1 at the first channel of a group, -1 for the following channels): ``nustar.rebin_on_grouping(my_grouping)``.
+
+My fit with an XSPEC model does not converge (or takes forever) with MINUIT
+---------------------------------------------------------------------------
+- Many XSPEC models are computed in single precision, or solve numerical equations internally (e.g. ``eqpair``). Their output, and therefore the likelihood, is not smooth at small scales. MINUIT computes derivatives with very small steps, so it can fail to converge, or wander to extreme parameter values where some models become very slow.
+- Use the ``least_squares`` minimizer, which works like the default XSPEC fitting method (``method leven``): the curvature is built from first derivatives of the residuals in each bin, and the derivative steps are proportional to the parameter values (1% by default, like ``xset delta 0.01``):
+
+.. code-block:: python
+
+    jl = JointLikelihood(model, data)
+    jl.set_minimizer("least_squares")
+    jl.fit()
+
+- The step and the tolerance can be changed with:
+
+.. code-block:: python
+
+    least_squares = LocalMinimization("least_squares")
+    least_squares.setup(diff_step=0.01, ftol=1e-8)
+    jl.set_minimizer(least_squares)
+
+- The errors returned by the fit come from the Gauss-Newton approximation of the Hessian (as in XSPEC). Use ``jl.get_errors()`` and ``jl.get_contours()`` (the equivalents of ``error`` and ``steppar``) for profile likelihood errors and scans.
+- As in XSPEC, keep the parameters away from special values at their boundaries, where some models switch to a different computation (for example ``xi = 0`` in ``eqpair``), and set reasonable bounds for parameters that can make the model very slow.
+- ``least_squares`` requires all the plugins to provide residuals for each bin. This is the case for all the spectral plugins (``SpectrumLike``, ``DispersionSpectrumLike``, ``OGIPLike``), except when the background is modeled with another plugin, and for ``XYLike``.
 
 How do I plot *unfolded data points* along with my fit?
 -------------------------------------------------------

@@ -110,6 +110,64 @@ It is clear that, depending on the starting point, minuit makes different steps 
 In the case of a simple, convex likelihood like this one, Minuit finds easily the minimum independently of the starting point.
 
 
+### Least squares minimizer
+
+For binned spectral data 3ML also provides a Levenberg–Marquardt-like minimizer, ``least_squares``, similar to the default fitting method of XSPEC (``method leven``). It is based on [scipy.optimize.least_squares](https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.least_squares.html).
+
+Instead of $-\log{L}$, it minimizes the sum of the squares of the *deviance residuals* $r_i$ of each bin:
+
+$r_i = \mathrm{sign}(s_i - m_i)~\sqrt{2\left[\log{L_i(s_i)} - \log{L_i(m_i)}\right]}$,
+
+where $m_i$ are the model counts and $s_i$ the counts of the saturated model (the one maximizing the likelihood of the bin). Since $\sum_i r_i^2 = -2\log{L}$ up to a constant, the minimum is the same. The difference is in how the minimum is found: the curvature is built from the first derivatives of the residuals ($J^T J$, where $J$ is the Jacobian), so that no second derivatives of the likelihood are needed, and the derivatives are computed with steps proportional to the values of the parameters (1% by default, like ``xset delta 0.01`` in XSPEC).
+
+This makes ``least_squares`` robust for models which are expensive to evaluate or have a limited numerical precision, such as many XSPEC models, where MINUIT can fail to converge. It requires all the plugins to provide deviance residuals, which is the case for ``XYLike`` and for the spectral plugins (``SpectrumLike``, ``DispersionSpectrumLike``, ``OGIPLike``) with the usual likelihoods.
+
+Let's simulate a spectrum and fit it with both minimizers:
+
+```python
+import numpy as np
+
+energies = np.logspace(1, 3, 51)
+
+spectrum = SpectrumLike.from_function(
+    "sim",
+    source_function=Blackbody(K=9e-2, kT=20),
+    background_function=Powerlaw(K=1, index=-1.5, piv=100.0),
+    energy_min=energies[:-1],
+    energy_max=energies[1:],
+)
+
+for minimizer in ("minuit", "least_squares"):
+    ls_model = Model(PointSource("sim", 0, 0, spectral_shape=Blackbody()))
+
+    ls_jl = JointLikelihood(ls_model, DataList(spectrum), verbose=False)
+    ls_jl.set_minimizer(minimizer)
+
+    ls_results, ls_likelihood = ls_jl.fit(quiet=True)
+
+    print(minimizer)
+    print(ls_results[["value", "error"]])
+    print(f"-log(L) = {ls_likelihood.loc['total'].iloc[0]:.4f}\n")
+```
+
+The relative step of the derivatives (``diff_step``), the tolerance on the relative change of the statistic (``ftol``), the maximum number of iterations (``max_nfev``) and the algorithm (``trf`` or ``dogbox``) can be configured:
+
+```python
+least_squares = LocalMinimization("least_squares")
+least_squares.setup(diff_step=0.01, ftol=1e-8)
+
+ls_jl.set_minimizer(least_squares)
+
+_ = ls_jl.fit()
+```
+
+The errors returned by the fit come from the inverse of $J^T J$, i.e. the Gauss–Newton approximation of the Hessian (the same reported by XSPEC). Profile likelihood errors and scans are available as usual:
+
+```python
+_ = ls_jl.get_errors()
+```
+
+
 ## Global minimization
 
 Now let us consider the case of a more complicated $-\log{L}$ function:

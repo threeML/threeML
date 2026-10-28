@@ -71,6 +71,14 @@ class _WeakMinusLogLikeProxy(object):
 
         return jl.minus_log_like_profile(*trial_values)
 
+    def residuals(self, *trial_values):
+        jl = self._jl_ref()
+
+        if jl is None:
+            return None
+
+        return jl.deviance_residuals_profile(*trial_values)
+
 
 class JointLikelihood(object):
     def __init__(
@@ -997,6 +1005,51 @@ class JointLikelihood(object):
         # Return the minus log likelihood
 
         return summed_log_likelihood * (-1)
+
+    def deviance_residuals_profile(self, *trial_values):
+        """Return the deviance residuals of all the plugins for a given set
+        of trial values (in the same order and internal reference used by
+        minus_log_like_profile). The sum of their squares is
+        2 * minus_log_like_profile(*trial_values) up to a constant. Used by
+        least squares minimizers.
+
+        :param trial_values: the trial values. Must be in the same
+            number as the free parameters in the model
+        :return: array of residuals, or None if the trial values are not
+            allowed
+        """
+
+        trial_values = np.array(trial_values)
+
+        if not np.all(np.isfinite(trial_values)):
+            return None
+
+        for i, parameter in enumerate(self._free_parameters.values()):
+            parameter._set_internal_value(trial_values[i])
+
+        residuals = []
+
+        for dataset in list(self._data_list.values()):
+            try:
+                residuals.append(np.asarray(dataset.get_deviance_residuals(), float))
+
+            except ModelAssertionViolation:
+                log.warning(
+                    "Fitting engine in forbidden space: %s" % (trial_values,),
+                )
+
+                return None
+
+        residuals = np.concatenate(residuals)
+
+        if not np.all(np.isfinite(residuals)):
+            log.warning(
+                "These parameters returned non-finite residuals: %s" % (trial_values,),
+            )
+
+            return None
+
+        return residuals
 
     @property
     def fit_trace(self):

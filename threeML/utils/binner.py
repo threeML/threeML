@@ -54,39 +54,21 @@ class Rebinner:
 
         # Rebin taking the mask into account
 
-        self._starts = []
-        self._stops = []
-        self._grouping = np.zeros_like(vector_to_rebin_on)
+        starts = []
+        stops = []
 
         n = 0
         bin_open = False
-
-        n_grouped_bins = 0
 
         for index, b in enumerate(vector_to_rebin_on):
             if not mask[index]:
                 # This element is excluded by the mask
 
-                if not bin_open:
-                    # Do nothing
-                    continue
-
-                else:
+                if bin_open:
                     # We need to close the bin here
-                    self._stops.append(index)
+                    stops.append(index)
                     n = 0
                     bin_open = False
-
-                    # If we have grouped more than one bin
-
-                    if n_grouped_bins > 1:
-                        # group all these bins
-                        self._grouping[index - n_grouped_bins + 1 : index] = -1
-                        self._grouping[index] = 1
-
-                    # reset the number of bins in this group
-
-                    n_grouped_bins = 0
 
             else:
                 # This element is included by the mask
@@ -95,53 +77,117 @@ class Rebinner:
                     # Open a new bin
                     bin_open = True
 
-                    self._starts.append(index)
+                    starts.append(index)
                     n = 0
 
                 # Add the current value to the open bin
 
                 n += b
 
-                n_grouped_bins += 1
-
                 # If we are beyond the requested value, close the bin
 
                 if n >= min_value_per_bin:
-                    self._stops.append(index + 1)
+                    stops.append(index + 1)
 
                     n = 0
 
                     bin_open = False
 
-                    # If we have grouped more than one bin
-
-                    if n_grouped_bins > 1:
-                        # group all these bins
-                        self._grouping[index - n_grouped_bins + 1 : index] = -1
-                        self._grouping[index] = 1
-
-                    # reset the number of bins in this group
-
-                    n_grouped_bins = 0
-
         # At the end of the loop, see if we left a bin open, if we did, close it
 
         if bin_open:
-            self._stops.append(len(vector_to_rebin_on))
+            stops.append(len(vector_to_rebin_on))
 
-        assert len(self._starts) == len(
-            self._stops
-        ), "This is a bug: the starts and stops of the bins are not in equal number"
+        self._set_bins(starts, stops, mask)
 
         self._min_value_per_bin = min_value_per_bin
-
-        self._n_bins = len(self._starts)
-        self._starts = np.array(self._starts)
-        self._stops = np.array(self._stops)
 
         log.debug(
             f"Vector was rebinned from {len(vector_to_rebin_on)} to {self._n_bins}"
         )
+
+    @classmethod
+    def from_ogip_grouping(cls, grouping, mask=None) -> "Rebinner":
+        """Build a rebinner from an OGIP GROUPING array.
+
+        OGIP convention: 1 marks the first channel of a group, -1 a
+        channel that continues the current group and 0 (no grouping
+        information) is treated as the start of a new group. Channels
+        excluded by the mask are dropped, so a group crossing the edge
+        of the mask keeps only its active channels.
+
+        :param grouping: array of OGIP grouping values, one per channel
+        :param mask: (optional) boolean mask of the active channels
+        :return: a Rebinner instance
+        """
+
+        grouping = np.asarray(grouping, dtype=int)
+
+        if mask is not None:
+            mask = np.array(mask, bool)
+
+            if mask.shape != grouping.shape:
+                log.error(
+                    "The provided mask must have the same number of elements as the "
+                    "grouping"
+                )
+
+                raise ValueError()
+
+        else:
+            mask = np.ones(grouping.shape[0], dtype=bool)
+
+        if not np.all(np.isin(grouping, (-1, 0, 1))):
+            log.error("OGIP grouping values must be -1, 0 or 1")
+
+            raise ValueError()
+
+        starts = []
+        stops = []
+        bin_open = False
+
+        for index, (group_flag, active) in enumerate(zip(grouping, mask)):
+            # Close the open bin at a masked channel or at the start of a new group
+
+            if bin_open and (not active or group_flag != -1):
+                stops.append(index)
+                bin_open = False
+
+            if active and not bin_open:
+                starts.append(index)
+                bin_open = True
+
+        if bin_open:
+            stops.append(len(mask))
+
+        instance = cls.__new__(cls)
+        instance._set_bins(starts, stops, mask)
+        instance._min_value_per_bin = None
+
+        log.debug(
+            f"Vector was grouped from {int(mask.sum())} to {instance._n_bins} bins"
+        )
+
+        return instance
+
+    def _set_bins(self, starts, stops, mask) -> None:
+        assert len(starts) == len(
+            stops
+        ), "This is a bug: the starts and stops of the bins are not in equal number"
+
+        self._mask = mask
+        self._n_bins = len(starts)
+        self._starts = np.array(starts, dtype=int)
+        self._stops = np.array(stops, dtype=int)
+
+        # OGIP grouping: 1 at the first channel of each bin, -1 for the
+        # following channels of the same bin. Channels outside of any bin
+        # are left as single-channel groups
+
+        self._grouping = np.ones(mask.shape[0], dtype=np.int16)
+
+        for start, stop in zip(self._starts, self._stops):
+            self._grouping[start + 1 : stop] = -1
 
     @property
     def n_bins(self):

@@ -226,6 +226,8 @@ fig = spectrum_generator.view_count_spectrum()
 spectrum_generator.remove_rebinning()
 ```
 
+For spectra read from PHA files, the grouping stored in the file can be used instead (see the OGIPLike section below).
+
 ### Fitting
 
 To fit the data, we need to create a function, a PointSouce, a Model, and either a JointLikelihood or BayesianAnalysis object. 
@@ -369,3 +371,55 @@ fig = ogip_data.view_count_spectrum()
 ```
 
 When using PHA Type II data, a spectrum number must be supplied to indicate which spectrum from the file to use. Users can also follow the XSPEC convention of specifying the spectrum number in the filename (e.g. 'my_pha.fits{1}') 
+
+### Using the grouping of the PHA file
+
+PHA files can store a grouping of the channels in the GROUPING column (for example produced by ``grppha`` or ``ftgrouppha``). By default 3ML uses each channel separately, but the grouping can be applied, as XSPEC does, with ``rebin_on_grouping``. Let's load a Swift-XRT spectrum, whose 1024 channels are grouped in the file:
+
+```python
+xrt = OGIPLike(
+    "XRT",
+    observation=get_path_of_data_file("datasets/xrt/xrt_src.pha"),
+    background=get_path_of_data_file("datasets/xrt/xrt_bkg.pha"),
+    response=get_path_of_data_file("datasets/xrt/xrt.rmf"),
+    arf_file=get_path_of_data_file("datasets/xrt/xrt.arf"),
+)
+
+print(f"channels: {len(xrt.grouping)}, groups in the file: {(xrt.get_pha_files()['pha'].file_grouping == 1).sum()}")
+```
+
+The grouping is applied to the active channels, so first select the energy range. Channels outside of the selection are dropped: a group crossing the edge of the selection keeps only its selected channels.
+
+```python
+xrt.set_active_measurements("0.3-10")
+
+print(f"bins before grouping: {xrt.n_data_points}")
+
+xrt.rebin_on_grouping()
+
+print(f"bins after grouping: {xrt.n_data_points}")
+
+fig = xrt.view_count_spectrum()
+```
+
+To change the energy selection, the grouping must be removed first and then applied again:
+
+```python
+xrt.remove_rebinning()
+
+xrt.set_active_measurements("0.5-8")
+xrt.rebin_on_grouping()
+```
+
+A custom grouping can also be provided as an array of OGIP grouping values, one per channel (1 at the first channel of a group, -1 for the following channels of the same group). For example, to group the channels in pairs:
+
+```python
+xrt.remove_rebinning()
+
+pairs = np.ones(len(xrt.grouping), dtype=int)
+pairs[1::2] = -1
+
+xrt.rebin_on_grouping(pairs)
+
+print(f"bins: {xrt.n_data_points}")
+```
