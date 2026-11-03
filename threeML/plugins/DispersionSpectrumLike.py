@@ -154,12 +154,6 @@ class DispersionSpectrumLike(SpectrumLike):
 
         # if like_model already set, upadte the integral function
         if self._like_model is not None:
-            integral = self._get_diff_flux_and_integral(
-                self._like_model, integrate_method=method
-            )
-
-            self._integral_flux = integral
-
             self._response.set_function(self._integral_flux)
 
     def get_simulated_dataset(self, new_name=None, **kwargs):
