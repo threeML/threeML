@@ -130,14 +130,6 @@ class DispersionSpectrumLike(SpectrumLike):
         # Get the differential flux function, and the integral function, with no
         # dispersion, we simply integrate the model over the bins
 
-        differential_flux, integral = self._get_diff_flux_and_integral(
-            self._like_model, integrate_method=self._model_integrate_method
-        )
-
-        log.debug(f"{self._name} passing integral flux function to RSP")
-
-        self._integral_flux = integral
-
         # pass to the response matrix
 
         self._response.set_function(self._integral_flux)
@@ -162,12 +154,6 @@ class DispersionSpectrumLike(SpectrumLike):
 
         # if like_model already set, upadte the integral function
         if self._like_model is not None:
-            differential_flux, integral = self._get_diff_flux_and_integral(
-                self._like_model, integrate_method=method
-            )
-
-            self._integral_flux = integral
-
             self._response.set_function(self._integral_flux)
 
     def get_simulated_dataset(self, new_name=None, **kwargs):
