@@ -10,7 +10,7 @@ dependencies:
   - pip
   - pytest
   - pytest-cov
-  - astromodels>=2.5.0
+  - threeml::astromodels>=2.6.0
   - arviz
   - codecov
   - coverage
@@ -30,7 +30,7 @@ dependencies:
   - pandas>=0.23
   - requests
   - speclite
-  - multinest
+  - multinest=3.10=h*  # exclude legacy build "2" (links libgfortran.so.3)
   - pymultinest
   - ultranest
   - dynesty>=1
@@ -53,6 +53,7 @@ dependencies:
   - rich
   - joblib
   - xspec>=12.15.1
+  - libblas=*=*openblas
   - pip:
     - autoemcee
     - chainconsumer

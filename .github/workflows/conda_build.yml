@@ -58,7 +58,7 @@ jobs:
                     rattler-build build --target-platform ${{ matrix.target-platform }} -c threeML -c conda-forge --recipe conda-dist/recipe.yaml --experimental
                   fi
               env:
-                  ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
+                  ISDEV: ${{ github.ref == 'refs/heads/dev' || github.base_ref == 'dev' || github.head_ref == 'dev' }}
                   OMP_NUM_THREADS: 1
                   MKL_NUM_THREADS: 1
                   NUMEXPR_NUM_THREADS: 1
@@ -98,9 +98,9 @@ jobs:
             - name: Build package
               run: |
                 if [[ "${ISDEV}" == "true" ]]; then
-                  rattler-build build --target-platform ${{ matrix.target-platform }} -c threeML/label/dev -c conda-forge --recipe conda-dist/recipe.yaml --experimental
+                  rattler-build build --target-platform ${{ matrix.target-platform }} -c threeML/label/dev -c conda-forge --recipe conda-dist/recipe.yaml --experimental --test skip
                 else
-                  rattler-build build --target-platform ${{ matrix.target-platform }} -c threeML -c conda-forge --recipe conda-dist/recipe.yaml --experimental
+                  rattler-build build --target-platform ${{ matrix.target-platform }} -c threeML -c conda-forge --recipe conda-dist/recipe.yaml --experimental --test skip
                 fi
 
                 echo "Uploading ${{matrix.os}} IsDev: ${ISDEV} "

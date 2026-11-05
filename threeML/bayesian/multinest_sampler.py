@@ -15,7 +15,8 @@ from threeML.data_list import DataList
 try:
     import pymultinest
 
-except Exception:
+# pymultinest calls sys.exit() if libmultinest cannot be loaded
+except (Exception, SystemExit):
     has_pymultinest = False
 
 else:
