@@ -2,8 +2,6 @@ import os
 from importlib import resources
 from pathlib import Path
 
-from threeML.config.config import get_path_of_user_config
-
 
 def get_path_of_data_file(data_file) -> Path:
     """Used to get internal testing data and for examples. Not for user data.

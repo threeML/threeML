@@ -2,7 +2,6 @@ import logging
 
 import numpy as np
 
-from threeML.io.logging import setup_logger
 from threeML.plugins import DispersionSpectrumLike, SpectrumLike
 
 log = logging.getLogger(__name__)

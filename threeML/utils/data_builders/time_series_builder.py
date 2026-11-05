@@ -44,9 +44,9 @@ from threeML.utils.time_series.time_series import TimeSeries
 log = logging.getLogger(__name__)
 
 if find_spec("polarpy") is not None:
-    from polarpy.polar_data import POLARData
-    from polarpy.polar_response import PolarResponse
-    from polarpy.polarlike import PolarLike
+    from polarpy.polar_data import POLARData as PolData
+    from polarpy.polar_response import PolarResponse as PolResponse
+    from polarpy.polarlike import PolarLike as PolarizationLike
 
     log.debug("PolPy plugin is available")
 
