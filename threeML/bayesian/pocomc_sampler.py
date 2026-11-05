@@ -33,7 +33,7 @@ class PocoMCSampler(MCMCSampler):
     def __init__(self, likelihood_model=None, data_list=None, **kwargs):
         assert has_pocomc, "You must install pocomc to use this sampler"
 
-        super(PocoMCSampler, self).__init__(likelihood_model, data_list, **kwargs)
+        super().__init__(likelihood_model, data_list, **kwargs)
 
     def get_posterior(self, trial_values) -> float:
         """
@@ -96,7 +96,8 @@ class PocoMCSampler(MCMCSampler):
 
             if self._sampler_kwargs.get("pool", None) is not None:
                 _WORKER_SAMPLER = self
-                with mp.pool.Pool(int(self._sampler_kwargs.get("pool"))) as executor:
+                ctx = mp.get_context("fork")
+                with ctx.Pool(int(self._sampler_kwargs.get("pool"))) as executor:
                     self._sampler_kwargs.pop("pool")
                     sampler = pc.Sampler(
                         prior=prior,
