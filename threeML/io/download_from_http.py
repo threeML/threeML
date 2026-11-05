@@ -1,3 +1,5 @@
+import logging
+
 import os
 import re
 from builtins import object
@@ -14,10 +16,10 @@ from threeML.io.file_utils import (
     path_exists_and_is_directory,
     sanitize_filename,
 )
-from threeML.io.logging import setup_logger
+
 from threeML.utils.progress_bar import tqdm
 
-log = setup_logger(__name__)
+log = logging.getLogger(__name__)
 
 
 class RemoteDirectoryNotFound(IOError):

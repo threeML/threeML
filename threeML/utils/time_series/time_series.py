@@ -1,3 +1,5 @@
+import logging
+
 __author__ = "grburgess"
 
 import collections
@@ -14,14 +16,14 @@ import pandas as pd
 from threeML.config.config import threeML_config
 from threeML.config.config_utils import get_value_kwargs
 from threeML.io.file_utils import sanitize_filename
-from threeML.io.logging import setup_logger
+
 from threeML.parallel.parallel_client import ParallelClient
 from threeML.utils.progress_bar import trange
 from threeML.utils.spectrum.binned_spectrum import Quality
 from threeML.utils.time_interval import TimeIntervalSet
 from threeML.utils.time_series.polynomial import Polynomial, polyfit, unbinned_polyfit
 
-log = setup_logger(__name__)
+log = logging.getLogger(__name__)
 
 
 class ReducingNumberOfThreads(Warning):

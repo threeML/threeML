@@ -1,3 +1,5 @@
+import logging
+
 import astropy.units as u
 import matplotlib.pyplot as plt
 import pytest
@@ -6,7 +8,7 @@ from astromodels import Model, PointSource, Powerlaw
 from threeML import plot_spectra
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.data_list import DataList
-from threeML.io.logging import setup_logger
+
 from threeML.io.network import internet_connection_is_active
 from threeML.utils.data_builders.fermi.lat_transient_builder import (
     TransientLATDataBuilder,
@@ -14,7 +16,7 @@ from threeML.utils.data_builders.fermi.lat_transient_builder import (
 )
 from threeML.utils.data_download.Fermi_LAT.download_LAT_data import LAT_dataset
 
-log = setup_logger(__name__)
+log = logging.getLogger(__name__)
 
 skip_if_internet_is_not_available = pytest.mark.skipif(
     not internet_connection_is_active(), reason="No active internet connection"

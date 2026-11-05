@@ -1,3 +1,5 @@
+import logging
+
 import abc
 import collections
 import math
@@ -31,7 +33,8 @@ if find_spec("mpi4py") is not None:
 else:
     using_mpi = False
 
-log = setup_logger(__name__)
+
+log = logging.getLogger(__name__)
 
 
 class SamplerBase(metaclass=abc.ABCMeta):

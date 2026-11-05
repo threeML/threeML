@@ -1,14 +1,16 @@
+import logging
+
 from builtins import zip
 
 import numba as nb
 import numpy as np
 import scipy.optimize
 
-from threeML.io.logging import setup_logger
+
 from threeML.minimizer.minimization import FitFailed, LocalMinimizer
 from threeML.utils.differentiation import get_jacobian
 
-log = setup_logger(__name__)
+log = logging.getLogger(__name__)
 
 
 _SUPPORTED_ALGORITHMS = ["L-BFGS-B", "TNC", "SLSQP"]

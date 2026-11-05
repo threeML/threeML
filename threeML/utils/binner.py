@@ -1,15 +1,17 @@
+import logging
+
 import numba as nb
 import numpy as np
 
 from threeML.config.config import threeML_config
-from threeML.io.logging import setup_logger
+
 from threeML.utils.bayesian_blocks import bayesian_blocks, bayesian_blocks_not_unique
 from threeML.utils.numba_utils import VectorFloat64, VectorInt64
 from threeML.utils.progress_bar import tqdm
 from threeML.utils.statistics.stats_tools import Significance
 from threeML.utils.time_interval import TimeIntervalSet
 
-log = setup_logger(__name__)
+log = logging.getLogger(__name__)
 
 
 class NotEnoughData(RuntimeError):

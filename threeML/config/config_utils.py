@@ -1,3 +1,5 @@
+import logging
+
 from pathlib import Path
 from typing import Optional
 
@@ -12,6 +14,8 @@ from .config import get_path_of_user_config, threeML_config
 # and the logging setup needs the config module.
 # from threeML.io.logging import setup_logger
 # log = setup_logger(__name__)
+
+log = logging.getLogger(__name__)
 
 
 def recurse_dict(d, tree):
@@ -54,9 +58,6 @@ def show_configuration(sub_menu: Optional[str] = None):
         else:
             msg = f"{sub_menu} is not in the threeml configuration"
 
-            from threeML.io.logging import setup_logger
-
-            log = setup_logger(__name__)
             log.error(msg)
 
             raise AssertionError(msg)
@@ -99,10 +100,6 @@ def get_value(name, user_value, par_type, config_value):
     :param config_value: value in config
     :returns: parameter value
     """
-
-    from threeML.io.logging import setup_logger
-
-    log = setup_logger(__name__)
 
     if user_value is not None:
         value = user_value

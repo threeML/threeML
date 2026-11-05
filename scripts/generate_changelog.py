@@ -49,16 +49,16 @@ def refomat_base_changelog(file):
     current_minor = None
     for i, li in enumerate(lines):
         if (
-            re.match("^(## \[v\d\.\d\.\d\]).*", li)  # normal vX.X.X versioning
-            or re.match("^(## \[v\d\.\d\]).*", li)  # catch vX.X (v1.0)
-            or re.match("^(## \[\d\.\d\.\d\]).*", li)  # catch missing "v" (0.5.1)
+            re.match(r"^(## \[v\d\.\d\.\d\]).*", li)  # normal vX.X.X versioning
+            or re.match(r"^(## \[v\d\.\d\]).*", li)  # catch vX.X (v1.0)
+            or re.match(r"^(## \[\d\.\d\.\d\]).*", li)  # catch missing "v" (0.5.1)
         ):
-            if not re.match("^(## \[v\d\.\d\]).*", li):
+            if not re.match(r"^(## \[v\d\.\d\]).*", li):
                 version = (
-                    re.match(".*(\d\.\d\.\d).*", li).group(1).strip("[").strip("]")
+                    re.match(r".*(\d\.\d\.\d).*", li).group(1).strip("[").strip("]")
                 )
             else:
-                version = re.match(".*(\d\.\d).*", li).group(1).strip("[").strip("]")
+                version = re.match(r".*(\d\.\d).*", li).group(1).strip("[").strip("]")
 
             li = "#" + li
             version = Version(version)

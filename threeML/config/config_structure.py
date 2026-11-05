@@ -25,7 +25,6 @@ class Logging:
     usr: bool = "on"
     console: bool = "on"
     level: LoggingLevel = LoggingLevel.INFO
-    startup_warnings: bool = "on"
 
 
 @dataclass

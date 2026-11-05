@@ -1,3 +1,5 @@
+import logging
+
 import collections
 import os
 import re
@@ -10,13 +12,12 @@ from glob import glob
 import pandas as pd
 import yaml
 
-from threeML.config import threeML_config
 from threeML.io.file_utils import file_existing_and_readable
-from threeML.io.logging import setup_logger
+from threeML.io.logging import add_startup_warning
 
 pd.reset_option("display.float_format")
 
-log = setup_logger(__name__)
+log = logging.getLogger(__name__)
 
 try:
     from GtBurst import IRFS
@@ -40,8 +41,7 @@ except Exception as e:
     irfs = None
     spectra = None
 
-    if threeML_config.logging.startup_warnings:
-        log.warning("No fermitools installed")
+    add_startup_warning(log, "No fermitools installed")
 
 
 class LATLikelihoodParameter(object):

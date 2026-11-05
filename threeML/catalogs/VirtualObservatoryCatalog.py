@@ -1,3 +1,5 @@
+import logging
+
 import warnings
 
 import astropy
@@ -11,18 +13,10 @@ from astroquery.vo_conesearch.exceptions import VOSError
 # from astropy.vo.client.vos_catalog import VOSCatalog
 from astroquery.vo_conesearch.vos_catalog import VOSCatalog
 
-from threeML.io.logging import setup_logger
+
 from threeML.io.network import internet_connection_is_active
 
-log = setup_logger(__name__)
-
-# Workaround to support astropy 4.1+
-astropy_old = True
-astropy_version = astropy.__version__
-if int(astropy_version[0]) == 4 and int(astropy_version[2]) >= 1:
-    astropy_old = False
-elif int(astropy_version[0]) >= 5:
-    astropy_old = False
+log = logging.getLogger(__name__)
 
 
 class ConeSearchFailed(RuntimeError):
@@ -37,19 +31,34 @@ class VirtualObservatoryCatalog(object):
 
         self._last_query_results = None
 
-    def search_around_source(self, source_name, radius):
+    def search_around_source(self, source=None, radius=None, **kwargs):
         """Search for sources around the named source. The coordinates of the
         provided source are resolved using the astropy.coordinates.name_resolve
         facility.
 
-        :param source_name: name of the source, like "Crab"
+        :param source: name of the source, like "Crab" or an astropy SkyCoord
         :param radius: radius of the search, in degrees
         :return: (ra, dec, table), where ra,dec are the coordinates of
             the source as resolved by astropy, and table is a table with
             the list of sources
         """
 
-        sky_coord = get_icrs_coordinates(source_name)
+        # support renamed keyword
+        if kwargs.get("source_name", None) is not None:
+            source = get_icrs_coordinates(kwargs.get("source_name"))
+            warnings.warn(
+                "The 'source_name' keyword in search_around_source is deprecated, use"
+                " 'source' instead",
+                DeprecationWarning,
+            )
+
+        if not isinstance(source, astropy.coordinates.SkyCoord):
+            sky_coord = get_icrs_coordinates(source)
+        else:
+            sky_coord = source
+
+        if radius is None:
+            raise ValueError("You need to provide a radius")
 
         ra, dec = (sky_coord.fk5.ra.value, sky_coord.fk5.dec.value)
 
@@ -113,15 +122,8 @@ class VirtualObservatoryCatalog(object):
 
                 str_df = pandas_df.select_dtypes([object])
 
-                if astropy_old:
-                    str_df = str_df.stack().str.decode("utf-8").unstack()
-
                 for col in str_df:
                     pandas_df[col] = str_df[col]
-
-                if astropy_old:
-                    new_index = [x.decode("utf-8") for x in pandas_df.index]
-                    pandas_df.index = new_index
 
                 self._last_query_results = pandas_df
 

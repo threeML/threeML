@@ -16,7 +16,40 @@ jupyter:
 <!-- #region -->
 # Logging and Verbosity
 
-We have recently switched to reporting information to the user via logging. Logging in 3ML occurs in three different ways:
+We use the [`logging`](https://docs.python.org/3/library/logging.html) library to manage all logs. 
+The `logging` needs to be configured by the application using 3ML --e.g. a script, an interactive notebook, etc-- 
+for example:
+
+```python
+# myapp.py
+import logging
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
+```
+
+See the `logging` library documentation for further details.
+
+For convenience, 3ML provides a custom logging configuration, which
+can be activated with:
+
+```python
+# myapp.py
+import logging
+from threeML.io.logging import setup_logger
+logger = setup_logger(__name__)
+```
+
+The logging behavior can be further configured with the instructions
+below. Note that these 3ML-specific logging configuration only 
+take effect if your logger was instantiated using 3ML's `setup_logger`.
+
+NOTE: Until recently, 3ML configured its own logger by default. 
+Now you need to call `setup_logger` if you want to recover the
+previous behavior.
+
+## Logging handlers
+
+Logging in 3ML occurs in three different ways:
 
 * to the console (jupyter or command line)
 * a user log file
@@ -24,22 +57,11 @@ We have recently switched to reporting information to the user via logging. Logg
 
 The first two files record information relvant to the average 3ML user. The debug file records low level information useful when trying to solve runtime errors. 
 
+## Configuration
 
 The logging of 3ML is configurable in the configuration file.
 
-<!-- #endregion -->
-
-
-```python 
-import warnings
-warnings.simplefilter('ignore')
-import numpy as np
-np.seterr(all="ignore")
-```
-
-
 ```python
-%%capture
 from threeML import threeML_config
 
 threeML_config["logging"]
@@ -47,6 +69,25 @@ threeML_config["logging"]
 
 First, **the location of the log files can be set** before start a 3ML session in python. By default, logging to the debug file is off (**developer** switch). The **console** and **usr** switches can also be disabled by default to completely silence 3ML. Additionally, the default logging level of 3ML can be set for both the usr and console logs.
 
+## Startup warnings
+
+3ML checks the availability of various plugins and external libraries
+during the library initialization. While these warnings are usual benign,
+if it is important for your application to record these warning 
+you can log them at any point by calling
+
+```python
+from threeML.io.logging import log_threeml_startup_warnings
+from astromodels.utils.logging import log_astromodels_startup_warnings
+log_astromodels_startup_warnings(logger)
+log_threeml_startup_warnings(logger)
+```
+
+Here, `logger` can be an arbitrary `Logger`, whether it was configured by
+3ML or not.
+
+NOTE: until recently, these warnings were logged and printed by default.
+Now you need to call the function above explicitely.
 
 ## Logging controls and verbosity
 

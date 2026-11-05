@@ -1,3 +1,5 @@
+import logging
+
 from builtins import range, zip
 
 __author__ = "grburgess"
@@ -8,7 +10,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from threeML.config.config import threeML_config
-from threeML.io.logging import setup_logger
+
 from threeML.io.plotting.light_curve_plots import binned_light_curve_plot
 from threeML.parallel.parallel_client import ParallelClient
 from threeML.utils.binner import TemporalBinner
@@ -17,7 +19,7 @@ from threeML.utils.time_interval import TimeIntervalSet
 from threeML.utils.time_series.polynomial import polyfit, unbinned_polyfit
 from threeML.utils.time_series.time_series import TimeSeries
 
-log = setup_logger(__name__)
+log = logging.getLogger(__name__)
 
 
 class ReducingNumberOfThreads(Warning):

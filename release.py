@@ -96,7 +96,7 @@ if __name__ == "__main__":
         "-n",
         action="store_true",
         dest="dryrun",
-        help="Dry run (i.e. do not actually do anything).",
+        help="Dry run (i.e. do not actually do anything!).",
     )
     opts, args = parser.parse_args()
     if not opts.tagmode and not (opts.src):

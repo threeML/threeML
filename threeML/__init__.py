@@ -1,3 +1,7 @@
+import logging
+
+# We import matplotlib first, because we need control on the backend
+# Indeed, if no DISPLAY variable is set, matplotlib 2.0 crashes (at the moment, 05/26/2017)
 import os
 import warnings
 from importlib import import_module
@@ -55,6 +59,13 @@ except AttributeError:
     _astromodels_temp = {
         k: ("astromodels", k) for k in _ast_all if k not in _astromodels.keys()
     }
+log = logging.getLogger(__name__)
+from .io.logging import add_startup_warning
+
+if os.environ.get("DISPLAY") is None:
+    add_startup_warning(
+        log, "no display variable set. using backend for graphics without display (agg)"
+    )
 
 _public.update(_astromodels_temp)
 _deprecated.update(_astromodels_temp)
@@ -281,20 +292,18 @@ for var in var_to_check:
             num_threads = int(num_threads)
 
         except ValueError:
-            if threeML_config.logging.startup_warnings:
-                log.warning(
-                    "Your env. variable %s is not an integer, which doesn't make sense. Set it to 1 "
-                    "for optimum performances." % var,
-                    # RuntimeWarning,
-                )
+            add_startup_warning(
+                log,
+                "Your env. variable %s is not an integer, which doesn't make sense. Set it to 1 "
+                "for optimum performances." % var,
+            )
 
     else:
-        if threeML_config.logging.startup_warnings:
-            log.warning(
-                "Env. variable %s is not set. Please set it to 1 for optimal performances in 3ML"
-                % var
-                #            RuntimeWarning,
-            )
+        add_startup_warning(
+            log,
+            "Env. variable %s is not set. Please set it to 1 for optimal performances in 3ML"
+            % var,
+        )
 
 
 def is_plugin_available(name):
