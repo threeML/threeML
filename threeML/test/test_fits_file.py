@@ -1,7 +1,8 @@
+from pathlib import Path
+
 import astropy.io.fits as fits
 import numpy as np
 import pytest
-from pathlib import Path
 
 from threeML.io.fits_file import FITSExtension, FITSFile
 

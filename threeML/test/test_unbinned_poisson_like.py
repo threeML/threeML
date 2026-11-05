@@ -5,7 +5,7 @@ from astromodels import Gaussian, Line, Log_normal, Model, PointSource
 from threeML.bayesian.bayesian_analysis import BayesianAnalysis
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.data_list import DataList
-from threeML.plugins.UnbinnedPoissonLike import EventObservation, UnbinnedPoissonLike
+from threeML.plugins import EventObservation, UnbinnedPoissonLike
 
 
 def test_event_observation(event_observation_contiguous, event_observation_split):

@@ -12,7 +12,7 @@ from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.classicMLE.likelihood_ratio_test import LikelihoodRatioTest
 from threeML.data_list import DataList
 from threeML.io.file_utils import within_directory
-from threeML.plugins.OGIPLike import OGIPLike
+from threeML.plugins import OGIPLike
 from threeML.plugins.SwiftXRTLike import SwiftXRTLike
 from threeML.utils.OGIP.response import OGIPResponse
 from threeML.utils.spectrum.pha_spectrum import PHASpectrum

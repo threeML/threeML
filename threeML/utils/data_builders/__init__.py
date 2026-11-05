@@ -1,4 +1,8 @@
-from .fermi.lat_transient_builder import TransientLATDataBuilder
-from .time_series_builder import TimeSeriesBuilder
+from threeML._lazy_exports import setup_lazy_exports
 
-__all__ = ["TimeSeriesBuilder", "TransientLATDataBuilder"]
+_EXPORTS = {
+    "TimeSeriesBuilder": (".time_series_builder", []),
+    "TransientLATDataBuilder": (".fermi", []),
+}
+
+setup_lazy_exports(globals(), _EXPORTS)

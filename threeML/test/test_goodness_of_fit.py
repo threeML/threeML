@@ -2,7 +2,7 @@ import numpy as np
 import scipy.stats
 from astromodels import Powerlaw
 
-from threeML.plugins.XYLike import XYLike
+from threeML.plugins import XYLike
 
 
 def test_goodness_of_fit():

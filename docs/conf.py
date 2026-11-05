@@ -32,11 +32,12 @@ DOCS = Path(__file__).parent
 
 def run_apidoc(app):
     """Download API stubs from GitHub Actions artifact or generate them locally."""
-    import subprocess
-    import requests
-    import zipfile
     import io
     import json
+    import subprocess
+    import zipfile
+
+    import requests
 
     api_dir = DOCS / "api"
     api_dir.mkdir(exist_ok=True)

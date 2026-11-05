@@ -6,7 +6,7 @@ from astromodels import IndependentVariable, Model, PointSource, Powerlaw
 
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.data_list import DataList
-from threeML.plugins.XYLike import XYLike
+from threeML.plugins import XYLike
 
 
 def test_energy_time_fit():

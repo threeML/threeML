@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 import scipy.optimize
 
-from threeML import add_startup_warning
+from ..io.logging import add_startup_warning
 from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings
 

@@ -1,11 +1,11 @@
 from builtins import object, zip
-from packaging.version import Version
 
 import astropy.constants as constants
 import astropy.units as astro_units
 import numba as nb
 import numpy as np
 import speclite.filters as spec_filters
+from packaging.version import Version
 
 from threeML.utils.interval import IntervalSet
 

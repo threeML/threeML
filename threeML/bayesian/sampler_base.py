@@ -4,15 +4,21 @@ import abc
 import collections
 import math
 import weakref
+from importlib.util import find_spec
 from typing import Dict, Optional
 
 import numpy as np
+from astromodels.core.model import Model
+from astromodels.functions.function import ModelAssertionViolation
 
+from threeML.analysis_results import BayesianResults
 from threeML.config import threeML_config
+from threeML.data_list import DataList
+from threeML.utils.numba_utils import nb_sum
+from threeML.utils.spectrum.share_spectrum import ShareSpectrum
+from threeML.utils.statistics.stats_tools import aic, bic, dic
 
-try:
-    # see if we have mpi and/or are using parallel
-
+if find_spec("mpi4py") is not None:
     from mpi4py import MPI
 
     if MPI.COMM_WORLD.Get_size() > 1:  # need parallel capabilities
@@ -23,19 +29,9 @@ try:
 
     else:
         using_mpi = False
-except Exception:
+else:
     using_mpi = False
 
-
-from astromodels.core.model import Model
-from astromodels.functions.function import ModelAssertionViolation
-
-from threeML.analysis_results import BayesianResults
-from threeML.data_list import DataList
-
-from threeML.utils.numba_utils import nb_sum
-from threeML.utils.spectrum.share_spectrum import ShareSpectrum
-from threeML.utils.statistics.stats_tools import aic, bic, dic
 
 log = logging.getLogger(__name__)
 

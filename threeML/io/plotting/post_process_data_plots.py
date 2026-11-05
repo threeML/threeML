@@ -4,7 +4,6 @@ import logging
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import colormaps
-
 import threeML.plugins.PhotometryLike as photolike
 import threeML.plugins.SpectrumLike as speclike
 from threeML.config.config import threeML_config

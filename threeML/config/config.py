@@ -1,14 +1,10 @@
 import os
 from pathlib import Path
+from omegaconf import OmegaConf
+
 import warnings
 
-from omegaconf import OmegaConf
 from .config_structure import Config
-
-# Read the default Config
-threeML_config: Config = OmegaConf.structured(Config)
-
-# now glob the config directory
 
 
 def get_path_of_user_config() -> Path:
@@ -22,6 +18,12 @@ def get_path_of_user_config() -> Path:
         config_path.mkdir(parents=True)
 
     return config_path
+
+
+# Read the default Config
+threeML_config: Config = OmegaConf.structured(Config)
+
+# now glob the config directory
 
 
 def update_config_with_user_configs(threeML_config):

@@ -2,6 +2,7 @@ import logging
 
 import copy
 import re
+from importlib.util import find_spec
 from pathlib import Path
 
 import astropy.io.fits as fits
@@ -10,11 +11,10 @@ import numpy as np
 
 from threeML.config.config import threeML_config
 from threeML.config.config_utils import get_value_kwargs
+from threeML.exceptions.custom_exceptions import NegativeBackground
 from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
+from threeML.plugins import DispersionSpectrumLike, OGIPLike, SpectrumLike
 from threeML.io.logging import silence_console_log
-from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
-from threeML.plugins.OGIPLike import OGIPLike
-from threeML.plugins.SpectrumLike import NegativeBackground, SpectrumLike
 from threeML.utils.data_builders.fermi.gbm_data import GBMCdata, GBMTTEFile
 from threeML.utils.data_builders.fermi.lat_data import LLEFile
 from threeML.utils.histogram import Histogram
@@ -43,28 +43,26 @@ from threeML.utils.time_series.time_series import TimeSeries
 
 log = logging.getLogger(__name__)
 
-try:
-    from polpy.poldata import PolData
-    from polpy.polresponse import PolResponse
-    from polpy.polarizationlike import PolarizationLike
+if find_spec("polarpy") is not None:
+    from polarpy.polar_data import POLARData as PolData
+    from polarpy.polar_response import PolarResponse as PolResponse
+    from polarpy.polarlike import PolarLike as PolarizationLike
 
     log.debug("PolPy plugin is available")
 
-    has_polpy = True
-
-except ImportError:
-    log.debug("PolPy plugin is unavailable")
+    has_polarpy = True
+else:
+    log.debug("POLAR plugins are unavailable")
 
     has_polpy = False
 
-try:
+if find_spec("gbm_drm_gen") is not None:
     import gbm_drm_gen
 
     log.debug("GBM RSP generator is available")
-
     has_balrog = True
+else:
 
-except ImportError:
     log.debug("GBM RSP generator is unavailable")
 
     has_balrog = False

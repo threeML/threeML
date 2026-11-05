@@ -1,9 +1,9 @@
+from importlib.metadata import version
 import logging
 
 import astropy.units as u
 import numpy as np
 from astropy.io import fits
-from importlib.metadata import version
 
 log = logging.getLogger(__name__)
 

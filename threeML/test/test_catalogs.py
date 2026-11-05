@@ -1,4 +1,5 @@
 import pytest
+from astropy.table import Table
 
 from threeML.catalogs.FermiGBM import FermiGBMBurstCatalog
 from threeML.catalogs.FermiLAT import (
@@ -10,7 +11,6 @@ from threeML.catalogs.FermiLAT import (
 from threeML.catalogs.FermiLLE import FermiLLEBurstCatalog
 from threeML.catalogs.Swift import SwiftGRBCatalog
 from threeML.io.network import internet_connection_is_active
-from astropy.table import Table
 from astropy.coordinates.name_resolve import NameResolveError
 from astropy.coordinates import SkyCoord
 
@@ -152,14 +152,12 @@ def test_swift_catalog():
 
 @skip_if_internet_is_not_available
 def test_old_fermi_module():
-    from threeML.catalogs.Fermi import (
-        FermiGBMBurstCatalog as GBMBC,
-        FermiGBMTriggerCatalog as GBMTC,
-        FermiLATSourceCatalog as LATSC,
-        FermiPySourceCatalog as FPYSC,
-        FermiLLEBurstCatalog as LLEPC,
-        ModelFrom3FGL as MF3FGL,
-    )
+    from threeML.catalogs.Fermi import FermiGBMBurstCatalog as GBMBC
+    from threeML.catalogs.Fermi import FermiGBMTriggerCatalog as GBMTC
+    from threeML.catalogs.Fermi import FermiLATSourceCatalog as LATSC
+    from threeML.catalogs.Fermi import FermiLLEBurstCatalog as LLEPC
+    from threeML.catalogs.Fermi import FermiPySourceCatalog as FPYSC
+    from threeML.catalogs.Fermi import ModelFrom3FGL as MF3FGL
 
     lle_catalog = LLEPC()
 

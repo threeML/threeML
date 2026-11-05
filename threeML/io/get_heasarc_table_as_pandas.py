@@ -2,16 +2,16 @@ import logging
 
 import codecs
 import datetime
-import requests
-from requests.adapters import HTTPAdapter
-from urllib3.util import Retry
 import warnings
 from builtins import map
 from pathlib import Path
 
 import astropy.io.votable as votable
 import astropy.time as astro_time
+import requests
 import yaml
+from requests.adapters import HTTPAdapter
+from urllib3.util import Retry
 
 from threeML.io.file_utils import (
     file_existing_and_readable,

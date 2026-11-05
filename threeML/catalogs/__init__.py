@@ -1,4 +1,14 @@
-from .FermiGBM import FermiGBMBurstCatalog, FermiGBMTriggerCatalog
-from .FermiLAT import FermiLATSourceCatalog, FermiPySourceCatalog
-from .FermiLLE import FermiLLEBurstCatalog
-from .Swift import SwiftGRBCatalog
+from .._lazy_exports import setup_lazy_exports
+
+_EXPORTS = {
+    "FermiGBMBurstCatalog": (".FermiGBM", []),
+    "FermiGBMTriggerCatalog": (".FermiGBM", []),
+    "FermiLATSourceCatalog": (".FermiLAT", []),
+    "FermiPySourceCatalog": (".FermiLAT", ["fermipy"]),
+    "FermiLLEBurstCatalog": (".FermiLLE", []),
+    "SwiftGRBCatalog": (".Swift", []),
+    "VirtualObservatoryCatalog": (".VirtualObservatoryCatalog", []),
+    "ConeSearchFailed": (".VirtualObservatoryCatalog", []),
+}
+
+setup_lazy_exports(globals(), _EXPORTS)

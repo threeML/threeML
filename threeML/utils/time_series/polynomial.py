@@ -28,8 +28,7 @@ from threeML.minimizer.minimization import (
     GlobalMinimization,
     LocalMinimization,
 )
-from threeML.plugins.UnbinnedPoissonLike import EventObservation, UnbinnedPoissonLike
-from threeML.plugins.XYLike import XYLike
+from threeML.plugins import EventObservation, UnbinnedPoissonLike, XYLike
 
 log = logging.getLogger(__name__)
 

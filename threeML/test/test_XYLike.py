@@ -6,7 +6,7 @@ from astromodels.functions import Gaussian, Line
 
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.data_list import DataList
-from threeML.plugins.XYLike import XYLike
+from threeML.plugins import XYLike
 
 
 def get_signal():

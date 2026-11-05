@@ -18,7 +18,7 @@ from rich.console import Console
 from rich.logging import RichHandler
 from rich.theme import Theme
 
-from threeML.config.config import threeML_config
+from ..config.config import threeML_config
 
 logger = logging.getLogger(__name__)
 
