@@ -1,6 +1,5 @@
 import logging
 
-import codecs
 import datetime
 import requests
 from requests.adapters import HTTPAdapter
@@ -143,7 +142,7 @@ def get_heasarc_table_as_pandas(heasarc_table_name, update=False, cache_time_day
                 new_lines = table_file.readlines()
 
             # now write the decoded lines back to the file
-            with codecs.open(file_name_sanatized, "w+", "utf-8") as table_file:
+            with open(file_name_sanatized, "w+", "utf-8") as table_file:
                 table_file.write("".join(new_lines))
 
             #        save the time that we go this table
