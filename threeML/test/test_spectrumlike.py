@@ -2,7 +2,10 @@ import warnings
 
 import numpy as np
 import pytest
-from astromodels import Blackbody, Model, PointSource, Powerlaw
+from astromodels.functions import Blackbody, Powerlaw, Disk_on_sphere
+
+from astromodels.sources import PointSource, ExtendedSource
+from astromodels.core.model import Model
 
 from threeML import DataList, JointLikelihood
 from threeML.exceptions.custom_exceptions import NegativeBackground
@@ -133,7 +136,33 @@ def test_assigning_source_name():
     jl = JointLikelihood(model, dl)
 
     _ = jl.fit()
-    #
+
+    disk = Disk_on_sphere()
+    es = ExtendedSource("test", spatial_shape=disk, spectral_shape=Powerlaw())
+    model = Model(es)
+    spectrum_generator = SpectrumLike.from_function(
+        "fake",
+        source_function=source_function,
+        background_function=background_function,
+        energy_min=low_edge,
+        energy_max=high_edge,
+    )
+
+    with pytest.raises(RuntimeError):
+        spectrum_generator.set_model(model)
+
+    ps = PointSource("ps", 0, 0, spectral_shape=Blackbody())
+    model = Model(es, ps)
+    spectrum_generator = SpectrumLike.from_function(
+        "fake",
+        source_function=source_function,
+        background_function=background_function,
+        energy_min=low_edge,
+        energy_max=high_edge,
+    )
+
+    spectrum_generator.assign_to_source("ps")
+    spectrum_generator.set_model(model)
 
 
 def test_spectrumlike_fit():
@@ -372,3 +401,133 @@ def test_all_statistics():
     spectrum_generator.set_model(model)
 
     spectrum_generator.get_log_like()
+
+
+def test_assigning_source_name_dispersion_spectrum():
+    response = OGIPResponse(get_path_of_data_file("datasets/ogip_powerlaw.rsp"))
+
+    sim_K = 1e-1
+    sim_kT = 20.0
+
+    # get a blackbody source function
+    source_function = Blackbody(K=sim_K, kT=sim_kT)
+
+    # power law background function
+    background_function = Powerlaw(K=1, index=-1.5, piv=100.0)
+
+    spectrum_generator = DispersionSpectrumLike.from_function(
+        "test",
+        source_function=source_function,
+        response=response,
+        background_function=background_function,
+    )
+
+    # good name setting
+
+    bb = Blackbody()
+
+    pts = PointSource("good_name", 0, 0, spectral_shape=bb)
+
+    model = Model(pts)
+
+    # before setting model
+
+    spectrum_generator.assign_to_source("good_name")
+
+    jl = JointLikelihood(model, DataList(spectrum_generator))
+
+    _ = jl.fit()
+
+    # after setting model
+
+    pts = PointSource("good_name", 0, 0, spectral_shape=bb)
+
+    model = Model(pts)
+
+    spectrum_generator = DispersionSpectrumLike.from_function(
+        "test",
+        source_function=source_function,
+        response=response,
+        background_function=background_function,
+    )
+    jl = JointLikelihood(model, DataList(spectrum_generator))
+
+    spectrum_generator.assign_to_source("good_name")
+
+    # after with bad name
+
+    spectrum_generator = DispersionSpectrumLike.from_function(
+        "test",
+        source_function=source_function,
+        response=response,
+        background_function=background_function,
+    )
+
+    jl = JointLikelihood(model, DataList(spectrum_generator))
+
+    with pytest.raises(RuntimeError):
+        spectrum_generator.assign_to_source("bad_name")
+
+        # before with bad name
+
+    spectrum_generator = DispersionSpectrumLike.from_function(
+        "test",
+        source_function=source_function,
+        response=response,
+        background_function=background_function,
+    )
+
+    spectrum_generator.assign_to_source("bad_name")
+
+    with pytest.raises(RuntimeError):
+        jl = JointLikelihood(model, DataList(spectrum_generator))
+
+    # multisource model
+
+    spectrum_generator = DispersionSpectrumLike.from_function(
+        "test",
+        source_function=source_function,
+        response=response,
+        background_function=background_function,
+    )
+
+    ps1 = PointSource("ps1", 0, 0, spectral_shape=Blackbody())
+    ps2 = PointSource("ps2", 0, 0, spectral_shape=Powerlaw())
+
+    model = Model(ps1, ps2)
+
+    model.ps2.spectrum.main.Powerlaw.K.fix = True
+    model.ps2.spectrum.main.Powerlaw.index.fix = True
+
+    spectrum_generator.assign_to_source("ps1")
+
+    dl = DataList(spectrum_generator)
+
+    jl = JointLikelihood(model, dl)
+
+    _ = jl.fit()
+
+    disk = Disk_on_sphere()
+    es = ExtendedSource("test", spatial_shape=disk, spectral_shape=Powerlaw())
+    model = Model(es)
+    spectrum_generator = DispersionSpectrumLike.from_function(
+        "test",
+        source_function=source_function,
+        response=response,
+        background_function=background_function,
+    )
+
+    with pytest.raises(RuntimeError):
+        spectrum_generator.set_model(model)
+
+    ps = PointSource("ps", 0, 0, spectral_shape=Blackbody())
+    model = Model(es, ps)
+    spectrum_generator = DispersionSpectrumLike.from_function(
+        "test",
+        source_function=source_function,
+        response=response,
+        background_function=background_function,
+    )
+
+    spectrum_generator.assign_to_source("ps")
+    spectrum_generator.set_model(model)

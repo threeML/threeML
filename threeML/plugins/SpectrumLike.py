@@ -1774,7 +1774,7 @@ class SpectrumLike(PluginPrototype):
         if new_model is not None:
             new_model = new_model.lower()
 
-            if not (new_model in _known_noise_models):
+            if new_model not in _known_noise_models:
 
                 log.error(
                     "Noise model %s not recognized. "
@@ -1815,7 +1815,7 @@ class SpectrumLike(PluginPrototype):
         # Do not make differences between upper and lower cases
         new_model = new_model.lower()
 
-        if not (new_model in _known_noise_models):
+        if new_model not in _known_noise_models:
 
             log.error(
                 "Noise model %s not recognized. "
@@ -1875,24 +1875,35 @@ class SpectrumLike(PluginPrototype):
 
         self._like_model = likelihoodModel
 
-        # We assume there are no extended sources, since we cannot handle them here
-
-        if not self._like_model.get_number_of_extended_sources() == 0:
-
-            log.error("SpectrumLike plugins do not support " "extended sources")
-
-            raise RuntimeError()
-
         # check if we set a source name that the source is in the model
 
         if self._source_name is not None:
-            if self._source_name not in self._like_model.sources:
+            if self._source_name not in self._like_model.sources.keys():
                 log.error(
                     "Source %s is not contained in "
                     "the likelihood model" % self._source_name
                 )
 
                 raise RuntimeError()
+            if self._source_name in self._like_model.extended_sources.keys():
+                log.error(
+                    "SpectrumLike plugins do not support extended sources."
+                    "You specified an extended source via the assign_to_source "
+                    f"function - source name is {self._source_name}."
+                )
+
+                raise RuntimeError()
+
+        else:
+            if self._like_model.get_number_of_extended_sources() > 0:
+                log.error(
+                    "SpectrumLike plugins do not support extended sources."
+                    "In case those are not relevant for that plugin use "
+                    "assign_to_source to assign a PointSource."
+                )
+
+                raise RuntimeError()
+
         # Get the differential flux function, and the integral function, with no
         # dispersion, we simply integrate the model over the bins
 
