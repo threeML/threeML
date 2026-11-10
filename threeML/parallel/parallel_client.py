@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import logging
 
 # Custom warning
@@ -10,20 +12,12 @@ import time
 import warnings
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Optional
 
 from threeML.config.config import threeML_config
-
 from threeML.utils.progress_bar import tqdm
 
 log = logging.getLogger(__name__)
 
-try:
-    from subprocess import DEVNULL  # py3k
-except ImportError:
-    import os
-
-    DEVNULL = open(os.devnull, "wb")
 
 # Check whether we have a parallel system or not
 
@@ -63,9 +57,9 @@ warnings.simplefilter("always", NoParallelEnvironment)
 
 @contextmanager
 def parallel_computation(
-    profile: Optional[str] = None,
+    profile: str | None = None,
     start_cluster: bool = True,
-    n_jobs: Optional[int] = None,
+    n_jobs: int | None = None,
 ) -> None:
     """A context manager which turns on parallel execution temporarily.
 
@@ -217,10 +211,10 @@ if has_parallel:
             # (more robust, and allows for serialization of class
             # methods)
 
-            if "profile" not in kwargs.keys():
+            if "profile" not in kwargs:
                 kwargs["profile"] = threeML_config.parallel.profile_name
 
-            super(ParallelClient, self).__init__(*args, **kwargs)
+            super().__init__(*args, **kwargs)
 
             # This will propagate the use_dill to all running
             # engines
@@ -273,7 +267,7 @@ if has_parallel:
                 n_active_engines = n_total_engines
 
                 if chunk_size is None:
-                    chunk_size = int(math.ceil(n_items / float(n_active_engines) / 20))
+                    chunk_size = math.ceil(n_items / float(n_active_engines) / 20)
 
             # We need this to keep the instance alive
             self._current_amr = lview.imap(
@@ -306,14 +300,14 @@ if has_parallel:
                 results.append(res)
 
             # Reorder the list according to the id
-            return list(map(lambda x: x[1], sorted(results, key=lambda x: x[0])))
+            return [x[1] for x in sorted(results, key=lambda x: x[0])]
 
 else:
     # NO parallel environment available. Make a dumb object to avoid import problems,
     # but this object will never be really used because the context manager will not
     # activate the parallel mode (see above)
 
-    class ParallelClient(object):
+    class ParallelClient:
         def __init__(self, *args, **kwargs):
             raise RuntimeError(
                 "No parallel environment and attempted to use the ParallelClient class,"
