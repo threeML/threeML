@@ -142,28 +142,7 @@ def do_the_test(cat_name, tmp_path):
             assert pos_fits.separation(pos_cat).value < 1e-3
             assert pos_fits.separation(pos_fermipy).value < 1e-3
 
-        continue
 
-        plt.loglog(e, e**2 * f_fermipy, "b-", label="fermipy", alpha=0.7)
-        plt.loglog(e, e**2 * fa_fits, "r--", label="from ROI fits", alpha=0.7)
-        plt.loglog(e, e**2 * fa_cat, "g:", label="from catalog", alpha=0.7)
-
-        if cat_name == "4FGL-DR4":
-            plt.loglog(e, e**2 * fa_vo, "y-.", label="from VO", alpha=0.7)
-
-        plt.title(name)
-        plt.legend(title=model_fits[astro_name].spectrum.main.shape.name)
-
-        plt.xlabel("Energy (MeV)")
-        plt.ylabel("$E^2$ dN/dE (MeV/cm$^2$/s)")
-
-        plt.grid()
-
-        plt.savefig(f"{astro_name}.png")
-        plt.show()
-
-
-# @pytest.mark.xfail
 @skip_if_internet_is_not_available
 @skip_if_fermipy_is_not_available
 def test_read_model_from_catalogs(tmp_path):
