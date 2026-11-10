@@ -145,13 +145,16 @@ def do_the_test(cat_name, tmp_path):
 
 @skip_if_internet_is_not_available
 @skip_if_fermipy_is_not_available
-def test_read_model_from_catalogs(tmp_path):
+@pytest.mark.parametrize(
+    "cat_name", ["4FGL", "4FGL-DR2", "4FGL-DR3", "4FGL-DR4", "FL16Y"]
+)
+def test_read_model_from_catalogs(cat_name, tmp_path):
     # Find crab and download data from Jan 01 2010 to Jan 8 2010 (needed for fermipy
     # instance)
 
     lat_catalog = FermiLATSourceCatalog()
     try:
-        ra, dec, table = lat_catalog.search_around_source("Crab", radius=20.0)
+        ra, dec, _ = lat_catalog.search_around_source("Crab", radius=20.0)
     except NameResolveError:
         pytest.skip(reason="Connection to Sesame failed")
 
@@ -179,19 +182,18 @@ def test_read_model_from_catalogs(tmp_path):
     irfs = evclass_irf[int(config["selection"]["evclass"])]
     config["gtlike"] = {"irfs": irfs, "edisp": False}
 
-    for cat_name in ["4FGL", "4FGL-DR2", "4FGL-DR3", "4FGL-DR4", "FL16Y"]:
-        the_config = copy.deepcopy(config)
-        tmp = "$CONDA_PREFIX/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits"
-        model_dict = {
-            "src_roiwidth": 30.0,
-            "galdiff": tmp,
-            "isodiff": "iso_P8R3_SOURCE_V3_v1.txt",
-            "catalogs": [cat_name],
-        }
+    the_config = copy.deepcopy(config)
+    tmp = "$CONDA_PREFIX/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits"
+    model_dict = {
+        "src_roiwidth": 30.0,
+        "galdiff": tmp,
+        "isodiff": "iso_P8R3_SOURCE_V3_v1.txt",
+        "catalogs": [cat_name],
+    }
 
-        the_config["model"] = model_dict
+    the_config["model"] = model_dict
 
-        stream = open(tmp_path / f"2config_Crab_{cat_name}.yaml", "w")
+    with open(tmp_path / f"2config_Crab_{cat_name}.yaml", "w") as stream:
         yaml.dump(dict(the_config), stream, default_flow_style=False)
 
-        do_the_test(cat_name, tmp_path)
+    do_the_test(cat_name, tmp_path)
