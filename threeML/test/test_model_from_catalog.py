@@ -54,7 +54,7 @@ def do_the_test(cat_name, tmp_path):
         tmp_path / f"2config_Crab_{cat_name}.yaml", logging={"verbosity": 3}
     )
     gta.setup()
-    gta.write_roi(tmp_path / f"roi_{cat_name}")
+    gta.write_roi(str(tmp_path / f"roi_{cat_name}"))
 
     gta = GTAnalysis.create(tmp_path / f"roi_{cat_name}.npy")
 
