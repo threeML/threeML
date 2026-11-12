@@ -30,6 +30,7 @@ from threeML.utils.photometry import (
     PhotometericObservation,
     get_photometric_filter_library,
 )
+from threeML.utils.data_download.Fermi_LAT.download_LAT_data import download_LAT_data
 
 np.random.seed(12345)
 
@@ -40,7 +41,7 @@ np.random.seed(12345)
 def setup_ipcluster():
     ipycluster_process = subprocess.Popen(["ipcluster", "start", "-n", "2"])
 
-    time.sleep(10.0)
+    time.sleep(2.0)
 
     yield ipycluster_process
 
@@ -534,3 +535,26 @@ def event_observation_split():
     obs = EventObservation(events, exposure=12, start=[0.0, 30.0], stop=[2.0, 40.0])
 
     yield obs
+
+
+@pytest.fixture(scope="session")
+def lat_cat_config(tmp_path_factory):
+    ra = 83.6367
+    dec = 22.0149
+    tstart = "2010-01-01 00:00:00"
+    tstop = "2010-01-08 00:00:00"
+
+    # Note that this will understand if you already download these files, and will
+    # not do it twice unless you change your selection or the outdir
+    tmp_path_lat = tmp_path_factory.mktemp("Crab_data")
+    evfile, scfile = download_LAT_data(
+        ra,
+        dec,
+        20.0,
+        tstart,
+        tstop,
+        time_type="Gregorian",
+        destination_directory=tmp_path_lat,
+    )
+
+    return evfile, scfile, ra, dec
