@@ -1,4 +1,5 @@
 import logging
+import warnings
 
 import copy
 
@@ -63,16 +64,23 @@ def do_the_test(cat_name, tmp_path):
         ra, dec, table = lat_catalog.search_around_source("Crab", radius=30.0)
     except NameResolveError:
         pytest.skip(reason="Connection to Sesame failed")
-    model_fits = lat_catalog.get_model()
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", category=UserWarning)
+        model_fits = lat_catalog.get_model()
 
     lat_catalog = FermiPySourceCatalog(cat_name)
     _ = lat_catalog.cone_search(ra, dec, radius=30.0)
-    model_cat = lat_catalog.get_model(use_association_name=False)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", category=UserWarning)
+        model_cat = lat_catalog.get_model(use_association_name=False)
 
     if cat_name == "4FGL-DR4":
         lat_catalog = FermiLATSourceCatalog()
         _ = lat_catalog.cone_search(ra, dec, radius=30.0)
-        model_vo = lat_catalog.get_model(use_association_name=False)
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", category=UserWarning)
+            model_vo = lat_catalog.get_model(use_association_name=False)
 
     for source in gta.get_sources():
         source = gta.roi.get_source_by_name(source["name"])
@@ -148,32 +156,8 @@ def do_the_test(cat_name, tmp_path):
 @pytest.mark.parametrize(
     "cat_name", ["4FGL", "4FGL-DR2", "4FGL-DR3", "4FGL-DR4", "FL16Y"]
 )
-def test_read_model_from_catalogs(cat_name, tmp_path):
-    # Find crab and download data from Jan 01 2010 to Jan 8 2010 (needed for fermipy
-    # instance)
-
-    lat_catalog = FermiLATSourceCatalog()
-    try:
-        ra, dec, _ = lat_catalog.search_around_source("Crab", radius=20.0)
-    except NameResolveError:
-        pytest.skip(reason="Connection to Sesame failed")
-
-    tstart = "2010-01-01 00:00:00"
-    tstop = "2010-01-08 00:00:00"
-
-    # Note that this will understand if you already download these files, and will
-    # not do it twice unless you change your selection or the outdir
-
-    evfile, scfile = download_LAT_data(
-        ra,
-        dec,
-        20.0,
-        tstart,
-        tstop,
-        time_type="Gregorian",
-        destination_directory="Crab_data",
-    )
-
+def test_read_model_from_catalogs(lat_cat_config, cat_name, tmp_path):
+    evfile, scfile, ra, dec = lat_cat_config
     config = FermipyLike.get_basic_config(evfile=evfile, scfile=scfile, ra=ra, dec=dec)
 
     config["binning"]["binsz"] = 0.5
