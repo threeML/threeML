@@ -66,12 +66,16 @@ def do_the_test(cat_name, tmp_path):
         pytest.skip(reason="Connection to Sesame failed")
     with warnings.catch_warnings():
         warnings.simplefilter("ignore", category=UserWarning)
+        warnings.simplefilter("ignore", category=RuntimeWarning)
+
         model_fits = lat_catalog.get_model()
 
     lat_catalog = FermiPySourceCatalog(cat_name)
     _ = lat_catalog.cone_search(ra, dec, radius=30.0)
     with warnings.catch_warnings():
         warnings.simplefilter("ignore", category=UserWarning)
+        warnings.simplefilter("ignore", category=RuntimeWarning)
+
         model_cat = lat_catalog.get_model(use_association_name=False)
 
     if cat_name == "4FGL-DR4":
@@ -80,6 +84,8 @@ def do_the_test(cat_name, tmp_path):
 
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", category=UserWarning)
+            warnings.simplefilter("ignore", category=RuntimeWarning)
+
             model_vo = lat_catalog.get_model(use_association_name=False)
 
     for source in gta.get_sources():
