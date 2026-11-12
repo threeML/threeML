@@ -184,12 +184,12 @@ def test_OGIP_response_arf_rsp_accessors():
     assert rsp.rsp_filename == rsp_file
 
 
-def test_response_write_to_fits1():
+def test_response_write_to_fits1(tmp_path):
     matrix, mc_energies, ebounds = get_matrix_elements()
 
     rsp = InstrumentResponse(matrix, ebounds, mc_energies)
 
-    temp_file = "__test.rsp"
+    temp_file = tmp_path / "__test.rsp"
 
     rsp.to_fits(temp_file, "TEST", "TEST", overwrite=True)
 
@@ -200,17 +200,17 @@ def test_response_write_to_fits1():
     assert np.allclose(rsp_reloaded.ebounds, rsp.ebounds)
     assert np.allclose(rsp_reloaded.monte_carlo_energies, rsp.monte_carlo_energies)
 
-    os.remove(temp_file)
+    temp_file.unlink()
 
 
-def test_response_write_to_fits2():
+def test_response_write_to_fits2(tmp_path):
     # Now do the same for a response read from a file
 
     rsp_file = get_path_of_data_file("ogip_test_gbm_n6.rsp")
 
     rsp = OGIPResponse(rsp_file)
 
-    temp_file = "__test.rsp"
+    temp_file = tmp_path / "__test.rsp"
 
     rsp.to_fits(temp_file, "TEST", "TEST", overwrite=True)
 
@@ -220,10 +220,10 @@ def test_response_write_to_fits2():
     assert np.allclose(rsp_reloaded.ebounds, rsp.ebounds)
     assert np.allclose(rsp_reloaded.monte_carlo_energies, rsp.monte_carlo_energies)
 
-    os.remove(temp_file)
+    temp_file.unlink()
 
 
-def test_response_write_to_fits3():
+def test_response_write_to_fits3(tmp_path):
     # Now do the same for a file with a ARF
 
     rsp_file = get_path_of_data_file("ogip_test_xmm_pn.rmf")
@@ -232,7 +232,7 @@ def test_response_write_to_fits3():
 
     rsp = OGIPResponse(rsp_file, arf_file=arf_file)
 
-    temp_file = "__test.rsp"
+    temp_file = tmp_path / "__test.rsp"
 
     rsp.to_fits(temp_file, "TEST", "TEST", overwrite=True)
 
@@ -242,7 +242,7 @@ def test_response_write_to_fits3():
     assert np.allclose(rsp_reloaded.ebounds, rsp.ebounds)
     assert np.allclose(rsp_reloaded.monte_carlo_energies, rsp.monte_carlo_energies)
 
-    os.remove(temp_file)
+    temp_file.unlink()
 
 
 def test_response_set_constructor():
