@@ -18,12 +18,7 @@ from threeML.utils.progress_bar import tqdm
 
 log = logging.getLogger(__name__)
 
-try:
-    from subprocess import DEVNULL  # py3k
-except ImportError:
-    import os
-
-    DEVNULL = open(os.devnull, "wb")
+from subprocess import DEVNULL  # py3k
 
 # Check whether we have a parallel system or not
 
