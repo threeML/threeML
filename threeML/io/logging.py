@@ -45,8 +45,7 @@ def get_path_of_log_dir() -> Path:
 
     log_path: Path = Path(threeML_config.logging.path).expanduser()
 
-    if not log_path.exists():
-        log_path.mkdir(parents=True)
+    log_path.mkdir(parents=True, exist_ok=True)
 
     return log_path
 
