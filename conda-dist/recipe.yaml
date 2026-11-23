@@ -22,6 +22,7 @@ requirements:
     - versioneer
 
   run:
+    - __unix
     - python
     - numpy >=1.26
     - scipy >=1.13
@@ -58,6 +59,7 @@ tests:
   - python:
       imports:
         - threeML 
+      pip_check: true
 
   - script:
       - pytest -vv --pyargs threeML
@@ -73,7 +75,6 @@ tests:
             - if: not (osx and python>=3.13)
               then:
                 - ultranest
-
 
 about:
   homepage: https://github.com/threeML/threeML
