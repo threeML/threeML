@@ -1,0 +1,50 @@
+
+/* Notebook styling for the existing RTD dark-mode theme */
+
+/* Input cell backgrounds */
+html[data-theme="dark"] .nbinput .input_area,
+html[data-theme="dark"] .nbinput > div[class^="highlight"]:nth-child(2) {
+    background: #20252b;
+    border: 1px solid #3a424d;
+    border-radius: 4px;
+}
+
+/* Keep highlighting backgrounds transparent within input cells */
+html[data-theme="dark"] .nbinput .input_area .highlight,
+html[data-theme="dark"] .nbinput .input_area .highlight pre {
+    background: transparent;
+}
+
+/* Readable notebook input and output text */
+html[data-theme="dark"] .nbinput .input_area pre,
+html[data-theme="dark"] .nbinput > div[class^="highlight"]:nth-child(2) pre,
+html[data-theme="dark"] .nboutput > :nth-child(2),
+html[data-theme="dark"] .nboutput > :nth-child(2) pre {
+    color: #e6edf3;
+}
+
+/* Input/output execution prompts */
+html[data-theme="dark"] .nbinput .prompt pre,
+html[data-theme="dark"] .nbinput > :first-child pre {
+    color: #8bcaff;
+}
+
+html[data-theme="dark"] .nboutput .prompt pre,
+html[data-theme="dark"] .nboutput > :first-child pre {
+    color: #ffbe7a;
+}
+
+/* Improve visibility of syntax-highlighted comments */
+html[data-theme="dark"] .nbinput .highlight .c1 {
+    color: #a0a8b4;
+}
+
+/* Rich notebook outputs, including HTML tables */
+html[data-theme="dark"] .nboutput table,
+html[data-theme="dark"] .nboutput table th,
+html[data-theme="dark"] .nboutput table td {
+    background-color: #20252b;
+    color: #e6edf3;
+    border-color: #3a424d;
+}
+
