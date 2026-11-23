@@ -22,12 +22,13 @@ requirements:
     - versioneer
 
   run:
+    - __unix
     - python
     - numpy >=1.26
     - scipy >=1.13
     - emcee >=3.1.5
-    - astropy
-    - matplotlib
+    - astropy-base >=7.2
+    - matplotlib-base
     - uncertainties
     - pyyaml >=5.1
     - dill
@@ -48,9 +49,7 @@ requirements:
     - omegaconf
     - rich
     - packaging
-
-    - if: (osx and x86_64)
-      then: llvmlite<0.46
+    - llvmlite>0.47
 
   run_constraints:
     - if: not (linux and aarch64)
@@ -60,6 +59,7 @@ tests:
   - python:
       imports:
         - threeML 
+      pip_check: true
 
   - script:
       - pytest -vv --pyargs threeML
@@ -75,7 +75,6 @@ tests:
             - if: not (osx and python>=3.13)
               then:
                 - ultranest
-
 
 about:
   homepage: https://github.com/threeML/threeML
