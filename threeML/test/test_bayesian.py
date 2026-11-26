@@ -1,12 +1,14 @@
 import numpy as np
+import logging
 import pytest
 
 from threeML import BayesianAnalysis, Log_uniform_prior, Uniform_prior
 
+log = logging.getLogger(__name__)
 try:
     import ultranest
 
-    print(ultranest.__doc__)
+    log.debug(ultranest.__doc__)
 except ModuleNotFoundError:
     has_ultranest = False
 else:
@@ -19,7 +21,7 @@ skip_if_ultranest_is_not_available = pytest.mark.skipif(
 try:
     import autoemcee
 
-    print(autoemcee.__doc__)
+    log.debug(autoemcee.__doc__)
 except ModuleNotFoundError:
     has_autoemcee = False
 else:
@@ -32,7 +34,7 @@ skip_if_autoemcee_is_not_available = pytest.mark.skipif(
 try:
     import dynesty
 
-    print(dynesty.__doc__)
+    log.debug(dynesty.__doc__)
 except ModuleNotFoundError:
     has_dynesty = False
 else:
@@ -45,7 +47,7 @@ skip_if_dynesty_is_not_available = pytest.mark.skipif(
 try:
     import pymultinest
 
-    print(pymultinest.__doc__)
+    log.debug(pymultinest.__doc__)
 except ModuleNotFoundError:
     has_pymultinest = False
 else:
@@ -57,7 +59,7 @@ skip_if_pymultinest_is_not_available = pytest.mark.skipif(
 try:
     import zeus
 
-    print(zeus.__doc__)
+    log.debug(zeus.__doc__)
 except ModuleNotFoundError:
     has_zeus = False
 else:
@@ -68,13 +70,25 @@ skip_if_zeus_is_not_available = pytest.mark.skipif(
 try:
     import nautilus
 
-    print(nautilus.__doc__)
+    log.debug(nautilus.__doc__)
 except ModuleNotFoundError:
     has_nautilus = False
 else:
     has_nautilus = True
 skip_if_nautilus_is_not_available = pytest.mark.skipif(
     not has_nautilus, reason="No nautilus available"
+)
+
+try:
+    import pocomc
+
+    log.debug(pocomc.__doc__)
+except ModuleNotFoundError:
+    has_pocomc = False
+else:
+    has_pocomc = True
+skip_if_pocomc_is_not_available = pytest.mark.skipif(
+    not has_pocomc, reason="No pocomc available"
 )
 
 
@@ -235,6 +249,30 @@ def test_zeus(bayes_fitter, completed_bn090217206_bayesian_analysis):
     check_results(res)
 
 
+@skip_if_zeus_is_not_available
+def test_zeus_automatic_convergence(
+    bayes_fitter, completed_bn090217206_bayesian_analysis
+):
+    bayes, _ = completed_bn090217206_bayesian_analysis
+
+    bayes.set_sampler("zeus")
+    assert bayes.sample() is None
+
+    cb0 = zeus.callbacks.AutocorrelationCallback(
+        ncheck=100, dact=0.01, nact=50, discard=0.5
+    )
+    cb1 = zeus.callbacks.MinIterCallback(nmin=1000)
+    bayes.sampler.setup(n_iterations=20000, n_walkers=4, n_burn_in=0)
+
+    bayes.sample(callbacks=[cb0, cb1])
+
+    res = bayes.results.get_data_frame()
+
+    bayes.restore_median_fit()
+
+    check_results(res)
+
+
 @pytest.mark.filterwarnings("ignore:You provided")
 @skip_if_nautilus_is_not_available
 def test_nautilus(bayes_fitter, completed_bn090217206_bayesian_analysis):
@@ -244,6 +282,24 @@ def test_nautilus(bayes_fitter, completed_bn090217206_bayesian_analysis):
     assert bayes.sample() is None
 
     bayes.sampler.setup(n_live=2000, f_live=0.009, n_shell=5, faulty_keyword=False)
+
+    bayes.sample()
+
+    res = bayes.results.get_data_frame()
+
+    bayes.restore_median_fit()
+
+    check_results(res)
+
+
+@skip_if_pocomc_is_not_available
+def test_pocomc(bayes_fitter, completed_bn090217206_bayesian_analysis):
+    bayes, _ = completed_bn090217206_bayesian_analysis
+
+    bayes.set_sampler("pocomc")
+    assert bayes.sample() is None
+
+    bayes.sampler.setup()
 
     bayes.sample()
 

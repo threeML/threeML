@@ -2,14 +2,11 @@ import logging
 
 import collections
 import copy
-import types
 from contextlib import contextmanager
 from typing import Any, Dict, Optional, Tuple, Union
-from packaging.version import Version
 
 import matplotlib
 import matplotlib.pyplot as plt
-import numba as nb
 import numpy as np
 import pandas as pd
 from astromodels import Model, PointSource, clone_model
@@ -37,6 +34,15 @@ from threeML.utils.spectrum.binned_spectrum import (
 )
 from threeML.utils.spectrum.pha_spectrum import PHASpectrum
 from threeML.utils.spectrum.spectrum_likelihood import statistic_lookup
+from threeML.utils.spectrum.integration_functions import (
+    simpson_integral_values,
+    simpson_integral_edges,
+    trapz_integral_edges,
+    trapz_integral_values,
+    riemann_integral_edges,
+    riemann_integral_values,
+)
+
 from threeML.utils.statistics.stats_tools import Significance
 from threeML.utils.string_utils import dash_separated_string_to_tuple
 
@@ -52,13 +58,6 @@ __instrument_name = "General binned spectral data"
 
 # This defines the known noise models for source and/or background spectra
 _known_noise_models = ["poisson", "gaussian", "ideal", "modeled"]
-
-
-np_version = Version(np.__version__)
-if np_version < Version("2.0.0"):
-    trapezoid = np.trapz
-else:
-    trapezoid = np.trapezoid
 
 
 class SpectrumLike(PluginPrototype):
@@ -210,12 +209,7 @@ class SpectrumLike(PluginPrototype):
 
                 # now get the background likelihood model
 
-                differential_flux, integral = self._get_diff_flux_and_integral(
-                    self._background_plugin.likelihood_model,
-                    integrate_method=self._background_integrate_method,
-                )
-
-                self._background_integral_flux = integral
+                self._background_integral_flux = self._background_plugin.integral_flux
 
         super(SpectrumLike, self).__init__(name, nuisance_parameters)
 
@@ -1907,12 +1901,6 @@ class SpectrumLike(PluginPrototype):
         # Get the differential flux function, and the integral function, with no
         # dispersion, we simply integrate the model over the bins
 
-        differential_flux, integral = self._get_diff_flux_and_integral(
-            self._like_model, integrate_method=self._model_integrate_method
-        )
-
-        self._integral_flux = integral
-
     def _evaluate_model(self, precalc_fluxes: Optional[np.array] = None) -> np.ndarray:
         """Since there is no dispersion, we simply evaluate the model by
         integrating over the energy bins. This can be overloaded to convolve
@@ -2021,16 +2009,9 @@ class SpectrumLike(PluginPrototype):
 
         return model
 
-    def _get_diff_flux_and_integral(
-        self, likelihood_model: Model, integrate_method: str = "simpson"
-    ) -> Tuple[types.FunctionType, types.FunctionType]:
-
-        if integrate_method not in ["simpson", "trapz", "riemann"]:
-
-            log.error("Only simpson and trapz are valid integral_methods.")
-
-            raise RuntimeError()
-
+    def _differential_flux(self, energies, likelihood_model=None):
+        if likelihood_model is None:
+            likelihood_model = self._like_model
         if self._source_name is None:
 
             log.debug(f"{self.name} is using all point sources")
@@ -2040,18 +2021,17 @@ class SpectrumLike(PluginPrototype):
             # Make a function which will stack all point sources (OGIP do not support
             # spatial dimension)
 
-            def differential_flux(energies):
-                fluxes = likelihood_model.get_point_source_fluxes(
-                    0, energies, tag=self._tag, stokes=self._stokes
+            fluxes = likelihood_model.get_point_source_fluxes(
+                0, energies, tag=self._tag, stokes=self._stokes
+            )
+
+            # If we have only one point source, this will never be executed
+            for i in range(1, n_point_sources):
+                fluxes += likelihood_model.get_point_source_fluxes(
+                    i, energies, tag=self._tag, stokes=self._stokes
                 )
 
-                # If we have only one point source, this will never be executed
-                for i in range(1, n_point_sources):
-                    fluxes += likelihood_model.get_point_source_fluxes(
-                        i, energies, tag=self._tag, stokes=self._stokes
-                    )
-
-                return fluxes
+            return fluxes
 
         else:
 
@@ -2059,17 +2039,12 @@ class SpectrumLike(PluginPrototype):
 
             # Note that we checked that self._source_name is in the model when the model
             # was set
-
             try:
-
-                def differential_flux(energies):
-
-                    return likelihood_model.sources[self._source_name](
-                        energies, tag=self._tag, stokes=self._stokes
-                    )
-
                 log.debug(
                     f"{self.name} is using only the point source {self._source_name}"
+                )
+                return likelihood_model.sources[self._source_name](
+                    energies, tag=self._tag, stokes=self._stokes
                 )
 
             except KeyError:
@@ -2081,70 +2056,32 @@ class SpectrumLike(PluginPrototype):
 
                 raise KeyError()
 
-        # The following integrates the diffFlux function using Simpson's rule
-        # This assume that the intervals e1,e2 are all small, which is guaranteed
-        # for any reasonable response matrix, given that e1 and e2 are Monte-Carlo
-        # energies. It also assumes that the function is smooth in the interval
-        # e1 - e2 and twice-differentiable, again reasonable on small intervals for
-        # decent models. It might fail for models with too sharp features, smaller
-        # than the size of the monte carlo interval.
+    def _integral_flux(self, *args, **kwargs):
 
-        if integrate_method == "simpson":
+        if self._model_integrate_method not in ["simpson", "trapz", "riemann"]:
+            log.error("Only simpson, trapz and riemann are valid integral_methods.")
+            raise RuntimeError()
 
-            # New way with simpson rule.
-            # Make sure to not calculate the model twice for the same energies
-
+        if self._model_integrate_method == "simpson":
             if self._has_contiguous_energies:
-
                 if self._predefined_energies is None:
-
-                    def integral(e_edges):
-
-                        # Make sure we do not calculate the flux two times at the same
-                        # energy
-                        # e_edges = np.append(e1, e2[-1])
-                        e_m = (e_edges[1:] + e_edges[:-1]) / 2.0
-
-                        diff_fluxes_edges = differential_flux(e_edges)
-                        diff_fluxes_mid = differential_flux(e_m)
-
-                        return _simps(
-                            e_edges[:-1],
-                            e_edges[1:],
-                            diff_fluxes_edges,
-                            diff_fluxes_mid,
-                        )
-
-                else:
-
-                    e_edges = np.array(self._predefined_energies)
-                    ee1 = e_edges[:-1]
-                    ee2 = e_edges[1:]
-
-                    e_m = (ee1 + ee2) / 2.0
-
-                    def integral():
-
-                        diff_fluxes_edges = differential_flux(e_edges)
-                        diff_fluxes_mid = differential_flux(e_m)
-
-                        return _simps(ee1, ee2, diff_fluxes_edges, diff_fluxes_mid)
-
-            else:
-
-                def integral(e1, e2):
-                    # single energy values given
-                    return (
-                        (e2 - e1)
-                        / 6.0
-                        * (
-                            differential_flux(e1)
-                            + 4 * differential_flux((e2 + e1) / 2.0)
-                            + differential_flux(e2)
-                        )
+                    assert len(args[0]) > 1
+                    return simpson_integral_edges(
+                        args[0], diff_flux_method=self._differential_flux
                     )
 
-        elif integrate_method == "trapz":
+                else:
+                    e_edges = np.array(self._predefined_energies)
+                    return simpson_integral_edges(
+                        e_edges, diff_flux_method=self._differential_flux
+                    )
+
+            else:
+                return simpson_integral_values(
+                    args[0], args[1], diff_flux_method=self._differential_flux
+                )
+
+        elif self._model_integrate_method == "trapz":
 
             if self._has_contiguous_energies:
 
@@ -2155,27 +2092,16 @@ class SpectrumLike(PluginPrototype):
                 else:
 
                     e_edges = np.array(self._predefined_energies)
-                    ee1 = e_edges[:-1]
-                    ee2 = e_edges[1:]
-
-                    def integral():
-                        diff_fluxes_edges = differential_flux(e_edges)
-
-                        return _trapz(
-                            np.array([diff_fluxes_edges[:-1], diff_fluxes_edges[1:]]).T,
-                            np.array([ee1, ee2]).T,
-                        )
-
-            else:
-
-                def integral(e1, e2):
-                    # single energy values given
-                    return _trapz(
-                        np.array([differential_flux(e1), differential_flux(e2)]),
-                        np.array([e1, e2]),
+                    return trapz_integral_edges(
+                        e_edges, diff_flux_method=self._differential_flux
                     )
 
-        elif integrate_method == "riemann":
+            else:
+                return trapz_integral_values(
+                    args[0], args[1], diff_flux_method=self._differential_flux
+                )
+
+        elif self._model_integrate_method == "riemann":
 
             if self._has_contiguous_energies:
 
@@ -2186,25 +2112,18 @@ class SpectrumLike(PluginPrototype):
                 else:
 
                     e_edges = np.array(self._predefined_energies)
-                    ee1 = e_edges[:-1]
-                    ee2 = e_edges[1:]
-
-                    e_m = (ee1 + ee2) / 2.0
-
-                    # energy width
-                    de = ee2 - ee1
-
-                    def integral():
-
-                        return _rsum(differential_flux(e_m), de)
+                    return riemann_integral_edges(
+                        e_edges, diff_flux_method=self._differential_flux
+                    )
 
             else:
+                return riemann_integral_values(
+                    args[0], args[1], diff_flux_method=self._differential_flux
+                )
 
-                def integral(e1, e2):
-
-                    return differential_flux(0.5 * (e1 + e2)) * (e2 - e1)
-
-        return differential_flux, integral
+    @property
+    def integral_flux(self):
+        return self._integral_flux
 
     def use_effective_area_correction(
         self,
@@ -2277,13 +2196,6 @@ class SpectrumLike(PluginPrototype):
         self._model_integrate_method = method
         log.info(f"{self._name} changing model integration method to {method}")
 
-        # if like_model already set, upadte the integral function
-        if self._like_model is not None:
-            differential_flux, integral = self._get_diff_flux_and_integral(
-                self._like_model, integrate_method=method
-            )
-            self._integral_flux = integral
-
     def __set_model_integrate_method(self, value: str) -> None:
 
         self.set_model_integrate_method(value)
@@ -2311,7 +2223,7 @@ class SpectrumLike(PluginPrototype):
         method: (str) which method should be used (simpson or trapz)"""
         if method not in ["simpson", "trapz", "riemann"]:
 
-            log.error("Only simpson and trapz are valid intergate methods.")
+            log.error("Only simpson,trapz and riemann are valid intergate methods.")
 
             raise RuntimeError()
 
@@ -2320,11 +2232,8 @@ class SpectrumLike(PluginPrototype):
 
         # if background_plugin is set, update the integral function
         if self._background_plugin is not None:
-            differential_flux, integral = self._get_diff_flux_and_integral(
-                self._background_plugin.likelihood_model,
-                integrate_method=method,
-            )
-            self._background_integral_flux = integral
+            self._background_plugin.model_integrate_method = method
+            self._background_integral_flux = self._background_plugin.integral_flux
 
     def __set_background_integrate_method(self, value: str) -> None:
 
@@ -3746,23 +3655,3 @@ class SpectrumLike(PluginPrototype):
             yscale="log",
             show_legend=show_legend,
         )
-
-
-@nb.njit(fastmath=True, cache=True)
-def _trapz(x, y):  # pragma: no cover
-    return trapezoid(x, y)
-
-
-@nb.njit(fastmath=True, cache=True)
-def _simps(e1, e2, diff_fluxes_edges, diff_fluxes_mid):  # pragma: no cover
-    return (
-        (e2 - e1)
-        / 6.0
-        * (diff_fluxes_edges[:-1] + 4 * diff_fluxes_mid + diff_fluxes_edges[1:])
-    )
-
-
-@nb.njit(fastmath=True, cache=True)
-def _rsum(model_mid_points, de):  # pragma: no cover
-
-    return np.multiply(model_mid_points, de)

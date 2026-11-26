@@ -231,9 +231,7 @@ class InstrumentResponse(object):
         """
         if precalc_fluxes is None:
             try:
-                fluxes = self._integral_function(
-                    # self._monte_carlo_energies[:-1], self._monte_carlo_energies[1:]
-                )
+                fluxes = self._integral_function()
             except TypeError:
                 fluxes = self._integral_function(
                     self._monte_carlo_energies[:-1],

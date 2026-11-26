@@ -1,7 +1,6 @@
-import logging
-
 import abc
 import collections
+import logging
 import math
 import weakref
 from typing import Dict, Optional
@@ -32,7 +31,6 @@ from astromodels.functions.function import ModelAssertionViolation
 
 from threeML.analysis_results import BayesianResults
 from threeML.data_list import DataList
-
 from threeML.utils.numba_utils import nb_sum
 from threeML.utils.spectrum.share_spectrum import ShareSpectrum
 from threeML.utils.statistics.stats_tools import aic, bic, dic
@@ -282,62 +280,44 @@ class SamplerBase(metaclass=abc.ABCMeta):
     def get_posterior(self, trial_values) -> float:
         """Compute the posterior for the normal sampler."""
 
-        # Assign this trial values to the parameters and
-        # store the corresponding values for the priors
-
-        # self._update_free_parameters()
+        # Assign this trial values to the parameters and store the corresponding
+        # values for the priors.
 
         if len(self._free_parameters) != len(trial_values):
-            msg = "Something is wrong. Number of free parameters\ndo not match the "
-            "number of trial values."
-
-            log.error(msg)
+            msg = (
+                "Something is wrong. Number of free parameters\n"
+                "do not match the number of trial values."
+            )
 
             raise AssertionError(msg)
 
-        log_prior = 0
-
-        # with use_
+        log_prior = 0.0
 
         for i, (parameter_name, parameter) in enumerate(self._free_parameters.items()):
             prior_value = parameter.prior(trial_values[i])
 
             if prior_value == 0:
                 # Outside allowed region of parameter space
-
                 return -np.inf
 
-            else:
-                parameter.value = trial_values[i]
+            parameter.value = trial_values[i]
 
-                log_prior += math.log(prior_value)
+            log_prior += math.log(prior_value)
 
         log_like = self._log_like(trial_values)
-
-        # print("Log like is %s, log_prior is %s, for trial values %s" % (log_like,
-        # log_prior,trial_values))
 
         return log_like + log_prior
 
     def get_posterior_proxy(self):
         """
-        Return a weakref-backed posterior callable.
+        Return a weakref-backed, pickleable posterior callable.
 
-        This prevents external samplers from keeping a strong reference to this
-        SamplerBase instance via a bound method.
+        The returned object does not keep a strong reference to this SamplerBase
+        instance in the parent process, but it can still be serialized and sent to
+        multiprocessing/MPI workers.
         """
 
-        sampler_ref = weakref.ref(self)
-
-        def posterior(trial_values):
-            sampler = sampler_ref()
-
-            if sampler is None:
-                return -np.inf
-
-            return sampler.get_posterior(trial_values)
-
-        return posterior
+        return PosteriorProxy(self)
 
     def _log_prior(self, trial_values) -> float:
         """Compute the sum of log-priors, used in the parallel tempering
@@ -375,7 +355,7 @@ class SamplerBase(metaclass=abc.ABCMeta):
                 # Old way; every dataset independendly - This is fine if the
                 # spectrum calc is fast.
 
-                for i, dataset in enumerate(self._data_list.values()):
+                for i, dataset in enumerate(list(self._data_list.values())):
                     log_like_values[i] = dataset.get_log_like()
 
             else:
@@ -437,6 +417,11 @@ class SamplerBase(metaclass=abc.ABCMeta):
             ]
 
             log.warning(f"Likelihood value is infinite for parameters: {params}")
+            vals = [
+                f"{d.name}: {v}"
+                for d, v in zip(self._data_list.values(), log_like_values)
+            ]
+            log.warning(f"Likelihood values for the individual plugins: {vals}")
 
             return -np.inf
 
@@ -500,7 +485,7 @@ class UnitCubeSampler(SamplerBase):
             return log_like
 
         # Now construct the prior
-        # MULTINEST priors are defined on the unit cube
+        # UnitCubeSampler priors are defined on the unit cube
         # and should return the value in the bounds... not the
         # probability. Therefore, we must make some transforms
 
@@ -567,3 +552,83 @@ def arg_median(a):
         left = np.partition(a, l)[l]
         right = np.partition(a, r)[r]
         return min([np.where(a == left)[0][0], np.where(a == right)[0][0]])
+
+
+class PosteriorProxy:
+    """
+    Pickleable posterior callable.
+
+    In the parent process this keeps only a weak reference to the sampler, so
+    external samplers do not keep the SamplerBase instance alive unnecessarily.
+
+    When pickled and sent to a worker process, the underlying sampler is
+    serialized and restored as a strong reference inside that worker. This is
+    necessary because a weakref to an object in another process would be useless.
+
+    Thanks Claude :)
+    """
+
+    def __init__(self, sampler):
+        # In the parent/main process, avoid keeping sampler alive.
+        self._sampler_ref = weakref.ref(sampler)
+
+        # This is only used after unpickling in a worker process.
+        self._sampler = None
+
+    def _get_sampler(self):
+        """
+        Return the sampler either from the local strong reference, used in
+        workers, or from the weak reference, used in the parent process.
+        """
+
+        if self._sampler is not None:
+            return self._sampler
+
+        if self._sampler_ref is None:
+            return None
+
+        return self._sampler_ref()
+
+    def __call__(self, trial_values):
+        sampler = self._get_sampler()
+
+        if sampler is None:
+            return -np.inf
+
+        return sampler.get_posterior(trial_values)
+
+    def __getstate__(self):
+        """
+        Customize pickling.
+
+        A weakref.ref object cannot meaningfully be pickled for execution in
+        another process. Therefore, when this proxy is pickled, dereference the
+        weakref and serialize the actual sampler.
+
+        This does not make the parent-side PosteriorProxy hold a permanent
+        strong reference. It only creates a strong reference during pickling.
+        """
+
+        sampler = self._get_sampler()
+
+        if sampler is None:
+            raise RuntimeError(
+                "Cannot pickle PosteriorProxy because the referenced sampler "
+                "has already been garbage-collected."
+            )
+
+        return {
+            "sampler": sampler,
+        }
+
+    def __setstate__(self, state):
+        """
+        Restore state in a worker process.
+
+        In the worker process we intentionally keep a strong reference to the
+        sampler. The worker needs a real sampler object to evaluate the
+        posterior.
+        """
+
+        self._sampler = state["sampler"]
+        self._sampler_ref = None
