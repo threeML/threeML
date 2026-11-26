@@ -182,3 +182,13 @@ bayes_analysis.results.corner_plot();
 
 
 ```
+## pocomc 
+
+```python
+bayes_analysis.set_sampler('pocomc')
+bayes_analysis.sampler.setup()
+bayes_analysis.sample()
+
+xyl.plot();
+bayes_analysis.results.corner_plot();
+```
