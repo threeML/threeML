@@ -1,12 +1,14 @@
 import numpy as np
+import logging
 import pytest
 
 from threeML import BayesianAnalysis, Log_uniform_prior, Uniform_prior
 
+log = logging.getLogger(__name__)
 try:
     import ultranest
 
-    print(ultranest.__doc__)
+    log.debug(ultranest.__doc__)
 except ModuleNotFoundError:
     has_ultranest = False
 else:
@@ -19,7 +21,7 @@ skip_if_ultranest_is_not_available = pytest.mark.skipif(
 try:
     import autoemcee
 
-    print(autoemcee.__doc__)
+    log.debug(autoemcee.__doc__)
 except ModuleNotFoundError:
     has_autoemcee = False
 else:
@@ -32,7 +34,7 @@ skip_if_autoemcee_is_not_available = pytest.mark.skipif(
 try:
     import dynesty
 
-    print(dynesty.__doc__)
+    log.debug(dynesty.__doc__)
 except ModuleNotFoundError:
     has_dynesty = False
 else:
@@ -45,7 +47,7 @@ skip_if_dynesty_is_not_available = pytest.mark.skipif(
 try:
     import pymultinest
 
-    print(pymultinest.__doc__)
+    log.debug(pymultinest.__doc__)
 except ModuleNotFoundError:
     has_pymultinest = False
 else:
@@ -57,7 +59,7 @@ skip_if_pymultinest_is_not_available = pytest.mark.skipif(
 try:
     import zeus
 
-    print(zeus.__doc__)
+    log.debug(zeus.__doc__)
 except ModuleNotFoundError:
     has_zeus = False
 else:
@@ -68,7 +70,7 @@ skip_if_zeus_is_not_available = pytest.mark.skipif(
 try:
     import nautilus
 
-    print(nautilus.__doc__)
+    log.debug(nautilus.__doc__)
 except ModuleNotFoundError:
     has_nautilus = False
 else:
@@ -80,7 +82,7 @@ skip_if_nautilus_is_not_available = pytest.mark.skipif(
 try:
     import pocomc
 
-    print(pocomc.__doc__)
+    log.debug(pocomc.__doc__)
 except ModuleNotFoundError:
     has_pocomc = False
 else:
